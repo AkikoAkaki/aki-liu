@@ -1,0 +1,25 @@
+{{ define "main" }}
+<article class="post-single">
+    <header class="post-header">
+        <h1 class="post-title">{{ .Title }}</h1>
+        <time class="post-date">{{ .Date.Format "2006/01/02" }}</time>
+    </header>
+    
+    <div class="post-content">
+        {{ .Content }}
+    </div>
+</article>
+
+<footer class="site-footer">
+    <div class="footer-left">Sit with your ambient ambition.</div>
+    <div class="footer-right">
+        <span class="footer-year">{{ now.Format "2006" }}</span>
+        <span class="footer-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+        </span>
+    </div>
+</footer>
+{{ end }}
