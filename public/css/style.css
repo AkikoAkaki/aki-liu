@@ -7,8 +7,8 @@
     /* Colors (Light Mode) */
     --bg-color: #ffffff;
     --text-color: #111111;
-    --text-meta: #737373;
-    --border-color: #e5e5e5;
+    --text-meta: #a3a3a3;
+    --border-color: #f0f0f0;
     
     /* Spacing */
     --spacing-unit: 1rem;
@@ -19,8 +19,8 @@
         /* Colors (Dark Mode) */
         --bg-color: #050505; /* Deep black/gray */
         --text-color: #ffffff;
-        --text-meta: #888888;
-        --border-color: #333333;
+        --text-meta: #666666;
+        --border-color: #1a1a1a;
     }
 }
 
@@ -40,11 +40,22 @@ a {
 /* Layout Grid */
 .site-container {
     display: grid;
-    grid-template-columns: 200px 1fr; /* Sidebar | Content */
-    max-width: 1200px;
+    grid-template-columns: 1fr 650px 1fr; /* Center the 650px column */
+    max-width: 100%;
     margin: 0 auto;
-    padding: 4rem 2rem;
+    padding: 10rem 2rem; /* Increased top padding */
     gap: 2rem;
+}
+
+.site-sidebar {
+    grid-column: 1;
+    justify-self: end; /* Align Index to the right of the left gutter */
+    padding-right: 2rem;
+}
+
+.site-main {
+    grid-column: 2;
+    width: 100%;
 }
 
 /* Sidebar (Index) */
@@ -64,7 +75,7 @@ a {
 .writing-label {
     font-family: var(--font-ui);
     font-size: 1rem;
-    font-weight: 400;
+    font-weight: 500;
     margin: 0 0 4rem 0; /* Space below Writing label */
     color: var(--text-color);
 }
@@ -77,11 +88,11 @@ a {
 
 .writing-item {
     display: grid;
-    grid-template-columns: 120px 1fr 60px; /* Year | Title | Date */
-    gap: 1rem;
+    grid-template-columns: 140px 1fr 60px; /* Increased year column width */
+    gap: 1.5rem; /* Increased gap between columns */
     align-items: baseline;
-    padding-bottom: 1.5rem; /* Space below text */
-    margin-bottom: 1.5rem; /* Space for next item */
+    padding-bottom: 1rem; /* Space below text */
+    margin-bottom: 1rem; /* Space for next item */
     position: relative;
 }
 
@@ -90,7 +101,7 @@ a {
     height: 1px;
     background-color: var(--border-color);
     position: absolute;
-    top: -1.5rem; /* Position divider in the middle of the gap */
+    top: -1rem; /* Position divider in the middle of the gap */
     width: 100%;
 }
 
