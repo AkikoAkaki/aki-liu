@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode | default "en" }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ block "title" . }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+    
+    <!-- Fonts: Inter (UI/Sans) & Newsreader (Serif/Index) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Newsreader:ital,wght@1,400&display=swap" rel="stylesheet">
+
+    {{ $style := resources.Get "css/style.css" }}
+    {{ if $style }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+    {{ end }}
+</head>
+<body>
+    <div class="site-container">
+        <aside class="site-sidebar">
+            <a href="{{ .Site.Home.RelPermalink }}" class="index-link">Index</a>
+        </aside>
+        <main class="site-main">
+            {{ block "main" . }}{{ end }}
+        </main>
+    </div>
+</body>
+</html>
