@@ -5,7 +5,7 @@ slug: "writing/browser-default-font-size"
 draft: false
 ---
 
-Use the `font-size: medium` keyword to inherit the browser default setting:
+Use the font-size: `medium` keyword to inherit the browser default setting:
 
 ```css
 .measure-element {
