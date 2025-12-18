@@ -9,7 +9,7 @@ Use the font-size: `medium` keyword to inherit the browser default setting:
 
 ```css
 .measure-element {
-	font-size: medium;
+  font-size: medium;
 }
 ```
 

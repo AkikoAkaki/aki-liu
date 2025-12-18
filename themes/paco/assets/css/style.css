@@ -6,15 +6,15 @@
     --font-mono: "Consolas", "Monaco", "Courier New", monospace;
 
     /* Typography Presets */
-    --type-heading: 500 16px/28px var(--font-sans);
-    --type-heading-l: 500 16px/32px var(--font-sans);
+    --type-heading: 500 16px/24px var(--font-sans);
+    --type-heading-l: 500 16px/28px var(--font-sans);
     --type-italic: 400 italic 1.1rem/normal var(--font-serif);
-    --type-l: 15px/32px var(--font-sans);
+    --type-l: 15px/26px var(--font-sans);
     --type-s: 14px/20px var(--font-sans);
 
     /* Colors (Light Mode) */
     --bg-color: #ffffff;
-    --text-color: #111111;
+    --text-color: #3a3a3a;
     --text-meta: #a3a3a3;
     --border-color: #f0f0f0;
     
@@ -51,7 +51,7 @@ a {
     grid-template-columns: 1fr 650px 1fr; /* Center the 650px column */
     max-width: 100%;
     margin: 0 auto;
-    padding: 10rem 2rem; /* Increased top padding */
+    padding: 7rem 2rem; /* Reduced top padding */
     gap: 2rem;
 }
 
@@ -175,6 +175,7 @@ a {
     font: var(--type-heading-l);
     margin: 0 0 0.25rem 0;
     letter-spacing: -0.01em;
+    color: #171717;
 }
 
 .post-date {
@@ -206,27 +207,52 @@ a {
 
 /* Code Blocks */
 .post-content pre {
-    background-color: #f8f8f8;
-    padding: 1.25rem 1.5rem;
-    border-radius: 12px; /* More rounded and smooth */
+    background-color: #f3f3f3;
+    padding: 1rem 1.5rem;
+    border-radius: 8px; /* Even more rounded and smooth */
     overflow-x: auto;
     margin: 2.5rem 0;
-    border: 1px solid #f0f0f0;
+    border: none;
+    color: #3a3a3a;
 }
 
 @media (prefers-color-scheme: dark) {
     .post-content pre {
-        background-color: #0a0a0a;
-        border-color: #1a1a1a;
+        background-color: #0d0d0d;
+        color: #ccc;
     }
+}
+
+/* Basic Syntax Highlighting for the "8f8f8f" look */
+/* Braces, colons, dots, semicolons */
+ .post-content pre code {
+    color: #3a3a3a;
+}
+
+@media (prefers-color-scheme: dark) {
+    .post-content pre code {
+        color: #eee;
+    }
+}
+
+/* Target punctuation, operators, keywords, numbers, and strings */
+.post-content pre code .p,
+.post-content pre code .o,
+.post-content pre code .k,
+.post-content pre code .kc,
+.post-content pre code .kd,
+.post-content pre code .kr,
+.post-content pre code .s,
+.post-content pre code .m {
+    color: #8f8f8f !important;
 }
 
 .post-content code {
     font-family: var(--font-mono);
     font-size: 0.85em;
-    background-color: #f0f0f0;
+    background-color: #f3f3f3;
     padding: 0.2rem 0.4rem;
-    border-radius: 6px; /* More rounded */
+    border-radius: 6px;
 }
 
 @media (prefers-color-scheme: dark) {

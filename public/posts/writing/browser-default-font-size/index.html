@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get the browser default font size | Aki&#39;s Blog</title>
@@ -36,12 +36,12 @@
     
     <div class="post-content">
         <p>Use the font-size: <code>medium</code> keyword to inherit the browser default setting:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-css" data-lang="css"><span style="display:flex;"><span>.<span style="color:#a6e22e">measure-element</span> {
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">font-size</span>: <span style="color:#66d9ef">medium</span>;
-</span></span><span style="display:flex;"><span>}
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-css" data-lang="css"><span class="line"><span class="cl"><span class="p">.</span><span class="nc">measure-element</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">font-size</span><span class="p">:</span> <span class="kc">medium</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>Reading the value from JavaScript is as simple as querying a measurement element and relying on <code>getComputedStyle</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">measureElement</span> <span style="color:#f92672">=</span> document.<span style="color:#a6e22e">querySelector</span>(<span style="color:#e6db74">&#39;.measure-element&#39;</span>);
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">fontSize</span> <span style="color:#f92672">=</span> parseInt(<span style="color:#a6e22e">getComputedStyle</span>(<span style="color:#a6e22e">measureElement</span>).<span style="color:#a6e22e">fontSize</span>);
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">measureElement</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.measure-element&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">let</span> <span class="nx">fontSize</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">measureElement</span><span class="p">).</span><span class="nx">fontSize</span><span class="p">);</span>
 </span></span></code></pre></div><p>If your browser&rsquo;s default font size is changed (for example to &ldquo;Very Large&rdquo; on Chromium), the return value will reflect the new size—for instance <code>24px</code> instead of <code>16px</code>.</p>
 <p>The value depends on the system preferences, so don&rsquo;t hardcode a pixel assumption unless you explicitly control the browser UI settings.</p>
 
