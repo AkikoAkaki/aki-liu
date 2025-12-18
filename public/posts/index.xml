@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Aki&#39;s Blog</title>
+    <link>http://localhost:1313/posts/</link>
+    <description>Recent content in Posts on Aki&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 09 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Get the browser default font size</title>
+      <link>http://localhost:1313/posts/browser-default-font-size/</link>
+      <pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/browser-default-font-size/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Safari favicon showing white background on dark mode</title>
+      <link>http://localhost:1313/posts/safari-favicon/</link>
+      <pubDate>Wed, 19 Apr 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/safari-favicon/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>px vs rem in font-size</title>
+      <link>http://localhost:1313/posts/px-vs-rem/</link>
+      <pubDate>Thu, 01 Sep 2022 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/px-vs-rem/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Redesign 2021</title>
+      <link>http://localhost:1313/posts/redesign-2021/</link>
+      <pubDate>Fri, 12 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/redesign-2021/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>React Hook Getter Pattern</title>
+      <link>http://localhost:1313/posts/react-hook-getter/</link>
+      <pubDate>Mon, 27 Sep 2021 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/react-hook-getter/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

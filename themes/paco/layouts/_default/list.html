@@ -1,0 +1,23 @@
+{{ define "main" }}
+<div class="writing-container">
+    <h1 class="writing-label">Writing</h1>
+    
+    <div class="writing-list">
+        {{ range .Pages.GroupByPublishDate "2006" }}
+            {{ $year := .Key }}
+            {{ range $index, $page := .Pages }}
+                {{ $isFirstOfYear := eq $index 0 }}
+                
+                <article class="writing-item {{ if $isFirstOfYear }}first-of-year{{ end }}">
+                    <div class="item-divider"></div>
+                    <div class="item-year">
+                        {{ if $isFirstOfYear }}{{ $year }}{{ end }}
+                    </div>
+                    <a href="{{ .RelPermalink }}" class="item-title">{{ .Title }}</a>
+                    <time class="item-date">{{ .Date.Format "01/02" }}</time>
+                </article>
+            {{ end }}
+        {{ end }}
+    </div>
+</div>
+{{ end }}
