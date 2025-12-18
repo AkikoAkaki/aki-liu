@@ -19,9 +19,9 @@
     <div class="site-container">
         <aside class="site-sidebar">
             <a href="/writing" class="index-link">
-                <svg class="back-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="miter">
-                    <path d="M9 18h5a5 5 0 0 0 0-10H5" />
-                    <path d="M9 8l-4-4 4-4" />
+                <svg class="back-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="17" y1="17" x2="7" y2="7"></line>
+                    <polyline points="7 17 7 7 17 7"></polyline>
                 </svg>
                 Writing
             </a>
@@ -35,7 +35,28 @@
     </header>
     
     <div class="post-content">
-        
+        <p>This happens as recently as Safari 16.4. It&rsquo;s because your favicon fails to meet contrast requirements.</p>
+<p>I don&rsquo;t know what the requirements are, or how Safari calculates them, and I can’t find any official information online (beyond some discussion deciding that Safari should stop automatically adjusting colors for improved contrast in places like <code>::placeholder</code> and <code>::selection</code>). It’s definitely related to color contrast, though I didn’t see any consistent behavior by matching or exceeding AA/4.5:1 or AAA/7:1 requirements of the foreground color against both #000 and #282828 (Safari&rsquo;s default tabbar background in dark mode).</p>
+<h3 id="solving">Solving</h3>
+<p>You can fix it by changing the primary color of your favicon to be “brighter”. Decreasing white space or adding a border to the icon may also help.</p>
+<h3 id="validating">Validating</h3>
+<p>Safari has an agressive favicon cache that is not easy to clear. Here&rsquo;s how to forcefully refresh your website&rsquo;s favicon in Safari:</p>
+<ul>
+<li>Click the menu item &ldquo;Clear Caches&rdquo; under the Develop menu
+<ul>
+<li>If you don&rsquo;t see the Develop menu, enable it in Safari Preferences › Advanced</li>
+</ul>
+</li>
+<li>Quit Safari</li>
+<li>Delete everything in <code>~/Library/Safari/Favicon Cache</code>
+<ul>
+<li>Terminal users can run <code>rm -rf ~/Library/Safari/Favicon\ Cache</code></li>
+</ul>
+</li>
+<li>Restart Safari</li>
+<li>Visit your site</li>
+</ul>
+
     </div>
 </article>
 
