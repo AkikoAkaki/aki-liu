@@ -1,79 +1,9 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safari favicon showing white background on dark mode | Aki&#39;s Blog</title>
-    
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Newsreader:ital,wght@1,400&display=swap" rel="stylesheet">
-
-    
-    
-    <link rel="stylesheet" href="/css/style.css">
-    
-</head>
-<body>
-    <div class="site-container">
-        <aside class="site-sidebar">
-            <a href="/writing" class="index-link">
-                <svg class="back-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="17" y1="17" x2="7" y2="7"></line>
-                    <polyline points="7 17 7 7 17 7"></polyline>
-                </svg>
-                Writing
-            </a>
-        </aside>
-        <main class="site-main">
-            
-<article class="post-single">
-    <header class="post-header">
-        <h1 class="post-title">Safari favicon showing white background on dark mode</h1>
-        <time class="post-date">2023/04/19</time>
-    </header>
-    
-    <div class="post-content">
-        <p>This happens as recently as Safari 16.4. It&rsquo;s because your favicon fails to meet contrast requirements.</p>
-<p>I don&rsquo;t know what the requirements are, or how Safari calculates them, and I can’t find any official information online (beyond some discussion deciding that Safari should stop automatically adjusting colors for improved contrast in places like <code>::placeholder</code> and <code>::selection</code>). It’s definitely related to color contrast, though I didn’t see any consistent behavior by matching or exceeding AA/4.5:1 or AAA/7:1 requirements of the foreground color against both #000 and #282828 (Safari&rsquo;s default tabbar background in dark mode).</p>
-<h3 id="solving">Solving</h3>
-<p>You can fix it by changing the primary color of your favicon to be “brighter”. Decreasing white space or adding a border to the icon may also help.</p>
-<h3 id="validating">Validating</h3>
-<p>Safari has an agressive favicon cache that is not easy to clear. Here&rsquo;s how to forcefully refresh your website&rsquo;s favicon in Safari:</p>
-<ul>
-<li>Click the menu item &ldquo;Clear Caches&rdquo; under the Develop menu
-<ul>
-<li>If you don&rsquo;t see the Develop menu, enable it in Safari Preferences › Advanced</li>
-</ul>
-</li>
-<li>Quit Safari</li>
-<li>Delete everything in <code>~/Library/Safari/Favicon Cache</code>
-<ul>
-<li>Terminal users can run <code>rm -rf ~/Library/Safari/Favicon\ Cache</code></li>
-</ul>
-</li>
-<li>Restart Safari</li>
-<li>Visit your site</li>
-</ul>
-
-    </div>
-</article>
-
-<footer class="site-footer">
-    <div class="footer-left">Sit with your ambient ambition.</div>
-    <div class="footer-right">
-        <span class="footer-year">2025</span>
-        <span class="footer-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-        </span>
-    </div>
-</footer>
-
-        </main>
-    </div>
-</body>
+  <head>
+    <title>https://example.org/writing/safari-favicon/</title>
+    <link rel="canonical" href="https://example.org/writing/safari-favicon/">
+    <meta charset="utf-8">
+    <meta http-equiv="refresh" content="0; url=https://example.org/writing/safari-favicon/">
+  </head>
 </html>

@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ block "title" . }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
+    {{ with .Permalink }}
+    <link rel="canonical" href="{{ . }}">
+    {{ end }}
     
     <!-- Fonts: Inter (UI/Sans) & Newsreader (Serif/Index) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,15 +19,27 @@
     {{ end }}
 </head>
 <body>
+    {{ $nav := .Site.Params.navigation }}
+    {{ $homeLabel := "Index" }}
+    {{ $writingLabel := "Writing" }}
+    {{ with $nav }}
+        {{ with .homeLabel }}{{ $homeLabel = . }}{{ end }}
+        {{ with .writingLabel }}{{ $writingLabel = . }}{{ end }}
+    {{ end }}
+    {{ $writingSection := .Site.GetPage "section" "writing" }}
     <div class="site-container">
         <aside class="site-sidebar">
-            <a href="{{ if .IsPage }}/writing{{ else }}{{ .Site.Home.RelPermalink }}{{ end }}" class="index-link">
-                <svg class="back-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="17" y1="17" x2="7" y2="7"></line>
-                    <polyline points="7 17 7 7 17 7"></polyline>
-                </svg>
-                {{ if .IsPage }}Writing{{ else }}Index{{ end }}
-            </a>
+            <nav class="site-nav">
+                <a href="{{ .Site.Home.RelPermalink }}" class="nav-link {{ if .IsHome }}is-active{{ end }}">
+                    {{ $homeLabel }}
+                </a>
+                {{ with $writingSection }}
+                {{ $writingActive := or (eq $.Section "writing") (and $.IsSection (eq $.RelPermalink .RelPermalink)) }}
+                <a href="{{ .RelPermalink }}" class="nav-link {{ if $writingActive }}is-active{{ end }}">
+                    {{ $writingLabel }}
+                </a>
+                {{ end }}
+            </nav>
         </aside>
         <main class="site-main">
             {{ block "main" . }}{{ end }}

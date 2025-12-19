@@ -1,6 +1,6 @@
 {{ define "main" }}
 <div class="writing-container">
-    <h1 class="writing-label">Writing</h1>
+    <h1 class="writing-label">{{ .Title }}</h1>
     
     <div class="writing-list">
         {{ range .Pages.GroupByPublishDate "2006" }}

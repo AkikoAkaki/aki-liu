@@ -1,8 +1,11 @@
 ---
 title: "Get the browser default font size"
 date: 2023-05-09
-slug: "writing/browser-default-font-size"
+slug: "browser-default-font-size"
 draft: false
+aliases:
+  - /posts/browser-default-font-size/
+  - /posts/writing/browser-default-font-size/
 ---
 
 Use the font-size: `medium` keyword to inherit the browser default setting:

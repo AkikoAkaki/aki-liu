@@ -57,7 +57,7 @@ a {
 
 .site-sidebar {
     grid-column: 1;
-    justify-self: end; /* Align Index to the right of the left gutter */
+    justify-self: end; /* Align nav to the right of the left gutter */
     padding-right: 12rem; /* Further increased distance from Writing panel */
 }
 
@@ -66,21 +66,27 @@ a {
     width: 100%;
 }
 
-/* Sidebar (Index) */
-.index-link {
+/* Sidebar Navigation */
+.site-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.nav-link {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    font-size: 1.05rem;
+    color: var(--text-meta);
+    transition: color 0.2s ease;
+}
+
+.nav-link.is-active {
     color: var(--text-color);
 }
 
-.back-icon {
-    display: inline-block;
+.nav-link:hover {
     color: var(--text-color);
-    opacity: 0.8;
 }
 
 /* Writing List Styles */

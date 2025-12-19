@@ -5,22 +5,22 @@
     <loc>https://example.org/</loc>
     <lastmod>2023-05-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/posts/writing/browser-default-font-size/</loc>
+    <loc>https://example.org/writing/browser-default-font-size/</loc>
     <lastmod>2023-05-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/posts/</loc>
+    <loc>https://example.org/writing/</loc>
     <lastmod>2023-05-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/posts/safari-favicon/</loc>
+    <loc>https://example.org/writing/safari-favicon/</loc>
     <lastmod>2023-04-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/posts/px-vs-rem/</loc>
+    <loc>https://example.org/writing/px-vs-rem/</loc>
     <lastmod>2022-09-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/posts/redesign-2021/</loc>
+    <loc>https://example.org/writing/redesign-2021/</loc>
     <lastmod>2021-11-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://example.org/posts/react-hook-getter/</loc>
+    <loc>https://example.org/writing/react-hook-getter/</loc>
     <lastmod>2021-09-27T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://example.org/categories/</loc>

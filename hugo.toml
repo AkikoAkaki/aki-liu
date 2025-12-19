@@ -2,6 +2,19 @@ baseURL = 'https://example.org/'
 languageCode = 'en-us'
 title = "Aki's Blog"
 theme = 'paco'
+mainSections = ['writing']
+
+[permalinks]
+  writing = '/writing/:slug/'
+
+[taxonomies]
+  tag = 'tags'
+  category = 'categories'
+
+[params]
+  [params.navigation]
+    homeLabel = 'Index'
+    writingLabel = 'Writing'
 
 [markup]
   [markup.goldmark]

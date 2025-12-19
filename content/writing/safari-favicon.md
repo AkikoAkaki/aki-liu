@@ -1,7 +1,10 @@
 ---
 title: "Safari favicon showing white background on dark mode"
 date: 2023-04-19
+slug: "safari-favicon"
 draft: false
+aliases:
+  - /posts/safari-favicon/
 ---
 
 This happens as recently as Safari 16.4. It's because your favicon fails to meet contrast requirements.
