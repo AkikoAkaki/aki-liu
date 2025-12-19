@@ -203,6 +203,54 @@ a {
     margin-bottom: 2rem;
 }
 
+/* 多媒体支持：响应式图片、figure、视频/音频与嵌入框 */
+.post-content img,
+.post-content picture,
+.post-content svg {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 2.5rem auto;
+    border-radius: 16px;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.post-content figure {
+    margin: 3rem 0;
+    text-align: center;
+}
+
+.post-content figure figcaption {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--text-meta);
+}
+
+.post-content video,
+.post-content audio,
+.post-content iframe {
+    width: 100%;
+    max-width: 100%;
+    margin: 2.5rem 0;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+    .post-content img,
+    .post-content picture,
+    .post-content svg,
+    .post-content video,
+    .post-content audio,
+    .post-content iframe {
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4);
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+}
+
 .post-content p.html-note {
     border-left: 3px solid var(--border-color);
     padding-left: 1rem;

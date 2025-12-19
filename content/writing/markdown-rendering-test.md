@@ -91,6 +91,23 @@ $$
 
 ![示例图片：占位图](https://via.placeholder.com/640x200.png?text=Markdown+Render+Test)
 
+<figure>
+  <img src="https://via.placeholder.com/800x320.png?text=Figure+Caption" alt="Figure caption example">
+  <figcaption>Figure + caption 渲染示例，能够测试图像的说明文本。</figcaption>
+</figure>
+
+<video controls preload="metadata" poster="https://via.placeholder.com/800x450.png?text=Video+Poster">
+  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+  你的浏览器不支持 video 标签，请使用支持 HTML5 的浏览器预览。
+</video>
+
+<audio controls>
+  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3" type="audio/mpeg">
+  你的浏览器不支持 audio 标签。
+</audio>
+
+<iframe title="示例视频嵌入" src="https://www.youtube.com/embed/ysz5S6PUM-U" height="360" loading="lazy" allow="fullscreen" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin"></iframe>
+
 ---
 
 注脚示例：这是正文中的一句话，需要说明[^note1]。
