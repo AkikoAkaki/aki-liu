@@ -6,4 +6,3 @@ draft: false
 aliases:
   - /posts/redesign-2021/
 ---
-
