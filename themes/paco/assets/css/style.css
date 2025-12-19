@@ -17,7 +17,7 @@
     --bg-color: #ffffff;
     --text-color: #3a3a3a;
     --text-meta: #a3a3a3;
-    --border-color: #f0f0f0;
+    --border-color: #e8e8e8;
 
     /* 间距基准：统一的间距单位，有助于保持 rhythm */
     --spacing-unit: 1rem;
@@ -324,7 +324,7 @@ a {
     text-decoration: underline;
     text-underline-offset: 4px;
     text-decoration-thickness: 1px;
-    text-decoration-color: #c7c7c7;
+    text-decoration-color: #e8e8e8;
     transition: text-decoration-color 0.18s ease, text-decoration-thickness 0.12s ease;
 }
 
@@ -505,4 +505,138 @@ a {
     display: flex;
     align-items: center;
     opacity: 0.6;
+}
+
+/* Homepage Styles */
+
+.home-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+/* Intro Section */
+.intro {
+    margin-bottom: 2rem;
+}
+
+.author-name {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+}
+
+.bio-text {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    max-width: 600px;
+}
+
+.bio-text em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+}
+
+.bio-text a {
+    text-decoration: underline;
+    text-decoration-color: var(--border-color);
+    text-underline-offset: 2px;
+}
+
+.bio-text a:hover {
+    color: var(--text-color);
+    text-decoration-color: var(--text-color);
+}
+
+/* Work Table Section */
+.work-table-section {
+    margin-bottom: 2rem;
+}
+
+.work-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+    table-layout: fixed;
+}
+
+.work-table th {
+    text-align: left;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--text-meta);
+    font-weight: 400;
+    padding-bottom: 1.5rem;
+    border: none;
+    background: transparent;
+}
+
+.work-table td {
+    vertical-align: top;
+    padding-bottom: 2rem;
+    padding-right: 1.5rem;
+    border: none;
+}
+
+.work-table td:last-child {
+    padding-right: 0;
+}
+
+/* Column widths */
+.col-building { width: 25%; }
+.col-projects { width: 37.5%; }
+.col-writing { width: 37.5%; }
+
+.work-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.work-title {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-color);
+    display: inline-block;
+}
+
+.work-desc {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--text-meta);
+    line-height: 1.4;
+}
+
+/* Now Section */
+.now-section {
+    margin-top: 2rem;
+}
+
+.section-title {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--text-meta);
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+}
+
+.now-section p {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    max-width: 600px;
+}
+
+.now-section p em {
+    font-family: var(--font-serif);
+    font-style: italic;
 }
