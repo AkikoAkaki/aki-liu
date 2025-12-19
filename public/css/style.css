@@ -292,15 +292,17 @@ a {
     padding: 0;
 }
 
-/* 列表样式：将文字与 marker 同步置为 #6f6f6f */
+/* 列表样式：正文内容使用主文本色，marker 使用 #6f6f6f；嵌套层级的 marker 样式按需求循环 */
 .post-content ul,
 .post-content ol {
     margin: 1.5rem 0;
     padding-left: 1.2rem;
     line-height: 2;
-    color: #6f6f6f;
+    color: var(--text-color);
+    list-style-position: outside; /* 保证 marker 显示在外侧 */
 }
 
+/* 保持嵌套列表的默认间距（去除额外 margin） */
 .post-content ul ul,
 .post-content ul ol,
 .post-content ol ul,
@@ -309,15 +311,29 @@ a {
     line-height: 2;
 }
 
+/* 默认 li 内容颜色（正文色） */
 .post-content li {
     margin-bottom: 0.4rem;
     line-height: 2;
-    color: #6f6f6f;
+    color: var(--text-color);
 }
 
+/* Marker 颜色统一为 #6f6f6f */
 .post-content li::marker {
     color: #6f6f6f;
 }
+
+/* 嵌套层级的无序列表 marker 类型循环设置：
+   - 1 层（顶级）: disc（实心圆）
+   - 2 层      : circle（空心圆）
+   - 3 层      : disc
+   - 4 层      : circle
+   以此类推，交替显示 */
+.post-content ul { list-style-type: disc; }
+.post-content ul ul { list-style-type: circle; }
+.post-content ul ul ul { list-style-type: disc; }
+.post-content ul ul ul ul { list-style-type: circle; }
+/* 额外深层继续交替（如果需要，可按上面样式继续添加） */
 
 /* 页脚：控制间距和分隔线 */
 .site-footer {
