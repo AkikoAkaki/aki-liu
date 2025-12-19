@@ -6,8 +6,8 @@
     --font-mono: "Consolas", "Monaco", "Courier New", monospace;
 
     /* Typography Presets */
-    --type-heading: 400 16px/24px var(--font-sans);
-    --type-heading-l: 400 16px/28px var(--font-sans);
+    --type-heading: 300 16px/24px var(--font-sans);
+    --type-heading-l: 300 16px/28px var(--font-sans);
     --type-italic: 400 italic 1.1rem/normal var(--font-serif);
     --type-l: 15px/26px var(--font-sans);
     --type-s: 14px/20px var(--font-sans);
@@ -88,6 +88,7 @@ a {
     font: var(--type-heading);
     margin: 0 0 4rem 0; /* Space below Writing label */
     color: var(--text-color);
+    font-weight: 500; /* Ensure lighter heading weight applies */
 }
 
 .writing-list {
@@ -176,6 +177,7 @@ a {
     margin: 0 0 0.25rem 0;
     letter-spacing: -0.01em;
     color: #171717;
+    font-weight: 500; /* Override UA default bold weight */
 }
 
 .post-date {
@@ -266,11 +268,11 @@ a {
     padding: 0;
 }
 
-/* Lists */
-.post-content ul,
+.post-content /* Lists */ ul,
 .post-content ol {
     margin: 1.5rem 0;
     padding-left: 1.2rem;
+    line-height: 2; /* Match body/content line-height (26px / 15px) */
 }
 
 .post-content ul ul,
@@ -278,10 +280,12 @@ a {
 .post-content ol ul,
 .post-content ol ol {
     margin: 0;
+    line-height: 2; /* Ensure nested lists use same line-height */
 }
 
 .post-content li {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.4rem;
+    line-height: 2; /* Unified list item spacing */
 }
 
 .post-content li::marker {
@@ -311,4 +315,17 @@ a {
     display: flex;
     align-items: center;
     opacity: 0.6;
+}
+
+/* 文章内 headings（统一字重）*/
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+  font-family: var(--font-sans);
+  font-weight: 400; /* 改为你想要的字重，例如 200/300/400 */
+  line-height: 1.25;
+  color: inherit;
 }
