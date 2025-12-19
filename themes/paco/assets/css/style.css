@@ -1,37 +1,39 @@
+/* 全局变量：字体、颜色、间距统一在这里配置，能快速改变整体调性 */
 :root {
-    /* Font Stack */
+    /* 字体栈：更换成其他字体即可影响所有正文与标题 */
     --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --font-serif: "Newsreader", "Signifier", "Times", serif;
     --font-ui: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: "Consolas", "Monaco", "Courier New", monospace;
 
-    /* Typography Presets */
+    /* 排版预设：字体大小与行高是基础数字，改这里即可影响多处标题与正文 */
     --type-heading: 300 16px/24px var(--font-sans);
     --type-heading-l: 300 16px/28px var(--font-sans);
     --type-italic: 400 italic 1.1rem/normal var(--font-serif);
     --type-l: 15px/26px var(--font-sans);
     --type-s: 14px/20px var(--font-sans);
 
-    /* Colors (Light Mode) */
+    /* 亮色配色：控制背景 / 文字 / 边框颜色 */
     --bg-color: #ffffff;
     --text-color: #3a3a3a;
     --text-meta: #a3a3a3;
     --border-color: #f0f0f0;
-    
-    /* Spacing */
+
+    /* 间距基准：用于统一控制 padding/margin 间距 */
     --spacing-unit: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        /* Colors (Dark Mode) */
-        --bg-color: #050505; /* Deep black/gray */
+        /* 深色模式：只需在这里调色即可完成夜间主题 */
+        --bg-color: #050505;
         --text-color: #ffffff;
         --text-meta: #666666;
         --border-color: #1a1a1a;
     }
 }
 
+/* 页面基础样式：背景与字体，调整字体层级即可影响全局 */
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -40,33 +42,36 @@ body {
     -webkit-font-smoothing: subpixel-antialiased;
 }
 
+/* 默认链接不带样式，具体在 .post-content 内统一控制 */
 a {
     color: inherit;
     text-decoration: none;
 }
 
-/* Layout Grid */
+/* 主体布局：三列网格保证内容垂直居中，padding 可根据需求放大 */
 .site-container {
     display: grid;
-    grid-template-columns: 1fr 650px 1fr; /* Center the 650px column */
+    grid-template-columns: 1fr 650px 1fr;
     max-width: 100%;
     margin: 0 auto;
-    padding: 7rem 2rem; /* Reduced top padding */
+    padding: 7rem 2rem;
     gap: 2rem;
 }
 
+/* 侧边栏：靠右排列以借助空白打造呼吸感 */
 .site-sidebar {
     grid-column: 1;
-    justify-self: end; /* Align nav to the right of the left gutter */
-    padding-right: 12rem; /* Further increased distance from Writing panel */
+    justify-self: end;
+    padding-right: 12rem;
 }
 
+/* 正文区域：固定出现在中间列 */
 .site-main {
     grid-column: 2;
     width: 100%;
 }
 
-/* Sidebar Navigation */
+/* 侧边导航：垂直排列，颜色可用 var(--text-meta) 统一调 */
 .site-nav {
     display: flex;
     flex-direction: column;
@@ -89,14 +94,15 @@ a {
     color: var(--text-color);
 }
 
-/* Writing List Styles */
+/* Writing 列表标题：根据需要修改 .writing-label 的字体与间距 */
 .writing-label {
     font: var(--type-heading);
-    margin: 0 0 4rem 0; /* Space below Writing label */
+    margin: 0 0 4rem 0;
     color: var(--text-color);
-    font-weight: 500; /* Ensure lighter heading weight applies */
+    font-weight: 500;
 }
 
+/* Writing 列表项：年份 / 标题 / 日期三列，可通过 grid-template 调节比例 */
 .writing-list {
     display: flex;
     flex-direction: column;
@@ -105,11 +111,11 @@ a {
 
 .writing-item {
     display: grid;
-    grid-template-columns: 140px 1fr 60px; /* Increased year column width */
-    gap: 1.5rem; /* Increased gap between columns */
+    grid-template-columns: 140px 1fr 60px;
+    gap: 1.5rem;
     align-items: baseline;
-    padding-bottom: 1rem; /* Space below text */
-    margin-bottom: 1rem; /* Space for next item */
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
     position: relative;
 }
 
@@ -118,12 +124,12 @@ a {
     height: 1px;
     background-color: var(--border-color);
     position: absolute;
-    top: -1rem; /* Position divider in the middle of the gap */
+    top: -1rem;
     width: 100%;
 }
 
 .writing-item:not(.first-of-year) .item-divider {
-    grid-column: 2 / -1; /* Start at title */
+    grid-column: 2 / -1;
 }
 
 .item-year {
@@ -147,7 +153,7 @@ a {
     font-variant-numeric: tabular-nums;
 }
 
-/* Responsive */
+/* 响应式：窄屏时改为单列、减小间距 */
 @media (max-width: 768px) {
     .site-container {
         grid-template-columns: 1fr;
@@ -156,7 +162,7 @@ a {
     }
 
     .writing-item {
-        grid-template-columns: 60px 1fr 50px; /* Tighter columns on mobile */
+        grid-template-columns: 60px 1fr 50px;
         gap: 0.5rem;
     }
     
@@ -169,7 +175,7 @@ a {
     }
 }
 
-/* Single Post Styles */
+/* 单篇文章整体：控制下方留白 */
 .post-single {
     margin-bottom: 8rem;
 }
@@ -183,7 +189,7 @@ a {
     margin: 0 0 0.25rem 0;
     letter-spacing: -0.01em;
     color: #171717;
-    font-weight: 500; /* Override UA default bold weight */
+    font-weight: 500;
 }
 
 .post-date {
@@ -193,6 +199,7 @@ a {
     margin-bottom: 4rem;
 }
 
+/* 正文样式组：字体、段距在这里统一调整 */
 .post-content {
     font: var(--type-l);
     color: var(--text-color);
@@ -202,24 +209,25 @@ a {
     margin-bottom: 2rem;
 }
 
+/* 链接样式：灰色下划线 + hover 变色与粗细提示交互 */
 .post-content a {
     text-decoration: underline;
     text-underline-offset: 4px;
-    text-decoration-thickness: 1px; /* slightly thicker underline */
+    text-decoration-thickness: 1px;
     text-decoration-color: #c7c7c7;
     transition: text-decoration-color 0.18s ease, text-decoration-thickness 0.12s ease;
 }
 
 .post-content a:hover {
     text-decoration-color: #6f6f6f;
-    text-decoration-thickness: 1.25px; /* subtle increase on hover */
+    text-decoration-thickness: 1.25px;
 }
 
-/* Code Blocks */
+/* 代码块：背景、圆角、溢出滚动可在这里一并调整 */
 .post-content pre {
     background-color: #f3f3f3;
     padding: 1rem 1.5rem;
-    border-radius: 8px; /* Even more rounded and smooth */
+    border-radius: 8px;
     overflow-x: auto;
     margin: 2.5rem 0;
     border: none;
@@ -233,9 +241,8 @@ a {
     }
 }
 
-/* Basic Syntax Highlighting for the "8f8f8f" look */
-/* Braces, colons, dots, semicolons */
- .post-content pre code {
+/* 代码框内高亮规则：同一组 CSS 可在此统一调整 */
+.post-content pre code {
     color: #3a3a3a;
 }
 
@@ -245,7 +252,6 @@ a {
     }
 }
 
-/* Target punctuation, operators, keywords, numbers, and strings */
 .post-content pre code .p,
 .post-content pre code .o,
 .post-content pre code .k,
@@ -276,11 +282,12 @@ a {
     padding: 0;
 }
 
-.post-content /* Lists */ ul,
+/* 列表与标记：调 line-height 可控制行间密度 */
+.post-content ul,
 .post-content ol {
     margin: 1.5rem 0;
     padding-left: 1.2rem;
-    line-height: 2; /* Match body/content line-height (26px / 15px) */
+    line-height: 2;
 }
 
 .post-content ul ul,
@@ -288,19 +295,19 @@ a {
 .post-content ol ul,
 .post-content ol ol {
     margin: 0;
-    line-height: 2; /* Ensure nested lists use same line-height */
+    line-height: 2;
 }
 
 .post-content li {
     margin-bottom: 0.4rem;
-    line-height: 2; /* Unified list item spacing */
+    line-height: 2;
 }
 
 .post-content li::marker {
     color: var(--text-meta);
 }
 
-/* Footer */
+/* 页脚区域：最上边距由 margin-top 控制 */
 .site-footer {
     margin-top: 10rem;
     padding-top: 2rem;
@@ -325,15 +332,15 @@ a {
     opacity: 0.6;
 }
 
-/* 文章内 headings（统一字重）*/
+/* 文章标题统一 SANS 字体与字重，保证与正文风格一致 */
 .post-content h1,
 .post-content h2,
 .post-content h3,
 .post-content h4,
 .post-content h5,
 .post-content h6 {
-  font-family: var(--font-sans);
-  font-weight: 400; /* 改为你想要的字重，例如 200/300/400 */
-  line-height: 1.25;
-  color: inherit;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.25;
+    color: inherit;
 }
