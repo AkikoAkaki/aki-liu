@@ -12,6 +12,8 @@ mainSections = ['writing']
   category = 'categories'
 
 [params]
+  enableKaTeX = true
+
   [params.navigation]
     homeLabel = 'Index'
     writingLabel = 'Writing'
