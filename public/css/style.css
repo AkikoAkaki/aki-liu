@@ -205,12 +205,14 @@ a {
 .post-content a {
     text-decoration: underline;
     text-underline-offset: 4px;
-    text-decoration-color: var(--border-color);
-    transition: text-decoration-color 0.2s ease;
+    text-decoration-thickness: 1px; /* slightly thicker underline */
+    text-decoration-color: #c7c7c7;
+    transition: text-decoration-color 0.18s ease, text-decoration-thickness 0.12s ease;
 }
 
 .post-content a:hover {
-    text-decoration-color: var(--text-meta);
+    text-decoration-color: #6f6f6f;
+    text-decoration-thickness: 1.25px; /* subtle increase on hover */
 }
 
 /* Code Blocks */
