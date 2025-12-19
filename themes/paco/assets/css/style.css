@@ -203,6 +203,15 @@ a {
     margin-bottom: 2rem;
 }
 
+.post-content p.html-note {
+    border-left: 3px solid var(--border-color);
+    padding-left: 1rem;
+    margin-top: 0.25rem;
+    background: rgba(0, 0, 0, 0.01);
+    color: var(--text-meta);
+    font-size: 0.95em;
+}
+
 .post-content h1,
 .post-content h2,
 .post-content h3,
