@@ -212,7 +212,8 @@ a {
     font-family: var(--font-sans);
     font-weight: 400;
     line-height: 1.25;
-    color: var(--text-color);
+    /* 标题颜色：显式设置为 #060606（便于在夜/亮模式下保证对比） */
+    color: #060606;
 }
 
 .post-content h3 {
