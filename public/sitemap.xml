@@ -2,35 +2,35 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/</loc>
+    <loc>https://example.org/</loc>
     <lastmod>2025-12-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/writing/test-links/</loc>
+    <loc>https://example.org/writing/test-links/</loc>
     <lastmod>2025-12-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/writing/markdown-rendering-test/</loc>
+    <loc>https://example.org/writing/markdown-rendering-test/</loc>
     <lastmod>2025-12-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/writing/</loc>
+    <loc>https://example.org/writing/</loc>
     <lastmod>2025-12-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/writing/browser-default-font-size/</loc>
+    <loc>https://example.org/writing/browser-default-font-size/</loc>
     <lastmod>2023-05-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/writing/safari-favicon/</loc>
+    <loc>https://example.org/writing/safari-favicon/</loc>
     <lastmod>2023-04-19T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/writing/px-vs-rem/</loc>
+    <loc>https://example.org/writing/px-vs-rem/</loc>
     <lastmod>2022-09-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/writing/redesign-2021/</loc>
+    <loc>https://example.org/writing/redesign-2021/</loc>
     <lastmod>2021-11-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/writing/react-hook-getter/</loc>
+    <loc>https://example.org/writing/react-hook-getter/</loc>
     <lastmod>2021-09-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>https://example.org/categories/</loc>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>https://example.org/tags/</loc>
   </url>
 </urlset>
