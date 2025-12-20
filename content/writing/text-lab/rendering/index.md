@@ -1,16 +1,22 @@
 ---
-title: "展评｜塞萨尔・皮耶特：渲染"
+title: "塞萨尔・皮耶特：渲染"
 date: 2025-01-28
 draft: false
 ---
 
-{{< figure src="still-life-with-crab-antique-and-apple.png" caption="César Piette, Still life with crab, antique and apple, 2024, acrylic painting, 84 × 84 cm" >}}
+{{< figure
+    src="still-life-with-crab-antique-and-apple.png"
+    caption="<strong>César Piette, <em>Still life with crab, antique and apple</em>, 2024</strong>, acrylic painting, 84 × 84 cm"
+>}}
 
 模型、组合、光线、景深，塞萨尔・皮耶特用现代的、温和的方式重构绘画的真实。它的作品简洁、生动：名称简要地给出画面包含的内容，其内容主要是人像、动物、植物和物体的朴实组合。远看这些画作，似乎会认为这是电脑生产的建模：物体有着光滑或是富有光泽的质感，就像塑料或金属，后方的背景呈现明显的虚化，像是使用了长焦相机造成的浅景深效果，与主体有明显的对比。皮耶特的大部分作品就是以颜色明快、富有动态、活泼可爱为基调静置着。
 
 为了呈现出这种精致的绘画风格，皮耶特先使用电脑进行建模，并喷绘出画作的主体，以最小化绘画的痕迹。区别于数字艺术的扁平化风潮，皮耶特的作品具有人造现实主义（artificial realism）的特征。尽管观众一眼就能分辨出画面中的物体与现实中的参照物之间的区别，但却迷失在皮耶特为其精心打造的光泽、纹理和质感细节之中。走近画作，可以看到皮耶特手工绘制的划痕、坑洼和污渍。艺术家将观众拉入了重重的现实迷境当中：每一幅作品都是电脑 3D 建模、画作和摄影之间的有机融合，祛除了生硬的边界，保留了鲜艳的色彩和富有生机的动态，却又消除了生命的迹象，只留下生命的拟像。
 
-{{< figure src="cigarettes+mushrooms.png" caption="César Piette, Cigarettes + mushrooms, 2024, acrylic painting, 84 × 84 cm" >}}
+{{< figure 
+    src="cigarettes+mushrooms.png" 
+    caption="<strong>César Piette, <em>Cigarettes + mushrooms</em>, 2024</strong>, acrylic painting, 84 × 84 cm" 
+>}}
 
 从皮耶特的作品，我们可以回到鲍德里亚对现实的诘问当中。在皮耶特的画作中，人、动物和植物的拟像并不仅仅作为对现实的模仿而存在。甚至可以说，它们不再与它们的原型有任何直接联系，而是成为了一个自包含的虚构的世界。[^1] 从作品的命名上来看，皮耶特似乎不想给作品任何人工的痕迹：他对作品的命名就像图像识别一样陈列出内容，其中不包括任何隐喻、艺术化加工和对语言的滥用，好像作品其实不属于创作者，而是独立存在的个体。凝视这些造物，会觉得它们是被摄像机定格在这些瞬间，好像这个瞬间只不过是它们生命中不起眼的一部分。这些造物身上并不缺少人类学的细节，它们拥有时间造成的磨损的痕迹。无法对它们进行指责，因为它们是无害的——不带有强烈的叙事性或情绪，只有光滑的表面。
 

@@ -359,14 +359,15 @@ em, i {
 }
 
 .post-content figure figcaption {
-    margin-top: -0.6rem;
-    font-size: 0.8rem;
+    margin-top: -0.15rem;
+    font: normal 0.8rem/1.5 "Newsreader", "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
     color: var(--text-meta);
     text-align: left;
 }
 
-.post-content figure figcaption strong {
-    font-weight: 600;
+.post-content figure figcaption em {
+    font-style: italic;
+    font-family: inherit;
 }
 
 .post-content video,

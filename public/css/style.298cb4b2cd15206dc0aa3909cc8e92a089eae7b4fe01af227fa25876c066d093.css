@@ -401,6 +401,31 @@ em, i {
     font-size: 0.95em;
 }
 
+.post-content .footnotes {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    font-size: 0.8rem;
+    line-height: 1.25;
+    color: var(--text-meta);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.post-content .footnotes ol {
+    margin: 0;
+    padding-left: 0.8rem;
+}
+
+.post-content .footnotes li {
+    margin: 0;
+    padding: 0.15rem 0;
+}
+
+.post-content .footnotes sup {
+    font-family: var(--font-serif);
+    font-style: normal;
+    font-weight: 500;
+}
+
 .post-content h1,
 .post-content h2,
 .post-content h3,

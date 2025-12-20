@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=14700&amp;path=livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get the browser default font size | Aki&#39;s Blog</title>
+    <title>雪 | Aki&#39;s Blog</title>
     
-    <link rel="canonical" href="http://localhost:1313/writing/browser-default-font-size/">
+    <link rel="canonical" href="http://localhost:14700/writing/%E9%9B%AA/">
     
     
     
@@ -101,7 +101,7 @@
                     
                     
                         
-                        <a href="/writing/text-lab/" class="sub-link ">Text Lab</a>
+                        <a href="/writing/text-lab/" class="sub-link is-active">Text Lab</a>
                     
                     
                     
@@ -111,7 +111,7 @@
                     
                     
                         
-                        <a href="/writing/tech/" class="sub-link is-active">Tech</a>
+                        <a href="/writing/tech/" class="sub-link ">Tech</a>
                     
                 </div>
                 
@@ -121,20 +121,17 @@
             
 <article class="post-single">
     <header class="post-header">
-        <h1 class="post-title">Get the browser default font size</h1>
-        <time class="post-date">2023/05/09</time>
+        <h1 class="post-title">雪</h1>
+        <time class="post-date">2024/12/02</time>
     </header>
 
     <div class="post-content">
-        <p>Use the font-size: <code>medium</code> keyword to inherit the browser default setting:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-css" data-lang="css"><span class="line"><span class="cl"><span class="p">.</span><span class="nc">measure-element</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="k">font-size</span><span class="p">:</span> <span class="kc">medium</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>Reading the value from JavaScript is as simple as querying a measurement element and relying on <code>getComputedStyle</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">measureElement</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.measure-element&#39;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="kd">let</span> <span class="nx">fontSize</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">measureElement</span><span class="p">).</span><span class="nx">fontSize</span><span class="p">);</span>
-</span></span></code></pre></div><p>If your browser&rsquo;s default font size is changed (for example to &ldquo;Very Large&rdquo; on Chromium), the return value will reflect the new size—for instance <code>24px</code> instead of <code>16px</code>.</p>
-<p>The value depends on the system preferences, so don&rsquo;t hardcode a pixel assumption unless you explicitly control the browser UI settings.</p>
+        <p>下雪了。雪飘在地上，轻轻地占领那一小片区域，久之便侵占了所有处在表层的东西——房屋，道路，树木。雪像碎纸，那些词语被丢弃，纷飞，失去形状。我踩住雪。雪发出号叫，互相挤压，留下一个我曾到来过的痕迹，以及我携带着的脏污。这是我对雪下的一道命令：它必须让地表保持裸露，保持显明，保持那个被我注视的状态。</p>
+<p>我踩进雪。我就这么掌控着雪。我能够随意调整它的形体，它的状态，它的方位。我也感知到了它对我的抵抗：雪在我脚下的陷落和融化。在它们的群居状态下，甚至想包裹我或搬运我。我抬起头，它们扑向我，如同扑火的飞蛾。它们在挑战我。它们迅猛地对我的寻常状态发起进攻。它们遮蔽我的视线，阻碍我的行进，它们篡夺我的注意力。雪地给我一种错觉：在这里，你可以拥有属于你的记录。独一无二的雪地图案。这是一封个人档案。然后它们会不加通知地将其铺平或是化解。雪就是雪。你别想扭改雪的自我。或许雪的确比我有着更为坚实的自我。</p>
+<p>雪化成路上的一滩。我忍不住想嘲笑它的自负和它脆弱易碎的洁白。它就这么无声地、无助地被一切碾碎。即使是最小的拨动也会令其破散。但就这样嘲笑它又令我有些不妥。雪化成一滩不流的水，和那些河里流的不一样。雪不走，雪无论如何不逃离这个令它不堪承受的地方。它不走，也不带走什么。有时，雪会放弃那令它骄傲的，那动人的、悲戚的白色，和其他的雪拥抱在一起，拧绞、凹陷，形成一座你不忍称之为雪的灰黑色不规则雕塑。有时候我会想它竟真的就以这样的姿态、这样的形象存留在这个世界上，像一座不被竣工的墓碑。但它会一直如此。它会紧紧地蜷缩成一块，偶尔流泪，然后一直坚守着那一块地。那泪也没逃逸开去。</p>
+<p>天就这么成为雪天了。抬头一看，那乖张地把希望强塞给我的太阳也被染得晦暗了。你说，这样的天怎么过好呢？世界变了，世界变了啊！其实从时针朝前拨一整个小时的那一刻世界就已经变了，竟然依旧还撑到现在才下雪吗。雪天又来临了。雪又凌空飞舞了。快把你想说的，你想做的，还有你那时而阴郁时而潮热的心情塞进雪里吧，趁这雪还在下，快把那惹人烦闷的，那孤寂的苦涩的漫长的平淡的敏感的机警的凶狠的软弱的，那被海浪和流星拍打的，被层层叠叠的迷雾桎梏的，那从未被改变过的和已经永远逝去的全部的时间揉成一个个雪球朝路灯掷去！雪还在下，雪从看不见的地方洒下咒语，雪把一切都覆盖住了！再也没有了！再也不会了！雪把一切都覆盖住了！</p>
+<p>我拖着冻僵的腿划过雪地。
+雪把一切都覆盖住了。</p>
 
     </div>
 </article>

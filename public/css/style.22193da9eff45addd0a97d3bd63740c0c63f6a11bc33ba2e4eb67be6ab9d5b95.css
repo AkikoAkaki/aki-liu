@@ -359,14 +359,18 @@ em, i {
 }
 
 .post-content figure figcaption {
-    margin-top: -0.6rem;
+    margin-top: -0.15rem;
     font-size: 0.8rem;
     color: var(--text-meta);
     text-align: left;
+    font-family: "Newsreader", "Microsoft YaHei", "PingFang SC", "SimSun", serif;
+    font-style: normal;
 }
 
-.post-content figure figcaption strong {
-    font-weight: 600;
+.post-content figure figcaption em,
+.post-content figure figcaption i {
+    font-style: italic;
+    font-family: "Newsreader", "Microsoft YaHei", "PingFang SC", "SimSun", serif;
 }
 
 .post-content video,

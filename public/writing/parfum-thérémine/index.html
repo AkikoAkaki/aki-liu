@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=14700&amp;path=livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get the browser default font size | Aki&#39;s Blog</title>
+    <title>Parfum thérémine | Aki&#39;s Blog</title>
     
-    <link rel="canonical" href="http://localhost:1313/writing/browser-default-font-size/">
+    <link rel="canonical" href="http://localhost:14700/writing/parfum-th%C3%A9r%C3%A9mine/">
     
     
     
@@ -101,7 +101,7 @@
                     
                     
                         
-                        <a href="/writing/text-lab/" class="sub-link ">Text Lab</a>
+                        <a href="/writing/text-lab/" class="sub-link is-active">Text Lab</a>
                     
                     
                     
@@ -111,7 +111,7 @@
                     
                     
                         
-                        <a href="/writing/tech/" class="sub-link is-active">Tech</a>
+                        <a href="/writing/tech/" class="sub-link ">Tech</a>
                     
                 </div>
                 
@@ -121,20 +121,23 @@
             
 <article class="post-single">
     <header class="post-header">
-        <h1 class="post-title">Get the browser default font size</h1>
-        <time class="post-date">2023/05/09</time>
+        <h1 class="post-title">Parfum thérémine</h1>
+        <time class="post-date">2024/05/31</time>
     </header>
 
     <div class="post-content">
-        <p>Use the font-size: <code>medium</code> keyword to inherit the browser default setting:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-css" data-lang="css"><span class="line"><span class="cl"><span class="p">.</span><span class="nc">measure-element</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="k">font-size</span><span class="p">:</span> <span class="kc">medium</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>Reading the value from JavaScript is as simple as querying a measurement element and relying on <code>getComputedStyle</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">measureElement</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;.measure-element&#39;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="kd">let</span> <span class="nx">fontSize</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">getComputedStyle</span><span class="p">(</span><span class="nx">measureElement</span><span class="p">).</span><span class="nx">fontSize</span><span class="p">);</span>
-</span></span></code></pre></div><p>If your browser&rsquo;s default font size is changed (for example to &ldquo;Very Large&rdquo; on Chromium), the return value will reflect the new size—for instance <code>24px</code> instead of <code>16px</code>.</p>
-<p>The value depends on the system preferences, so don&rsquo;t hardcode a pixel assumption unless you explicitly control the browser UI settings.</p>
+        <blockquote>
+<p>And you know
+I only feel you through
+The scent
+Of the waveFinding the key
+While touching the air
+Soft odyssey
+Delusive is the view</p>
+</blockquote>
+<p>Parfum thérémine 这首歌是属于阴郁的上海雨天的。这又让我想起了那个在车厢的摇晃中给地下的人们写诗的那个夜晚。当两侧的车窗陷入暗影之中，隔绝外音，只余歌声；当一部城市电影驶入它蜿蜒的低吼；而周围的人戴上口罩，用哀沉的静默对这强迫性的带离行动发出控诉；浪便从车厢的两侧袭卷来了——一场自然灾害把近得不能再近的人们包围，但水流又把人和人斥开，往车厢内注入蜂鸣般的间奏。</p>
+<p>这座城市需要一场瞬时的毁灭，而此毁灭必须是一次降灵般的蛮剪，把它原本的黑色秩序剪得只剩流边和碎叶，如同梧桐树的剪影，如同那被撕裂的树皮。在树的庇护之下，好像一切存亡都有了理由。</p>
+<p>那盏黏糊的酒上的冰块映出了他苍白的脸色，他马上要睡去，不安地抵抗噪音、光线和不断逼近的明日。大楼和夜晚融混为同一的身体，发亮的彩窗零散地浮于远方的乌云之下，像天堂，又像废墟。我想这就是这座城市的根音：抖颤、消颓、困抑，恒久地在高架桥的回旋道路中打转。</p>
 
     </div>
 </article>

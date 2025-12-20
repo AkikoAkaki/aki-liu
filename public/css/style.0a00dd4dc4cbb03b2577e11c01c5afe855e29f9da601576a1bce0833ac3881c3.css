@@ -363,10 +363,7 @@ em, i {
     font-size: 0.8rem;
     color: var(--text-meta);
     text-align: left;
-}
-
-.post-content figure figcaption strong {
-    font-weight: 600;
+    font-family: var(--font-serif);
 }
 
 .post-content video,

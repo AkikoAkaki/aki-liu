@@ -363,10 +363,13 @@ em, i {
     font-size: 0.8rem;
     color: var(--text-meta);
     text-align: left;
+    font-family: "Newsreader", "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-style: normal;
 }
 
-.post-content figure figcaption strong {
-    font-weight: 600;
+.post-content figure figcaption em {
+    font-style: italic;
+    font-family: inherit;
 }
 
 .post-content video,
