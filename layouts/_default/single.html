@@ -5,18 +5,8 @@
         <time class="post-date">{{ .Date.Format "2006/01/02" }}</time>
     </header>
 
-    <div class="post-body">
-        <div class="post-content">
-            {{ .Content }}
-        </div>
-        {{ $toc := .TableOfContents }}
-        {{ with $toc }}
-            {{ if gt (len (plainify .)) 0 }}
-            <aside class="post-toc">
-                {{ . | safeHTML }}
-            </aside>
-            {{ end }}
-        {{ end }}
+    <div class="post-content">
+        {{ .Content }}
     </div>
 </article>
 
@@ -32,4 +22,15 @@
         </span>
     </div>
 </footer>
+{{ end }}
+
+{{ define "sidebar-right" }}
+    {{ $toc := .TableOfContents }}
+    {{ with $toc }}
+        {{ if gt (len (plainify .)) 0 }}
+        <aside class="post-toc">
+            {{ . | safeHTML }}
+        </aside>
+        {{ end }}
+    {{ end }}
 {{ end }}

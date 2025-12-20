@@ -160,36 +160,17 @@ a {
     font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 1200px) {
-    .site-container {
-        grid-template-columns: 200px 650px;
-        justify-content: center;
+@media (max-width: 1024px) {
+    .post-body {
+        grid-template-columns: 1fr;
     }
-    .site-sidebar-right {
-        grid-column: 2;
-        grid-row: 2;
-        margin-top: 4rem;
-    }
+
     .post-toc {
         position: relative;
         top: auto;
         max-height: none;
-        width: 100%;
-    }
-}
-
-@media (max-width: 900px) {
-    .site-container {
-        grid-template-columns: 1fr;
-        padding: 2rem 1.5rem;
-    }
-    .site-sidebar {
-        justify-self: start;
+        margin-top: 2rem;
         padding-right: 0;
-    }
-    .site-sidebar-right {
-        grid-column: 1;
-        grid-row: auto;
     }
 }
 
