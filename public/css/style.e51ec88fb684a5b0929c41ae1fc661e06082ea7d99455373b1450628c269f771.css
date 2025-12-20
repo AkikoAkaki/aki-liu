@@ -350,16 +350,16 @@ em, i {
 }
 
 .post-content figure {
-    margin: 1rem 0;
+    margin: 3rem 0;
     text-align: left;
 }
 
 .post-content figure img {
-    margin: 0;
+    margin-bottom: 0;
 }
 
 .post-content figure figcaption {
-    margin-top: -0.6rem;
+    margin-top: 0;
     font-size: 0.8rem;
     color: var(--text-meta);
     text-align: left;
@@ -383,7 +383,7 @@ em, i {
     .post-content video,
     .post-content audio,
     .post-content iframe {
-        box-shadow: none;
+        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4);
         border-color: rgba(255, 255, 255, 0.08);
     }
 }
