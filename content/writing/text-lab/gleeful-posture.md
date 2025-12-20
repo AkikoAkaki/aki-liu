@@ -1,6 +1,7 @@
 ---
 title: "欢欣的姿态"
 date: 2024-09-28
+tags: ["fiction"]
 draft: false
 ---
 

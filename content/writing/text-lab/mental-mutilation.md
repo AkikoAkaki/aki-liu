@@ -1,6 +1,7 @@
 ---
 title: "精神断肢"
 date: 2025-06-21
+tags: ["fiction", "poetry"]
 draft: false
 ---
 

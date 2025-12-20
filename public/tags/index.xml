@@ -2,10 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Aki&#39;s Blog</title>
-    <link>http://localhost:14700/tags/</link>
+    <link>http://localhost:1313/tags/</link>
     <description>Recent content in Tags on Aki&#39;s Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <atom:link href="http://localhost:14700/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 21 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Fiction</title>
+      <link>http://localhost:1313/tags/fiction/</link>
+      <pubDate>Sat, 21 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/fiction/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Poetry</title>
+      <link>http://localhost:1313/tags/poetry/</link>
+      <pubDate>Sat, 21 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/poetry/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Essay</title>
+      <link>http://localhost:1313/tags/essay/</link>
+      <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/essay/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Critique</title>
+      <link>http://localhost:1313/tags/critique/</link>
+      <pubDate>Tue, 28 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/critique/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>

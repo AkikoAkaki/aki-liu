@@ -1,6 +1,7 @@
 ---
 title: "雪"
 date: 2024-12-02
+tags: ["essay"]
 draft: false
 ---
 

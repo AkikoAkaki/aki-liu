@@ -1,6 +1,7 @@
 ---
 title: "对话（bavarder）"
 date: 2024-09-29
+tags: ["critique"]
 draft: false
 ---
 

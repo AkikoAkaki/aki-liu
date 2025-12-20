@@ -1,6 +1,7 @@
 ---
 title: "分裂人：无身体的言说"
 date: 2024-10-13
+tags: ["critique"]
 draft: false
 ---
 

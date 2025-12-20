@@ -1,6 +1,7 @@
 ---
 title: "塞萨尔・皮耶特：渲染"
 date: 2025-01-28
+tags: ["critique"]
 draft: false
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: "在 Timid 与 Timbuktu 之间：生命经验，死亡经验与爱情故事"
 date: 2024-06-09
+tags: ["critique"]
 draft: false
 ---
 

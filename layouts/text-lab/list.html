@@ -1,0 +1,71 @@
+{{ define "main" }}
+<div class="writing-container">
+    <h1 class="writing-label">{{ .Title }}</h1>
+    
+    <div class="writing-list">
+        {{ range .Pages.GroupByPublishDate "2006" }}
+            {{ $year := .Key }}
+            {{ range $index, $page := .Pages }}
+                {{ $isFirstOfYear := eq $index 0 }}
+                
+                <article class="writing-item {{ if $isFirstOfYear }}first-of-year{{ end }}">
+                    <div class="item-divider"></div>
+                    <div class="item-year">
+                        {{ if $isFirstOfYear }}{{ $year }}{{ end }}
+                    </div>
+                    <a href="{{ .RelPermalink }}" class="item-title">{{ .Title }}</a>
+                    <time class="item-date">{{ .Date.Format "01/02" }}</time>
+                </article>
+            {{ end }}
+        {{ end }}
+    </div>
+</div>
+{{ end }}
+
+{{ define "sidebar-right" }}
+<div class="tag-sidebar" style="margin-top: 5.5rem; font-family: 'Inter', sans-serif; width: 75px;">
+    {{/* Collect tags from current section's pages only */}}
+    {{ $tags := dict }}
+    {{ range .Pages }}
+        {{ range .Params.tags }}
+            {{ $currentCount := index $tags . | default 0 }}
+            {{ $tags = merge $tags (dict . (add $currentCount 1)) }}
+        {{ end }}
+    {{ end }}
+    
+    {{/* Get keys and sort them */}}
+    {{ $keys := slice }}
+    {{ range $k, $v := $tags }}
+        {{ $keys = $keys | append $k }}
+    {{ end }}
+    {{ $keys = sort $keys }}
+
+    <div class="tag-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+        {{ range $keys }}
+            {{ $name := . }}
+            {{ $count := index $tags $name }}
+            <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}" class="tag-item">
+                <span>#{{ $name }}</span>
+                <span class="tag-count">{{ $count }}</span>
+            </a>
+        {{ end }}
+    </div>
+    
+    <style>
+        .tag-item {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-meta);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            font-size: 0.9rem;
+        }
+        .tag-item:hover {
+            color: var(--text-color);
+        }
+        .tag-count {
+            opacity: 0.4;
+        }
+    </style>
+</div>
+{{ end }}

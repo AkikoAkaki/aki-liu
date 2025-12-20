@@ -1,6 +1,7 @@
 ---
 title: "静安寺"
 date: 2025-01-18
+tags: ["poetry"]
 draft: false
 ---
 

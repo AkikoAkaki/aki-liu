@@ -1,6 +1,7 @@
 ---
 title: "沙漠"
 date: 2025-05-10
+tags: ["essay", "poetry"]
 draft: false
 ---
 

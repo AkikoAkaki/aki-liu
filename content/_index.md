@@ -4,15 +4,19 @@ title: "Home"
 
 <section class="intro">
     <h1 class="author-name">Aki Liu</h1>
-    <p class="bio-text"><em>Build, Write, Create.</em> Building polished software and web experiences. Experimenting with magical details in user interfaces. Webmaster at <a href="#">Linear</a>.</p>
-    <p class="bio-text">In the past I've developed the <a href="#">Vercel</a> design system, website, and dashboard.</p>
+    <p class="bio-text"><em>Build, Write, Create</em>. Building full-stack AI solutions. Crafting software with a focus on logic and aesthetics. Obsessed with polishing the human experience through design and code.</p>
+    <p class="bio-text">In the past I’ve engineered AI tools for <a href="https://artisk.ai" target="_blank">Artisk</a> and <a href="https://dentistjourney.com" target="_blank">Dentist Journey</a>.</p>
 </section>
 
 {{< work-grid >}}
 
 <section class="now-section">
     <h2 class="section-title">Now</h2>
-    <p>Developing skill through doing, guiltlessly exploring passion and interests, imbuing quality. Mindful that <em>everything around me is someone's life work.</em></p>
-    <p>All I want to do is build websites. Typography, motion design, copywriting, performance—the web is an endless medium of opportunity and creativity of which I've only scratched the surface.</p>
-    <p>Enjoying deep, dark, boring dance music: songs that set the pace in the first ten seconds and maintain it for the next ten minutes. Deep is a curation of my favorites. Soothed by the ...</p>
+    <p>Cultivating taste through rigorous building and writing. Relentlessly thinking and reflecting.</p>
+    <p>Influenced by the aesthetics of Yukio Mishima, Roland Barthes, Tomas Tranströmer, and Sheena Ringo.</p>
+</section>
+
+<section class="connect-section">
+    <h2 class="section-title">Connect</h2>
+    <p>Reach me at <a href="mailto:aki.f.liu2004@gmail.com">aki.f.liu2004@gmail.com</a></p>
 </section>

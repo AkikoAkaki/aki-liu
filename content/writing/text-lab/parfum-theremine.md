@@ -1,6 +1,7 @@
 ---
 title: "Parfum thérémine"
 date: 2024-05-31
+tags: ["essay"]
 draft: false
 ---
 

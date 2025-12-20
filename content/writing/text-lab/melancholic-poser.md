@@ -1,6 +1,7 @@
 ---
 title: "忧郁的姿势"
 date: 2024-09-30
+tags: ["critique"]
 draft: false
 ---
 

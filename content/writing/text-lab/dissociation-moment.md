@@ -1,6 +1,7 @@
 ---
 title: "解离瞬间"
 date: 2024-10-04
+tags: ["essay", "poetry"]
 draft: false
 ---
 
