@@ -226,12 +226,12 @@ a {
     color: #b1b1b1;
     line-height: 1.6;
     position: sticky;
-    top: 14rem;
+    top: 5rem;
     max-height: calc(100vh - 10rem);
     overflow-y: auto;
     padding-right: 0.5rem;
     width: 240px;
-    margin-top: 0.4rem;
+    margin-top: 0.6rem;
 }
 
 .post-toc nav {
