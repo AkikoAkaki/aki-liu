@@ -38,6 +38,28 @@
             });
         </script>
         {{ end }}
+    <style>
+        .nav-sub {
+            display: flex;
+            flex-direction: column;
+            margin-left: 1.5rem;
+            margin-top: 0.25rem;
+        }
+        .sub-link {
+            font-size: 0.95em;
+            color: #666;
+            text-decoration: none;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        .sub-link:hover {
+            color: #000;
+        }
+        .sub-link.is-active {
+            color: #000;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
     {{ $nav := .Site.Params.navigation }}
@@ -55,10 +77,34 @@
                     {{ $homeLabel }}
                 </a>
                 {{ with $writingSection }}
+                {{/* Keep 'Writing' active if we are in the writing section */}}
                 {{ $writingActive := or (eq $.Section "writing") (and $.IsSection (eq $.RelPermalink .RelPermalink)) }}
                 <a href="{{ .RelPermalink }}" class="nav-link {{ if $writingActive }}is-active{{ end }}">
                     {{ $writingLabel }}
                 </a>
+                
+                {{/* Sub-navigation */}}
+                <div class="nav-sub">
+                    {{ $textlab := .Site.GetPage "/writing/text-lab" }}
+                    {{ $life := .Site.GetPage "/writing/life" }}
+                    {{ $tech := .Site.GetPage "/writing/tech" }}
+                    
+                    {{/* Helper to check if a subsection is active (either the section page itself or a post within it) */}}
+                    {{ with $textlab }}
+                        {{ $isActive := eq $.CurrentSection . }}
+                        <a href="{{ .RelPermalink }}" class="sub-link {{ if $isActive }}is-active{{ end }}">Text Lab</a>
+                    {{ end }}
+                    
+                    {{ with $life }}
+                        {{ $isActive := eq $.CurrentSection . }}
+                        <a href="{{ .RelPermalink }}" class="sub-link {{ if $isActive }}is-active{{ end }}">Life</a>
+                    {{ end }}
+                    
+                    {{ with $tech }}
+                        {{ $isActive := eq $.CurrentSection . }}
+                        <a href="{{ .RelPermalink }}" class="sub-link {{ if $isActive }}is-active{{ end }}">Tech</a>
+                    {{ end }}
+                </div>
                 {{ end }}
             </nav>
         </aside>

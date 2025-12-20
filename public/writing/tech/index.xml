@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tech on Aki&#39;s Blog</title>
+    <link>http://localhost:1313/writing/tech/</link>
+    <description>Recent content in Tech on Aki&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 09 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/writing/tech/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Get the browser default font size</title>
+      <link>http://localhost:1313/writing/browser-default-font-size/</link>
+      <pubDate>Tue, 09 May 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/writing/browser-default-font-size/</guid>
+      <description>&lt;p&gt;Use the font-size: &lt;code&gt;medium&lt;/code&gt; keyword to inherit the browser default setting:&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-css&#34; data-lang=&#34;css&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;measure-element&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;font-size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;medium&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Reading the value from JavaScript is as simple as querying a measurement element and relying on &lt;code&gt;getComputedStyle&lt;/code&gt;:&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;measureElement&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;document&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;querySelector&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;.measure-element&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;let&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;fontSize&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;parseInt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;getComputedStyle&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;measureElement&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;fontSize&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If your browser&amp;rsquo;s default font size is changed (for example to &amp;ldquo;Very Large&amp;rdquo; on Chromium), the return value will reflect the new size—for instance &lt;code&gt;24px&lt;/code&gt; instead of &lt;code&gt;16px&lt;/code&gt;.&lt;/p&gt;&#xA;&lt;p&gt;The value depends on the system preferences, so don&amp;rsquo;t hardcode a pixel assumption unless you explicitly control the browser UI settings.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Safari favicon showing white background on dark mode</title>
+      <link>http://localhost:1313/writing/safari-favicon/</link>
+      <pubDate>Wed, 19 Apr 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/writing/safari-favicon/</guid>
+      <description>&lt;p&gt;This happens as recently as Safari 16.4. It&amp;rsquo;s because your favicon fails to meet contrast requirements.&lt;/p&gt;&#xA;&lt;p&gt;I don&amp;rsquo;t know what the requirements are, or how Safari calculates them, and I can’t find any official information online (beyond some discussion deciding that Safari should stop automatically adjusting colors for improved contrast in places like &lt;code&gt;::placeholder&lt;/code&gt; and &lt;code&gt;::selection&lt;/code&gt;). It’s definitely related to color contrast, though I didn’t see any consistent behavior by matching or exceeding AA/4.5:1 or AAA/7:1 requirements of the foreground color against both #000 and #282828 (Safari&amp;rsquo;s default tabbar background in dark mode).&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>px vs rem in font-size</title>
+      <link>http://localhost:1313/writing/px-vs-rem/</link>
+      <pubDate>Thu, 01 Sep 2022 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/writing/px-vs-rem/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Redesign 2021</title>
+      <link>http://localhost:1313/writing/redesign-2021/</link>
+      <pubDate>Fri, 12 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/writing/redesign-2021/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>React Hook Getter Pattern</title>
+      <link>http://localhost:1313/writing/react-hook-getter/</link>
+      <pubDate>Mon, 27 Sep 2021 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/writing/react-hook-getter/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

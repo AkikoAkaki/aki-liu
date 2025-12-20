@@ -38,6 +38,28 @@
             });
         </script>
         
+    <style>
+        .nav-sub {
+            display: flex;
+            flex-direction: column;
+            margin-left: 1.5rem;
+            margin-top: 0.25rem;
+        }
+        .sub-link {
+            font-size: 0.95em;
+            color: #666;
+            text-decoration: none;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        .sub-link:hover {
+            color: #000;
+        }
+        .sub-link.is-active {
+            color: #000;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
     
@@ -56,9 +78,33 @@
                 </a>
                 
                 
+                
                 <a href="/writing/" class="nav-link is-active">
                     Writing
                 </a>
+                
+                
+                <div class="nav-sub">
+                    
+                    
+                    
+                    
+                    
+                    
+                        
+                        <a href="/writing/text-lab/" class="sub-link is-active">Text Lab</a>
+                    
+                    
+                    
+                        
+                        <a href="/writing/life/" class="sub-link ">Life</a>
+                    
+                    
+                    
+                        
+                        <a href="/writing/tech/" class="sub-link ">Tech</a>
+                    
+                </div>
                 
             </nav>
         </aside>

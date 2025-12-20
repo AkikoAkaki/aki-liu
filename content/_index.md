@@ -3,8 +3,8 @@ title: "Home"
 ---
 
 <section class="intro">
-    <h1 class="author-name">Paco Coursey</h1>
-    <p class="bio-text"><em>Crafting interfaces.</em> Building polished software and web experiences. Experimenting with magical details in user interfaces. Webmaster at <a href="#">Linear</a>.</p>
+    <h1 class="author-name">Aki Liu</h1>
+    <p class="bio-text"><em>Build, Write, Create.</em> Building polished software and web experiences. Experimenting with magical details in user interfaces. Webmaster at <a href="#">Linear</a>.</p>
     <p class="bio-text">In the past I've developed the <a href="#">Vercel</a> design system, website, and dashboard.</p>
 </section>
 
