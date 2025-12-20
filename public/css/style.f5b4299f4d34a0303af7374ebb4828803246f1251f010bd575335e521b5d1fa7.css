@@ -154,20 +154,6 @@ a {
     font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 1024px) {
-    .post-body {
-        grid-template-columns: 1fr;
-    }
-
-    .post-toc {
-        position: relative;
-        top: auto;
-        max-height: none;
-        margin-top: 2rem;
-        padding-right: 0;
-    }
-}
-
 /* 响应式：窄屏改成单列、减小间距 */
 @media (max-width: 768px) {
     .site-container {

@@ -33,11 +33,11 @@
     }
 }
 
+/* 页面基础：背景、文字、字体，留白可以通过 padding 调整 */
 html {
     scroll-behavior: smooth;
 }
 
-/* 页面基础：背景、文字、字体，留白可以通过 padding 调整 */
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -154,20 +154,6 @@ a {
     font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 1024px) {
-    .post-body {
-        grid-template-columns: 1fr;
-    }
-
-    .post-toc {
-        position: relative;
-        top: auto;
-        max-height: none;
-        margin-top: 2rem;
-        padding-right: 0;
-    }
-}
-
 /* 响应式：窄屏改成单列、减小间距 */
 @media (max-width: 768px) {
     .site-container {
@@ -194,52 +180,6 @@ a {
 
 .post-header {
     margin-bottom: 0;
-}
-
-.post-body {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 240px;
-    gap: 3rem;
-    align-items: start;
-}
-
-.post-toc {
-    font: var(--type-l);
-    color: #b1b1b1;
-    line-height: 1.6;
-    position: sticky;
-    top: 6rem;
-    max-height: calc(100vh - 8rem);
-    overflow-y: auto;
-    padding-right: 0.5rem;
-}
-
-.post-toc nav {
-    font: inherit;
-}
-
-.post-toc ul {
-    list-style: none;
-    margin: 0;
-    padding-left: 0;
-}
-
-.post-toc li {
-    margin-bottom: 0.35rem;
-}
-
-.post-toc li ul {
-    padding-left: 1rem;
-}
-
-.post-toc a {
-    color: #b1b1b1;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.post-toc a:hover {
-    color: var(--text-color);
 }
 
 .post-title {
