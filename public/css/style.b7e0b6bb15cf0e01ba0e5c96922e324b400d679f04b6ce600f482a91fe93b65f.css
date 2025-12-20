@@ -434,7 +434,7 @@ em, i {
     line-height: 1.3;
     color: #050505;
     margin-bottom: 0.75rem;
-    margin-top: 3.5rem;
+    margin-top: 2.5rem;
     scroll-margin-top: 25vh;
 }
 
@@ -687,7 +687,7 @@ em, i {
     display: flex;
     flex-direction: column;
     gap: 2.5rem;
-    padding-top: 4rem;
+    padding-top: 2rem;
 }
 
 /* Intro Section */

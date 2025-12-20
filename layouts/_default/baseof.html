@@ -82,38 +82,32 @@
     <div class="site-container">
         <aside class="site-sidebar">
             <nav class="site-nav">
-                <a href="{{ .Site.Home.RelPermalink }}" class="nav-link {{ if .IsHome }}is-active{{ end }}">
-                    {{ $homeLabel }}
-                </a>
-                {{ with $writingSection }}
-                {{/* Keep 'Writing' active if we are in the writing section */}}
-                {{ $writingActive := or (eq $.Section "writing") (and $.IsSection (eq $.RelPermalink .RelPermalink)) }}
-                <a href="{{ .RelPermalink }}" class="nav-link {{ if $writingActive }}is-active{{ end }}">
-                    {{ $writingLabel }}
-                </a>
-                
-                {{/* Sub-navigation */}}
-                <div class="nav-sub">
-                    {{ $textlab := .Site.GetPage "/writing/text-lab" }}
-                    {{ $life := .Site.GetPage "/writing/life" }}
-                    {{ $tech := .Site.GetPage "/writing/tech" }}
+                {{ if not .IsHome }}
+                    {{ $backUrl := "" }}
+                    {{ $backText := "" }}
                     
-                    {{/* Helper to check if a subsection is active (either the section page itself or a post within it) */}}
-                    {{ with $textlab }}
-                        {{ $isActive := eq $.CurrentSection . }}
-                        <a href="{{ .RelPermalink }}" class="sub-link {{ if $isActive }}is-active{{ end }}">Text Lab</a>
+                    {{ if .IsPage }}
+                        {{ $backUrl = .CurrentSection.RelPermalink }}
+                        {{ $backText = .CurrentSection.Title }}
+                    {{ else if .IsSection }}
+                        {{ if eq .Parent .Site.Home }}
+                            {{ $backUrl = .Site.Home.RelPermalink }}
+                            {{ $backText = "Index" }}
+                        {{ else }}
+                            {{ $backUrl = .Parent.RelPermalink }}
+                            {{ $backText = .Parent.Title }}
+                        {{ end }}
                     {{ end }}
-                    
-                    {{ with $life }}
-                        {{ $isActive := eq $.CurrentSection . }}
-                        <a href="{{ .RelPermalink }}" class="sub-link {{ if $isActive }}is-active{{ end }}">Life</a>
+
+                    {{ if $backUrl }}
+                    <a href="{{ $backUrl }}" class="nav-back">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        <span>{{ $backText }}</span>
+                    </a>
                     {{ end }}
-                    
-                    {{ with $tech }}
-                        {{ $isActive := eq $.CurrentSection . }}
-                        <a href="{{ .RelPermalink }}" class="sub-link {{ if $isActive }}is-active{{ end }}">Tech</a>
-                    {{ end }}
-                </div>
                 {{ end }}
             </nav>
         </aside>
