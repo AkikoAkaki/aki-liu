@@ -52,7 +52,7 @@ a {
     text-decoration: none;
 }
 
-/* 斜体统一使用 Serif 字体栈（Newsreader + 宋体） */
+/* 斜体统一使用 Serif 字体栈（Newsreader + 思源宋体） */
 em, i {
     font-family: var(--font-serif);
     font-style: italic;
@@ -309,11 +309,11 @@ em, i {
 .post-content {
     font: var(--type-l);
     color: var(--text-color);
+    font-weight: 300;
 }
 
 .post-content p {
     margin-bottom: 1.25rem;
-    white-space: pre-line;
 }
 
 .post-content blockquote {
@@ -407,15 +407,15 @@ em, i {
 }
 
 .post-content h1 {
-    font-size: 1.16rem;
+    font-size: 1.35rem;
 }
 
 .post-content h2 {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
 }
 
 .post-content h3 {
-    font-size: 1rem;
+    font-size: 1.15rem;
 }
 
 .post-content h4 {

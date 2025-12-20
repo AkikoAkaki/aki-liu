@@ -22,6 +22,7 @@ mainSections = ['writing']
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+      hardLineBreak = true
   [markup.highlight]
     noClasses = false
     style = "monokai" # This will be overridden by our CSS classes

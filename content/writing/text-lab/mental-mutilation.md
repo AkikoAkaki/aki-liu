@@ -5,7 +5,6 @@ draft: false
 ---
 
 *Le désastre ruine tout, tout en laissant tout en état.* [^1]
-
 *灾难毁灭一切，同时又让一切原封不动。*
 
 ### 《忧国》与夕墓燃烧时

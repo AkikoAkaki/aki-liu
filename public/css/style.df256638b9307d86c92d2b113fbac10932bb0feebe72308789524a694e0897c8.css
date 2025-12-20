@@ -56,7 +56,6 @@ a {
 em, i {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: 1.1em;
 }
 
 /* 主体布局：三列网格，正文始终在中央 */
@@ -313,7 +312,6 @@ em, i {
 
 .post-content p {
     margin-bottom: 1.25rem;
-    white-space: pre-line;
 }
 
 .post-content blockquote {
@@ -407,15 +405,15 @@ em, i {
 }
 
 .post-content h1 {
-    font-size: 1.16rem;
+    font-size: 1.35rem;
 }
 
 .post-content h2 {
-    font-size: 1.1rem;
+    font-size: 1.25rem;
 }
 
 .post-content h3 {
-    font-size: 1rem;
+    font-size: 1.15rem;
 }
 
 .post-content h4 {

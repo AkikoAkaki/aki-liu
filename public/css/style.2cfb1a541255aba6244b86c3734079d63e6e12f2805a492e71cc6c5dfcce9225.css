@@ -662,7 +662,6 @@ em, i {
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
-    font-size: 1.1em;
 }
 
 .bio-text a {
@@ -761,5 +760,4 @@ em, i {
 .now-section p em {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: 1.1em;
 }
