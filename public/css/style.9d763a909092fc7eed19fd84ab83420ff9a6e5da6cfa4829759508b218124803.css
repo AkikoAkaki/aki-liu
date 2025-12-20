@@ -305,7 +305,7 @@ a {
 }
 
 .post-content p {
-    margin-bottom: 1.25rem;
+    margin-bottom: 2rem;
 }
 
 .post-content blockquote {
@@ -399,11 +399,11 @@ a {
 }
 
 .post-content h1 {
-    font-size: 1.35rem;
+    font-size: 1.25rem;
 }
 
 .post-content h2 {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
 }
 
 .post-content h3 {

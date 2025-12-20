@@ -65,7 +65,5 @@ draft: false
 把铁的墓地
 浇铸回一片荒芜的土。
 
----
-
 
 [^1]: 莫里斯・布朗肖 (Maurice Blanchot), 《灾异的书写》

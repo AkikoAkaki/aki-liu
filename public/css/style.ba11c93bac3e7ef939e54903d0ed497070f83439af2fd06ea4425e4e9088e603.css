@@ -58,7 +58,7 @@ a {
     grid-template-columns: 1fr 650px 1fr;
     max-width: 100%;
     margin: 0 auto;
-    padding: 7rem 2rem;
+    padding: 5rem 2rem;
     gap: 2rem;
 }
 
@@ -121,33 +121,17 @@ a {
     grid-template-columns: 140px 1fr 60px;
     gap: 1.5rem;
     align-items: baseline;
-    padding-top: 1.1rem;
-    padding-bottom: 0.7rem;
-    margin-bottom: 0;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
     position: relative;
-}
-
-.item-title,
-.item-date {
-    transition: opacity 0.1s ease;
-}
-
-.writing-list:hover .item-title,
-.writing-list:hover .item-date {
-    opacity: 0.5;
-}
-
-.writing-item:hover .item-title,
-.writing-item:hover .item-date {
-    opacity: 1;
 }
 
 .item-divider {
     grid-column: 1 / -1;
     height: 1px;
-    background-color: #e5e5e5;
+    background-color: #f0f0f0;
     position: absolute;
-    top: 0;
+    top: -1.4rem;
     width: 100%;
 }
 
@@ -305,7 +289,7 @@ a {
 }
 
 .post-content p {
-    margin-bottom: 1.25rem;
+    margin-bottom: 2rem;
 }
 
 .post-content blockquote {
@@ -399,15 +383,15 @@ a {
 }
 
 .post-content h1 {
-    font-size: 1.35rem;
-}
-
-.post-content h2 {
     font-size: 1.25rem;
 }
 
-.post-content h3 {
+.post-content h2 {
     font-size: 1.15rem;
+}
+
+.post-content h3 {
+    font-size: 1rem;
 }
 
 .post-content h4 {
