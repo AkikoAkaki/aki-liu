@@ -56,7 +56,6 @@ a {
 em, i {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: 1.1em;
 }
 
 /* 主体布局：三列网格，正文始终在中央 */
@@ -661,7 +660,6 @@ em, i {
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
-    font-size: 1.1em;
 }
 
 .bio-text a {
@@ -760,5 +758,4 @@ em, i {
 .now-section p em {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: 1.1em;
 }
