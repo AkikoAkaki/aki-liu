@@ -4,7 +4,7 @@ title: "Home"
 
 <section class="intro">
     <h1 class="author-name">Aki Liu</h1>
-    <p class="bio-text"><em>Build, Write, Create</em>. Building full-stack AI solutions. Crafting software with a focus on logic and aesthetics. Obsessed with polishing the human experience through design and code.</p>
+    <p class="bio-text"><em>Build, Write, Create</em>. Building full-stack AI solutions. Crafting product with a focus on logic and aesthetics. Obsessed with polishing the human experience through design and code.</p>
     <p class="bio-text">In the past I’ve engineered AI tools for <a href="https://artisk.ai" target="_blank">Artisk</a> and <a href="https://dentistjourney.com" target="_blank">Dentist Journey</a>.</p>
 </section>
 
