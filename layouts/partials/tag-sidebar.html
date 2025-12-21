@@ -34,7 +34,9 @@
         {{ range $keys }}
             {{ $name := . }}
             {{ $count := index $tags $name }}
-            <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}" class="tag-item">
+            {{ $slug := printf "/tags/%s/" ($name | urlize) }}
+            {{ $page := site.GetPage $slug }}
+            <a href="{{ if $page }}{{ $page.RelPermalink }}{{ else }}{{ $slug | relLangURL }}{{ end }}" class="tag-item">
                 <span>#{{ $name }}</span>
                 <span class="tag-count">{{ $count }}</span>
             </a>
