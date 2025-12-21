@@ -365,8 +365,8 @@ body::after {
     }
 
     .site-footer {
-        padding-top: 3rem;
-        margin-bottom: 1rem;
+        padding-top: 2rem;
+        margin-bottom: 0;
     }
 
     .post-single {
@@ -842,8 +842,7 @@ body::after {
 /* 页脚：控制间距和分隔线 */
 .site-footer {
     margin-top: auto;
-    padding-top: 6rem;
-    padding-bottom: 2rem;
+    padding-top: 4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -894,6 +893,11 @@ body::after {
     flex-direction: column;
     gap: 2.5rem;
     padding-top: 0.5rem;
+    flex-grow: 1;
+}
+
+.writing-container {
+    flex-grow: 1;
 }
 
 @media (max-width: 768px) {

@@ -365,8 +365,8 @@ body::after {
     }
 
     .site-footer {
-        padding-top: 3rem;
-        margin-bottom: 1rem;
+        padding-top: 2rem;
+        margin-bottom: 0;
     }
 
     .post-single {
@@ -842,8 +842,7 @@ body::after {
 /* 页脚：控制间距和分隔线 */
 .site-footer {
     margin-top: auto;
-    padding-top: 6rem;
-    padding-bottom: 2rem;
+    padding-top: 10rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
