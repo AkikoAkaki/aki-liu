@@ -77,11 +77,6 @@ em, i {
     padding-right: 4rem;
 }
 
-.site-sidebar:empty,
-.site-sidebar-right:empty {
-    display: none;
-}
-
 /* 主内容列 */
 .site-main {
     grid-column: 2;
@@ -93,12 +88,6 @@ em, i {
 
 .not-home .site-main {
     padding-top: 0.5rem;
-}
-
-@media (max-width: 768px) {
-    .not-home .site-main {
-        padding-top: 0;
-    }
 }
 
 /* 右侧边栏：用于目录等 */
@@ -860,12 +849,6 @@ body::after {
     flex-direction: column;
     gap: 2.5rem;
     padding-top: 0.5rem;
-}
-
-@media (max-width: 768px) {
-    .home-container {
-        padding-top: 0;
-    }
 }
 
 /* Intro Section */

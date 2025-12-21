@@ -77,11 +77,6 @@ em, i {
     padding-right: 4rem;
 }
 
-.site-sidebar:empty,
-.site-sidebar-right:empty {
-    display: none;
-}
-
 /* 主内容列 */
 .site-main {
     grid-column: 2;
