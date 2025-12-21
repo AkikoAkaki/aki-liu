@@ -1,3 +1,6 @@
+{{ $techSection := .Site.GetPage "section" "writing/tech" }}
+{{ $lifeSection := .Site.GetPage "section" "writing/life" }}
+{{ $textLabSection := .Site.GetPage "section" "writing/text-lab" }}
 <section class="work-table-section">
     <table class="work-table">
         <thead>
@@ -23,7 +26,7 @@
                 </td>
                 <td class="col-writing">
                     <div class="work-item">
-                        <a href="/writing/tech/" class="work-title">Tech</a>
+                        <a href="{{ $techSection.RelPermalink }}" class="work-title">Tech</a>
                         <div class="work-desc">Thoughts on products, code, and design.</div>
                     </div>
                 </td>
@@ -33,7 +36,7 @@
                 <td></td>
                 <td>
                     <div class="work-item">
-                        <a href="/writing/text-lab/" class="work-title">Text Lab</a>
+                        <a href="{{ $textLabSection.RelPermalink }}" class="work-title">Text Lab</a>
                         <div class="work-desc">Literature, art, philosophy and more.</div>
                     </div>
                 </td>
@@ -43,7 +46,7 @@
                 <td></td>
                 <td>
                     <div class="work-item">
-                        <a href="/writing/life/" class="work-title">Life</a>
+                        <a href="{{ $lifeSection.RelPermalink }}" class="work-title">Life</a>
                         <div class="work-desc">Reflections and personal archives.</div>
                     </div>
                 </td>

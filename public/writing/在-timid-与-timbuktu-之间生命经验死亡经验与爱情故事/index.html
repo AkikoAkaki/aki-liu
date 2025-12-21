@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/myblog-redesigned/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=myblog-redesigned/livereload" data-no-instant defer></script>
+<head><script src="/aki-liu/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=aki-liu/livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>在 Timid 与 Timbuktu 之间：生命经验，死亡经验与爱情故事 | Aki&#39;s Blog</title>
     
-    <link rel="canonical" href="http://localhost:1313/myblog-redesigned/writing/%E5%9C%A8-timid-%E4%B8%8E-timbuktu-%E4%B9%8B%E9%97%B4%E7%94%9F%E5%91%BD%E7%BB%8F%E9%AA%8C%E6%AD%BB%E4%BA%A1%E7%BB%8F%E9%AA%8C%E4%B8%8E%E7%88%B1%E6%83%85%E6%95%85%E4%BA%8B/">
+    <link rel="canonical" href="http://localhost:1313/aki-liu/writing/%E5%9C%A8-timid-%E4%B8%8E-timbuktu-%E4%B9%8B%E9%97%B4%E7%94%9F%E5%91%BD%E7%BB%8F%E9%AA%8C%E6%AD%BB%E4%BA%A1%E7%BB%8F%E9%AA%8C%E4%B8%8E%E7%88%B1%E6%83%85%E6%95%85%E4%BA%8B/">
     
     
     
@@ -15,7 +15,7 @@
 
         
         
-        <link rel="stylesheet" href="/myblog-redesigned/css/style.6104d11e391958a51eb716da6d2f5cfc78070fb0706326b4ea7e4c79fe8a0d8c.css" integrity="sha256-YQTRHjkZWKUetxbabS9c/HgHD7BwYya06n5Mef6KDYw=">
+        <link rel="stylesheet" href="/aki-liu/css/style.b93e74b7f8fdd4348de552cf443d756725c8f1e150c55002f81f7ca66e4eb195.css" integrity="sha256-uT50t/j91DSN5VLPRD11ZyXI8eFQxVAC&#43;B98pm5OsZU=">
         
         
         
@@ -59,7 +59,7 @@
             
         
         <div class="title-with-back">
-            <a class="back-link" href="/myblog-redesigned/writing/text-lab/">
+            <a class="back-link" href="/aki-liu/writing/text-lab/">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14" />
                     <path d="M11 6l-6 6 6 6" />
@@ -124,6 +124,85 @@ Within his bending sickle&rsquo;s compass come. <sup id="fnref:1"><a href="#fn:1
         </main>
         <aside class="site-sidebar-right">
             
+
+<aside class="post-toc">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#小说梗概">小说梗概</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</aside>
+<script>
+(function() {
+    const toc = document.querySelector('.post-toc');
+    if (!toc) return;
+    
+    const links = toc.querySelectorAll('a');
+    const headings = Array.from(links).map(link => {
+        const id = link.getAttribute('href').slice(1);
+        return document.getElementById(id);
+    }).filter(Boolean);
+    
+    
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = link.getAttribute('href').slice(1);
+            const target = document.getElementById(id);
+            if (target) {
+                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+                const offsetPosition = targetPosition - (window.innerHeight * 0.25);
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
+    
+    function highlightActiveHeading() {
+        let current = null;
+        const scrollPos = window.scrollY + (window.innerHeight * 0.26);
+        
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i] && headings[i].offsetTop <= scrollPos) {
+                current = headings[i];
+                break;
+            }
+        }
+        
+        links.forEach(link => link.classList.remove('is-active'));
+        if (current) {
+            const activeLink = toc.querySelector(`a[href="#${current.id}"]`);
+            if (activeLink) activeLink.classList.add('is-active');
+        }
+    }
+    
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                highlightActiveHeading();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+    
+    highlightActiveHeading();
+})();
+</script>
+
+
         </aside>
     </div>
 </body>

@@ -26,3 +26,7 @@ mainSections = ['writing']
   [markup.highlight]
     noClasses = false
     style = "monokai" # This will be overridden by our CSS classes
+  [markup.tableOfContents]
+    endLevel = 6
+    ordered = false
+    startLevel = 1

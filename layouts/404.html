@@ -1,0 +1,14 @@
+{{ define "main" }}
+<section class="not-found">
+    <span class="not-found-label">404</span>
+    <h1 class="not-found-title">Page not found.</h1>
+    <p class="not-found-description">The page you are looking for no longer exists, or the URL was mistyped. Let's get you back on track.</p>
+    <a class="not-found-link" href="{{ .Site.Home.RelPermalink }}">
+        Return home
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+    </a>
+</section>
+{{ end }}

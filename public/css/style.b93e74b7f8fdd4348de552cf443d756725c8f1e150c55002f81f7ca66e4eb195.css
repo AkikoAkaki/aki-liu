@@ -67,6 +67,7 @@ em, i {
     margin: 0 auto;
     padding: 7rem 2rem;
     gap: 2rem;
+    min-height: 100vh;
 }
 
 /* 侧边栏向右对齐以制造呼吸空间 */
@@ -80,6 +81,8 @@ em, i {
 .site-main {
     grid-column: 2;
     width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .not-home .site-main {
@@ -90,6 +93,45 @@ em, i {
 .site-sidebar-right {
     grid-column: 3;
     justify-self: start;
+}
+
+.not-found {
+    max-width: 520px;
+    padding: 4rem 0 6rem;
+}
+
+.not-found-label {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #7d7d7d;
+}
+
+.not-found-title {
+    font-size: clamp(2.25rem, 4vw, 3.4rem);
+    font-weight: 500;
+    margin: 0.35rem 0 1.5rem;
+}
+
+.not-found-description {
+    color: #4a4a4a;
+    line-height: 1.7;
+    margin: 0 0 2.5rem;
+}
+
+.not-found-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 500;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 0.2rem;
+}
+
+.not-found-link svg {
+    width: 16px;
+    height: 16px;
 }
 
 /* Writing 栏标题：字体与间距统一在这里 */
@@ -235,6 +277,9 @@ em, i {
         justify-self: start;
         padding-right: 0;
     }
+    .site-main {
+        grid-column: 1;
+    }
     .site-sidebar-right {
         grid-column: 1;
         grid-row: auto;
@@ -262,7 +307,9 @@ em, i {
     .title-with-back {
         margin-left: 0;
         padding-left: 0;
-        gap: 0.4rem;
+        gap: 0.8rem;
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .title-with-back .back-link {
@@ -280,16 +327,16 @@ em, i {
 }
 
 .post-toc {
-    font: var(--type-l);
-    color: #b1b1b1;
-    line-height: 1.6;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #8f8f8f;
     position: sticky;
-    top: 14.5rem;
+    top: 15.5rem;
     max-height: calc(100vh - 10rem);
     overflow-y: auto;
     padding-right: 0.5rem;
     width: 240px;
-    margin-top: 0.4rem;
 }
 
 .post-toc nav {
@@ -307,13 +354,20 @@ em, i {
 }
 
 .post-toc li ul {
-    padding-left: 1rem;
+    padding-left: 1.2rem;
+    margin-top: 0.35rem;
+}
+
+.post-toc li ul ul {
+    padding-left: 1.2rem;
+    margin-top: 0.35rem;
 }
 
 .post-toc a {
-    color: #b1b1b1;
+    color: #8f8f8f;
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color 0.25s ease;
+    display: block;
 }
 
 .post-toc a:hover {
@@ -322,7 +376,6 @@ em, i {
 
 .post-toc a.is-active {
     color: var(--text-color);
-    font-weight: 500;
 }
 
 .post-title {
@@ -651,7 +704,8 @@ em, i {
 
 /* 页脚：控制间距和分隔线 */
 .site-footer {
-    margin-top: 10rem;
+    margin-top: auto;
+    padding-top: 10rem;
     display: flex;
     justify-content: space-between;
     align-items: center;

@@ -1,3 +1,5 @@
 ---
 title: Tech
+aliases:
+  - /tech/
 ---

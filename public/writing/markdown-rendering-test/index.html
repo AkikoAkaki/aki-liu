@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/myblog-redesigned/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=myblog-redesigned/livereload" data-no-instant defer></script>
+<head><script src="/aki-liu/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=aki-liu/livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown 渲染压力测试 | Aki&#39;s Blog</title>
     
-    <link rel="canonical" href="http://localhost:1313/myblog-redesigned/writing/markdown-rendering-test/">
+    <link rel="canonical" href="http://localhost:1313/aki-liu/writing/markdown-rendering-test/">
     
     
     
@@ -15,7 +15,7 @@
 
         
         
-        <link rel="stylesheet" href="/myblog-redesigned/css/style.6104d11e391958a51eb716da6d2f5cfc78070fb0706326b4ea7e4c79fe8a0d8c.css" integrity="sha256-YQTRHjkZWKUetxbabS9c/HgHD7BwYya06n5Mef6KDYw=">
+        <link rel="stylesheet" href="/aki-liu/css/style.b93e74b7f8fdd4348de552cf443d756725c8f1e150c55002f81f7ca66e4eb195.css" integrity="sha256-uT50t/j91DSN5VLPRD11ZyXI8eFQxVAC&#43;B98pm5OsZU=">
         
         
         
@@ -59,7 +59,7 @@
             
         
         <div class="title-with-back">
-            <a class="back-link" href="/myblog-redesigned/writing/tech/">
+            <a class="back-link" href="/aki-liu/writing/tech/">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M5 12h14" />
                     <path d="M11 6l-6 6 6 6" />
@@ -242,6 +242,109 @@ $$</p>
         </main>
         <aside class="site-sidebar-right">
             
+
+<aside class="post-toc">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#markdown-渲染压力测试">Markdown 渲染压力测试</a>
+      <ul>
+        <li><a href="#1-基本文本与格式化">1. 基本文本与格式化</a></li>
+        <li><a href="#2-标题层级h1h6">2. 标题层级（H1–H6）</a></li>
+      </ul>
+    </li>
+    <li><a href="#h1-标题">H1 标题</a>
+      <ul>
+        <li><a href="#h2-标题">H2 标题</a>
+          <ul>
+            <li><a href="#h3-标题应略小于正文字体">H3 标题（应略小于正文字体）</a>
+              <ul>
+                <li><a href="#h4-标题">H4 标题</a>
+                  <ul>
+                    <li><a href="#h5-标题">H5 标题</a>
+                      <ul>
+                        <li><a href="#h6-标题">H6 标题</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#3-列表测试">3. 列表测试</a></li>
+        <li><a href="#4-代码块测试">4. 代码块测试</a></li>
+        <li><a href="#5-数学公式与表格">5. 数学公式与表格</a></li>
+        <li><a href="#6-多媒体分割线与注脚">6. 多媒体、分割线与注脚</a></li>
+        <li><a href="#7-高级与边缘用例">7. 高级与边缘用例</a></li>
+        <li><a href="#8-渲染器验证清单快速参考">8. 渲染器验证清单（快速参考）</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</aside>
+<script>
+(function() {
+    const toc = document.querySelector('.post-toc');
+    if (!toc) return;
+    
+    const links = toc.querySelectorAll('a');
+    const headings = Array.from(links).map(link => {
+        const id = link.getAttribute('href').slice(1);
+        return document.getElementById(id);
+    }).filter(Boolean);
+    
+    
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = link.getAttribute('href').slice(1);
+            const target = document.getElementById(id);
+            if (target) {
+                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+                const offsetPosition = targetPosition - (window.innerHeight * 0.25);
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
+    
+    function highlightActiveHeading() {
+        let current = null;
+        const scrollPos = window.scrollY + (window.innerHeight * 0.26);
+        
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i] && headings[i].offsetTop <= scrollPos) {
+                current = headings[i];
+                break;
+            }
+        }
+        
+        links.forEach(link => link.classList.remove('is-active'));
+        if (current) {
+            const activeLink = toc.querySelector(`a[href="#${current.id}"]`);
+            if (activeLink) activeLink.classList.add('is-active');
+        }
+    }
+    
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                highlightActiveHeading();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+    
+    highlightActiveHeading();
+})();
+</script>
+
+
         </aside>
     </div>
 </body>
