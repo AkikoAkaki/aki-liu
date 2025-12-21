@@ -10,6 +10,7 @@
         </a>
         <h1 class="writing-label">{{ .Title }}</h1>
     </div>
+    {{ partial "tag-sidebar.html" (dict "variant" "inline" "context" .) }}
     
     <div class="writing-list">
         {{ range .Pages.GroupByPublishDate "2006" }}
@@ -32,5 +33,5 @@
 {{ end }}
 
 {{ define "sidebar-right" }}
-    {{ partial "tag-sidebar.html" . }}
+    {{ partial "tag-sidebar.html" (dict "context" .) }}
 {{ end }}

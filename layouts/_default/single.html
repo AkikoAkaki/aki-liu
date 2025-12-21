@@ -20,77 +20,86 @@
         <time class="post-date">{{ .Date.Format "2006/01/02" }}</time>
     </header>
 
+    {{ if .TableOfContents }}
+    <aside class="post-toc post-toc--inline">
+        {{ .TableOfContents }}
+    </aside>
+    {{ end }}
+
     <div class="post-content">
         {{ .Content }}
     </div>
 </article>
-{{ end }}
 
-{{ define "sidebar-right" }}
-{{ if .TableOfContents }}
-<aside class="post-toc">
-    {{ .TableOfContents }}
-</aside>
 <script>
-(function() {
-    const toc = document.querySelector('.post-toc');
-    if (!toc) return;
-    
-    const links = toc.querySelectorAll('a');
-    const headings = Array.from(links).map(link => {
+(function () {
+    const tocs = document.querySelectorAll('.post-toc');
+    if (!tocs.length) return;
+
+    const links = Array.from(document.querySelectorAll('.post-toc a'));
+    const headings = links
+        .map((link) => {
+            const id = link.getAttribute('href').slice(1);
+            return document.getElementById(id);
+        })
+        .filter(Boolean);
+
+    const scrollToHeading = (link) => {
         const id = link.getAttribute('href').slice(1);
-        return document.getElementById(id);
-    }).filter(Boolean);
-    
-    // Smooth scroll with 25% from top positioning
-    links.forEach(link => {
+        const target = document.getElementById(id);
+        if (target) {
+            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = targetPosition - window.innerHeight * 0.25;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+    };
+
+    links.forEach((link) => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            const id = link.getAttribute('href').slice(1);
-            const target = document.getElementById(id);
-            if (target) {
-                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
-                const offsetPosition = targetPosition - (window.innerHeight * 0.25);
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-            }
+            scrollToHeading(link);
         });
     });
-    
-    // Highlight active heading on scroll
-    function highlightActiveHeading() {
+
+    const highlightActiveHeading = () => {
         let current = null;
-        const scrollPos = window.scrollY + (window.innerHeight * 0.26);
-        
+        const scrollPos = window.scrollY + window.innerHeight * 0.26;
+
         for (let i = headings.length - 1; i >= 0; i--) {
             if (headings[i] && headings[i].offsetTop <= scrollPos) {
                 current = headings[i];
                 break;
             }
         }
-        
-        links.forEach(link => link.classList.remove('is-active'));
+
+        links.forEach((link) => link.classList.remove('is-active'));
         if (current) {
-            const activeLink = toc.querySelector(`a[href="#${current.id}"]`);
-            if (activeLink) activeLink.classList.add('is-active');
+            links
+                .filter((link) => link.getAttribute('href') === `#${current.id}`)
+                .forEach((link) => link.classList.add('is-active'));
         }
-    }
-    
+    };
+
     let ticking = false;
     window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                highlightActiveHeading();
-                ticking = false;
-            });
-            ticking = true;
-        }
+        if (ticking) return;
+        window.requestAnimationFrame(() => {
+            highlightActiveHeading();
+            ticking = false;
+        });
+        ticking = true;
     });
-    
+
     highlightActiveHeading();
 })();
 </script>
 {{ end }}
+
+{{ define "sidebar-right" }}
+    {{ if .TableOfContents }}
+    <aside class="post-toc post-toc--sidebar">
+        {{ .TableOfContents }}
+    </aside>
+    {{ end }}
 {{ end }}
+

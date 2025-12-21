@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parfum thérémine | Aki&#39;s Blog</title>
+    
+    <link rel="canonical" href="https://AkikoAkaki.github.io/aki-liu/parfum-th%C3%A9r%C3%A9mine/">
+    
+    
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Newsreader:ital,wght@1,400&display=swap" rel="stylesheet">
+
+        
+        
+        <link rel="stylesheet" href="/aki-liu/css/style.ebfadc975e8952672a3ddad800b6529b3749feb841ec8df84ce871c7ab51df57.css" integrity="sha256-6/rcl16JUmcqPdrYALZSmzdJ/rhB7I34TOhxx6tR31c=">
+        
+        
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+        <script defer>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof renderMathInElement === 'function') {
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false
+                    });
+                }
+            });
+        </script>
+        
+</head>
+<body class="not-home">
+    
+    
+    
+        
+    
+    
+    <div class="site-container">
+        <aside class="site-sidebar"></aside>
+        <main class="site-main">
+            
+<article class="post-single">
+    <header class="post-header">
+        
+        
+        
+            
+            
+        
+        <div class="title-with-back">
+            <a class="back-link" href="/aki-liu/text-lab/">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14" />
+                    <path d="M11 6l-6 6 6 6" />
+                </svg>
+                <span>Text Lab</span>
+            </a>
+            <h1 class="post-title">Parfum thérémine</h1>
+        </div>
+        <time class="post-date">2024/05/31</time>
+    </header>
+
+    
+    <aside class="post-toc post-toc--inline">
+        <nav id="TableOfContents"></nav>
+    </aside>
+    
+
+    <div class="post-content">
+        <blockquote>
+<p>And you know
+I only feel you through
+The scent
+Of the waveFinding the key
+While touching the air
+Soft odyssey
+Delusive is the view</p>
+</blockquote>
+<p>Parfum thérémine 这首歌是属于阴郁的上海雨天的。这又让我想起了那个在车厢的摇晃中给地下的人们写诗的那个夜晚。当两侧的车窗陷入暗影之中，隔绝外音，只余歌声；当一部城市电影驶入它蜿蜒的低吼；而周围的人戴上口罩，用哀沉的静默对这强迫性的带离行动发出控诉；浪便从车厢的两侧袭卷来了——一场自然灾害把近得不能再近的人们包围，但水流又把人和人斥开，往车厢内注入蜂鸣般的间奏。</p>
+<p>这座城市需要一场瞬时的毁灭，而此毁灭必须是一次降灵般的蛮剪，把它原本的黑色秩序剪得只剩流边和碎叶，如同梧桐树的剪影，如同那被撕裂的树皮。在树的庇护之下，好像一切存亡都有了理由。</p>
+<p>那盏黏糊的酒上的冰块映出了他苍白的脸色，他马上要睡去，不安地抵抗噪音、光线和不断逼近的明日。大楼和夜晚融混为同一的身体，发亮的彩窗零散地浮于远方的乌云之下，像天堂，又像废墟。我想这就是这座城市的根音：抖颤、消颓、困抑，恒久地在高架桥的回旋道路中打转。</p>
+
+    </div>
+</article>
+
+<script>
+(function () {
+    const tocs = document.querySelectorAll('.post-toc');
+    if (!tocs.length) return;
+
+    const links = Array.from(document.querySelectorAll('.post-toc a'));
+    const headings = links
+        .map((link) => {
+            const id = link.getAttribute('href').slice(1);
+            return document.getElementById(id);
+        })
+        .filter(Boolean);
+
+    const scrollToHeading = (link) => {
+        const id = link.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if (target) {
+            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = targetPosition - window.innerHeight * 0.25;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+    };
+
+    links.forEach((link) => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            scrollToHeading(link);
+        });
+    });
+
+    const highlightActiveHeading = () => {
+        let current = null;
+        const scrollPos = window.scrollY + window.innerHeight * 0.26;
+
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i] && headings[i].offsetTop <= scrollPos) {
+                current = headings[i];
+                break;
+            }
+        }
+
+        links.forEach((link) => link.classList.remove('is-active'));
+        if (current) {
+            links
+                .filter((link) => link.getAttribute('href') === `#${current.id}`)
+                .forEach((link) => link.classList.add('is-active'));
+        }
+    };
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (ticking) return;
+        window.requestAnimationFrame(() => {
+            highlightActiveHeading();
+            ticking = false;
+        });
+        ticking = true;
+    });
+
+    highlightActiveHeading();
+})();
+</script>
+
+            <footer class="site-footer">
+                <div class="footer-left">© 2025 Aki Liu, crafted with inspiration from <a href="https://paco.me" target="_blank" rel="noopener noreferrer">Paco Coursey</a></div>
+            </footer>
+        </main>
+        <aside class="site-sidebar-right">
+            
+    
+    <aside class="post-toc post-toc--sidebar">
+        <nav id="TableOfContents"></nav>
+    </aside>
+    
+
+        </aside>
+    </div>
+</body>
+</html>
