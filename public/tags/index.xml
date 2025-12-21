@@ -2,38 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Aki&#39;s Blog</title>
-    <link>http://localhost:1313/aki-liu/tags/</link>
+    <link>https://AkikoAkaki.github.io/aki-liu/tags/</link>
     <description>Recent content in Tags on Aki&#39;s Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 21 Jun 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/aki-liu/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://AkikoAkaki.github.io/aki-liu/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Fiction</title>
-      <link>http://localhost:1313/aki-liu/tags/fiction/</link>
+      <link>https://AkikoAkaki.github.io/aki-liu/tags/fiction/</link>
       <pubDate>Sat, 21 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/tags/fiction/</guid>
+      <guid>https://AkikoAkaki.github.io/aki-liu/tags/fiction/</guid>
       <description></description>
     </item>
     <item>
       <title>Poetry</title>
-      <link>http://localhost:1313/aki-liu/tags/poetry/</link>
+      <link>https://AkikoAkaki.github.io/aki-liu/tags/poetry/</link>
       <pubDate>Sat, 21 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/tags/poetry/</guid>
+      <guid>https://AkikoAkaki.github.io/aki-liu/tags/poetry/</guid>
       <description></description>
     </item>
     <item>
       <title>Essay</title>
-      <link>http://localhost:1313/aki-liu/tags/essay/</link>
+      <link>https://AkikoAkaki.github.io/aki-liu/tags/essay/</link>
       <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/tags/essay/</guid>
+      <guid>https://AkikoAkaki.github.io/aki-liu/tags/essay/</guid>
       <description></description>
     </item>
     <item>
       <title>Critique</title>
-      <link>http://localhost:1313/aki-liu/tags/critique/</link>
+      <link>https://AkikoAkaki.github.io/aki-liu/tags/critique/</link>
       <pubDate>Tue, 28 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/tags/critique/</guid>
+      <guid>https://AkikoAkaki.github.io/aki-liu/tags/critique/</guid>
       <description></description>
     </item>
   </channel>

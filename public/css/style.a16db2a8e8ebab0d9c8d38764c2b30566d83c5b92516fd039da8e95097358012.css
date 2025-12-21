@@ -244,13 +244,6 @@ body::after {
     opacity: 1;
 }
 
-@media (hover: none) {
-    .writing-list:hover .item-title,
-    .writing-list:hover .item-date {
-        opacity: 1;
-    }
-}
-
 .item-divider {
     grid-column: 1 / -1;
     height: 1px;
