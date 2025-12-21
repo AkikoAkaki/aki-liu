@@ -5,7 +5,7 @@ theme = 'paco'
 mainSections = ['writing']
 
 [permalinks]
-  writing = '/:contentbasename/'
+  writing = '/:slug/'
 
 [taxonomies]
   tag = 'tags'
