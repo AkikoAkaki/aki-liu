@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/aki-liu/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=aki-liu/livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>城市行进 | Aki&#39;s Blog</title>
+    
+    <link rel="canonical" href="http://localhost:1313/aki-liu/%E5%9F%8E%E5%B8%82%E8%A1%8C%E8%BF%9B/">
+    
+    
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Newsreader:ital,wght@1,400&display=swap" rel="stylesheet">
+
+        
+        
+        <link rel="stylesheet" href="/aki-liu/css/style.8c4bd5c711d39c43f9da77c337637e35893216fbc2d502eb17e9f8538548a9aa.css" integrity="sha256-jEvVxxHTnEP52nfDN2N&#43;NYkyFvvC1QLrF&#43;n4U4VIqao=">
+        
+        
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+        <script defer>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof renderMathInElement === 'function') {
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false
+                    });
+                }
+            });
+        </script>
+        
+</head>
+<body class="not-home">
+    
+    
+    
+        
+    
+    
+    <div class="site-container">
+        <aside class="site-sidebar"></aside>
+        <main class="site-main">
+            
+<article class="post-single">
+    <header class="post-header">
+        
+        
+        
+            
+            
+        
+        <div class="title-with-back">
+            <a class="back-link" href="/aki-liu/text-lab/">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14" />
+                    <path d="M11 6l-6 6 6 6" />
+                </svg>
+                <span>Text Lab</span>
+            </a>
+            <h1 class="post-title">城市行进</h1>
+        </div>
+        <time class="post-date">2022/06/27</time>
+    </header>
+
+    
+    <aside class="post-toc post-toc--inline">
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#20220627-2119">2022/06/27 21:19</a></li>
+            <li><a href="#20220629-1954">2022/06/29 19:54</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </aside>
+    
+
+    <div class="post-content">
+        <h3 id="20220627-2119">2022/06/27 21:19</h3>
+<p>饱腹感与推弦旋转，自然烘乾机铺上低音，夜色入侵石砖小路，向著清浅的池塘底部与排队的人群极速坠去。油画的背景中，洋桔梗逐渐枯萎，电风扇停止工作，我的耳中蓦地只剩下降噪带来的些许不适，与久久回蕩的谈话声、脚步声、啸叫声。</p>
+<h3 id="20220629-1954">2022/06/29 19:54</h3>
+<p>从蜿蜒晦暗的停车场中驶出，挡风玻璃上骤然间被雨滴占领，我来到了无数水泥巨人的脚下。我跟著扫弦的余音，把不安揉进虚拟雪球，然后朝灰白的天空奋力掷去。</p>
+<p>远处的天上倏然出现一道橙红色的弧光，那道弧光从云间斩将过来，身旁大厦的玻璃霎地凹成了粼光碎片。我看着夕阳骄矜地放光，层积云藐视着雨点和我们。不知从何处插进我脑中的过载音色将我的泪捅出眼眶，慢慢地，慢慢地，慢慢地，直到我从车窗上瞥到了一辆救护车闪着蓝光从我身旁掠过，然后贝斯弦猛地颤抖，我的心撼动不止。</p>
+
+    </div>
+</article>
+
+<script>
+(function () {
+    const tocs = document.querySelectorAll('.post-toc');
+    if (!tocs.length) return;
+
+    const links = Array.from(document.querySelectorAll('.post-toc a'));
+    const headings = links
+        .map((link) => {
+            const id = link.getAttribute('href').slice(1);
+            return document.getElementById(id);
+        })
+        .filter(Boolean);
+
+    const scrollToHeading = (link) => {
+        const id = link.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if (target) {
+            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = targetPosition - window.innerHeight * 0.25;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+    };
+
+    links.forEach((link) => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            scrollToHeading(link);
+        });
+    });
+
+    const highlightActiveHeading = () => {
+        let current = null;
+        const scrollPos = window.scrollY + window.innerHeight * 0.26;
+
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i] && headings[i].offsetTop <= scrollPos) {
+                current = headings[i];
+                break;
+            }
+        }
+
+        links.forEach((link) => link.classList.remove('is-active'));
+        if (current) {
+            links
+                .filter((link) => link.getAttribute('href') === `#${current.id}`)
+                .forEach((link) => link.classList.add('is-active'));
+        }
+    };
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (ticking) return;
+        window.requestAnimationFrame(() => {
+            highlightActiveHeading();
+            ticking = false;
+        });
+        ticking = true;
+    });
+
+    highlightActiveHeading();
+})();
+</script>
+
+            <footer class="site-footer">
+                <div class="footer-left">© 2025 Aki Liu, crafted with inspiration from <a href="https://paco.me" target="_blank" rel="noopener noreferrer">Paco Coursey</a></div>
+            </footer>
+        </main>
+        <aside class="site-sidebar-right">
+    
+    <aside class="post-toc post-toc--sidebar">
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#20220627-2119">2022/06/27 21:19</a></li>
+            <li><a href="#20220629-1954">2022/06/29 19:54</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </aside>
+    
+</aside>
+    </div>
+</body>
+</html>

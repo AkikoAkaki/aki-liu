@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Portry on Aki&#39;s Blog</title>
+    <link>http://localhost:1313/aki-liu/tags/portry/</link>
+    <description>Recent content in Portry on Aki&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 11 Jul 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/aki-liu/tags/portry/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>石枯れて水しぼめるや冬もなし</title>
+      <link>http://localhost:1313/aki-liu/%E7%9F%B3%E6%9E%AF%E3%82%8C%E3%81%A6%E6%B0%B4%E3%81%97%E3%81%BC%E3%82%81%E3%82%8B%E3%82%84%E5%86%AC%E3%82%82%E3%81%AA%E3%81%97/</link>
+      <pubDate>Tue, 11 Jul 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/aki-liu/%E7%9F%B3%E6%9E%AF%E3%82%8C%E3%81%A6%E6%B0%B4%E3%81%97%E3%81%BC%E3%82%81%E3%82%8B%E3%82%84%E5%86%AC%E3%82%82%E3%81%AA%E3%81%97/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>
