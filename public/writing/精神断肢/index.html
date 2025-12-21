@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=12738&amp;path=livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>精神断肢 | Aki&#39;s Blog</title>
     
-    <link rel="canonical" href="http://localhost:1313/writing/%E7%B2%BE%E7%A5%9E%E6%96%AD%E8%82%A2/">
+    <link rel="canonical" href="http://localhost:12738/writing/%E7%B2%BE%E7%A5%9E%E6%96%AD%E8%82%A2/">
     
     
     
@@ -15,7 +15,7 @@
 
         
         
-        <link rel="stylesheet" href="/css/style.53d4e9b5eb0fea5665049556f1a4579bdd6a2929dd29b919074fa2e02d21d896.css" integrity="sha256-U9TptesP6lZlBJVW8aRXm91qKSndKbkZB0&#43;i4C0h2JY=">
+        <link rel="stylesheet" href="/css/style.d1f395dbfc00963efafd7152e9e123a9b28fed3351f6c6812e821f23752c7a8d.css" integrity="sha256-0fOV2/wAlj76/XFS6eEjqbKP7TNR9saBLoIfI3Useo0=">
         
         
         
@@ -112,65 +112,6 @@
         </main>
         <aside class="site-sidebar-right">
             
-    
-    
-        
-        <aside class="post-toc">
-            <nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#忧国与夕墓燃烧时">《忧国》与夕墓燃烧时</a></li>
-        <li><a href="#残酷沉默理论之碑">残酷沉默理论之碑</a></li>
-        <li><a href="#大爆炸一把旋律伞的撑开">大爆炸，一把旋律伞的撑开</a></li>
-        <li><a href="#寻常的一次对风的屠戮">寻常的一次对风的屠戮</a></li>
-        <li><a href="#塞萨尔艾拉的塞萨尔艾拉">塞萨尔・艾拉的塞萨尔・艾拉</a></li>
-        <li><a href="#一则气象学的症候英雄或一滩脓水">一则气象学的症候，英雄或一滩脓水</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-        </aside>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const tocLinks = document.querySelectorAll('.post-toc a');
-                const headings = Array.from(document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6'))
-                    .filter(h => h.id);
-                
-                if (tocLinks.length === 0 || headings.length === 0) return;
-
-                let activeIndex = 0;
-
-                const updateActive = () => {
-                    
-                    const threshold = window.innerHeight * 0.75;
-                    
-                    
-                    let newIndex = 0;
-                    for (let i = 0; i < headings.length; i++) {
-                        if (headings[i].getBoundingClientRect().top <= threshold) {
-                            newIndex = i;
-                        } else {
-                            break;
-                        }
-                    }
-
-                    if (newIndex !== activeIndex) {
-                        tocLinks[activeIndex]?.classList.remove('is-active');
-                        activeIndex = newIndex;
-                        tocLinks[activeIndex]?.classList.add('is-active');
-                    }
-                };
-
-                
-                updateActive();
-
-                window.addEventListener('scroll', updateActive, { passive: true });
-            });
-        </script>
-        
-    
-
         </aside>
     </div>
 </body>

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=12738&amp;path=livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>沙漠 | Aki&#39;s Blog</title>
     
-    <link rel="canonical" href="http://localhost:1313/writing/%E6%B2%99%E6%BC%A0/">
+    <link rel="canonical" href="http://localhost:12738/writing/%E6%B2%99%E6%BC%A0/">
     
     
     
@@ -15,7 +15,7 @@
 
         
         
-        <link rel="stylesheet" href="/css/style.53d4e9b5eb0fea5665049556f1a4579bdd6a2929dd29b919074fa2e02d21d896.css" integrity="sha256-U9TptesP6lZlBJVW8aRXm91qKSndKbkZB0&#43;i4C0h2JY=">
+        <link rel="stylesheet" href="/css/style.d1f395dbfc00963efafd7152e9e123a9b28fed3351f6c6812e821f23752c7a8d.css" integrity="sha256-0fOV2/wAlj76/XFS6eEjqbKP7TNR9saBLoIfI3Useo0=">
         
         
         
@@ -164,68 +164,6 @@
         </main>
         <aside class="site-sidebar-right">
             
-    
-    
-        
-        <aside class="post-toc">
-            <nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#倒汐潮">倒汐潮</a></li>
-        <li><a href="#归档">归档</a></li>
-        <li><a href="#赛特">赛特</a></li>
-        <li><a href="#歌">歌</a></li>
-        <li><a href="#白沙">白沙</a></li>
-        <li><a href="#沉离鬼">沉离鬼</a></li>
-        <li><a href="#复眼">复眼</a></li>
-        <li><a href="#洛杉矶下雨了">洛杉矶下雨了</a></li>
-        <li><a href="#剩余的锈蚀之物">剩余的锈蚀之物</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-        </aside>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const tocLinks = document.querySelectorAll('.post-toc a');
-                const headings = Array.from(document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6'))
-                    .filter(h => h.id);
-                
-                if (tocLinks.length === 0 || headings.length === 0) return;
-
-                let activeIndex = 0;
-
-                const updateActive = () => {
-                    
-                    const threshold = window.innerHeight * 0.75;
-                    
-                    
-                    let newIndex = 0;
-                    for (let i = 0; i < headings.length; i++) {
-                        if (headings[i].getBoundingClientRect().top <= threshold) {
-                            newIndex = i;
-                        } else {
-                            break;
-                        }
-                    }
-
-                    if (newIndex !== activeIndex) {
-                        tocLinks[activeIndex]?.classList.remove('is-active');
-                        activeIndex = newIndex;
-                        tocLinks[activeIndex]?.classList.add('is-active');
-                    }
-                };
-
-                
-                updateActive();
-
-                window.addEventListener('scroll', updateActive, { passive: true });
-            });
-        </script>
-        
-    
-
         </aside>
     </div>
 </body>

@@ -83,7 +83,7 @@ em, i {
 }
 
 .not-home .site-main {
-    padding-top: 3rem;
+    padding-top: 0.5rem;
 }
 
 /* 右侧边栏：用于目录等 */
@@ -94,10 +94,12 @@ em, i {
 
 /* Writing 栏标题：字体与间距统一在这里 */
 .writing-label {
-    font: var(--type-heading);
-    margin: 0 0 4rem 0;
-    color: var(--text-color);
-    font-weight: 500;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.3;
+    color: #050505;
+    margin: 0.7rem 0 0.75rem 0;
+    font-size: 1.05rem;
 }
 
 /* Writing 列表项：三列结构，左年，中标题，右日期 */
@@ -275,11 +277,12 @@ em, i {
 }
 
 .post-title {
-    font: var(--type-heading-l);
-    margin: 0 0 0.25rem 0;
-    letter-spacing: -0.01em;
-    color: #171717;
-    font-weight: 500;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.3;
+    color: #050505;
+    margin: 0.7rem 0 0.75rem 0;
+    font-size: 1.05rem;
 }
 
 .post-date {
