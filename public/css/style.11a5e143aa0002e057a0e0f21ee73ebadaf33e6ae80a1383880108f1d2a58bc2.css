@@ -65,6 +65,7 @@ em, i {
 .site-container {
     display: grid;
     grid-template-columns: 1fr 650px 1fr;
+    grid-template-rows: minmax(0, 1fr);
     max-width: 100%;
     margin: 0 auto;
     padding: 7rem 2rem 2rem;
@@ -91,6 +92,7 @@ em, i {
     display: flex;
     flex-direction: column;
     min-width: 0; /* Prevent flex/grid item from overflowing due to large content */
+    min-height: 0;
 }
 
 .not-home .site-main {
@@ -310,7 +312,7 @@ body::after {
     .site-container {
         grid-template-columns: 1fr;
         padding: 2rem 1.5rem;
-        padding: 3.5rem 1.5rem calc(0.25rem + env(safe-area-inset-bottom));
+    }
     .site-sidebar {
         justify-self: start;
         padding-right: 0;
