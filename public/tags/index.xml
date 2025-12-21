@@ -43,5 +43,12 @@
       <guid>http://localhost:1313/aki-liu/tags/drama/</guid>
       <description></description>
     </item>
+    <item>
+      <title>Journal</title>
+      <link>http://localhost:1313/aki-liu/tags/journal/</link>
+      <pubDate>Thu, 23 Dec 2021 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/aki-liu/tags/journal/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>
