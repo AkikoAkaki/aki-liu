@@ -67,7 +67,7 @@ em, i {
     grid-template-columns: 1fr 650px 1fr;
     max-width: 100%;
     margin: 0 auto;
-    padding: 7rem 2rem 2rem;
+    padding: 7rem 2rem 3rem;
     gap: 2rem;
     min-height: 100vh;
 }
@@ -309,7 +309,7 @@ body::after {
 @media (max-width: 900px) {
     .site-container {
         grid-template-columns: 1fr;
-        padding: 2rem 1.5rem;
+        padding: 2rem 1.5rem 2.5rem;
     }
     .site-sidebar {
         justify-self: start;
@@ -329,7 +329,7 @@ body::after {
 @media (max-width: 768px) {
     .site-container {
         grid-template-columns: 1fr;
-        padding: 3rem 1.5rem;
+        padding: 0rem 1.5rem 2rem;
         gap: 3rem;
     }
 
@@ -828,7 +828,7 @@ body::after {
 /* 页脚：控制间距和分隔线 */
 .site-footer {
     margin-top: auto;
-    padding-top: 10rem;
+    padding: 3rem 0 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
