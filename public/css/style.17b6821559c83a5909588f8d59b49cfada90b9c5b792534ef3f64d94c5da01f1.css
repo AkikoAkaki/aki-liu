@@ -147,7 +147,6 @@ em, i {
 
 .title-with-back {
     position: relative;
-    z-index: 50; /* Ensure it stays above the global top mask */
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
@@ -190,20 +189,6 @@ em, i {
     display: flex;
     flex-direction: column;
     width: 100%;
-    position: relative;
-}
-
-/* Global fixed gradient mask for top edge fade */
-body::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 40px;
-    background: linear-gradient(to bottom, var(--bg-color) 20%, transparent);
-    z-index: 40;
-    pointer-events: none;
 }
 
 .writing-item {
@@ -337,8 +322,6 @@ body::after {
 /* 单篇文章整体与标题 */
 .post-single {
     margin-bottom: 8rem;
-    min-width: 0; /* Ensure child elements like code blocks trigger scroll instead of expanding */
-    width: 100%;
 }
 
 .post-header {
@@ -909,21 +892,11 @@ body::after {
     animation-delay: 0.1s;
 }
 
-.work-table-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    /* Gradient mask for scroll hint */
-    mask-image: linear-gradient(to right, black calc(100% - 40px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black calc(100% - 40px), transparent 100%);
-}
-
 .work-table {
     width: 100%;
     border-collapse: collapse;
     border: none;
     table-layout: fixed;
-    min-width: 600px; /* Ensure scroll on mobile */
 }
 
 .work-table th {
@@ -1014,8 +987,7 @@ a.work-title:hover {
     .tag-sidebar--inline {
         display: block;
     }
-    /* Hide the sidebar tags on mobile */
-    .site-sidebar-right .tag-sidebar--sidebar {
+    .site-sidebar .tag-sidebar--sidebar {
         display: none;
     }
 }

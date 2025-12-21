@@ -334,7 +334,7 @@ em, i {
     line-height: 1.6;
     color: #8f8f8f;
     position: sticky;
-    top: 7rem;
+    top: 15.5rem;
     max-height: calc(100vh - 10rem);
     overflow-y: auto;
     padding-right: 0.5rem;
@@ -364,6 +364,12 @@ em, i {
 .post-toc ul ul ul {
     padding-left: 1.2rem;
     margin-top: 0.35rem;
+}
+
+/* Fix for deep nesting indentation when higher level headers are missing */
+.post-toc li:not(:has(> a)) > ul {
+    padding-left: 0;
+    margin-top: 0;
 }
 
 .post-toc li {
@@ -714,12 +720,20 @@ em, i {
 }
 
 /* 表格：支持边框、对齐与条纹以增强可读性 */
+.table-wrapper {
+    overflow-x: auto;
+    margin: 2.5rem 0;
+    border-radius: 8px;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
 .post-content table {
     width: 100%;
     border-collapse: collapse;
-    margin: 2.5rem 0;
+    margin: 0; /* Margin handled by wrapper */
     font-size: 0.95rem;
     background-color: rgba(255, 255, 255, 0.4);
+    min-width: 600px; /* Ensure table is wide enough to trigger scroll on small screens if needed */
 }
 
 .post-content table caption {

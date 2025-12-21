@@ -83,7 +83,6 @@ em, i {
     width: 100%;
     display: flex;
     flex-direction: column;
-    min-width: 0; /* Prevent flex/grid item from overflowing due to large content */
 }
 
 .not-home .site-main {
@@ -147,7 +146,6 @@ em, i {
 
 .title-with-back {
     position: relative;
-    z-index: 50; /* Ensure it stays above the global top mask */
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
@@ -190,20 +188,6 @@ em, i {
     display: flex;
     flex-direction: column;
     width: 100%;
-    position: relative;
-}
-
-/* Global fixed gradient mask for top edge fade */
-body::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 40px;
-    background: linear-gradient(to bottom, var(--bg-color) 20%, transparent);
-    z-index: 40;
-    pointer-events: none;
 }
 
 .writing-item {
@@ -337,8 +321,6 @@ body::after {
 /* 单篇文章整体与标题 */
 .post-single {
     margin-bottom: 8rem;
-    min-width: 0; /* Ensure child elements like code blocks trigger scroll instead of expanding */
-    width: 100%;
 }
 
 .post-header {
@@ -619,8 +601,6 @@ body::after {
     margin: 2.5rem 0;
     border: none;
     color: #3a3a3a;
-    white-space: pre;
-    word-wrap: normal;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -740,20 +720,12 @@ body::after {
 }
 
 /* 表格：支持边框、对齐与条纹以增强可读性 */
-.table-wrapper {
-    overflow-x: auto;
-    margin: 2.5rem 0;
-    border-radius: 8px;
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-}
-
 .post-content table {
     width: 100%;
     border-collapse: collapse;
-    margin: 0; /* Margin handled by wrapper */
+    margin: 2.5rem 0;
     font-size: 0.95rem;
     background-color: rgba(255, 255, 255, 0.4);
-    min-width: 600px; /* Ensure table is wide enough to trigger scroll on small screens if needed */
 }
 
 .post-content table caption {
@@ -909,21 +881,11 @@ body::after {
     animation-delay: 0.1s;
 }
 
-.work-table-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    /* Gradient mask for scroll hint */
-    mask-image: linear-gradient(to right, black calc(100% - 40px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black calc(100% - 40px), transparent 100%);
-}
-
 .work-table {
     width: 100%;
     border-collapse: collapse;
     border: none;
     table-layout: fixed;
-    min-width: 600px; /* Ensure scroll on mobile */
 }
 
 .work-table th {
@@ -1014,8 +976,7 @@ a.work-title:hover {
     .tag-sidebar--inline {
         display: block;
     }
-    /* Hide the sidebar tags on mobile */
-    .site-sidebar-right .tag-sidebar--sidebar {
+    .site-sidebar .tag-sidebar--sidebar {
         display: none;
     }
 }
