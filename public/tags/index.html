@@ -15,7 +15,7 @@
 
         
         
-        <link rel="stylesheet" href="/aki-liu/css/style.b93e74b7f8fdd4348de552cf443d756725c8f1e150c55002f81f7ca66e4eb195.css" integrity="sha256-uT50t/j91DSN5VLPRD11ZyXI8eFQxVAC&#43;B98pm5OsZU=">
+        <link rel="stylesheet" href="/aki-liu/css/style.5511c4a26e442b63bb2b28eaadea578735e8da983f6bb05cae9425579ae1d2fe.css" integrity="sha256-VRHEom5EK2O7KyjqrepXhzXo2pg/a7BcrpQlV5rh0v4=">
         
         
         
@@ -142,18 +142,26 @@
     
     <style>
         .tag-item {
-            display: flex;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) min-content;
             justify-content: space-between;
+            align-items: center;
+            column-gap: 1.5rem;
             color: var(--text-meta);
             text-decoration: none;
             transition: color 0.2s ease;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
         .tag-item:hover {
             color: var(--text-color);
         }
         .tag-count {
-            opacity: 0.4;
+            color: inherit;
+            opacity: 1;
+            margin-left: auto;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: "tnum" 1;
         }
     </style>
 </div>

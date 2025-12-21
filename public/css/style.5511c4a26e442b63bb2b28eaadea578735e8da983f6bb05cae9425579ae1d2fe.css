@@ -654,6 +654,33 @@ em, i {
 .post-content ul ul ul ul { list-style-type: circle; }
 /* 额外深层继续交替（如果需要，可按上面样式继续添加） */
 
+/* 脚注样式：减少行距 */
+.post-content .footnotes {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--text-meta);
+}
+
+.post-content .footnotes hr {
+    display: none;
+}
+
+.post-content .footnotes ol {
+    line-height: 1.4;
+}
+
+.post-content .footnotes li {
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+}
+
+.post-content .footnotes p {
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
 /* 表格：支持边框、对齐与条纹以增强可读性 */
 .post-content table {
     width: 100%;
