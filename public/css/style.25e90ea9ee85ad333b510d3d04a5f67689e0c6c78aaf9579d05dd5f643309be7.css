@@ -341,6 +341,14 @@ body::after {
         grid-row: 2;
     }
 
+    .site-footer {
+        padding-top: 3rem;
+    }
+
+    .post-single {
+        margin-bottom: 2rem;
+    }
+
     .writing-item {
         grid-template-columns: 60px 1fr 50px;
         gap: 0.5rem;
@@ -361,14 +369,6 @@ body::after {
 
     .title-with-back .back-link {
         position: static;
-    }
-
-    .site-footer {
-        padding-top: 3rem;
-    }
-
-    .post-single {
-        margin-bottom: 3rem;
     }
 }
 

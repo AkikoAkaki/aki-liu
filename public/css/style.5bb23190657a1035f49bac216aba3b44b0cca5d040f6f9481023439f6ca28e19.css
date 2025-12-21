@@ -362,14 +362,6 @@ body::after {
     .title-with-back .back-link {
         position: static;
     }
-
-    .site-footer {
-        padding-top: 3rem;
-    }
-
-    .post-single {
-        margin-bottom: 3rem;
-    }
 }
 
 /* 单篇文章整体与标题 */
