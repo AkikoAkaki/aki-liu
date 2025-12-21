@@ -118,8 +118,8 @@ em, i {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    font-family: var(--font-serif);
-    font-size: 1.15rem;
+    font-family: var(--font-sans);
+    font-size: 0.1rem;
     color: #7d7d7d;
     text-decoration: none;
     padding: 0.15rem 0.4rem 0.15rem 0;

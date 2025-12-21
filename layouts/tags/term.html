@@ -1,6 +1,15 @@
 {{ define "main" }}
 <div class="writing-container">
-    <h1 class="writing-label">{{ .Title }}</h1>
+    <div class="title-with-back">
+        <a class="back-link" href="{{ .Site.Home.RelPermalink }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="M11 6l-6 6 6 6" />
+            </svg>
+            <span>Index</span>
+        </a>
+        <h1 class="writing-label">{{ .Title }}</h1>
+    </div>
     {{ $pages := .Data.Pages }}
     {{ if gt (len $pages) 0 }}
     <div class="writing-list">
