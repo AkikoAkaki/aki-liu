@@ -318,7 +318,7 @@ body::after {
 @media (max-width: 768px) {
     .site-container {
         grid-template-columns: 1fr;
-        padding: 3rem 1.5rem;
+        padding: 4rem 1.5rem;
         gap: 3rem;
     }
 
