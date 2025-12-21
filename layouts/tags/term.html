@@ -1,38 +1,49 @@
 {{ define "main" }}
 <div class="writing-container">
+    {{ $pages := .Data.Pages }}
+    {{ $backHref := .Site.Home.RelPermalink }}
+    {{ $backLabel := "Index" }}
+
+    {{ if gt (len $pages) 0 }}
+        {{ $firstPage := index $pages 0 }}
+        {{ $allSameSection := true }}
+        {{ $targetSection := $firstPage.CurrentSection }}
+        {{ range $pages }}
+            {{ if ne .CurrentSection $targetSection }}
+                {{ $allSameSection = false }}
+            {{ end }}
+        {{ end }}
+        {{ if and $allSameSection $targetSection }}
+            {{ $backHref = $targetSection.RelPermalink }}
+            {{ $backLabel = $targetSection.Title }}
+        {{ end }}
+    {{ end }}
+
     <div class="title-with-back">
-        <a class="back-link" href="{{ .Site.Home.RelPermalink }}">
+        <a class="back-link" href="{{ $backHref }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 12h14" />
                 <path d="M11 6l-6 6 6 6" />
             </svg>
-            <span>Index</span>
+            <span>{{ $backLabel }}</span>
         </a>
         <h1 class="writing-label">{{ .Title }}</h1>
     </div>
-    {{ $pages := .Data.Pages }}
     {{ if gt (len $pages) 0 }}
     <div class="writing-list">
-        {{ range $pages.GroupBy "Section" }}
-            <div class="section-group" style="margin-bottom: 2rem;">
-                <h2 class="section-group-title" style="font-size: 0.9rem; color: var(--text-meta); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
-                    {{ .Key | humanize }}
-                </h2>
-                {{ range .Pages.GroupByPublishDate "2006" }}
-                    {{ $year := .Key }}
-                    {{ range $index, $page := .Pages }}
-                        {{ $isFirstOfYear := eq $index 0 }}
-                        <article class="writing-item {{ if $isFirstOfYear }}first-of-year{{ end }}">
-                            <div class="item-divider"></div>
-                            <div class="item-year">
-                                {{ if $isFirstOfYear }}{{ $year }}{{ end }}
-                            </div>
-                            <a href="{{ .RelPermalink }}" class="item-title">{{ .Title }}</a>
-                            <time class="item-date">{{ .Date.Format "01/02" }}</time>
-                        </article>
-                    {{ end }}
-                {{ end }}
-            </div>
+        {{ range $pages.GroupByPublishDate "2006" }}
+            {{ $year := .Key }}
+            {{ range $index, $page := .Pages }}
+                {{ $isFirstOfYear := eq $index 0 }}
+                <article class="writing-item {{ if $isFirstOfYear }}first-of-year{{ end }}">
+                    <div class="item-divider"></div>
+                    <div class="item-year">
+                        {{ if $isFirstOfYear }}{{ $year }}{{ end }}
+                    </div>
+                    <a href="{{ .RelPermalink }}" class="item-title">{{ .Title }}</a>
+                    <time class="item-date">{{ .Date.Format "01/02" }}</time>
+                </article>
+            {{ end }}
         {{ end }}
     </div>
     {{ end }}
