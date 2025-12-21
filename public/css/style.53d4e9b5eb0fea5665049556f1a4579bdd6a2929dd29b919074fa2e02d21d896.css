@@ -1,9 +1,9 @@
 /* 全局变量：字体、颜色、间距统一在这里配置，能快速改变整体调性 */
 :root {
     /* 字体栈：更换字体即可影响整站语气 */
-    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --font-serif: "Newsreader", "Signifier", "Times", serif;
-    --font-ui: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: "Inter", "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-serif: "Newsreader", "SimSun", "Songti SC", "Signifier", "Times", serif;
+    --font-ui: "Inter", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: "Consolas", "Monaco", "Courier New", monospace;
 
     /* 排版预设：字体大小与行高是基础标尺 */
@@ -52,6 +52,13 @@ a {
     text-decoration: none;
 }
 
+/* 斜体统一使用 Serif 字体栈（Newsreader + 宋体） */
+em, i {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.1em;
+}
+
 /* 主体布局：三列网格，正文始终在中央 */
 .site-container {
     display: grid;
@@ -66,7 +73,7 @@ a {
 .site-sidebar {
     grid-column: 1;
     justify-self: end;
-    padding-right: 12rem;
+    padding-right: 4rem;
 }
 
 /* 主内容列 */
@@ -75,30 +82,14 @@ a {
     width: 100%;
 }
 
+.not-home .site-main {
+    padding-top: 3rem;
+}
+
 /* 右侧边栏：用于目录等 */
 .site-sidebar-right {
     grid-column: 3;
     justify-self: start;
-}
-
-/* 侧边导航：垂直排列 + 简洁 hover */
-.site-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.nav-link {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 1.05rem;
-    color: var(--text-meta);
-    transition: color 0.2s ease;
-}
-
-.nav-link.is-active,
-.nav-link:hover {
-    color: var(--text-color);
 }
 
 /* Writing 栏标题：字体与间距统一在这里 */
@@ -121,17 +112,33 @@ a {
     grid-template-columns: 140px 1fr 60px;
     gap: 1.5rem;
     align-items: baseline;
-    padding-bottom: 0.4rem;
-    margin-bottom: 1.5rem;
+    padding-top: 1.1rem;
+    padding-bottom: 0.7rem;
+    margin-bottom: 0;
     position: relative;
+}
+
+.item-title,
+.item-date {
+    transition: opacity 0.1s ease;
+}
+
+.writing-list:hover .item-title,
+.writing-list:hover .item-date {
+    opacity: 0.5;
+}
+
+.writing-item:hover .item-title,
+.writing-item:hover .item-date {
+    opacity: 1;
 }
 
 .item-divider {
     grid-column: 1 / -1;
     height: 1px;
-    background-color: #f0f0f0;
+    background-color: #e5e5e5;
     position: absolute;
-    top: -1.4rem;
+    top: 0;
     width: 100%;
 }
 
@@ -289,7 +296,8 @@ a {
 }
 
 .post-content p {
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
+    white-space: pre-line;
 }
 
 .post-content blockquote {
@@ -320,20 +328,29 @@ a {
     height: auto;
     display: block;
     margin: 2.5rem auto;
-    border-radius: 16px;
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.08);
+    border-radius: 0;
+    box-shadow: none;
     border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .post-content figure {
-    margin: 3rem 0;
-    text-align: center;
+    margin: 1rem 0;
+    text-align: left;
+}
+
+.post-content figure img {
+    margin: 0;
 }
 
 .post-content figure figcaption {
-    margin-top: 0.75rem;
-    font-size: 0.9rem;
+    margin-top: -0.6rem;
+    font-size: 0.8rem;
     color: var(--text-meta);
+    text-align: left;
+}
+
+.post-content figure figcaption strong {
+    font-weight: 600;
 }
 
 .post-content video,
@@ -354,7 +371,7 @@ a {
     .post-content video,
     .post-content audio,
     .post-content iframe {
-        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4);
+        box-shadow: none;
         border-color: rgba(255, 255, 255, 0.08);
     }
 }
@@ -379,19 +396,20 @@ a {
     line-height: 1.3;
     color: #050505;
     margin-bottom: 0.75rem;
+    margin-top: 3.5rem;
     scroll-margin-top: 25vh;
 }
 
 .post-content h1 {
-    font-size: 1.25rem;
+    font-size: 1.16rem;
 }
 
 .post-content h2 {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
 }
 
 .post-content h3 {
-    font-size: 1rem;
+    font-size: 1.05rem;
 }
 
 .post-content h4 {
@@ -582,14 +600,24 @@ a {
 /* 页脚：控制间距和分隔线 */
 .site-footer {
     margin-top: 10rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 0.85rem;
     color: var(--text-meta);
     font-family: var(--font-ui);
+}
+
+.site-footer a {
+    text-decoration: underline;
+    text-decoration-color: var(--border-color);
+    text-underline-offset: 2px;
+    color: inherit;
+    transition: text-decoration-color 0.2s ease;
+}
+
+.site-footer a:hover {
+    text-decoration-color: var(--text-color);
 }
 
 .footer-right {
@@ -606,23 +634,39 @@ a {
 
 /* Homepage Styles */
 
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .home-container {
     display: flex;
     flex-direction: column;
-    gap: 4rem;
+    gap: 2.5rem;
+    padding-top: 0.5rem;
 }
 
 /* Intro Section */
 .intro {
-    margin-bottom: 2rem;
+    margin-bottom: 0;
+    opacity: 0;
+    animation: fade-in-up 0.6s ease forwards;
+    animation-delay: 0s;
 }
 
 .author-name {
     font-family: var(--font-sans);
-    font-size: 1rem;
     font-weight: 400;
-    margin-bottom: 1.5rem;
-    color: var(--text-color);
+    line-height: 1.3;
+    color: #050505;
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
 }
 
 .bio-text {
@@ -638,22 +682,32 @@ a {
     font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
+    font-size: 1.1em;
 }
 
-.bio-text a {
+.bio-text a,
+.now-section a,
+.connect-section a {
     text-decoration: underline;
     text-decoration-color: var(--border-color);
     text-underline-offset: 2px;
+    color: inherit;
+    transition: text-decoration-color 0.2s ease;
 }
 
-.bio-text a:hover {
+.bio-text a:hover,
+.now-section a:hover,
+.connect-section a:hover {
     color: var(--text-color);
     text-decoration-color: var(--text-color);
 }
 
 /* Work Table Section */
 .work-table-section {
-    margin-bottom: 2rem;
+    margin-bottom: 0;
+    opacity: 0;
+    animation: fade-in-up 0.6s ease forwards;
+    animation-delay: 0.1s;
 }
 
 .work-table {
@@ -667,7 +721,7 @@ a {
     text-align: left;
     font-family: var(--font-sans);
     font-size: 0.9rem;
-    color: var(--text-meta);
+    color: #6f6f6f;
     font-weight: 400;
     padding-bottom: 1.5rem;
     border: none;
@@ -702,26 +756,41 @@ a {
     font-weight: 500;
     color: var(--text-color);
     display: inline-block;
+    text-decoration: none;
+}
+
+a.work-title {
+    text-decoration: underline;
+    text-decoration-color: var(--border-color);
+    text-underline-offset: 2px;
+}
+
+a.work-title:hover {
+    text-decoration-color: var(--text-color);
 }
 
 .work-desc {
     font-family: var(--font-sans);
     font-size: 0.9rem;
-    color: var(--text-meta);
-    line-height: 1.4;
+    color: #6f6f6f;
+    line-height: 1.75;
 }
 
 /* Now Section */
 .now-section {
-    margin-top: 2rem;
+    margin-top: 0;
+    opacity: 0;
+    animation: fade-in-up 0.6s ease forwards;
+    animation-delay: 0.2s;
 }
 
 .section-title {
     font-family: var(--font-sans);
-    font-size: 0.9rem;
-    color: var(--text-meta);
     font-weight: 400;
-    margin-bottom: 1.5rem;
+    line-height: 1.3;
+    color: #050505;
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
 }
 
 .now-section p {
@@ -736,4 +805,22 @@ a {
 .now-section p em {
     font-family: var(--font-serif);
     font-style: italic;
+    font-size: 1.1em;
+}
+
+/* Connect Section */
+.connect-section {
+    margin-top: 0;
+    opacity: 0;
+    animation: fade-in-up 0.6s ease forwards;
+    animation-delay: 0.3s;
+}
+
+.connect-section p {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    max-width: 600px;
 }

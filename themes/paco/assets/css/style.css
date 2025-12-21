@@ -82,52 +82,14 @@ em, i {
     width: 100%;
 }
 
+.not-home .site-main {
+    padding-top: 3rem;
+}
+
 /* 右侧边栏：用于目录等 */
 .site-sidebar-right {
     grid-column: 3;
     justify-self: start;
-}
-
-/* 侧边导航：垂直排列 + 简洁 hover */
-.site-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.nav-back {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    color: var(--text-meta);
-    transition: color 0.2s ease;
-    margin-top: 0.2rem; /* Align with title baseline */
-}
-
-.nav-back:hover {
-    color: var(--text-color);
-}
-
-.nav-back svg {
-    transition: transform 0.2s ease;
-}
-
-.nav-back:hover svg {
-    transform: translateX(-3px);
-}
-
-.nav-link {
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    color: var(--text-meta);
-    transition: color 0.2s ease;
-}
-
-.nav-link.is-active,
-.nav-link:hover {
-    color: var(--text-color);
 }
 
 /* Writing 栏标题：字体与间距统一在这里 */
@@ -687,7 +649,7 @@ em, i {
     display: flex;
     flex-direction: column;
     gap: 2.5rem;
-    padding-top: 4rem;
+    padding-top: 0.5rem;
 }
 
 /* Intro Section */

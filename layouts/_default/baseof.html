@@ -38,79 +38,16 @@
             });
         </script>
         {{ end }}
-    <style>
-        .nav-sub {
-            display: flex;
-            flex-direction: column;
-            margin-left: 1.5rem;
-            margin-top: 0.25rem;
-        }
-        .nav-link {
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 1.25rem;
-            color: var(--text-meta);
-            transition: color 0.2s ease;
-        }
-        .sub-link {
-            font-family: var(--font-serif);
-            font-style: italic;
-            font-size: 1.25rem;
-            color: var(--text-meta);
-            text-decoration: none;
-            margin-bottom: 0.25rem;
-            display: block;
-            transition: color 0.2s ease;
-        }
-        .sub-link:hover {
-            color: var(--text-color);
-        }
-        .sub-link.is-active {
-            color: var(--text-color);
-        }
-    </style>
 </head>
-<body>
+<body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }}">
     {{ $nav := .Site.Params.navigation }}
     {{ $homeLabel := "Index" }}
-    {{ $writingLabel := "Writing" }}
     {{ with $nav }}
         {{ with .homeLabel }}{{ $homeLabel = . }}{{ end }}
-        {{ with .writingLabel }}{{ $writingLabel = . }}{{ end }}
     {{ end }}
     {{ $writingSection := .Site.GetPage "section" "writing" }}
     <div class="site-container">
-        <aside class="site-sidebar">
-            <nav class="site-nav">
-                {{ if not .IsHome }}
-                    {{ $backUrl := "" }}
-                    {{ $backText := "" }}
-                    
-                    {{ if .IsPage }}
-                        {{ $backUrl = .CurrentSection.RelPermalink }}
-                        {{ $backText = .CurrentSection.Title }}
-                    {{ else if .IsSection }}
-                        {{ if eq .Parent .Site.Home }}
-                            {{ $backUrl = .Site.Home.RelPermalink }}
-                            {{ $backText = "Index" }}
-                        {{ else }}
-                            {{ $backUrl = .Parent.RelPermalink }}
-                            {{ $backText = .Parent.Title }}
-                        {{ end }}
-                    {{ end }}
-
-                    {{ if $backUrl }}
-                    <a href="{{ $backUrl }}" class="nav-back">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="19" y1="12" x2="5" y2="12"></line>
-                            <polyline points="12 19 5 12 12 5"></polyline>
-                        </svg>
-                        <span>{{ $backText }}</span>
-                    </a>
-                    {{ end }}
-                {{ end }}
-            </nav>
-        </aside>
+        <aside class="site-sidebar"></aside>
         <main class="site-main">
             {{ block "main" . }}{{ end }}
             <footer class="site-footer">
