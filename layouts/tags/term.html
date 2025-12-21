@@ -13,19 +13,26 @@
     {{ $pages := .Data.Pages }}
     {{ if gt (len $pages) 0 }}
     <div class="writing-list">
-        {{ range $pages.GroupByPublishDate "2006" }}
-            {{ $year := .Key }}
-            {{ range $index, $page := .Pages }}
-                {{ $isFirstOfYear := eq $index 0 }}
-                <article class="writing-item {{ if $isFirstOfYear }}first-of-year{{ end }}">
-                    <div class="item-divider"></div>
-                    <div class="item-year">
-                        {{ if $isFirstOfYear }}{{ $year }}{{ end }}
-                    </div>
-                    <a href="{{ .RelPermalink }}" class="item-title">{{ .Title }}</a>
-                    <time class="item-date">{{ .Date.Format "01/02" }}</time>
-                </article>
-            {{ end }}
+        {{ range $pages.GroupBy "Section" }}
+            <div class="section-group" style="margin-bottom: 2rem;">
+                <h2 class="section-group-title" style="font-size: 0.9rem; color: var(--text-meta); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                    {{ .Key | humanize }}
+                </h2>
+                {{ range .Pages.GroupByPublishDate "2006" }}
+                    {{ $year := .Key }}
+                    {{ range $index, $page := .Pages }}
+                        {{ $isFirstOfYear := eq $index 0 }}
+                        <article class="writing-item {{ if $isFirstOfYear }}first-of-year{{ end }}">
+                            <div class="item-divider"></div>
+                            <div class="item-year">
+                                {{ if $isFirstOfYear }}{{ $year }}{{ end }}
+                            </div>
+                            <a href="{{ .RelPermalink }}" class="item-title">{{ .Title }}</a>
+                            <time class="item-date">{{ .Date.Format "01/02" }}</time>
+                        </article>
+                    {{ end }}
+                {{ end }}
+            </div>
         {{ end }}
     </div>
     {{ end }}

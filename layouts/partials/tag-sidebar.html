@@ -1,0 +1,47 @@
+<div class="tag-sidebar" style="margin-top: 3.15rem; font-family: 'Inter', sans-serif; width: 75px;">
+    {{/* Collect tags from current context's pages (usually a section) */}}
+    {{ $tags := dict }}
+    {{ range .Pages }}
+        {{ range .Params.tags }}
+            {{ $currentCount := index $tags . | default 0 }}
+            {{ $tags = merge $tags (dict . (add $currentCount 1)) }}
+        {{ end }}
+    {{ end }}
+    
+    {{/* Get keys and sort them */}}
+    {{ $keys := slice }}
+    {{ range $k, $v := $tags }}
+        {{ $keys = $keys | append $k }}
+    {{ end }}
+    {{ $keys = sort $keys }}
+
+    {{ if gt (len $keys) 0 }}
+    <div class="tag-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+        {{ range $keys }}
+            {{ $name := . }}
+            {{ $count := index $tags $name }}
+            <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}" class="tag-item">
+                <span>#{{ $name }}</span>
+                <span class="tag-count">{{ $count }}</span>
+            </a>
+        {{ end }}
+    </div>
+    {{ end }}
+    
+    <style>
+        .tag-item {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-meta);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            font-size: 0.9rem;
+        }
+        .tag-item:hover {
+            color: var(--text-color);
+        }
+        .tag-count {
+            opacity: 0.4;
+        }
+    </style>
+</div>
