@@ -909,6 +909,22 @@ a.work-title:hover {
     line-height: 1.75;
 }
 
+.tag-sidebar {
+    width: auto !important;
+}
+
+.tag-sidebar .tag-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) min-content;
+    gap: 2rem;
+}
+
+.tag-sidebar .tag-count {
+    min-width: 1.5rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
 /* Now Section */
 .now-section {
     margin-top: 0;
