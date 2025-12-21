@@ -134,6 +134,7 @@ em, i {
 .title-with-back .back-link svg {
     width: 16px;
     height: 16px;
+    margin-top: -1.75px;
 }
 
 .title-with-back .back-link span {
