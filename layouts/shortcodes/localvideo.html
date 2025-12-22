@@ -1,0 +1,44 @@
+{{- /* Renders local video assets stored alongside the page bundle */ -}}
+{{- $src := .Get "src" -}}
+{{- if not $src -}}
+  {{- errorf "localvideo shortcode requires the 'src' parameter (called at %s)" .Position -}}
+{{- end -}}
+{{- $video := .Page.Resources.GetMatch $src -}}
+{{- $url := "" -}}
+{{- if $video -}}
+  {{- $url = $video.RelPermalink -}}
+{{- else -}}
+  {{- $url = relURL $src -}}
+{{- end -}}
+{{- $poster := .Get "poster" -}}
+{{- $caption := .Get "caption" -}}
+{{- $preload := default "metadata" (.Get "preload") -}}
+{{- $type := .Get "type" -}}
+{{- if not $type -}}
+  {{- $ext := strings.ToLower (strings.TrimPrefix "." (path.Ext $src)) -}}
+  {{- if eq $ext "mp4" -}}
+    {{- $type = "video/mp4" -}}
+  {{- else if eq $ext "webm" -}}
+    {{- $type = "video/webm" -}}
+  {{- else if or (eq $ext "ogg") (eq $ext "ogv") -}}
+    {{- $type = "video/ogg" -}}
+  {{- end -}}
+{{- end -}}
+{{- $truthy := slice "true" "1" "yes" "on" "y" -}}
+{{- $autoplay := lower (default "" (.Get "autoplay")) -}}
+{{- $mutedParam := lower (default "" (.Get "muted")) -}}
+{{- $loop := lower (default "" (.Get "loop")) -}}
+{{- $playsinline := lower (default "" (.Get "playsinline")) -}}
+{{- $autoplayEnabled := in $truthy $autoplay -}}
+{{- $mutedEnabled := or (in $truthy $mutedParam) (and $autoplayEnabled (eq $mutedParam "")) -}}
+{{- $loopEnabled := in $truthy $loop -}}
+{{- $playsinlineEnabled := or (eq $playsinline "") (in $truthy $playsinline) -}}
+<figure class="local-video{{ with .Get "class" }} {{ . }}{{ end }}">
+  <video class="local-video__media" controls preload="{{ $preload }}" {{ if $autoplayEnabled }}autoplay{{ end }} {{ if $mutedEnabled }}muted{{ end }} {{ if $loopEnabled }}loop{{ end }} {{ if $playsinlineEnabled }}playsinline{{ end }}{{ with $poster }} poster="{{ . }}"{{ end }}>
+    <source src="{{ $url }}"{{ with $type }} type="{{ . }}"{{ end }}>
+    Sorry, your browser cannot play this video.
+  </video>
+  {{- with $caption -}}
+    <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end -}}
+</figure>

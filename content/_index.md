@@ -14,6 +14,7 @@ title: "Home"
     <h2 class="section-title">Now</h2>
     <p>Cultivating taste through rigorous building and writing. Relentlessly thinking and reflecting.</p>
     <p>Influenced by the aesthetics of Yukio Mishima, Roland Barthes, Tomas Tranströmer, and Sheena Ringo.</p>
+    <p>Here are some <a href="{{< ref "/cute-things" >}}">cute things</a>.</p>
 </section>
 
 <section class="connect-section">

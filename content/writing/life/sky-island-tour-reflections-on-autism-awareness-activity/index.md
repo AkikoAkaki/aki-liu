@@ -1,6 +1,7 @@
 ---
 title: " 空岛之游：关爱自闭症活动随笔"
 date: 2021-12-23
+slug: "sky-island-tour-reflections-on-autism-awareness-activity"
 tags: ["journal"]
 draft: false
 ---

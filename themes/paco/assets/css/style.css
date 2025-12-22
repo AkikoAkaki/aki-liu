@@ -545,12 +545,17 @@ body::after {
     border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
+.post-content img[width] {
+    width: auto;
+}
+
 .post-content figure {
     margin: 1rem 0;
     text-align: left;
 }
 
-.post-content figure img {
+.post-content figure img,
+.post-content figure video {
     margin: 0;
 }
 
@@ -571,9 +576,9 @@ body::after {
     width: 100%;
     max-width: 100%;
     margin: 2.5rem 0;
-    border-radius: 16px;
+    border-radius: 0;
     border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.08);
+    box-shadow: none;
 }
 
 @media (prefers-color-scheme: dark) {
