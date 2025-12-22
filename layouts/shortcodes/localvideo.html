@@ -35,7 +35,7 @@
 {{- $playsinlineEnabled := or (eq $playsinline "") (in $truthy $playsinline) -}}
 <figure class="local-video{{ with .Get "class" }} {{ . }}{{ end }}">
   <video class="local-video__media" controls preload="{{ $preload }}" {{ if $autoplayEnabled }}autoplay{{ end }} {{ if $mutedEnabled }}muted{{ end }} {{ if $loopEnabled }}loop{{ end }} {{ if $playsinlineEnabled }}playsinline{{ end }}{{ with $poster }} poster="{{ . }}"{{ end }}>
-    <source src="{{ $url }}"{{ with $type }} type="{{ . }}"{{ end }}>
+    <source src="{{ $url }}#t=0.001"{{ with $type }} type="{{ . }}"{{ end }}>
     Sorry, your browser cannot play this video.
   </video>
   {{- with $caption -}}
