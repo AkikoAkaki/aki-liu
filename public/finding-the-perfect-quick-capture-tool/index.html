@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/aki-liu/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=aki-liu/livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finding the Perfect Quick Capture Tool | Aki&#39;s Blog</title>
+    
+    <link rel="canonical" href="http://localhost:1313/aki-liu/finding-the-perfect-quick-capture-tool/">
+    
+    
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Newsreader:ital,wght@1,400&display=swap" rel="stylesheet">
+
+        
+        
+        <link rel="stylesheet" href="/aki-liu/css/style.6ade9ae99cbe6fa8eb2f5c899015bce9fb11e10dad1eb8851866587506f5f3e5.css" integrity="sha256-at6a6Zy&#43;b6jrL1yJkBW86fsR4Q2tHriFGGZYdQb18&#43;U=">
+        
+        
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+        <script defer>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof renderMathInElement === 'function') {
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false
+                    });
+                }
+            });
+        </script>
+        
+</head>
+<body class="not-home">
+    
+    
+    
+        
+    
+    
+    <div class="site-container">
+        <aside class="site-sidebar"></aside>
+        <main class="site-main">
+            
+<article class="post-single">
+    <header class="post-header">
+        
+        
+        
+            
+            
+        
+        <div class="title-with-back">
+            <a class="back-link" href="/aki-liu/tech/">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14" />
+                    <path d="M11 6l-6 6 6 6" />
+                </svg>
+                <span>Tech</span>
+            </a>
+            <h1 class="post-title">Finding the Perfect Quick Capture Tool</h1>
+        </div>
+        <time class="post-date">2025/12/22</time>
+    </header>
+
+    
+    <aside class="post-toc post-toc--inline">
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#tldr-my-selection-summary">TL;DR: My Selection Summary</a></li>
+          </ul>
+        </li>
+        <li><a href="#the-early-days-from-paper-to-e-ink">The Early Days: From Paper to E-Ink</a></li>
+        <li><a href="#the-exploration-phase-trial-error-and-trade-offs">The Exploration Phase: Trial, Error, and Trade-offs</a>
+          <ul>
+            <li><a href="#simplenote-the-former-industry-standard">Simplenote: The Former Industry Standard</a></li>
+            <li><a href="#google-keep-the-concern-of-data-sovereignty">Google Keep: The Concern of Data Sovereignty</a></li>
+            <li><a href="#upnote-almost-perfect">Upnote: Almost Perfect</a></li>
+            <li><a href="#notesnook-the-conflict-between-encryption-and-format">Notesnook: The Conflict Between Encryption and Format</a></li>
+          </ul>
+        </li>
+        <li><a href="#why-werent-the-mainstream-tools-suitable">Why Weren&rsquo;t the Mainstream Tools Suitable?</a></li>
+        <li><a href="#the-final-choice-anytype">The Final Choice: Anytype</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </aside>
+    
+
+    <div class="post-content">
+        <h3 id="tldr-my-selection-summary">TL;DR: My Selection Summary</h3>
+<div class="table-wrapper">
+  <table>
+    <thead>
+      
+        <tr>
+          
+            <th>
+              Tool
+            </th>
+          
+            <th>
+              Reason for Elimination
+            </th>
+          
+        </tr>
+      
+    </thead>
+    <tbody>
+      
+        <tr>
+          
+            <td>
+              <strong>Simplenote</strong>
+            </td>
+          
+            <td>
+              No image support; functionality is too basic.
+            </td>
+          
+        </tr>
+      
+        <tr>
+          
+            <td>
+              <strong>Google Keep</strong>
+            </td>
+          
+            <td>
+              Data cannot be exported (Lock-in risk); no Markdown support; unfriendly to long text.
+            </td>
+          
+        </tr>
+      
+        <tr>
+          
+            <td>
+              <strong>Notion</strong>
+            </td>
+          
+            <td>
+              Requires internet connection; slow startup speed; unsuitable for quick capture.
+            </td>
+          
+        </tr>
+      
+        <tr>
+          
+            <td>
+              <strong>Obsidian</strong>
+            </td>
+          
+            <td>
+              Great for a Knowledge Base, but too heavy to serve as an &ldquo;Inbox.&rdquo;
+            </td>
+          
+        </tr>
+      
+        <tr>
+          
+            <td>
+              <strong>Upnote</strong>
+            </td>
+          
+            <td>
+              Rich-text oriented; not Markdown native; free version limits are too restrictive.
+            </td>
+          
+        </tr>
+      
+        <tr>
+          
+            <td>
+              <strong>Notesnook</strong>
+            </td>
+          
+            <td>
+              Not Markdown native; cannot copy text as Markdown.
+            </td>
+          
+        </tr>
+      
+        <tr>
+          
+            <td>
+              <strong>Apple Notes</strong>
+            </td>
+          
+            <td>
+              No Windows platform support.
+            </td>
+          
+        </tr>
+      
+        <tr>
+          
+            <td>
+              <strong>Anytype</strong>
+            </td>
+          
+            <td>
+              <strong>The Winner</strong> (Local-first, Open Source, Markdown support, Beautiful, Encrypted).
+            </td>
+          
+        </tr>
+      
+    </tbody>
+  </table>
+</div>
+<hr>
+<p>My obsession with &ldquo;recording tools&rdquo; has persisted for quite a long time. Because I frequently have text processing needs, I have been searching for the perfect portable, quick-capture tool.</p>
+<h2 id="the-early-days-from-paper-to-e-ink">The Early Days: From Paper to E-Ink</h2>
+<p>Early on, I was a loyal advocate of digital notes. Since junior high, I tried to abandon paper notebooks. The disadvantages of paper are obvious: the data is inflexible, cannot be exported, is hard to edit, and even simple typos or messy handwriting can clutter an entire page.</p>
+<p>At that time, my only electronic device was a classic Kindle. It was eye-friendly, multi-functional, and compact. It could export reading notes directly into a spreadsheet, which was enough for me back then. However, as a recording tool, it had a fatal flaw: <strong>it lacked any optimization for editing</strong>. The E-ink refresh rate was low, requiring me to press every character &ldquo;slowly and firmly&rdquo; to type. Despite this, I specifically imported a custom e-book and did quite a bit of creative writing inside it using the annotation feature.</p>
+<h2 id="the-exploration-phase-trial-error-and-trade-offs">The Exploration Phase: Trial, Error, and Trade-offs</h2>
+<h3 id="simplenote-the-former-industry-standard">Simplenote: The Former Industry Standard</h3>
+<figure><img src="/aki-liu/finding-the-perfect-quick-capture-tool/1.png">
+</figure>
+
+<p>After entering college, Simplenote became my daily driver. It was practically the benchmark for the software industry: minimalist, high performance, Markdown support, excellent compatibility, forever free, and exportable data. Even looking back now, it’s hard for me to find fault with it.</p>
+<p>The main reason I eventually replaced it was simple: <strong>it doesn&rsquo;t support images.</strong>
+However, I really admired its recycling bin mechanism—when notes are deleted, they aren&rsquo;t automatically emptied but are kept forever. This unintentionally acted as an &ldquo;automatic archive.&rdquo; Opening Simplenote occasionally during college and seeing texts I casually wrote in junior high often filled me with nostalgia.</p>
+<h3 id="google-keep-the-concern-of-data-sovereignty">Google Keep: The Concern of Data Sovereignty</h3>
+<figure><img src="/aki-liu/finding-the-perfect-quick-capture-tool/3.png">
+</figure>
+
+<p>I briefly tried Google Keep after discovering it was integrated into Gemini. I was intrigued by the concept of &ldquo;AI + Notes,&rdquo; so I thought about switching my quick capture tool to Google Keep.</p>
+<p>Keep has the typical Google product style: Web-native and lightweight. Its card stream view is great for an overview, and it supports images and collaboration.</p>
+<p>But its text formatting support is minimal (no Markdown), and it is unfriendly to long text. The core reason I abandoned it, however, was <strong>the inability to export data</strong>. As someone who values data control, I cannot tolerate the risk of my data instantly evaporating if my Google account were to be banned. Now, I only use it to record temporary information that I don&rsquo;t mind losing.</p>
+<h3 id="upnote-almost-perfect">Upnote: Almost Perfect</h3>
+<figure><img src="/aki-liu/finding-the-perfect-quick-capture-tool/2.png">
+</figure>
+
+<p>I turned to Upnote as a modern alternative to Simplenote that supports images. Upnote features a notebook system, workspaces, and real-time Markdown rendering.</p>
+<p>Many people love its aesthetic, considering it clean, fast, and elegant. It does indeed perform well. But after using it for a while, I found it wasn&rsquo;t quite <strong>polished</strong> enough. The operation bar is too cluttered, and it feels strongly <strong>Rich-text oriented</strong> (you can&rsquo;t paste directly from Markdown source). The list layout on mobile wasn&rsquo;t compact enough for my liking.</p>
+<p>Ultimately, the free version&rsquo;s limit of only 50 notes drove me away—paying for that feature set didn&rsquo;t feel worth it.</p>
+<h3 id="notesnook-the-conflict-between-encryption-and-format">Notesnook: The Conflict Between Encryption and Format</h3>
+<figure><img src="/aki-liu/finding-the-perfect-quick-capture-tool/4.png">
+</figure>
+
+<p>After leaving Upnote, a newer, minimalist, encrypted note-taking app called Notesnook caught my attention.</p>
+<p>I thought this would be my next tool: concise, lightweight, modern, beautiful, open-source, private, and supporting images and publishing. I still think it’s a very good app, and I prefer it over Upnote.</p>
+<p>However, I abandoned it before diving too deep. It has a fatal pain point: <strong>it is not Markdown native.</strong> Does it support Markdown shortcuts during editing? Yes, but the underlying format isn&rsquo;t Markdown. This means I cannot easily copy notes out as Markdown text.</p>
+<h2 id="why-werent-the-mainstream-tools-suitable">Why Weren&rsquo;t the Mainstream Tools Suitable?</h2>
+<ul>
+<li><strong>Evernote:</strong> Used it very early on (elementary/middle school), but it quickly became unbearably bloated.</li>
+<li><strong>Obsidian:</strong> I still use Obsidian, but I have refactored it into a deep-linked &ldquo;Knowledge Base&rdquo; rather than using it for daily logging. Daily logging shouldn&rsquo;t cause my knowledge base to expand infinitely; it makes management difficult.</li>
+<li><strong>Notion:</strong> Powerful database features and a beautiful interface, but its speed and performance are issues. Limited by cloud services, every open requires loading, and it lacks offline functionality. This is fatal for a quick recording experience.</li>
+<li><strong>OneNote:</strong> I barely used it. I dislike OneNote&rsquo;s design, and it feels too bloated. Also, despite running Windows 11, I try to avoid the Microsoft ecosystem as much as possible.</li>
+<li><strong>Apple Notes:</strong> It’s truly a great app, but my Windows 11 PC can&rsquo;t use it.</li>
+<li><strong>Bear:</strong> I used it a long time ago. It was the peak of aesthetics back then, but it doesn&rsquo;t stand out much now. Plus, it also doesn&rsquo;t work on Windows, and the free version is too restricted.</li>
+</ul>
+<h2 id="the-final-choice-anytype">The Final Choice: Anytype</h2>
+<figure><img src="/aki-liu/finding-the-perfect-quick-capture-tool/5.png">
+</figure>
+
+<p>Finally, we arrive at the software I am currently using—<strong>Anytype</strong>.</p>
+<p>I tried Anytype before but was initially confused by its &ldquo;Object&rdquo; logic. Now that I&rsquo;ve revisited it, I find the logic quite easy to understand.</p>
+<p>I found that Anytype truly satisfies all my requirements: <strong>Minimalist, Beautiful, Open Source, Private, Local-first, Image support, Publishing support, Markdown support, Data Export, and no major restrictions in the free version.</strong></p>
+<p>My current workflow is very smooth: all notes can be assigned a status. Notes I want to archive are simply archived, and by setting up filters, I don&rsquo;t see them often, keeping the library clean. I can link notes freely and publish with one click. It has extensive features, and while it isn&rsquo;t perfect (the desktop client still has noticeable bugs and lacks the high degree of polish that Notion has), it gives me what I wanted most: <strong>Control and Freedom.</strong></p>
+<figure><img src="/aki-liu/finding-the-perfect-quick-capture-tool/6.png">
+</figure>
+
+
+    </div>
+</article>
+
+<script>
+(function () {
+    const tocs = document.querySelectorAll('.post-toc');
+    if (!tocs.length) return;
+
+    const links = Array.from(document.querySelectorAll('.post-toc a'));
+    const headings = links
+        .map((link) => {
+            const id = link.getAttribute('href').slice(1);
+            return document.getElementById(id);
+        })
+        .filter(Boolean);
+
+    const scrollToHeading = (link) => {
+        const id = link.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if (target) {
+            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = targetPosition - window.innerHeight * 0.25;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+    };
+
+    links.forEach((link) => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            scrollToHeading(link);
+        });
+    });
+
+    const highlightActiveHeading = () => {
+        let current = null;
+        const scrollPos = window.scrollY + window.innerHeight * 0.26;
+
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i] && headings[i].offsetTop <= scrollPos) {
+                current = headings[i];
+                break;
+            }
+        }
+
+        links.forEach((link) => link.classList.remove('is-active'));
+        if (current) {
+            links
+                .filter((link) => link.getAttribute('href') === `#${current.id}`)
+                .forEach((link) => link.classList.add('is-active'));
+        }
+    };
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (ticking) return;
+        window.requestAnimationFrame(() => {
+            highlightActiveHeading();
+            ticking = false;
+        });
+        ticking = true;
+    });
+
+    highlightActiveHeading();
+})();
+</script>
+
+            <footer class="site-footer">
+                <div class="footer-left">© 2025 Aki Liu, crafted with inspiration from <a href="https://paco.me" target="_blank" rel="noopener noreferrer">Paco Coursey</a></div>
+            </footer>
+        </main>
+        <aside class="site-sidebar-right">
+    
+    <aside class="post-toc post-toc--sidebar">
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#tldr-my-selection-summary">TL;DR: My Selection Summary</a></li>
+          </ul>
+        </li>
+        <li><a href="#the-early-days-from-paper-to-e-ink">The Early Days: From Paper to E-Ink</a></li>
+        <li><a href="#the-exploration-phase-trial-error-and-trade-offs">The Exploration Phase: Trial, Error, and Trade-offs</a>
+          <ul>
+            <li><a href="#simplenote-the-former-industry-standard">Simplenote: The Former Industry Standard</a></li>
+            <li><a href="#google-keep-the-concern-of-data-sovereignty">Google Keep: The Concern of Data Sovereignty</a></li>
+            <li><a href="#upnote-almost-perfect">Upnote: Almost Perfect</a></li>
+            <li><a href="#notesnook-the-conflict-between-encryption-and-format">Notesnook: The Conflict Between Encryption and Format</a></li>
+          </ul>
+        </li>
+        <li><a href="#why-werent-the-mainstream-tools-suitable">Why Weren&rsquo;t the Mainstream Tools Suitable?</a></li>
+        <li><a href="#the-final-choice-anytype">The Final Choice: Anytype</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </aside>
+    
+</aside>
+    </div>
+</body>
+</html>
