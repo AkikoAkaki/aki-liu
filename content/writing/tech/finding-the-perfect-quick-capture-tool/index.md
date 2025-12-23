@@ -32,7 +32,7 @@ At that time, my only electronic device was a classic Kindle. It was eye-friendl
 ### Simplenote: The Former Industry Standard
 
 {{< figure 
-    src="1.jpg"
+    src="1.png"
 >}}
 
 After entering college, Simplenote became my daily driver. It was practically the benchmark for the software industry: minimalist, high performance, Markdown support, excellent compatibility, forever free, and exportable data. Even looking back now, it’s hard for me to find fault with it.
@@ -43,7 +43,7 @@ However, I really admired its recycling bin mechanism—when notes are deleted, 
 ### Google Keep: The Concern of Data Sovereignty
 
 {{< figure 
-    src="3.jpg"
+    src="3.png"
 >}}
 
 I briefly tried Google Keep after discovering it was integrated into Gemini. I was intrigued by the concept of "AI + Notes," so I thought about switching my quick capture tool to Google Keep.
@@ -55,7 +55,7 @@ But its text formatting support is minimal (no Markdown), and it is unfriendly t
 ### Upnote: Almost Perfect
 
 {{< figure 
-    src="2.jpg"
+    src="2.png"
 >}}
 
 I turned to Upnote as a modern alternative to Simplenote that supports images. Upnote features a notebook system, workspaces, and real-time Markdown rendering.
@@ -67,7 +67,7 @@ Ultimately, the free version's limit of only 50 notes drove me away—paying for
 ### Notesnook: The Conflict Between Encryption and Format
 
 {{< figure 
-    src="4.jpg"
+    src="4.png"
 >}}
 
 After leaving Upnote, a newer, minimalist, encrypted note-taking app called Notesnook caught my attention.
@@ -90,7 +90,7 @@ However, I abandoned it before diving too deep. It has a fatal pain point: **it 
 ## The Final Choice: Anytype
 
 {{< figure 
-    src="5.jpg"
+    src="5.png"
 >}}
 
 
@@ -103,5 +103,5 @@ I found that Anytype truly satisfies all my requirements: **Minimalist, Beautifu
 My current workflow is very smooth: all notes can be assigned a status. Notes I want to archive are simply archived, and by setting up filters, I don't see them often, keeping the library clean. I can link notes freely and publish with one click. It has extensive features, and while it isn't perfect (the desktop client still has noticeable bugs and lacks the high degree of polish that Notion has), it gives me what I wanted most: **Control and Freedom.**
 
 {{< figure 
-    src="6.jpg"
+    src="6.png"
 >}}
