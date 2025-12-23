@@ -6,16 +6,14 @@ draft: false
 
 ### TL;DR: My Selection Summary
 
-| Tool | Reason for Elimination |
-| --- | --- |
-| **Simplenote** | No image support; functionality is too basic. |
-| **Google Keep** | Data cannot be exported (Lock-in risk); no Markdown support; unfriendly to long text. |
-| **Notion** | Requires internet connection; slow startup speed; unsuitable for quick capture. |
-| **Obsidian** | Great for a Knowledge Base, but too heavy to serve as an "Inbox." |
-| **Upnote** | Rich-text oriented; not Markdown native; free version limits are too restrictive. |
-| **Notesnook** | Not Markdown native; cannot copy text as Markdown. |
-| **Apple Notes** | No Windows platform support. |
-| **Anytype** | **The Winner** (Local-first, Open Source, Markdown support, Beautiful, Encrypted). |
+- **Simplenote**: No image support; functionality is too basic.
+- **Google Keep**: Data cannot be exported; no Markdown support; unfriendly to long text.
+- **Notion** : Requires internet connection; slow startup speed; unsuitable for quick capture.
+- **Obsidian**: Great for a knowledge base, but too heavy to serve as an Inbox.
+- **Upnote**: Rich-text oriented; not Markdown native; free version limits are too restrictive.
+- **Notesnook**: Not Markdown native; cannot copy text as Markdown.
+- **Apple Notes**: No Windows platform support.
+- **Anytype**: The Winner————Local-first, open source, Markdown, beautiful, encrypted.
 
 ---
 
