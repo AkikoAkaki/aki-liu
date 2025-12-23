@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tech on Aki&#39;s Blog</title>
-    <link>http://localhost:1313/aki-liu/tech/</link>
+    <link>https://AkikoAkaki.github.io/aki-liu/tech/</link>
     <description>Recent content in Tech on Aki&#39;s Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 22 Dec 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/aki-liu/tech/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://AkikoAkaki.github.io/aki-liu/tech/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Finding the Perfect Quick Capture Tool</title>
-      <link>http://localhost:1313/aki-liu/finding-the-perfect-quick-capture-tool/</link>
+      <link>https://AkikoAkaki.github.io/aki-liu/finding-the-perfect-quick-capture-tool/</link>
       <pubDate>Mon, 22 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/finding-the-perfect-quick-capture-tool/</guid>
+      <guid>https://AkikoAkaki.github.io/aki-liu/finding-the-perfect-quick-capture-tool/</guid>
       <description>&lt;h3 id=&#34;tldr-my-selection-summary&#34;&gt;TL;DR: My Selection Summary&lt;/h3&gt;&#xA;&lt;table&gt;&#xA;  &lt;thead&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;th&gt;Tool&lt;/th&gt;&#xA;          &lt;th&gt;Reason for Elimination&lt;/th&gt;&#xA;      &lt;/tr&gt;&#xA;  &lt;/thead&gt;&#xA;  &lt;tbody&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;strong&gt;Simplenote&lt;/strong&gt;&lt;/td&gt;&#xA;          &lt;td&gt;No image support; functionality is too basic.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;strong&gt;Google Keep&lt;/strong&gt;&lt;/td&gt;&#xA;          &lt;td&gt;Data cannot be exported (Lock-in risk); no Markdown support; unfriendly to long text.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;strong&gt;Notion&lt;/strong&gt;&lt;/td&gt;&#xA;          &lt;td&gt;Requires internet connection; slow startup speed; unsuitable for quick capture.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;strong&gt;Obsidian&lt;/strong&gt;&lt;/td&gt;&#xA;          &lt;td&gt;Great for a Knowledge Base, but too heavy to serve as an &amp;ldquo;Inbox.&amp;rdquo;&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;strong&gt;Upnote&lt;/strong&gt;&lt;/td&gt;&#xA;          &lt;td&gt;Rich-text oriented; not Markdown native; free version limits are too restrictive.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;strong&gt;Notesnook&lt;/strong&gt;&lt;/td&gt;&#xA;          &lt;td&gt;Not Markdown native; cannot copy text as Markdown.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;strong&gt;Apple Notes&lt;/strong&gt;&lt;/td&gt;&#xA;          &lt;td&gt;No Windows platform support.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;strong&gt;Anytype&lt;/strong&gt;&lt;/td&gt;&#xA;          &lt;td&gt;&lt;strong&gt;The Winner&lt;/strong&gt; (Local-first, Open Source, Markdown support, Beautiful, Encrypted).&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;  &lt;/tbody&gt;&#xA;&lt;/table&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;My obsession with &amp;ldquo;recording tools&amp;rdquo; has persisted for quite a long time. Because I frequently have text processing needs, I have been searching for the perfect portable, quick-capture tool.&lt;/p&gt;</description>
     </item>
   </channel>
