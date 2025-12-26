@@ -1,69 +1,69 @@
-# Sample workflow for building and deploying a Hugo site to GitHub Pages
+# 用于构建 Hugo 网站并部署到 GitHub Pages 的示例工作流
 name: Deploy Hugo site to Pages
 
 on:
-  # Runs on pushes targeting the default branch
+  # 当推送到默认分支（main）时触发
   push:
     branches: ["main"]
 
-  # Allows you to run this workflow manually from the Actions tab
+  # 允许在 Actions 选项卡中手动运行此工作流
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+# 设置 GITHUB_TOKEN 的权限，以允许部署到 GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+# 允许同时只有一个并发部署，跳过在进行中的运行和最新排队运行之间排队的运行。
+# 但是，不要取消正在进行的运行，因为 we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
-# Default to bash
+# 默认使用 bash 运行命令
 defaults:
   run:
     shell: bash
 
 jobs:
-  # Build job
+  # 构建任务
   build:
     runs-on: ubuntu-latest
     env:
       HUGO_VERSION: 0.152.2
     steps:
-      - name: Install Hugo CLI
+      - name: 安装 Hugo CLI
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
-      - name: Install Dart Sass
+      - name: 安装 Dart Sass (用于处理 CSS)
         run: sudo snap install dart-sass
-      - name: Checkout
+      - name: 检出代码
         uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
-      - name: Setup Pages
+      - name: 配置 GitHub Pages
         id: pages
         uses: actions/configure-pages@v5
-      - name: Install Node.js dependencies
+      - name: 安装 Node.js 依赖 (如果存在)
         run: "[[ -f package-lock.json || -f package.json ]] && npm ci || true"
-      - name: Build with Hugo
+      - name: 使用 Hugo 构建网站
         env:
-          # For maximum backward compatibility with Hugo modules
+          # 设置 Hugo 环境为生产环境
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
         run: |
           hugo \
             --gc \
             --minify
-      - name: Upload artifact
+      - name: 上传构建产物
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
 
-  # Deployment job
+  # 部署任务
   deploy:
     environment:
       name: github-pages
@@ -71,6 +71,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Deploy to GitHub Pages
+      - name: 部署到 GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

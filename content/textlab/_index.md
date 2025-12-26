@@ -1,8 +1,7 @@
 ---
 title: Text Lab
-type: text-lab
-url: /text-lab/
+type: textlab
+url: /textlab/
 aliases:
   - /text-lab/
-  - /textlab/
 ---

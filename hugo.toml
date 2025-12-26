@@ -1,32 +1,49 @@
+# 网站的基本 URL，通常是部署后的域名
 baseURL = 'https://AkikoAkaki.github.io/aki-liu/'
+# 网站使用的语言代码
 languageCode = 'en-us'
+# 网站的标题
 title = "Aki's Blog"
+# 使用的主题名称
 theme = 'paco'
-mainSections = ['writing']
+# 网站的主要内容章节，用于某些列表页的过滤
+mainSections = ['tech', 'life', 'textlab']
 
-[permalinks]
-  writing = '/:slug/'
-
+# 分类系统配置（标签和分类）
 [taxonomies]
   tag = 'tags'
   category = 'categories'
 
+# 网站自定义参数
 [params]
+  # 是否启用 KaTeX 数学公式渲染
   enableKaTeX = true
 
+  # 导航栏相关的标签设置
   [params.navigation]
     homeLabel = 'Index'
     writingLabel = 'Writing'
 
+# 渲染引擎（Markup）配置
 [markup]
+  # Goldmark 是 Hugo 默认的 Markdown 渲染器
   [markup.goldmark]
     [markup.goldmark.renderer]
+      # 允许在 Markdown 中直接编写 HTML
       unsafe = true
+      # 将换行符渲染为 <br> 标签
       hardLineBreak = true
+  # 代码高亮配置
   [markup.highlight]
+    # 是否不使用 CSS 类（false 表示使用 CSS 类进行高亮）
     noClasses = false
+    # 高亮样式名称
     style = "monokai" # This will be overridden by our CSS classes
+  # 目录（Table of Contents）配置
   [markup.tableOfContents]
+    # 目录包含的最大标题层级
     endLevel = 6
+    # 是否显示有序列表
     ordered = false
+    # 目录开始的最小标题层级
     startLevel = 1
