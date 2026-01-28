@@ -27,15 +27,15 @@ columns:
     title: Writing
     cssClass: col-writing
     items:
-      - title: Tech
+      - title: Insights
         desc: "Thoughts on products, code, and design."
-        link: /tech/
+        link: /insights/
       - title: Text Lab
         desc: "Literature, art, philosophy and more."
         link: /textlab/
-      - title: Life
+      - title: Notes
         desc: "Reflections and personal archives."
-        link: /life/
+        link: /notes/
 
   - id: projects
     title: Projects

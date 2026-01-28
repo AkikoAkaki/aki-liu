@@ -16,24 +16,24 @@
       <description></description>
     </item>
     <item>
+      <title>Product</title>
+      <link>http://localhost:1313/tags/product/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/product/</guid>
+      <description></description>
+    </item>
+    <item>
       <title>Productivity</title>
       <link>http://localhost:1313/tags/productivity/</link>
-      <pubDate>Wed, 14 Jan 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/productivity/</guid>
       <description></description>
     </item>
     <item>
       <title>Mental Model</title>
       <link>http://localhost:1313/tags/mental-model/</link>
-      <pubDate>Sat, 27 Dec 2025 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/tags/mental-model/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Product</title>
-      <link>http://localhost:1313/tags/product/</link>
-      <pubDate>Sat, 27 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/tags/product/</guid>
       <description></description>
     </item>
     <item>

@@ -16,6 +16,27 @@
       <description>&lt;h3 id=&#34;引言&#34;&gt;引言&lt;/h3&gt;&#xA;&lt;p&gt;一个动作需要付出多大的代价？卡夫卡曾写过一篇令人不寒而栗的短篇小说 &lt;em&gt;《叩击庄园大门》（The Knock at the Manor Gate/Der Schlag ans Hoftor）&lt;/em&gt;：一个漫不经心的敲门动作，竟然引来了审讯、囚禁和毁灭。长久以来，这被视为文学上的荒诞寓言，直到 2026 年 1 月 7 日，这个寓言在明尼苏达州的街头变成了血淋淋的现实。&lt;/p&gt;&#xA;&lt;p&gt;2026 年 1 月 7 日，美国明尼苏达州的明尼阿波利斯市，一名 37 岁的美国公民 Renee Nicole Good 被 ICE 探员射杀身亡。当时 ICE 正在进行大规模移民执法行动，Good 驾驶一辆红色本田 Pilot 出现在现场。视频显示，探员包围了她的车辆并命令其下车。在对峙过程中，Good 尝试驾车驶离，探员 Jonathan Ross 在近距离向车内连开三枪，击中其头部及身体。之后，特朗普政府和国土安全部（DHS）迅速将事件定义为“本土恐怖主义”（domestic terrorism），称 Good 试图“将车辆武器化”冲撞探员，而探员是出于“正当防卫”开枪。与此同时，多名目击者和包括《纽约时报》、BBC、华盛顿邮报在内的媒体通过视频分析指出，车辆在移动时似乎并未直接撞击探员，或者探员在开枪时已处于安全位置。现场视频显示，多名探员给出了相互矛盾的指令（同时要求“驶离”和“下车”）。此外，有报道称 ICE 探员在事发后阻止了现场医生对 Good 进行急救。这一切发生得如此之快：从 Good 遇到 ICE 探员到被射杀仅不到十分钟。&lt;/p&gt;&#xA;&lt;h3 id=&#34;制裁与罪行的倒置&#34;&gt;制裁与罪行的倒置&lt;/h3&gt;&#xA;&lt;p&gt;这起事件最扑朔迷离的地方在于它没有明确的定性。这场悲剧在政治上已经变成了罗夏墨迹测验（Rorschach test）：进步派与左翼将 Renee Good 捧成圣人，形容她为“一位无辜的母亲，护士，诗人，白人，美国公民”却遭到当街射杀，或“公开处决”，目的是法西斯式地震慑所有异见者；而保守派与右翼则认为 Renee Good 在面对 ICE 执法时应绝对顺从，她的下场（在自己居住的街区一瞬间内被连开三枪射杀身亡并无法得到医疗救助）完全是她的个人愚蠢选择（即“对权威缺乏敬畏”）的结果。并声称她当时处于“药物诱发的狂暴状态”，是“Antifa 的秘密成员”，正准备对副总统的车队实施自杀式袭击。这两种论调之间几乎没有中间地带，这起事件也被描绘成了两种截然不同的故事。尽管当时有周围人的录像，有执法记录仪，但 Renee Good 的真正动机（驶离或是撞人）始终没有明确的证据佐证，是争议的焦点。&lt;/p&gt;&#xA;&lt;p&gt;死亡无疑是一种毁灭性结局，然而 Renee Good 不仅遭遇了 ICE 的射杀，司法部和 FBI 据称还在对已故的她进行调查，而不是调查开枪的探员。正如卡夫卡的故事中所述的：一个可能的敲门动作引来了全副武装的骑兵队、长矛、法官和如同牢房般的审讯室，国家机器以一种碾压式的姿态降临到普通人头上。&lt;/p&gt;</description>
     </item>
     <item>
+      <title>Flomo: The Note-taking Illusion</title>
+      <link>http://localhost:1313/tech/flomo/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tech/flomo/</guid>
+      <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;Flomo markets itself as a Zettelkasten implementation, but the product architecture prioritizes low-latency capture over graph connectivity. It lacks the accessible backlinks and visualization primitives necessary for knowledge compounding, effectively functioning as a linear, append-only log rather than a network. While useful as a capture buffer, the proprietary HTML exports create high friction for interoperability with the standard Markdown-based knowledge stack.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;Flomo made waves in the Chinese knowledge management community by positioning itself as a Zettelkasten tool. Founder Shaonan frequently referenced Niklas Luhmann in early podcasts and articles, emphasizing that &amp;ldquo;cards should connect like neurons.&amp;rdquo; The marketing was clever—it pitched Flomo as a simplified Obsidian, a shortcut to building a &amp;ldquo;Second Brain.&amp;rdquo;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>On Stay up Late</title>
+      <link>http://localhost:1313/tech/stay-up-late/</link>
+      <pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tech/stay-up-late/</guid>
+      <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;The feeling of &amp;ldquo;needing something more&amp;rdquo; before sleep is a lie we tell ourselves to keep the lights on. To break the cycle of late-night scrolling, we must stop chasing satisfaction and learn to go to bed hungry.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;I&amp;rsquo;ve been trying to figure out why I stay up so late.&lt;/p&gt;&#xA;&lt;p&gt;It&amp;rsquo;s not because I&amp;rsquo;m stressed. My days are actually quite chill lately. I&amp;rsquo;m not dreading tomorrow, either; I&amp;rsquo;m generally optimistic about the future. Yet, every night, I find myself scrolling through feeds, refusing to go to sleep, even when my eyes hurt and my body is exhausted.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Why WeChat is the Best Remainder</title>
+      <link>http://localhost:1313/tech/wechat-remainder/</link>
+      <pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tech/wechat-remainder/</guid>
+      <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;The best Todo list is the one you actually open. By comparing the &amp;ldquo;perfect&amp;rdquo; Todoist against the &amp;ldquo;bloated&amp;rdquo; WeChat, I realized that true execution power comes from social binding and zero-resistance access, not from complex sorting systems.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;I&amp;rsquo;ve often pondered: what exactly is the role of a Todo List supposed to be?&lt;/p&gt;&#xA;&lt;p&gt;By current market &amp;ldquo;productivity standards,&amp;rdquo; Todoist, which I currently use, is undoubtedly top-tier. It features project hierarchies, tag management, natural language input, and even Karma scores to gamify your progress. To organize my life, I subscribed to the Premium version, attempting to use the GTD (Get Things Done) philosophy to keep everything in perfect order.&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>Why I Abandoned My &#34;Perfect&#34; Hugo Blog for Notion</title>
       <link>http://localhost:1313/tech/hugo-to-notion/</link>
       <pubDate>Wed, 14 Jan 2026 00:00:00 +0000</pubDate>

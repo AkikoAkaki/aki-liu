@@ -13,6 +13,7 @@
         {{ range .Pages.GroupByPublishDate "2006" }}
             {{ $year := .Key }}
             {{ range $index, $page := .Pages }}
+                {{ if eq $page.Kind "page" }}
                 {{ $isFirstOfYear := eq $index 0 }}
                 
                 <article class="writing-item {{ if $isFirstOfYear }}first-of-year{{ end }}">
@@ -23,6 +24,7 @@
                     <a href="{{ .RelPermalink }}" class="item-title">{{ .Title }}</a>
                     <time class="item-date">{{ .Date.Format "01/02" }}</time>
                 </article>
+                {{ end }}
             {{ end }}
         {{ end }}
     </div>

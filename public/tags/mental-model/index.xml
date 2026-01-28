@@ -6,8 +6,22 @@
     <description>Recent content in Mental Model on Aki&#39;s Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 27 Dec 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 16 Jan 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/mental-model/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>On Stay up Late</title>
+      <link>http://localhost:1313/tech/stay-up-late/</link>
+      <pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tech/stay-up-late/</guid>
+      <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;The feeling of &amp;ldquo;needing something more&amp;rdquo; before sleep is a lie we tell ourselves to keep the lights on. To break the cycle of late-night scrolling, we must stop chasing satisfaction and learn to go to bed hungry.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;I&amp;rsquo;ve been trying to figure out why I stay up so late.&lt;/p&gt;&#xA;&lt;p&gt;It&amp;rsquo;s not because I&amp;rsquo;m stressed. My days are actually quite chill lately. I&amp;rsquo;m not dreading tomorrow, either; I&amp;rsquo;m generally optimistic about the future. Yet, every night, I find myself scrolling through feeds, refusing to go to sleep, even when my eyes hurt and my body is exhausted.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Why WeChat is the Best Remainder</title>
+      <link>http://localhost:1313/tech/wechat-remainder/</link>
+      <pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tech/wechat-remainder/</guid>
+      <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;The best Todo list is the one you actually open. By comparing the &amp;ldquo;perfect&amp;rdquo; Todoist against the &amp;ldquo;bloated&amp;rdquo; WeChat, I realized that true execution power comes from social binding and zero-resistance access, not from complex sorting systems.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;I&amp;rsquo;ve often pondered: what exactly is the role of a Todo List supposed to be?&lt;/p&gt;&#xA;&lt;p&gt;By current market &amp;ldquo;productivity standards,&amp;rdquo; Todoist, which I currently use, is undoubtedly top-tier. It features project hierarchies, tag management, natural language input, and even Karma scores to gamify your progress. To organize my life, I subscribed to the Premium version, attempting to use the GTD (Get Things Done) philosophy to keep everything in perfect order.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>The Trap of Fake Work</title>
       <link>http://localhost:1313/tech/fake-work/</link>

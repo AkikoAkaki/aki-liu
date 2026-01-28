@@ -17,20 +17,26 @@
     <loc>http://localhost:1313/textlab/american-dream/</loc>
     <lastmod>2026-01-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/productivity/</loc>
-    <lastmod>2026-01-14T00:00:00+00:00</lastmod>
+    <loc>http://localhost:1313/tech/flomo/</loc>
+    <lastmod>2026-01-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tech/</loc>
-    <lastmod>2026-01-14T00:00:00+00:00</lastmod>
+    <loc>http://localhost:1313/tags/product/</loc>
+    <lastmod>2026-01-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/productivity/</loc>
+    <lastmod>2026-01-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tags/mental-model/</loc>
+    <lastmod>2026-01-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tech/stay-up-late/</loc>
+    <lastmod>2026-01-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tech/wechat-remainder/</loc>
+    <lastmod>2026-01-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tech/hugo-to-notion/</loc>
     <lastmod>2026-01-14T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/mental-model/</loc>
-    <lastmod>2025-12-27T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/product/</loc>
-    <lastmod>2025-12-27T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tech/fake-work/</loc>
     <lastmod>2025-12-27T00:00:00+00:00</lastmod>
@@ -67,6 +73,12 @@
   </url><url>
     <loc>http://localhost:1313/textlab/jingan-temple/</loc>
     <lastmod>2025-01-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/insights/</loc>
+    <lastmod>2025-01-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/notes/</loc>
+    <lastmod>2025-01-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/textlab/snow/</loc>
     <lastmod>2024-12-02T00:00:00+00:00</lastmod>
@@ -249,9 +261,6 @@
     <lastmod>2021-12-23T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tags/journal/</loc>
-    <lastmod>2021-12-23T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/life/</loc>
     <lastmod>2021-12-23T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/textlab/melting/</loc>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flomo: The Note-taking Illusion | Aki&#39;s Blog</title>
+    
+    <link rel="canonical" href="http://localhost:1313/tech/flomo/">
+    
+    
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Newsreader:ital,wght@1,400&display=swap" rel="stylesheet">
+
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="/css/bundle.min.8fbdaf6c96d97c854ecbbbcef4dbe7800fb26360024d23ee0fe7bc6a559c3825.css" integrity="sha256-j72vbJbZfIVOy7vO9NvngA&#43;yY2ACTSPuD&#43;e8alWcOCU=">
+        
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+        <script defer>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof renderMathInElement === 'function') {
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false
+                    });
+                }
+            });
+        </script>
+        
+</head>
+<body class="not-home">
+    
+    
+    
+        
+    
+    
+    <div class="site-container">
+        <aside class="site-sidebar"></aside>
+        <main class="site-main">
+            
+<article class="post-single">
+    <header class="post-header">
+        
+        
+        
+            
+            
+        
+        <div class="title-with-back">
+            <a class="back-link" href="/insights/">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14" />
+    <path d="M11 6l-6 6 6 6" />
+</svg>
+
+                <span>Insights</span>
+            </a>
+            <h1 class="post-title">Flomo: The Note-taking Illusion</h1>
+        </div>
+        <time class="post-date">2026/01/20</time>
+    </header>
+
+    
+    <aside class="post-toc post-toc--inline">
+        <nav id="TableOfContents"></nav>
+    </aside>
+    
+
+    <div class="post-content">
+        <aside>
+<p><strong>TL;DR</strong></p>
+<p>Flomo markets itself as a Zettelkasten implementation, but the product architecture prioritizes low-latency capture over graph connectivity. It lacks the accessible backlinks and visualization primitives necessary for knowledge compounding, effectively functioning as a linear, append-only log rather than a network. While useful as a capture buffer, the proprietary HTML exports create high friction for interoperability with the standard Markdown-based knowledge stack.</p>
+</aside>
+<p>Flomo made waves in the Chinese knowledge management community by positioning itself as a Zettelkasten tool. Founder Shaonan frequently referenced Niklas Luhmann in early podcasts and articles, emphasizing that &ldquo;cards should connect like neurons.&rdquo; The marketing was clever—it pitched Flomo as a simplified Obsidian, a shortcut to building a &ldquo;Second Brain.&rdquo;</p>
+<p>But here&rsquo;s the problem: <strong>Flomo can&rsquo;t actually do Zettelkasten.</strong></p>
+<figure><img src="/tech/flomo/fig1.png">
+</figure>
+
+<figure><img src="/tech/flomo/fig2.png">
+</figure>
+
+<hr>
+<p>The essence of Zettelkasten isn&rsquo;t writing cards—it&rsquo;s connecting them. Luhmann&rsquo;s methodology rests on three pillars:</p>
+<ol>
+<li><strong>Atomic Notes:</strong> Each card captures a single, independent thought.</li>
+<li><strong>Networked Structure:</strong> Cards link together to form a knowledge network.</li>
+<li><strong>Emergent Insights:</strong> New ideas surface by traversing these connections.</li>
+</ol>
+<p>The second and third points are crucial. Without robust linking, you don&rsquo;t have a Zettelkasten. You have a pile of disconnected notes.</p>
+<p>Flomo excels at low-friction capture. Its mobile input speed is nearly unbeatable. But when it comes to the linking features that actually make Zettelkasten work? They&rsquo;re essentially decorative.</p>
+<p>Here&rsquo;s what&rsquo;s broken:</p>
+<ul>
+<li>Backlinks exist but are hidden by default, requiring manual expansion</li>
+<li>No graph visualization to see your knowledge network</li>
+<li>The chronological feed buries connections under a timeline</li>
+<li>AI semantic search (added in 2024) doesn&rsquo;t compensate for poor link infrastructure</li>
+</ul>
+<p>The design philosophy is fundamentally Twitter-like: &ldquo;consumption of the now&rdquo; rather than &ldquo;compounding of knowledge.&rdquo; <strong>You can create links, but you can&rsquo;t leverage them.</strong></p>
+<p>Compare this to Roam Research or Obsidian:</p>
+<ul>
+<li>Backlinks appear automatically at the bottom of every note</li>
+<li>Graph view reveals the shape of your knowledge network</li>
+<li>You think by jumping through links</li>
+<li>&ldquo;Unlinked Mentions&rdquo; help discover potential connections</li>
+</ul>
+<p>That&rsquo;s what a digital Zettelkasten looks like.</p>
+<p>Building backlink panels and graph views was mature technology by 2021. Flomo chose not to build them because its true positioning is as a <strong>mobile quick-capture tool</strong>, not a knowledge management system. Their documentation even admits a desire to remain &ldquo;small and beautiful.&rdquo;</p>
+<p>Yet the marketing suggested otherwise. The slogan &ldquo;Record constantly, meaning emerges naturally&rdquo; is vague enough to imply Zettelkasten magic. The founder tied Flomo deeply to <em>How to Take Smart Notes</em>. The product copy repeatedly emphasizes &ldquo;building connections.&rdquo;</p>
+<hr>
+<p>I&rsquo;ve observed two patterns:</p>
+<p><strong>Type One:</strong> Attracted by the Zettelkasten promise, they earnestly try to build a knowledge network. Eventually they realize the tool can&rsquo;t support the methodology and migrate to Obsidian or Logseq.</p>
+<p><strong>Type Two:</strong> They never understood Zettelkasten. They use Flomo as a running log but feel sophisticated because of the &ldquo;card note&rdquo; terminology.</p>
+<p>The first group wastes time. The second group gets a false sense of accomplishment.</p>
+<hr>
+<p>An excellent <strong>inbox</strong> acts like a funnel—information flows in smoothly. An excellent <strong>archive</strong> acts like a warehouse—information gets retrieved in an orderly fashion.</p>
+<p><strong>Flomo tries to be both and ends up as a reservoir with no outlet.</strong></p>
+<p>If Flomo were honest about its positioning, it would say:</p>
+<blockquote>
+<p>&ldquo;We&rsquo;re a mobile jotting tool that helps you capture thoughts on the go. If you need deep organization and connection, export to Obsidian.&rdquo;</p>
+</blockquote>
+<p>That would be reasonable. Inbox and archive are fundamentally different tools. But the documentation doesn&rsquo;t make this distinction. It insists Flomo can serve as a complete knowledge base.</p>
+<hr>
+<p>Flomo chose a different strategy: attract users with Zettelkasten&rsquo;s halo, then retain them through subscriptions and poor export formats.</p>
+<p>In 2026, Markdown is the lingua franca of knowledge management. Yet Flomo&rsquo;s data export is primarily HTML, cluttered with rendering code. This isn&rsquo;t developer laziness—it&rsquo;s a defensive business maneuver. <strong>Lock users in by increasing the cost of migration.</strong></p>
+<p>As personal knowledge management shifts toward &ldquo;letting AI understand your notes,&rdquo; Flomo&rsquo;s data pollution becomes a bigger issue. While modern AI can process HTML, Flomo has done nothing to optimize its export format for this future.</p>
+<p>Meanwhile, Flomo operates an opaque, built-in AI for basic analysis. Contrast this with Notion AI&rsquo;s comprehensive agent system that calls top-tier models without hard usage caps. Flomo&rsquo;s &ldquo;2 AI insights per day&rdquo; is virtually non-existent. Your years of accumulated thoughts sit trapped in a black box that&rsquo;s difficult to utilize.</p>
+<hr>
+<p>Flomo&rsquo;s biggest problem isn&rsquo;t missing features. It&rsquo;s the <strong>mismatch between its narrative and its product.</strong></p>
+<p>If you treat it as a memo app with tags, it&rsquo;s great—clean, fast, cross-platform.</p>
+<p>But if you believe the marketing and expect to practice Zettelkasten, you&rsquo;ll be disappointed.</p>
+<hr>
+<p><strong>If you need quick recording:</strong> Apple Notes, Simple Note, or even a messaging app&rsquo;s &ldquo;Saved Messages&rdquo; feature does the same thing for free.</p>
+<p><strong>If you want to practice Zettelkasten:</strong> Use Obsidian or Logseq directly. The learning curve is steeper, but the tools actually align with the methodology.</p>
+<p><strong>If you&rsquo;re already using Flomo:</strong> Ask yourself—are you truly utilizing the links? If you&rsquo;re just recording and reviewing, why pay for the concept of &ldquo;Card Notes&rdquo;?</p>
+<hr>
+<p>When choosing tools, look at <strong>what they actually do</strong>, not <strong>what they claim to do.</strong></p>
+<p>It&rsquo;s dangerous when a tool gives you the illusion of &ldquo;thinking&rdquo; when you&rsquo;re really just moving text around.</p>
+<p>For Flomo, this isn&rsquo;t a product flaw. It&rsquo;s a marketing strategy.</p>
+<p>Users deserve to know the difference.</p>
+
+    </div>
+</article>
+
+<script>
+(function () {
+    const tocs = document.querySelectorAll('.post-toc');
+    if (!tocs.length) return;
+
+    const links = Array.from(document.querySelectorAll('.post-toc a'));
+    const headings = links
+        .map((link) => {
+            const id = link.getAttribute('href').slice(1);
+            return document.getElementById(id);
+        })
+        .filter(Boolean);
+
+    const scrollToHeading = (link) => {
+        const id = link.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if (target) {
+            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+            const offsetPosition = targetPosition - window.innerHeight * 0.25;
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+    };
+
+    links.forEach((link) => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            scrollToHeading(link);
+        });
+    });
+
+    const highlightActiveHeading = () => {
+        let current = null;
+        const scrollPos = window.scrollY + window.innerHeight * 0.26;
+
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i] && headings[i].offsetTop <= scrollPos) {
+                current = headings[i];
+                break;
+            }
+        }
+
+        links.forEach((link) => link.classList.remove('is-active'));
+        if (current) {
+            links
+                .filter((link) => link.getAttribute('href') === `#${current.id}`)
+                .forEach((link) => link.classList.add('is-active'));
+        }
+    };
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (ticking) return;
+        window.requestAnimationFrame(() => {
+            highlightActiveHeading();
+            ticking = false;
+        });
+        ticking = true;
+    });
+
+    highlightActiveHeading();
+})();
+</script>
+
+            <footer class="site-footer">
+                <div class="footer-left">© 2025 Aki Liu, crafted with inspiration from <a href="https://paco.me" target="_blank" rel="noopener noreferrer">Paco Coursey</a></div>
+            </footer>
+        </main>
+        <aside class="site-sidebar-right">
+    
+    <aside class="post-toc post-toc--sidebar">
+        <nav id="TableOfContents"></nav>
+    </aside>
+    
+</aside>
+    </div>
+</body>
+</html>

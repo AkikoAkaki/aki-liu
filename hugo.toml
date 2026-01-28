@@ -1,5 +1,5 @@
 # 网站的基本 URL，通常是部署后的域名
-baseURL = 'https://AkikoAkaki.github.io/aki-liu/'
+baseURL = '/'
 # 网站使用的语言代码
 languageCode = 'en-us'
 # 网站的标题

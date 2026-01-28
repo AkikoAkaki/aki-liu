@@ -6,8 +6,15 @@
     <description>Recent content in Product on Aki&#39;s Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 27 Dec 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 20 Jan 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/tags/product/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Flomo: The Note-taking Illusion</title>
+      <link>http://localhost:1313/tech/flomo/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tech/flomo/</guid>
+      <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;Flomo markets itself as a Zettelkasten implementation, but the product architecture prioritizes low-latency capture over graph connectivity. It lacks the accessible backlinks and visualization primitives necessary for knowledge compounding, effectively functioning as a linear, append-only log rather than a network. While useful as a capture buffer, the proprietary HTML exports create high friction for interoperability with the standard Markdown-based knowledge stack.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;Flomo made waves in the Chinese knowledge management community by positioning itself as a Zettelkasten tool. Founder Shaonan frequently referenced Niklas Luhmann in early podcasts and articles, emphasizing that &amp;ldquo;cards should connect like neurons.&amp;rdquo; The marketing was clever—it pitched Flomo as a simplified Obsidian, a shortcut to building a &amp;ldquo;Second Brain.&amp;rdquo;&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Why WeChat Cannot Integrate True Personal AI</title>
       <link>http://localhost:1313/tech/wechat/</link>
