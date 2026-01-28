@@ -17,51 +17,51 @@
     </item>
     <item>
       <title>Flomo: The Note-taking Illusion</title>
-      <link>//localhost:1313/tech/flomo/</link>
+      <link>//localhost:1313/insights/flomo/</link>
       <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/flomo/</guid>
+      <guid>//localhost:1313/insights/flomo/</guid>
       <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;Flomo markets itself as a Zettelkasten implementation, but the product architecture prioritizes low-latency capture over graph connectivity. It lacks the accessible backlinks and visualization primitives necessary for knowledge compounding, effectively functioning as a linear, append-only log rather than a network. While useful as a capture buffer, the proprietary HTML exports create high friction for interoperability with the standard Markdown-based knowledge stack.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;Flomo made waves in the Chinese knowledge management community by positioning itself as a Zettelkasten tool. Founder Shaonan frequently referenced Niklas Luhmann in early podcasts and articles, emphasizing that &amp;ldquo;cards should connect like neurons.&amp;rdquo; The marketing was clever—it pitched Flomo as a simplified Obsidian, a shortcut to building a &amp;ldquo;Second Brain.&amp;rdquo;&lt;/p&gt;</description>
     </item>
     <item>
       <title>On Stay up Late</title>
-      <link>//localhost:1313/tech/stay-up-late/</link>
+      <link>//localhost:1313/insights/stay-up-late/</link>
       <pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/stay-up-late/</guid>
+      <guid>//localhost:1313/insights/stay-up-late/</guid>
       <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;The feeling of &amp;ldquo;needing something more&amp;rdquo; before sleep is a lie we tell ourselves to keep the lights on. To break the cycle of late-night scrolling, we must stop chasing satisfaction and learn to go to bed hungry.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;I&amp;rsquo;ve been trying to figure out why I stay up so late.&lt;/p&gt;&#xA;&lt;p&gt;It&amp;rsquo;s not because I&amp;rsquo;m stressed. My days are actually quite chill lately. I&amp;rsquo;m not dreading tomorrow, either; I&amp;rsquo;m generally optimistic about the future. Yet, every night, I find myself scrolling through feeds, refusing to go to sleep, even when my eyes hurt and my body is exhausted.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Why WeChat is the Best Remainder</title>
-      <link>//localhost:1313/tech/wechat-remainder/</link>
+      <link>//localhost:1313/insights/wechat-remainder/</link>
       <pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/wechat-remainder/</guid>
+      <guid>//localhost:1313/insights/wechat-remainder/</guid>
       <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;The best Todo list is the one you actually open. By comparing the &amp;ldquo;perfect&amp;rdquo; Todoist against the &amp;ldquo;bloated&amp;rdquo; WeChat, I realized that true execution power comes from social binding and zero-resistance access, not from complex sorting systems.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;I&amp;rsquo;ve often pondered: what exactly is the role of a Todo List supposed to be?&lt;/p&gt;&#xA;&lt;p&gt;By current market &amp;ldquo;productivity standards,&amp;rdquo; Todoist, which I currently use, is undoubtedly top-tier. It features project hierarchies, tag management, natural language input, and even Karma scores to gamify your progress. To organize my life, I subscribed to the Premium version, attempting to use the GTD (Get Things Done) philosophy to keep everything in perfect order.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Why I Abandoned My &#34;Perfect&#34; Hugo Blog for Notion</title>
-      <link>//localhost:1313/tech/hugo-to-notion/</link>
+      <link>//localhost:1313/insights/hugo-to-notion/</link>
       <pubDate>Wed, 14 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/hugo-to-notion/</guid>
+      <guid>//localhost:1313/insights/hugo-to-notion/</guid>
       <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;Stop optimizing the container and start shipping the content. This post documents the move from an over-engineered Hugo blog to a frictionless Notion setup, highlighting why &amp;ldquo;Design Engineering&amp;rdquo; can become a trap that prevents you from actually learning in public.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;h3 id=&#34;the-siren-call-of-design-engineering&#34;&gt;The Siren Call of &amp;ldquo;Design Engineering&amp;rdquo;&lt;/h3&gt;&#xA;&lt;p&gt;It started, ironically, with Andrej Karpathy. I was digging through his blog, admiring the &amp;ldquo;content-first&amp;rdquo; philosophy. That led me to &lt;a href=&#34;https://bearblog.dev/&#34;&gt;Bear Blog&lt;/a&gt;—clean, minimal, no-nonsense. I loved the idea. But as soon as I hit the free tier&amp;rsquo;s media upload limits, I balked. I wanted that minimalism, but I didn&amp;rsquo;t want the constraints.&lt;/p&gt;</description>
     </item>
     <item>
       <title>The Trap of Fake Work</title>
-      <link>//localhost:1313/tech/fake-work/</link>
+      <link>//localhost:1313/insights/fake-work/</link>
       <pubDate>Sat, 27 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/fake-work/</guid>
+      <guid>//localhost:1313/insights/fake-work/</guid>
       <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;Busyness is often a &amp;ldquo;silt-out&amp;rdquo; that masks a lack of direction; by applying three heuristics—Asset vs. Consumable, the Domino, and the Pain test—knowledge workers can distinguish high-leverage &amp;ldquo;real work&amp;rdquo; from the noise of fake productivity.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;There is a distinct difference between being busy and doing work.&lt;/p&gt;&#xA;&lt;p&gt;I&amp;rsquo;ve noticed a pattern in myself recently. When my brain gets tired, I don&amp;rsquo;t stop. Instead, I start clicking things. I check email; I organize files; I read news that I don&amp;rsquo;t care about. I look like I&amp;rsquo;m working. I might even feel like I&amp;rsquo;m working. But I&amp;rsquo;m not. I am engaging in fake work to hide from the fact that I don&amp;rsquo;t know what to do next.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Why WeChat Cannot Integrate True Personal AI</title>
-      <link>//localhost:1313/tech/wechat/</link>
+      <link>//localhost:1313/insights/wechat/</link>
       <pubDate>Sat, 27 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/wechat/</guid>
+      <guid>//localhost:1313/insights/wechat/</guid>
       <description>&lt;p&gt;On-device AI promises a compelling future: bringing Large Language Model (LLM) capabilities to the edge, transforming our messy digital footprints into a structured external memory.&lt;/p&gt;&#xA;&lt;p&gt;Theoretically, WeChat holds the most valuable dataset in the Chinese mobile ecosystem—conversations, transactions, reading habits, and social graphs. It should be the pioneer of this shift. However, when we strip away the interface and examine the &lt;strong&gt;product architecture&lt;/strong&gt; and &lt;strong&gt;incentive mechanisms&lt;/strong&gt;, we find an irreconcilable conflict.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Finding the Perfect Quick Capture Tool</title>
-      <link>//localhost:1313/tech/quick-capture/</link>
+      <link>//localhost:1313/insights/quick-capture/</link>
       <pubDate>Mon, 22 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/quick-capture/</guid>
+      <guid>//localhost:1313/insights/quick-capture/</guid>
       <description>&lt;h3 id=&#34;tldr-my-selection-summary&#34;&gt;TL;DR: My Selection Summary&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Simplenote&lt;/strong&gt;: No image support; functionality is too basic.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Google Keep&lt;/strong&gt;: Data cannot be exported; no Markdown support; unfriendly to long text.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Notion&lt;/strong&gt; : Requires internet connection; slow startup speed; unsuitable for quick capture.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Obsidian&lt;/strong&gt;: Great for a knowledge base, but too heavy to serve as an Inbox.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Upnote&lt;/strong&gt;: Rich-text oriented; not Markdown native; free version limits are too restrictive.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Notesnook&lt;/strong&gt;: Not Markdown native; cannot copy text as Markdown.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Apple Notes&lt;/strong&gt;: No Windows platform support.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Anytype&lt;/strong&gt;: The Winner————Local-first, open source, Markdown, beautiful, encrypted.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;My obsession with &amp;ldquo;recording tools&amp;rdquo; has persisted for quite a long time. Because I frequently have text processing needs, I have been searching for the perfect portable, quick-capture tool.&lt;/p&gt;</description>
     </item>
     <item>
@@ -499,25 +499,11 @@
       <description>&lt;h3 id=&#34;2022-01-05&#34;&gt;2022-01-05&lt;/h3&gt;&#xA;&lt;p&gt;&lt;strong&gt;The Perishing of Rainwater&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;星星点点的叶片像偶然泼在白纸上的暗红墨水，缀饰着朦胧阴云连绵的天空。轿车驶过，轮胎上沾着的雨水在地面上也碾出似墨的痕迹，过不多时又要干了。雨点奋不顾身地扑在汽车的挡风玻璃上，而后破碎，被雨刮器无情地刮落下去。路旁的墙壁上，那潇洒的水墨山水图像竟是由雨的血液浸成的吗？这种将死之物又是何等的美丽啊。&lt;/p&gt;&#xA;&lt;p&gt;Leaves that looked like a splash of dark crimson ink on white paper dotted the hazy overcast sky. The vehicle drove by, the rain on the tires on the ground grinding out like ink traces, only to dry again after a short time. Raindrops pounced courageously on the car&amp;rsquo;s glass, shattered, and were cruelly scraped down by the wipers. Is the unrestrained wash painting on the roadside wall actually created with rain&amp;rsquo;s blood? How precious this fading image is.&lt;/p&gt;</description>
     </item>
     <item>
-      <title> 空岛之游：关爱自闭症活动随笔</title>
-      <link>//localhost:1313/life/sky-island-tour-reflections-on-autism-awareness-activity/</link>
-      <pubDate>Thu, 23 Dec 2021 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/life/sky-island-tour-reflections-on-autism-awareness-activity/</guid>
-      <description>&lt;p&gt;原是以为这次志愿活动会相对轻松，但整操作下来后还是感到了艰辛与劳累。虽说腰酸背痛难忍，但心理上的压抑与震撼感还是压倒地超越了生理的疲倦。究根问底，是这个自闭症志愿机构与我现下的生活经验相悖得令人窒息——医院也是这种场所，它们将自己与世俗欢娱相隔离。10月19日，我头痛去医院时，写下了「在医院里看完了莫言《白狗秋千架》里的《弃婴》，眼前是无数平庸的却苦痛着的人们，头顶是污浊浑黑的天花板玻璃，霎时间，感到自己的傲慢无影无踪了，众生又有什么不平等的呢？ 」我看到了其中包含的是对这世界赋予的悲凉现状的臣服与无奈，然而，当初的我却未能透过这一幅幅苦难的图景看到那些即使如此，却仍孤注一掷地沿着那明明灭灭的摇曳道路前行着的痛苦与伟大的人们。&lt;/p&gt;&#xA;&lt;p&gt;我凝视着自闭症患者——小孩、同龄人乃至奔三青年，不禁对所谓幻想中的美好世界感到唏嘘。最近看的文艺作品无不充斥着对社会缺陷/社会黑暗面的揭露与批评：宇野常宽所著的《零零年代想象力》与动画「未来日记」将九五到零五年日本社会决断主义的消极倾向深刻地反映出来，加缪的《局外人》叙述一名死于社会与司法制度无形的手下的小人物，而张爱玲的小说集《倾城之恋》更是以苍凉的笔锋流露出生活不如意的众生相。相比而言，我个人的日常和谐稳定几乎到了近乎枯燥的程度，于是不可避免地对完美到不现实的事件进行幻想、编织。前些日子我对此进行了内省思辨，愈发觉得这种乌托邦幻想不堪一击。然而，《零零年代的想象力》告诉我就算害怕社会境况并拒绝接受，这种「自闭家里蹲/心理主义」并不能使人摆脱在这个后现代社会的重压下无法生存的恐惧，人们需要做出决断——并非破罐破摔式的反社会决断，而是自由、优雅的决断方式。正如宇野常宽所说的：「为了跨越一个特定的时代所必要的，不是背向这个时代否定它，倒不如说是祝福，我们应该在满怀期待的同时去克服时代的弊病。」结合前辈对我的一番疏导，我发觉到一味地回避最终只能徒留遗憾，而向着这「看似不可能」的方向努力——即使是 barely touching，也总能给自己留下值得玩味的回忆。于我是如此，于社会亦是如此——即使是 barely 帮助了这个社会，依旧是能给自己与社会上的人们留下值得纪念的回忆。观测着自闭症患者种种的荒诞举动，想到他们整日活在泡沫般的培智服务中心内，虽说服务中心不乏温暖，但泡沫外的广阔世界却容不下他们；他们与社会上的旁人背道而驰，与「正常生活」隔窗相望，我的心便无可抑制地万分绞痛。绞痛有多深刻，看到患者们持笔涂鸦着的欣喜感就有多热烈，对非盈利培智服务中心的敬佩就有多强。便是生来不幸如此，也有着，尽管可能是小部分人还在热忱地帮助、关爱、照顾着他们。所谓「完美无缺」的社会也完全是空谈，但所谓「无可救药」的社会也并不是板上钉钉；正是由于有灰暗有曙光，有 disparity ，烟火才会有如此缤纷的色彩。&lt;/p&gt;&#xA;&lt;figure&gt;&lt;img src=&#34;//localhost:1313/life/sky-island-tour-reflections-on-autism-awareness-activity/1.png&#34;&#xA;    alt=&#34;实地照片&#34;&gt;&lt;figcaption&gt;&#xA;      &lt;p&gt;实地照片&lt;/p&gt;&#xA;    &lt;/figcaption&gt;&#xA;&lt;/figure&gt;</description>
-    </item>
-    <item>
       <title>溶化记</title>
       <link>//localhost:1313/textlab/melting/</link>
       <pubDate>Tue, 21 Dec 2021 00:00:00 +0000</pubDate>
       <guid>//localhost:1313/textlab/melting/</guid>
       <description>&lt;h3 id=&#34;2021-12-11&#34;&gt;&lt;strong&gt;2021-12-11&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;p&gt;在骑车回来听着 co shu nie 第一张专的 For special you! 眼泪真的止不住地流下来，想起了自己的曾经和自己无限的幻想。着实感觉到这个世界自由却冷漠，有时候感觉真实在我面前被残忍地剥落，机械地过日子，意识从感知现实脱离向自己荒唐的幻梦了。我脑中已经不知循环过多少遍自身的理想形象了，浸润在迷梦中的我又能够自洽吗？我的身体终究是不会在梦中被磨成我所向往的样子的。&lt;/p&gt;&#xA;&lt;p&gt;想到这里我总感到悲从中来，有时候不太清楚自己的方向了。可能是心灵太过孤独，也可能是生活有些空虚，但沉静下来还是会发现世界也没有那么不堪，那我的悲伤又会不会仅仅是我的幻想而已呢？我思考着，在我今后的作品中，可以努力重构着这么一个真假难分的魔幻世界。晚上买东西看到了翻天娃辣条，又想起曾经与我母亲相爱相杀偷用电子产品的时光了。虽然知道我的胃必然会寄，但还是买了一包翻天娃辣条，这是否又是对我懵懂时期对夜生活的一腔热血的追忆呢？收银的时候又看到了小妹麻木的姿态与身旁点钞的员工辛酸的神情，结合了之前日语老师所叙述的日本社畜的悲惨遭遇与惊人压力，「如果你哪次在日本街头看到了一个一脸无辜的，穿着西装的人，那他大概率是面试失败了」这句话再次深深地烙刻在我的脑海中。&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h3 id=&#34;2021-12-31&#34;&gt;&lt;strong&gt;2021-12-31&lt;/strong&gt;&lt;/h3&gt;&#xA;&lt;p&gt;今年的12月31日于去年截然不同。去年的这一天我跟着一家人从租在xhw旁边的房子回家，映射着我内心的周遭事物的感情无不被我察觉，轿车在夕阳下逐渐远离学校的景色也浩大震撼，那时的色调尚没有如今复杂的斑斓般令人难以脱身。那时候的我的感知与一年之后自不可同日而语，现今的我已然对跨年失去了曾经的超级敏感，反而是将注意力的焦点置于往后一两周的期末考试上了。这不仅是内心紊乱的体现，更是期望与压力循环扩大的标志。这样的改变对我来说似乎也并不甚悲哀，暗藏在内心深处呼号的也仅仅是那个淡漠却撕裂般的去年的我罢了。在我一忙碌于当下的任务时，他便在我头脑里恍恍惚惚晃动开来不甚清晰了。翻动着曾经的朋友圈，不禁感慨于站在2021年回首的我与正在2021年哭笑痴嗔的我之间的隔阂。很庆幸能在朋友圈记录下过去的点滴，虽说确实没啥实用，但至少能给自己留下一些于拟像社会的存在证明吧。11年级，光从学业上来说那确凿的是进步了，但对这一年的快乐程度相比去年进步与否我深表怀疑。这其中包含着渴求知识的焦虑、对未来学业与生活品质的焦虑以及对社交生活的焦虑等的影响在我脑海中挥之不去、日渐加深——特别是与他人比较的时候，还有针对星河湾的学习生活的疑惑和对身体状况对强烈担忧。但与此同时我又探索发现了太多东西了——vocaloid和ツミキ、co shu nie和上原广美，还有对文学、传播、艺术与与ACGN的深度热爱。写到这，我也从车上走进了房门。2020到2021的新年我在寒风中环视着这个繁艳的世界，那2021到2022我就在温暖的暖气旁或是安逸或是生产吧。&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Serendipitously Stumble into a Blossom</title>
-      <link>//localhost:1313/life/blossom/</link>
-      <pubDate>Sat, 06 Nov 2021 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/life/blossom/</guid>
-      <description>&lt;p&gt;I was staring down from my Shinjuku hotel by Kabukicho. The mood here was different from that of Shanghai: although it appeared to be full of tall buildings and bustling with pedestrians at the massive crossroads, there seemed to be a slight sensation of separation in the air. Although this emotion is faint and concealed, it appears to be grasping my heart, having a significant impact on me that I have never encountered before. I seemed to have discovered a new universe and was shocked in place, flooded with mixed emotions inside. I expected the computer could show me everything in the world, but when I was in Shinjuku, gazing out the floor-to-ceiling windows at this scenery, there appeared to be a touch of melancholy in the people and objects around me and even in the surroundings. I observed a thin melancholy and emptiness hiding behind this prosperity, and I had the impression that I was gazing at a collection of people who were dying to live. It was the first time since I was a youngster that I had the feeling I was staring at a world where life was floating and sinking along the way. I had the sense that I was peering into a crystal ball filled with miniature portraits and pavilions skyscrapers being tossed around by an invisible hand, yet all striving to live and enjoying to live.&lt;/p&gt;</description>
     </item>
     <item>
       <title>少女终末旅行</title>

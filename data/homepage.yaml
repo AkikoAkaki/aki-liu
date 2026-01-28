@@ -21,20 +21,20 @@ columns:
     items:
       - title: University of Rochester
         desc: "B.S. in Computer Science<br>B.S. in Applied Mathematics"
-        link: ""
+        link: "https://www.rochester.edu/"
 
   - id: writing
     title: Writing
     cssClass: col-writing
     items:
       - title: Insights
-        desc: "Thoughts on products, code, and design."
+        desc: "Products, industry, and life."
         link: /insights/
       - title: Text Lab
-        desc: "Literature, art, philosophy and more."
+        desc: "Literature, art, and theory."
         link: /textlab/
-      - title: Notes
-        desc: "Reflections and personal archives."
+      - title: Engineering
+        desc: "Systems, algorithms, and proofs."
         link: /notes/
 
   - id: projects

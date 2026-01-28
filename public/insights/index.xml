@@ -10,51 +10,51 @@
     <atom:link href="//localhost:1313/insights/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Flomo: The Note-taking Illusion</title>
-      <link>//localhost:1313/tech/flomo/</link>
+      <link>//localhost:1313/insights/flomo/</link>
       <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/flomo/</guid>
+      <guid>//localhost:1313/insights/flomo/</guid>
       <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;Flomo markets itself as a Zettelkasten implementation, but the product architecture prioritizes low-latency capture over graph connectivity. It lacks the accessible backlinks and visualization primitives necessary for knowledge compounding, effectively functioning as a linear, append-only log rather than a network. While useful as a capture buffer, the proprietary HTML exports create high friction for interoperability with the standard Markdown-based knowledge stack.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;Flomo made waves in the Chinese knowledge management community by positioning itself as a Zettelkasten tool. Founder Shaonan frequently referenced Niklas Luhmann in early podcasts and articles, emphasizing that &amp;ldquo;cards should connect like neurons.&amp;rdquo; The marketing was clever—it pitched Flomo as a simplified Obsidian, a shortcut to building a &amp;ldquo;Second Brain.&amp;rdquo;&lt;/p&gt;</description>
     </item>
     <item>
       <title>On Stay up Late</title>
-      <link>//localhost:1313/tech/stay-up-late/</link>
+      <link>//localhost:1313/insights/stay-up-late/</link>
       <pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/stay-up-late/</guid>
+      <guid>//localhost:1313/insights/stay-up-late/</guid>
       <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;The feeling of &amp;ldquo;needing something more&amp;rdquo; before sleep is a lie we tell ourselves to keep the lights on. To break the cycle of late-night scrolling, we must stop chasing satisfaction and learn to go to bed hungry.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;I&amp;rsquo;ve been trying to figure out why I stay up so late.&lt;/p&gt;&#xA;&lt;p&gt;It&amp;rsquo;s not because I&amp;rsquo;m stressed. My days are actually quite chill lately. I&amp;rsquo;m not dreading tomorrow, either; I&amp;rsquo;m generally optimistic about the future. Yet, every night, I find myself scrolling through feeds, refusing to go to sleep, even when my eyes hurt and my body is exhausted.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Why WeChat is the Best Remainder</title>
-      <link>//localhost:1313/tech/wechat-remainder/</link>
+      <link>//localhost:1313/insights/wechat-remainder/</link>
       <pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/wechat-remainder/</guid>
+      <guid>//localhost:1313/insights/wechat-remainder/</guid>
       <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;The best Todo list is the one you actually open. By comparing the &amp;ldquo;perfect&amp;rdquo; Todoist against the &amp;ldquo;bloated&amp;rdquo; WeChat, I realized that true execution power comes from social binding and zero-resistance access, not from complex sorting systems.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;I&amp;rsquo;ve often pondered: what exactly is the role of a Todo List supposed to be?&lt;/p&gt;&#xA;&lt;p&gt;By current market &amp;ldquo;productivity standards,&amp;rdquo; Todoist, which I currently use, is undoubtedly top-tier. It features project hierarchies, tag management, natural language input, and even Karma scores to gamify your progress. To organize my life, I subscribed to the Premium version, attempting to use the GTD (Get Things Done) philosophy to keep everything in perfect order.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Why I Abandoned My &#34;Perfect&#34; Hugo Blog for Notion</title>
-      <link>//localhost:1313/tech/hugo-to-notion/</link>
+      <link>//localhost:1313/insights/hugo-to-notion/</link>
       <pubDate>Wed, 14 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/hugo-to-notion/</guid>
+      <guid>//localhost:1313/insights/hugo-to-notion/</guid>
       <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;Stop optimizing the container and start shipping the content. This post documents the move from an over-engineered Hugo blog to a frictionless Notion setup, highlighting why &amp;ldquo;Design Engineering&amp;rdquo; can become a trap that prevents you from actually learning in public.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;h3 id=&#34;the-siren-call-of-design-engineering&#34;&gt;The Siren Call of &amp;ldquo;Design Engineering&amp;rdquo;&lt;/h3&gt;&#xA;&lt;p&gt;It started, ironically, with Andrej Karpathy. I was digging through his blog, admiring the &amp;ldquo;content-first&amp;rdquo; philosophy. That led me to &lt;a href=&#34;https://bearblog.dev/&#34;&gt;Bear Blog&lt;/a&gt;—clean, minimal, no-nonsense. I loved the idea. But as soon as I hit the free tier&amp;rsquo;s media upload limits, I balked. I wanted that minimalism, but I didn&amp;rsquo;t want the constraints.&lt;/p&gt;</description>
     </item>
     <item>
       <title>The Trap of Fake Work</title>
-      <link>//localhost:1313/tech/fake-work/</link>
+      <link>//localhost:1313/insights/fake-work/</link>
       <pubDate>Sat, 27 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/fake-work/</guid>
+      <guid>//localhost:1313/insights/fake-work/</guid>
       <description>&lt;aside&gt;&#xD;&#xA;&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;Busyness is often a &amp;ldquo;silt-out&amp;rdquo; that masks a lack of direction; by applying three heuristics—Asset vs. Consumable, the Domino, and the Pain test—knowledge workers can distinguish high-leverage &amp;ldquo;real work&amp;rdquo; from the noise of fake productivity.&lt;/p&gt;&#xA;&lt;/aside&gt;&#xD;&#xA;&lt;p&gt;There is a distinct difference between being busy and doing work.&lt;/p&gt;&#xA;&lt;p&gt;I&amp;rsquo;ve noticed a pattern in myself recently. When my brain gets tired, I don&amp;rsquo;t stop. Instead, I start clicking things. I check email; I organize files; I read news that I don&amp;rsquo;t care about. I look like I&amp;rsquo;m working. I might even feel like I&amp;rsquo;m working. But I&amp;rsquo;m not. I am engaging in fake work to hide from the fact that I don&amp;rsquo;t know what to do next.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Why WeChat Cannot Integrate True Personal AI</title>
-      <link>//localhost:1313/tech/wechat/</link>
+      <link>//localhost:1313/insights/wechat/</link>
       <pubDate>Sat, 27 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/wechat/</guid>
+      <guid>//localhost:1313/insights/wechat/</guid>
       <description>&lt;p&gt;On-device AI promises a compelling future: bringing Large Language Model (LLM) capabilities to the edge, transforming our messy digital footprints into a structured external memory.&lt;/p&gt;&#xA;&lt;p&gt;Theoretically, WeChat holds the most valuable dataset in the Chinese mobile ecosystem—conversations, transactions, reading habits, and social graphs. It should be the pioneer of this shift. However, when we strip away the interface and examine the &lt;strong&gt;product architecture&lt;/strong&gt; and &lt;strong&gt;incentive mechanisms&lt;/strong&gt;, we find an irreconcilable conflict.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Finding the Perfect Quick Capture Tool</title>
-      <link>//localhost:1313/tech/quick-capture/</link>
+      <link>//localhost:1313/insights/quick-capture/</link>
       <pubDate>Mon, 22 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tech/quick-capture/</guid>
+      <guid>//localhost:1313/insights/quick-capture/</guid>
       <description>&lt;h3 id=&#34;tldr-my-selection-summary&#34;&gt;TL;DR: My Selection Summary&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Simplenote&lt;/strong&gt;: No image support; functionality is too basic.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Google Keep&lt;/strong&gt;: Data cannot be exported; no Markdown support; unfriendly to long text.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Notion&lt;/strong&gt; : Requires internet connection; slow startup speed; unsuitable for quick capture.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Obsidian&lt;/strong&gt;: Great for a knowledge base, but too heavy to serve as an Inbox.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Upnote&lt;/strong&gt;: Rich-text oriented; not Markdown native; free version limits are too restrictive.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Notesnook&lt;/strong&gt;: Not Markdown native; cannot copy text as Markdown.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Apple Notes&lt;/strong&gt;: No Windows platform support.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Anytype&lt;/strong&gt;: The Winner————Local-first, open source, Markdown, beautiful, encrypted.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;My obsession with &amp;ldquo;recording tools&amp;rdquo; has persisted for quite a long time. Because I frequently have text processing needs, I have been searching for the perfect portable, quick-capture tool.&lt;/p&gt;</description>
     </item>
   </channel>

@@ -78,12 +78,5 @@
       <guid>//localhost:1313/tags/translation/</guid>
       <description></description>
     </item>
-    <item>
-      <title>Journal</title>
-      <link>//localhost:1313/tags/journal/</link>
-      <pubDate>Thu, 23 Dec 2021 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/tags/journal/</guid>
-      <description></description>
-    </item>
   </channel>
 </rss>
