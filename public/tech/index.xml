@@ -1,14 +1,26 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tech on Aki's Blog</title><link>https://AkikoAkaki.github.io/aki-liu/tech/</link><description>Recent content in Tech on Aki's Blog</description><generator>Hugo</generator><language>en-us</language><lastBuildDate>Sat, 27 Dec 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://AkikoAkaki.github.io/aki-liu/tech/index.xml" rel="self" type="application/rss+xml"/><item><title>Why WeChat Cannot Integrate True Personal AI</title><link>https://AkikoAkaki.github.io/aki-liu/tech/wechat/</link><pubDate>Sat, 27 Dec 2025 00:00:00 +0000</pubDate><guid>https://AkikoAkaki.github.io/aki-liu/tech/wechat/</guid><description>&lt;p&gt;On-device AI promises a compelling future: bringing Large Language Model (LLM) capabilities to the edge, transforming our messy digital footprints into a structured external memory.&lt;/p&gt;
-&lt;p&gt;Theoretically, WeChat holds the most valuable dataset in the Chinese mobile ecosystem—conversations, transactions, reading habits, and social graphs. It should be the pioneer of this shift. However, when we strip away the interface and examine the &lt;strong&gt;product architecture&lt;/strong&gt; and &lt;strong&gt;incentive mechanisms&lt;/strong&gt;, we find an irreconcilable conflict.&lt;/p&gt;</description></item><item><title>Finding the Perfect Quick Capture Tool</title><link>https://AkikoAkaki.github.io/aki-liu/tech/quick-capture/</link><pubDate>Mon, 22 Dec 2025 00:00:00 +0000</pubDate><guid>https://AkikoAkaki.github.io/aki-liu/tech/quick-capture/</guid><description>&lt;h3 id="tldr-my-selection-summary"&gt;TL;DR: My Selection Summary&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Simplenote&lt;/strong&gt;: No image support; functionality is too basic.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Google Keep&lt;/strong&gt;: Data cannot be exported; no Markdown support; unfriendly to long text.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Notion&lt;/strong&gt; : Requires internet connection; slow startup speed; unsuitable for quick capture.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Obsidian&lt;/strong&gt;: Great for a knowledge base, but too heavy to serve as an Inbox.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Upnote&lt;/strong&gt;: Rich-text oriented; not Markdown native; free version limits are too restrictive.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Notesnook&lt;/strong&gt;: Not Markdown native; cannot copy text as Markdown.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Apple Notes&lt;/strong&gt;: No Windows platform support.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Anytype&lt;/strong&gt;: The Winner————Local-first, open source, Markdown, beautiful, encrypted.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;p&gt;My obsession with &amp;ldquo;recording tools&amp;rdquo; has persisted for quite a long time. Because I frequently have text processing needs, I have been searching for the perfect portable, quick-capture tool.&lt;/p&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tech on Aki&#39;s Blog</title>
+    <link>http://localhost:1313/aki-liu/tech/</link>
+    <description>Recent content in Tech on Aki&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 27 Dec 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/aki-liu/tech/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Why WeChat Cannot Integrate True Personal AI</title>
+      <link>http://localhost:1313/aki-liu/tech/wechat/</link>
+      <pubDate>Sat, 27 Dec 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/aki-liu/tech/wechat/</guid>
+      <description>&lt;p&gt;On-device AI promises a compelling future: bringing Large Language Model (LLM) capabilities to the edge, transforming our messy digital footprints into a structured external memory.&lt;/p&gt;&#xA;&lt;p&gt;Theoretically, WeChat holds the most valuable dataset in the Chinese mobile ecosystem—conversations, transactions, reading habits, and social graphs. It should be the pioneer of this shift. However, when we strip away the interface and examine the &lt;strong&gt;product architecture&lt;/strong&gt; and &lt;strong&gt;incentive mechanisms&lt;/strong&gt;, we find an irreconcilable conflict.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Finding the Perfect Quick Capture Tool</title>
+      <link>http://localhost:1313/aki-liu/tech/quick-capture/</link>
+      <pubDate>Mon, 22 Dec 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/aki-liu/tech/quick-capture/</guid>
+      <description>&lt;h3 id=&#34;tldr-my-selection-summary&#34;&gt;TL;DR: My Selection Summary&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Simplenote&lt;/strong&gt;: No image support; functionality is too basic.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Google Keep&lt;/strong&gt;: Data cannot be exported; no Markdown support; unfriendly to long text.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Notion&lt;/strong&gt; : Requires internet connection; slow startup speed; unsuitable for quick capture.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Obsidian&lt;/strong&gt;: Great for a knowledge base, but too heavy to serve as an Inbox.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Upnote&lt;/strong&gt;: Rich-text oriented; not Markdown native; free version limits are too restrictive.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Notesnook&lt;/strong&gt;: Not Markdown native; cannot copy text as Markdown.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Apple Notes&lt;/strong&gt;: No Windows platform support.&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Anytype&lt;/strong&gt;: The Winner————Local-first, open source, Markdown, beautiful, encrypted.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;hr&gt;&#xA;&lt;p&gt;My obsession with &amp;ldquo;recording tools&amp;rdquo; has persisted for quite a long time. Because I frequently have text processing needs, I have been searching for the perfect portable, quick-capture tool.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

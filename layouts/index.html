@@ -1,6 +1,76 @@
 {{ define "main" }}
+{{- $data := site.Data.homepage -}}
+
 <div class="home-container">
-    <!-- TEST -->
-    {{ .Content }}
+    {{/* Intro Section */}}
+    <section class="intro">
+        <h1 class="author-name">{{ $data.intro.name }}</h1>
+        {{- range $index, $para := $data.intro.bio }}
+        <p class="bio-text">
+            {{- if eq $index 0 }}<em>{{ $data.intro.tagline }}</em>. {{ end }}{{ $para | safeHTML }}
+        </p>
+        {{- end }}
+    </section>
+
+    {{/* Work Table Section */}}
+    <section class="work-table-section">
+        <div class="work-table-wrapper">
+            <table class="work-table">
+                <thead>
+                    <tr>
+                        {{- range $data.columns }}
+                        <th>{{ .title }}</th>
+                        {{- end }}
+                    </tr>
+                </thead>
+                <tbody>
+                    {{- /* 计算最大行数 */ -}}
+                    {{- $maxRows := 0 -}}
+                    {{- range $data.columns -}}
+                        {{- if gt (len .items) $maxRows -}}
+                            {{- $maxRows = len .items -}}
+                        {{- end -}}
+                    {{- end -}}
+
+                    {{- /* 渲染每一行 */ -}}
+                    {{- range $rowIndex := seq $maxRows }}
+                    <tr>
+                        {{- range $col := $data.columns }}
+                            {{- $item := index .items (sub $rowIndex 1) }}
+                            <td{{ with .cssClass }} class="{{ . }}"{{ end }}>
+                                {{- if $item }}
+                                <div class="work-item">
+                                    {{- if $item.link }}
+                                    <a href="{{ $item.link | relLangURL }}" class="work-title">{{ $item.title }}</a>
+                                    {{- else }}
+                                    <div class="work-title">{{ $item.title }}</div>
+                                    {{- end }}
+                                    <div class="work-desc">{{ $item.desc | safeHTML }}</div>
+                                </div>
+                                {{- end }}
+                            </td>
+                        {{- end }}
+                    </tr>
+                    {{- end }}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {{/* Now Section */}}
+    <section class="now-section">
+        <h2 class="section-title">{{ $data.now.title }}</h2>
+        {{- range $data.now.paragraphs }}
+        <p>{{ . | safeHTML }}</p>
+        {{- end }}
+    </section>
+
+    {{/* Connect Section */}}
+    <section class="connect-section">
+        <h2 class="section-title">{{ $data.connect.title }}</h2>
+        {{- range $data.connect.paragraphs }}
+        <p>{{ . | safeHTML }}</p>
+        {{- end }}
+    </section>
 </div>
 {{ end }}
