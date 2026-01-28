@@ -5,9 +5,8 @@ tags: ["translation"]
 draft: false
 ---
 
-原文：[Gainax and the Neo-Kanada Renaissance – Animétudes](https://animetudes.com/2021/07/02/gainax-and-the-neo-kanada-renaissance/)。
-
-这篇文章是[金田系的历史系列](https://animetudes.com/the-history-of-the-kanada-school/)的其中之一。
+*原文：[Gainax and the Neo-Kanada Renaissance – Animétudes](https://animetudes.com/2021/07/02/gainax-and-the-neo-kanada-renaissance/)。*
+*这篇文章是[金田系的历史系列](https://animetudes.com/the-history-of-the-kanada-school/)的其中之一。*
 
 ---
 
@@ -32,7 +31,7 @@ draft: false
 对于看惯了今石洋之后期作品的人来说可能会感到惊讶的是，在这个阶段，金田伊功的影响远没有人们想象的那样明显。你确实看到了它的元素，主要是在速度线上。但尤其是在这个序列中，今石洋之似乎更接近松本宪生和若林厚史所代表的 90 年代早期的流动动画（flow animation） ：动作总体上非常细致和流畅，在动作高潮时刻的激烈抽打更接近若林厚史在 *《幽游白书》* 中的表现而不是金田伊功对该技术的使用。今石洋之在形状的处理方法更能明确地体现这一点，他用了金田伊功（尤其是在 90 年代）很少使用的两种技术：加粗身体的轮廓线条，以及形状的一般性变形。可能是通过吉成曜在制作 *《新世纪福音战士》* 时于自己的分镜中突出地使用了轮廓加粗，流动动画（flow animation）的这些特点被传给了今石洋之。
 
 {{< figure 
-    src="3.jpg"
+    src="3.png"
     caption="上：今石洋之；左下：若林厚史；右下：吉成曜"
 >}}
 
