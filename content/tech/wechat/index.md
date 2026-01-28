@@ -1,7 +1,7 @@
 ---
 title: "Why WeChat Cannot Integrate True Personal AI"
 date: 2025-12-27
-tags: ["product thinking"]
+tags: ["product"]
 draft: false
 ---
 

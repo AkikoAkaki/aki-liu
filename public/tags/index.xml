@@ -2,59 +2,87 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Aki&#39;s Blog</title>
-    <link>http://localhost:1313/aki-liu/tags/</link>
+    <link>http://localhost:1313/tags/</link>
     <description>Recent content in Tags on Aki&#39;s Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 21 Jun 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/aki-liu/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 26 Jan 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Critique</title>
+      <link>http://localhost:1313/tags/critique/</link>
+      <pubDate>Mon, 26 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/critique/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Product</title>
+      <link>http://localhost:1313/tags/product/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/product/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Productivity</title>
+      <link>http://localhost:1313/tags/productivity/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/productivity/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Mental Model</title>
+      <link>http://localhost:1313/tags/mental-model/</link>
+      <pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/mental-model/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Pruductivity</title>
+      <link>http://localhost:1313/tags/pruductivity/</link>
+      <pubDate>Mon, 22 Dec 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/tags/pruductivity/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Fiction</title>
-      <link>http://localhost:1313/aki-liu/tags/fiction/</link>
+      <link>http://localhost:1313/tags/fiction/</link>
       <pubDate>Sat, 21 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/tags/fiction/</guid>
+      <guid>http://localhost:1313/tags/fiction/</guid>
       <description></description>
     </item>
     <item>
       <title>Poetry</title>
-      <link>http://localhost:1313/aki-liu/tags/poetry/</link>
+      <link>http://localhost:1313/tags/poetry/</link>
       <pubDate>Sat, 21 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/tags/poetry/</guid>
+      <guid>http://localhost:1313/tags/poetry/</guid>
       <description></description>
     </item>
     <item>
       <title>Essay</title>
-      <link>http://localhost:1313/aki-liu/tags/essay/</link>
+      <link>http://localhost:1313/tags/essay/</link>
       <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/tags/essay/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Critique</title>
-      <link>http://localhost:1313/aki-liu/tags/critique/</link>
-      <pubDate>Tue, 28 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/tags/critique/</guid>
+      <guid>http://localhost:1313/tags/essay/</guid>
       <description></description>
     </item>
     <item>
       <title>Drama</title>
-      <link>http://localhost:1313/aki-liu/tags/drama/</link>
+      <link>http://localhost:1313/tags/drama/</link>
       <pubDate>Wed, 15 Nov 2023 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/tags/drama/</guid>
+      <guid>http://localhost:1313/tags/drama/</guid>
       <description></description>
     </item>
     <item>
       <title>Translation</title>
-      <link>http://localhost:1313/aki-liu/tags/translation/</link>
+      <link>http://localhost:1313/tags/translation/</link>
       <pubDate>Tue, 05 Apr 2022 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/tags/translation/</guid>
+      <guid>http://localhost:1313/tags/translation/</guid>
       <description></description>
     </item>
     <item>
       <title>Journal</title>
-      <link>http://localhost:1313/aki-liu/tags/journal/</link>
+      <link>http://localhost:1313/tags/journal/</link>
       <pubDate>Thu, 23 Dec 2021 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/aki-liu/tags/journal/</guid>
+      <guid>http://localhost:1313/tags/journal/</guid>
       <description></description>
     </item>
   </channel>

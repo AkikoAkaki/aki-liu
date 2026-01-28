@@ -1,0 +1,496 @@
+/* ==========================================================================
+   Post Styles
+   文章页面：标题、日期、正文排版、目录
+   ========================================================================== */
+
+/* ==========================================================================
+   Post Layout
+   ========================================================================== */
+
+.post-single {
+    margin-bottom: 8rem;
+    min-width: 0;
+    width: 100%;
+}
+
+.post-header {
+    margin-bottom: 0;
+}
+
+.post-title {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--color-heading);
+    margin: 0.7rem 0 0.75rem 0;
+    font-size: 1.05rem;
+}
+
+.post-date {
+    font: var(--type-s);
+    color: var(--text-meta);
+    display: block;
+    margin-bottom: 4rem;
+}
+
+@media (max-width: 768px) {
+    .post-single {
+        margin-bottom: 1rem;
+    }
+}
+
+/* ==========================================================================
+   Table of Contents
+   ========================================================================== */
+
+.post-toc {
+    background-color: transparent;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-dim);
+    position: sticky;
+    top: 15.5rem;
+    max-height: calc(100vh - 10rem);
+    overflow-y: auto;
+    padding-right: 0.5rem;
+    width: 240px;
+}
+
+.post-toc nav {
+    font: inherit;
+}
+
+.post-toc > nav > ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+}
+
+.post-toc ul {
+    list-style: none;
+    margin: 0;
+}
+
+.post-toc ul ul {
+    padding-left: 1.2rem;
+    margin-top: 0.35rem;
+}
+
+/* Fix for deep nesting indentation when higher level headers are missing */
+.post-toc li:not(:has(> a)) > ul {
+    padding-left: 0;
+    margin-top: 0;
+}
+
+.post-toc li {
+    margin-bottom: 0.35rem;
+}
+
+.post-toc a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.25s ease;
+    display: block;
+    padding: 0.05rem 0;
+}
+
+.post-toc a:hover {
+    color: var(--text-color);
+}
+
+.post-toc a.is-active {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.post-toc--inline {
+    display: none;
+}
+
+.post-toc--sidebar {
+    display: block;
+}
+
+@media (max-width: 1200px) {
+    .post-toc {
+        position: relative;
+        top: auto;
+        max-height: none;
+        width: 100%;
+    }
+}
+
+@media (max-width: 900px) {
+    .post-toc {
+        position: static;
+        top: auto;
+        max-height: none;
+        width: 100%;
+        padding-right: 0;
+        margin-top: 1.75rem;
+    }
+
+    .post-toc--inline {
+        display: block;
+        order: -1;
+    }
+
+    .post-toc--sidebar {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   Post Content
+   ========================================================================== */
+
+.post-content {
+    font: var(--type-l);
+    color: var(--text-color);
+}
+
+.post-content p {
+    margin-bottom: 1.25rem;
+    white-space: pre-line;
+}
+
+/* Blockquote */
+.post-content blockquote {
+    margin: 2.25rem 0 2.25rem -1.5rem;
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--color-secondary);
+    color: var(--text-color);
+    background: transparent;
+}
+
+@media (max-width: 768px) {
+    .post-content blockquote {
+        margin-left: 0;
+        padding-left: 1rem;
+    }
+}
+
+/* Aside blocks */
+.post-content aside {
+    background-color: rgba(0, 0, 0, 0.03);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2.25rem 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .post-content aside {
+        background-color: rgba(255, 255, 255, 0.04);
+    }
+}
+
+@media (max-width: 768px) {
+    .post-content aside {
+        padding: 1rem;
+    }
+}
+
+/* Headings */
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--color-heading);
+    margin-bottom: 0.75rem;
+    margin-top: 3.5rem;
+    scroll-margin-top: 25vh;
+}
+
+.post-content h1 { font-size: 1.16rem; }
+.post-content h2 { font-size: 1.1rem; }
+.post-content h3 { font-size: 1.05rem; }
+.post-content h4 { font-size: 1rem; }
+.post-content h5 { font-size: 1rem; }
+.post-content h6 { font-size: 1rem; }
+
+.post-content hr {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin: 3rem 0 1.5rem;
+    width: 100%;
+}
+
+/* Links */
+.post-content a {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--border-color);
+    transition: text-decoration-color 0.18s ease, text-decoration-thickness 0.12s ease;
+}
+
+.post-content a:hover {
+    text-decoration-color: var(--color-secondary);
+    text-decoration-thickness: 1.25px;
+}
+
+/* ==========================================================================
+   Media (Images, Video, Audio)
+   ========================================================================== */
+
+.post-content img,
+.post-content picture,
+.post-content svg {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 2.5rem auto;
+    border-radius: 0;
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.post-content img[width] {
+    width: auto;
+}
+
+.post-content figure {
+    margin: 1rem 0;
+    text-align: left;
+}
+
+.post-content figure img,
+.post-content figure video {
+    margin: 0;
+}
+
+.post-content figure figcaption {
+    margin-top: -0.6rem;
+    font-size: 0.8rem;
+    color: var(--text-meta);
+    text-align: left;
+}
+
+.post-content figure figcaption strong {
+    font-weight: 600;
+}
+
+.post-content video,
+.post-content audio,
+.post-content iframe {
+    width: 100%;
+    max-width: 100%;
+    margin: 2.5rem 0;
+    border-radius: 0;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .post-content img,
+    .post-content picture,
+    .post-content svg,
+    .post-content video,
+    .post-content audio,
+    .post-content iframe {
+        box-shadow: none;
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+}
+
+.post-content p.html-note {
+    border-left: 3px solid var(--border-color);
+    padding-left: 1rem;
+    margin-top: 0.25rem;
+    background: rgba(0, 0, 0, 0.01);
+    color: var(--text-meta);
+    font-size: 0.95em;
+}
+
+/* ==========================================================================
+   Code Blocks
+   ========================================================================== */
+
+.post-content pre {
+    background-color: var(--color-bg-muted);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 2.5rem 0;
+    border: none;
+    color: var(--text-color);
+    white-space: pre;
+    word-wrap: normal;
+}
+
+@media (prefers-color-scheme: dark) {
+    .post-content pre {
+        background-color: #0d0d0d;
+        color: #ccc;
+    }
+}
+
+.post-content pre code {
+    color: inherit;
+    background-color: transparent;
+    padding: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .post-content pre code {
+        color: #eee;
+    }
+}
+
+.post-content pre code .p,
+.post-content pre code .o,
+.post-content pre code .k,
+.post-content pre code .kc,
+.post-content pre code .kd,
+.post-content pre code .kr,
+.post-content pre code .s,
+.post-content pre code .m {
+    color: var(--color-dim) !important;
+}
+
+.post-content code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background-color: var(--color-bg-muted);
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .post-content code {
+        background-color: #1a1a1a;
+    }
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+.post-content ul,
+.post-content ol {
+    margin: 1.5rem 0;
+    padding-left: 1.2rem;
+    line-height: 2;
+    color: var(--text-color);
+    list-style-position: outside;
+}
+
+.post-content ul ul,
+.post-content ul ol,
+.post-content ol ul,
+.post-content ol ol {
+    margin: 0;
+    line-height: 2;
+}
+
+.post-content li {
+    margin-bottom: 0.4rem;
+    line-height: 2;
+    color: var(--text-color);
+}
+
+.post-content li::marker {
+    color: var(--color-secondary);
+}
+
+/* Nested list marker types */
+.post-content ul { list-style-type: disc; }
+.post-content ul ul { list-style-type: circle; }
+.post-content ul ul ul { list-style-type: disc; }
+.post-content ul ul ul ul { list-style-type: circle; }
+
+/* ==========================================================================
+   Footnotes
+   ========================================================================== */
+
+.post-content .footnotes {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--text-meta);
+}
+
+.post-content .footnotes hr {
+    display: none;
+}
+
+.post-content .footnotes ol {
+    line-height: 1.4;
+}
+
+.post-content .footnotes li {
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+}
+
+.post-content .footnotes p {
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+.table-wrapper {
+    overflow-x: auto;
+    margin: 2.5rem 0;
+    border-radius: 8px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    font-size: 0.95rem;
+    background-color: rgba(255, 255, 255, 0.4);
+    min-width: 600px;
+}
+
+.post-content table caption {
+    caption-side: top;
+    text-align: left;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--text-color);
+}
+
+.post-content th,
+.post-content td {
+    border: 1px solid var(--border-color);
+    padding: 0.65rem 0.9rem;
+}
+
+.post-content th {
+    background-color: rgba(0, 0, 0, 0.02);
+    font-weight: 600;
+    text-align: left;
+    color: var(--text-color);
+}
+
+.post-content tbody tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.post-content td {
+    vertical-align: top;
+}
+
+@media (prefers-color-scheme: dark) {
+    .post-content table {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .post-content tbody tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.04);
+    }
+}

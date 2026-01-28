@@ -9,10 +9,7 @@
         {{ end }}
         <div class="title-with-back">
             <a class="back-link" href="{{ $backHref }}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14" />
-                    <path d="M11 6l-6 6 6 6" />
-                </svg>
+                {{ partial "icons/back-arrow.html" . }}
                 <span>{{ $backLabel }}</span>
             </a>
             <h1 class="post-title">{{ .Title }}</h1>

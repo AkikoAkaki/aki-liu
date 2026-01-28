@@ -13,10 +13,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Newsreader:ital,wght@1,400&display=swap" rel="stylesheet">
 
-        {{ $style := resources.Get "css/style.css" | fingerprint }}
-        {{ if $style }}
-        <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
-        {{ end }}
+    {{/* Hugo Pipes: Concatenate modular CSS files */}}
+    {{ $base := resources.Get "css/base.css" }}
+    {{ $layout := resources.Get "css/layout.css" }}
+    {{ $components := resources.Get "css/components.css" }}
+    {{ $post := resources.Get "css/post.css" }}
+    {{ $home := resources.Get "css/home.css" }}
+    {{ $styles := slice $base $layout $components $post $home | resources.Concat "css/bundle.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $styles.RelPermalink }}" integrity="{{ $styles.Data.Integrity }}">
         {{ $enableKaTeX := or .Site.Params.enablekatex .Site.Params.enableKaTeX }}
         {{ if $enableKaTeX }}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
