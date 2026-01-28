@@ -6,6 +6,12 @@ languageCode = 'en-us'
 title = "Aki's Blog"
 # 使用的主题名称
 theme = 'paco'
+
+# Hugo version requirements
+[module]
+  [module.hugoVersion]
+    extended = false
+    min = "0.112.0"
 # 网站的主要内容章节，用于某些列表页的过滤
 mainSections = ['tech', 'life', 'textlab']
 
