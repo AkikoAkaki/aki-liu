@@ -1,13 +1,20 @@
 ---
 title: "The Trap of Fake Work"
 date: 2025-12-27
-tags: ["productivity", "mental models"]
+tags: ["productivity", "mental model"]
 draft: false
 ---
 
+<aside>
+
+**TL;DR**
+
+Busyness is often a "silt-out" that masks a lack of direction; by applying three heuristics—Asset vs. Consumable, the Domino, and the Pain test—knowledge workers can distinguish high-leverage "real work" from the noise of fake productivity.
+</aside>
+
 There is a distinct difference between being busy and doing work.
 
-I’ve noticed a pattern in myself recently. When my brain gets tired, I don't stop. Instead, I start clicking things. I check email; I organize files; I read news that I don't care about. I look like I'm working. I might even feel like I'm working. But I'm not. I am engaging in fake work to hide from the fact that I don't know what to do next.
+I've noticed a pattern in myself recently. When my brain gets tired, I don't stop. Instead, I start clicking things. I check email; I organize files; I read news that I don't care about. I look like I'm working. I might even feel like I'm working. But I'm not. I am engaging in fake work to hide from the fact that I don't know what to do next.
 
 This is a dangerous trap because it feels productive. But it is actually a form of laziness. It is laziness disguised as activity.
 
@@ -33,12 +40,8 @@ When you feel that urge to tab-switch, it means your internal GPS has lost signa
 
 Once the silt settles, how do you tell the difference between real work and fake work? I use three heuristics.
 
-The first is to ask if the work is an **asset** or a **consumable**. Consumable work is like answering email. You do it, and it's gone. Tomorrow the inbox is full again. It’s maintenance. Asset work is like writing code or an essay. You do it once, and it keeps working for you. It compounds. If you spend your whole day on consumables, you are treading water.
-
-The second is to look for the **domino**. In any list of tasks, there is usually one item that, if done, makes the others irrelevant or much easier. That is the real work. The rest is just clutter. We often avoid the domino because it is heavy. We prefer to move the little pebbles because it feels like we are doing more.
-
-This leads to the third and most reliable test: the **pain**.
-
-Real work usually feels like resistance. It feels slightly unpleasant. It requires a level of concentration that the brain naturally wants to avoid. If what you are doing feels smooth and easy—if you can do it while listening to a podcast—it is probably fake work.
+1. The first is to ask if the work is an **asset** or a **consumable**. Consumable work is like answering email. You do it, and it's gone. Tomorrow the inbox is full again. It's maintenance. Asset work is like writing code or an essay. You do it once, and it keeps working for you. It compounds. If you spend your whole day on consumables, you are treading water.
+2. The second is to look for the **domino**. In any list of tasks, there is usually one item that, if done, makes the others irrelevant or much easier. That is the real work. The rest is just clutter. We often avoid the domino because it is heavy. We prefer to move the little pebbles because it feels like we are doing more.
+3. This leads to the third and most reliable test: the **pain**. Real work usually feels like resistance. It feels slightly unpleasant. It requires a level of concentration that the brain naturally wants to avoid. If what you are doing feels smooth and easy—if you can do it while listening to a podcast—it is probably fake work.
 
 The thing you are procrastinating on is usually the only thing that matters. The rest is just noise you create to drown out the guilt of not doing it.

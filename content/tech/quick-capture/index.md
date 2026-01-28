@@ -1,7 +1,7 @@
 ---
 title: "Finding the Perfect Quick Capture Tool"
 date: 2025-12-22
-tags: ["product thinking"]
+tags: ["product", "pruductivity"]
 draft: false
 ---
 
