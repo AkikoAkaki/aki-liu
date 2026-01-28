@@ -1,5 +1,5 @@
 ---
-title: "幸存者"
+title: "栖云路两岸"
 date: 2023-01-20
 tags: ["essay"]
 draft: false
