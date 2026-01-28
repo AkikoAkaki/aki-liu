@@ -28,13 +28,13 @@ columns:
     cssClass: col-writing
     items:
       - title: Insights
-        desc: "Products, industry, and life."
+        desc: "Reflections on software craftsmanship, industry dynamics, and personal growth."
         link: /insights/
       - title: Text Lab
-        desc: "Literature, art, and theory."
+        desc: "Experiments in creative writing, cultural criticism, and diverse narratives."
         link: /textlab/
       - title: Engineering
-        desc: "Systems, algorithms, and proofs."
+        desc: "Documentation of technical learnings, mathematical notes, and engineering practices."
         link: /notes/
 
   - id: projects
@@ -42,8 +42,14 @@ columns:
     cssClass: col-projects
     items:
       - title: Distributed Delay Queue
-        desc: "A scalable, Redis-backed delay queue system with clean architecture."
+        desc: "A scalable, Redis-backed delay queue system. Designed with clean architecture for high availability and fault tolerance."
         link: "https://github.com/AkikoAkaki/distributed-delay-queue"
+      - title: Artisk
+        desc: "Engineering infrastructure for a generative AI creative suite. Focusing on backend scalability and high-concurrency model inference."
+        link: "https://artisk.ai"
+      - title: Dentist Journey
+        desc: "Ensuring platform stability through rigorous testing workflows. Validating system logic to guarantee a reliable user experience."
+        link: "https://dentistjourney.com"
 
 # ==========================================================================
 # Now Section - 当前状态
