@@ -41,9 +41,9 @@ columns:
     title: Projects
     cssClass: col-projects
     items:
-      - title: Distributed Delay Queue
-        desc: "A scalable, Redis-backed delay queue system. Designed with clean architecture for high availability and fault tolerance."
-        link: "https://github.com/AkikoAkaki/distributed-delay-queue"
+      - title: Async Task Platform
+        desc: "A scalable, Redis-backed async task platform. Designed with clean architecture for high availability and fault tolerance."
+        link: "https://github.com/AkikoAkaki/async-task-platform"
       - title: Artisk
         desc: "Engineering infrastructure for a generative AI creative suite. Focusing on backend scalability and high-concurrency model inference."
         link: "https://artisk.ai"
