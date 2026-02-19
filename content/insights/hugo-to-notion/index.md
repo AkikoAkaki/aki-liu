@@ -1,5 +1,5 @@
 ---
-title: "Why I Abandoned My \"Perfect\" Hugo Blog for Notion"
+title: "为什么我放弃了“完美”的 Hugo 博客，转投 Notion"
 date: 2026-01-14
 tags: ["productivity"]
 draft: false
@@ -9,59 +9,57 @@ draft: false
 
 **TL;DR**
 
-Stop optimizing the container and start shipping the content. This post documents the move from an over-engineered Hugo blog to a frictionless Notion setup, highlighting why "Design Engineering" can become a trap that prevents you from actually learning in public.
+停止优化容器了，开始产出内容。这篇文章记录了从过度设计的 Hugo 博客迁移到零摩擦 Notion 方案的过程，揭示了为何“设计工程”可能成为一个阻止你真正实践“公开学习”的陷阱。
 
 </aside>
 
-### The Siren Call of "Design Engineering"
+### “设计工程”的诱惑
 
-It started, ironically, with Andrej Karpathy. I was digging through his blog, admiring the "content-first" philosophy. That led me to [Bear Blog](https://bearblog.dev/)—clean, minimal, no-nonsense. I loved the idea. But as soon as I hit the free tier's media upload limits, I balked. I wanted that minimalism, but I didn't want the constraints.
+这一切讽刺地始于 Andrej Karpathy。我在他的博客上翻阅，欣赏那种“内容优先”的哲学。这让我发现了 [Bear Blog](https://bearblog.dev/)——干净、极简、不废话。我很喜欢这个理念。但当我碰到免费版的媒体上传限制时，我犹豫了。我想要那种极简主义，但不想要那些限制。
 
-Then I fell down the rabbit hole.
+然后我掉进了兔子洞。
 
-I tried Hugo with the PaperMod theme (the one Lilian Weng uses). It was functional, but it lacked... soul. It felt like a default setting. And then, I saw [Paco Coursey's blog](http://paco.me).
+我试了 Hugo 搭配 PaperMod 主题（就是 Lilian Weng 用的那个）。功能上没问题，但它缺少……灵魂。感觉就像一个默认设置。然后，我看到了 [Paco Coursey 的博客](http://paco.me)。
 
-It was a revelation. The high performance, the elegant typography, the subtle animations that felt "just right," and that overwhelming sense of "Quiet Luxury." I was hooked. I didn't just want a blog; I wanted that. I became obsessed with the idea of "Design Engineering."
+那是一次顿悟。极致的性能、优雅的排版、恰到好处的细微动画，以及那种扑面而来的“静奢感”（Quiet Luxury）。我被迷住了。我不只是想要一个博客——我想要的是那种东西。我开始痴迷于“设计工程”这个概念。
 
-### The 5-Day Vibe Coding Sprint
+### 五天的 Vibe Coding 冲刺
 
-For the next five days, I didn't write a single word of content. Instead, I went into a fugue state of "vibe coding."
+接下来的五天，我一个字的内容都没写。取而代之的是，我陷入了一种“氛围编程”（vibe coding）的恍惚状态。
 
-I spent my nights tweaking CSS and wrestling with Hugo templates to replicate Paco's aesthetic. Since I lacked the frontend expertise to build it from scratch, I relied heavily on AI tools, iteratively prompting them to fix layout shifts and animation bugs. It was a cycle of frustration: the AI would fix one thing and break two others.
+那几天晚上我都在调 CSS、和 Hugo 模板搏斗，试图复现 Paco 的美学。由于我缺乏从零搭建的前端能力，我重度依赖 AI 工具，不断提示它们修复布局偏移和动画 bug。这是一个令人沮丧的循环：AI 修好了一个问题，又弄坏了两个。
 
-But eventually, I had it. A custom, high-performance, Paco-inspired Hugo blog. It looked almost perfect. I felt incredibly productive.
+但最终，我做到了——一个定制的、高性能的、Paco 风格的 Hugo 博客。它看起来近乎完美。我感觉自己效率爆表。
 
+### 文件系统的摩擦
 
-### The Friction of the File System
+生产力的幻觉在我真正尝试写作的那一刻就破灭了。
 
-The illusion of productivity shattered the moment I actually tried to write.
+迁移旧笔记暴露了这套工作流的残酷。在 Hugo/Markdown 的世界里，每篇文章都变成了一个文件管理项目：
 
-Migrating my old notes exposed the brutality of the workflow. In the Hugo/Markdown world, every post became a file management project:
+- 命名规范：我必须把中文标题翻译成英文，格式化为 kebab-case，确保对 SEO 友好。
+- index.md 陷阱：为了正确管理图片，我不能只有一个 Markdown 文件。我需要一个文件夹，文件夹必须以文章命名，里面的文件必须叫 index.md。
+- 盲人编辑器：在 VS Code 中插入图片意味着写一个路径字符串。我看不到图片本身。要检查它是否正常工作，我得构建站点并检查本地服务器。
+- 依赖地狱：视频插入会报错，frontmatter 格式必须精确无误。
 
-- Naming conventions: I had to translate my Chinese titles into English, format them into kebab-case, and ensure they were SEO-friendly.
-- The index.md Trap: To manage images properly, I couldn't just have a markdown file. I needed a folder. That folder needed to be named after the post. The file inside had to be index.md.
-- The Blind Editor: In VS Code, inserting an image meant writing a path string. I couldn't see the image. To check if it worked, I had to build the site and check the local server.
-- Dependency Hell: Video insertions threw errors. Frontmatter formatting had to be precise.
+我意识到我不是在写作——我是在维护一个数据库。我把 90% 的精力花在了容器上，只有 10% 花在了内容上。
 
-I realized I wasn't writing; I was maintaining a database. I was spending 90% of my energy on the container and 10% on the content.
+### 虚荣指标 vs. 分布式队列
 
-### Vanity Metrics vs. The Distributed Queue
+转折点来自一个意想不到的地方。我当时正在做一个复杂的后端项目——一个分布式延迟队列系统。那是高难度的、逻辑密集型的工程工作。在那个项目期间，我偶然发现了 [Ivan Zhao（Notion 创始人）的个人网站](https://ivanhzhao.notion.site/)。它……就是一个 Notion 页面。没有自定义字体，没有花哨的动画，没有“设计工程”。
 
-The turning point came from an unexpected place. I was working on a complex backend project—a Distributed Delay Queue system. It was hard, logic-heavy engineering work. During that project, I stumbled upon [Ivan Zhao's (the founder of Notion) personal site](https://ivanhzhao.notion.site/). It was... just a Notion page. No custom fonts, no fancy animations, no "Design Engineering."
+我突然意识到：我一直在优化错误的东西。
 
-It hit me: I was optimizing for the wrong thing.
+那五天的 CSS 调优是一个虚荣指标。我想要一个炫酷的网站，好让潜在读者进来后觉得：“哇，这个人真厉害。”我是在表演能力，而非展示能力。 我的后端项目需要深度专注，我没有多余的心智带宽去和博客的文件系统搏斗。我需要一个写作摩擦为零的工具。
 
-Those five days of CSS tweaking were a Vanity Metric. I wanted a flashy website so that potential readers would land on it and think, "Wow, this guy is good." I was performing competence rather than demonstrating it.
-My backend project required deep focus. I didn't have the mental bandwidth to fight with my blog's file system. I needed a tool where the friction to write was zero.
+### 拥抱“无聊”的技术栈
 
-### Embracing the "Boring" Stack
+所以，我转向了 Notion。
 
-So, I'm switching to Notion.
+它的可定制性不高，没有 60fps 的动画，也不能彰显“我是前端大师”的信号。
 
-It's not highly customizable. It doesn't have 60fps animations. It doesn't signal "I am a frontend wizard."
+但写作体验堪称完美。我可以拖拽上传图片、在手机上写作，不需要给文件命名为 index.md。
 
-But the writing experience is flawless. I can drag and drop images. I can write on my phone. I don't need to name a file index.md.
+最终我意识到，“公开学习”（Learning in Public）的核心不在于平台，而在于思考的透明度。说实话，现在根本没人在看我的博客。但这反而是一种解放——既然我是唯一的用户，我不如为我自己的用户体验做优化。
 
-In the end, I realized that Learning in Public isn't about the platform; it's about the transparency of thought. If I'm honest, no one is reading my blog right now anyway. And that's liberating. Since I'm the only user, I might as well optimize for my own user experience.
-
-Ship the content, not the container.
+产出内容，而非容器。

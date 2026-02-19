@@ -1,5 +1,5 @@
 ---
-title: "Flomo: The Note-taking Illusion"
+title: "Flomo：做笔记的幻觉"
 date: 2026-01-20
 tags: ["product", "productivity"]
 draft: false
@@ -9,13 +9,13 @@ draft: false
 
 **TL;DR**
 
-Flomo markets itself as a Zettelkasten implementation, but the product architecture prioritizes low-latency capture over graph connectivity. It lacks the accessible backlinks and visualization primitives necessary for knowledge compounding, effectively functioning as a linear, append-only log rather than a network. While useful as a capture buffer, the proprietary HTML exports create high friction for interoperability with the standard Markdown-based knowledge stack.
+Flomo 将自己包装为卡片笔记法（Zettelkasten）的实现，但其产品架构实际上优先考虑低延迟的捕获，而非图谱连接性。它缺乏可访问的反向链接和可视化原语来实现知识复利，本质上是一个线性的、仅追加的日志，而非网络。虽然作为捕获缓冲区有一定用处，但其专有的 HTML 导出格式与基于 Markdown 的标准知识工具栈之间存在极高的互操作摩擦。
 
 </aside>
 
-Flomo made waves in the Chinese knowledge management community by positioning itself as a Zettelkasten tool. Founder Shaonan frequently referenced Niklas Luhmann in early podcasts and articles, emphasizing that "cards should connect like neurons." The marketing was clever—it pitched Flomo as a simplified Obsidian, a shortcut to building a "Second Brain."
+Flomo 在中文知识管理社区引起了不小的轰动，将自己定位为卡片笔记法工具。创始人少楠在早期的播客和文章中频繁引用尼克拉斯·卢曼（Niklas Luhmann），强调「卡片应该像神经元一样连接」。营销很巧妙——将 Flomo 定位为简化版的 Obsidian，一条通往「第二大脑」的捷径。
 
-But here's the problem: **Flomo can't actually do Zettelkasten.**
+但问题在于：**Flomo 实际上做不到卡片笔记法。**
 
 {{< figure 
     src="fig1.png"
@@ -27,92 +27,90 @@ But here's the problem: **Flomo can't actually do Zettelkasten.**
 
 ---
 
-The essence of Zettelkasten isn't writing cards—it's connecting them. Luhmann's methodology rests on three pillars:
+卡片笔记法的精髓不是写卡片——而是连接卡片。卢曼的方法论建立在三个支柱之上：
 
-1. **Atomic Notes:** Each card captures a single, independent thought.
-2. **Networked Structure:** Cards link together to form a knowledge network.
-3. **Emergent Insights:** New ideas surface by traversing these connections.
+1. **原子笔记：** 每张卡片捕捉一个单一、独立的想法。
+2. **网络化结构：** 卡片通过链接彼此连接，组成知识网络。
+3. **涌现式洞见：** 新想法通过遍历这些连接而浮现。
 
-The second and third points are crucial. Without robust linking, you don't have a Zettelkasten. You have a pile of disconnected notes.
+第二点和第三点至关重要。没有强大的链接功能，你拥有的就不是卡片笔记法，而是一堆互不相连的笔记。
 
-Flomo excels at low-friction capture. Its mobile input speed is nearly unbeatable. But when it comes to the linking features that actually make Zettelkasten work? They're essentially decorative.
+Flomo 在低摩擦的捕获方面表现出色，其移动端输入速度几乎无人能敌。但说到真正让卡片笔记法运转起来的链接功能？它们基本上只是装饰品。
 
-Here's what's broken:
+以下是问题所在：
 
-- Backlinks exist but are hidden by default, requiring manual expansion
-- No graph visualization to see your knowledge network
-- The chronological feed buries connections under a timeline
-- AI semantic search (added in 2024) doesn't compensate for poor link infrastructure
+- 反向链接虽然存在，但默认隐藏，需要手动展开
+- 没有图谱可视化来查看你的知识网络
+- 按时间排列的信息流将连接埋在时间线之下
+- AI 语义搜索（2024 年新增）无法弥补链接基础设施的不足
 
-The design philosophy is fundamentally Twitter-like: "consumption of the now" rather than "compounding of knowledge." **You can create links, but you can't leverage them.**
+其设计哲学从本质上来说与 Twitter 类似：「消费当下」而非「知识复利」。你可以创建链接，但你无法利用它们。
 
-Compare this to Roam Research or Obsidian:
+将此与 Roam Research 或 Obsidian 相比：
 
-- Backlinks appear automatically at the bottom of every note
-- Graph view reveals the shape of your knowledge network
-- You think by jumping through links
-- "Unlinked Mentions" help discover potential connections
+- 反向链接自动出现在每条笔记的底部
+- 图谱视图揭示你知识网络的形态
+- 你通过跳转链接来思考
+-「未链接的提及」帮助发现潜在的连接
 
-That's what a digital Zettelkasten looks like.
+这才是数字化卡片笔记法的样子。
 
-Building backlink panels and graph views was mature technology by 2021. Flomo chose not to build them because its true positioning is as a **mobile quick-capture tool**, not a knowledge management system. Their documentation even admits a desire to remain "small and beautiful."
+构建反向链接面板和图谱视图在 2021 年就已是成熟技术。Flomo 没有选择去做，因为它真正的定位是一个移动端快速捕获工具，而不是知识管理系统。他们的文档甚至承认了想要保持「小而美」的愿望。
 
-Yet the marketing suggested otherwise. The slogan "Record constantly, meaning emerges naturally" is vague enough to imply Zettelkasten magic. The founder tied Flomo deeply to *How to Take Smart Notes*. The product copy repeatedly emphasizes "building connections."
-
----
-
-I've observed two patterns:
-
-**Type One:** Attracted by the Zettelkasten promise, they earnestly try to build a knowledge network. Eventually they realize the tool can't support the methodology and migrate to Obsidian or Logseq.
-
-**Type Two:** They never understood Zettelkasten. They use Flomo as a running log but feel sophisticated because of the "card note" terminology.
-
-The first group wastes time. The second group gets a false sense of accomplishment.
+然而营销却暗示了相反的方向。口号「随时记录，自然涌现意义」足够模糊，让人联想到卡片笔记法的魔力。创始人将 Flomo 与《How to Take Smart Notes》深度绑定。产品文案反复强调「建立连接」。
 
 ---
 
-An excellent **inbox** acts like a funnel—information flows in smoothly. An excellent **archive** acts like a warehouse—information gets retrieved in an orderly fashion.
+我观察到两种模式：
 
-**Flomo tries to be both and ends up as a reservoir with no outlet.**
+**第一类：** 被卡片笔记法的承诺所吸引，他们认真地尝试构建知识网络。最终他们意识到工具无法支撑方法论，转而迁移至 Obsidian 或 Logseq。
 
-If Flomo were honest about its positioning, it would say:
+**第二类：** 他们从未真正理解卡片笔记法。他们把 Flomo 当作一个流水日志来用，但因为「卡片笔记」的术语而自我感觉良好。
 
-> "We're a mobile jotting tool that helps you capture thoughts on the go. If you need deep organization and connection, export to Obsidian."
-
-That would be reasonable. Inbox and archive are fundamentally different tools. But the documentation doesn't make this distinction. It insists Flomo can serve as a complete knowledge base.
+第一类人浪费了时间。第二类人获得了虚假的成就感。
 
 ---
 
-Flomo chose a different strategy: attract users with Zettelkasten's halo, then retain them through subscriptions and poor export formats.
+一个优秀的收件箱就像一个漏斗——信息顺畅流入。一个优秀的档案库就像一个仓库——信息有序检索。Flomo 试图两者兼顾。
 
-In 2026, Markdown is the lingua franca of knowledge management. Yet Flomo's data export is primarily HTML, cluttered with rendering code. This isn't developer laziness—it's a defensive business maneuver. **Lock users in by increasing the cost of migration.**
+如果 Flomo 对自己的定位足够诚实，它会说：
 
-As personal knowledge management shifts toward "letting AI understand your notes," Flomo's data pollution becomes a bigger issue. While modern AI can process HTML, Flomo has done nothing to optimize its export format for this future.
+> 「我们是一个移动端的速记工具，帮助你在路上捕捉想法。如果你需要深度的组织和连接，请导出到 Obsidian。」
 
-Meanwhile, Flomo operates an opaque, built-in AI for basic analysis. Contrast this with Notion AI's comprehensive agent system that calls top-tier models without hard usage caps. Flomo's "2 AI insights per day" is virtually non-existent. Your years of accumulated thoughts sit trapped in a black box that's difficult to utilize.
-
----
-
-Flomo's biggest problem isn't missing features. It's the **mismatch between its narrative and its product.**
-
-If you treat it as a memo app with tags, it's great—clean, fast, cross-platform.
-
-But if you believe the marketing and expect to practice Zettelkasten, you'll be disappointed.
+这本来是合理的。收件箱和档案库从根本上来说是不同的工具。但文档没有做出这种区分，它坚称 Flomo 可以作为一个完整的知识库。
 
 ---
 
-**If you need quick recording:** Apple Notes, Simple Note, or even a messaging app's "Saved Messages" feature does the same thing for free.
+Flomo 选择了另一种策略：用卡片笔记法的光环吸引用户，然后通过订阅和糟糕的导出格式留住他们。
 
-**If you want to practice Zettelkasten:** Use Obsidian or Logseq directly. The learning curve is steeper, but the tools actually align with the methodology.
+2026 年，Markdown 是知识管理的通用语。然而 Flomo 的数据导出主要是 HTML 格式，其中充斥着渲染代码。这不是开发者的懒惰——这是一种防御性的商业策略。通过提高迁移成本来锁定用户。
 
-**If you're already using Flomo:** Ask yourself—are you truly utilizing the links? If you're just recording and reviewing, why pay for the concept of "Card Notes"?
+随着个人知识管理转向「让 AI 理解你的笔记」，Flomo 的数据污染变成了一个更大的问题。虽然现代 AI 可以处理 HTML，但 Flomo 在优化其导出格式以适应这一未来方面毫无作为。
+
+与此同时，Flomo 运行着一个不透明的、内置的 AI 做基本分析。将此与 Notion AI 全面的 Agent 系统相比——后者调用顶级模型，没有硬性使用限制。Flomo 的「每天 2 次 AI 洞察」基本等于不存在。你多年积累的想法被困在一个难以利用的黑盒中。
 
 ---
 
-When choosing tools, look at **what they actually do**, not **what they claim to do.**
+Flomo 最大的问题不是功能缺失，而是叙事与产品之间的错位。
 
-It's dangerous when a tool gives you the illusion of "thinking" when you're really just moving text around.
+如果你把它当作一个带标签的备忘录应用来用，它很好——简洁、快速、跨平台。
 
-For Flomo, this isn't a product flaw. It's a marketing strategy.
+但如果你相信了营销宣传，期待用它来实践卡片笔记法，你会失望的。
 
-Users deserve to know the difference.
+---
+
+**如果你需要快速记录：** Apple Notes、Simplenote，甚至任意通讯应用的「收藏消息」功能都能免费做到同样的事情。
+
+**如果你想实践卡片笔记法：** 直接使用 Obsidian 或 Logseq。学习曲线更陡峭，但工具确实与方法论相匹配。
+
+**如果你已经在使用 Flomo：** 问问自己——你真的在利用链接吗？如果你只是在记录和回顾，为什么要为「卡片笔记」这个概念付费？
+
+---
+
+选择工具时，要看它实际做了什么，而不是它声称能做什么。
+
+当一个工具给你制造「思考」的幻觉，而你实际上只是在搬运文字时，这是危险的。
+
+对 Flomo 来说，这不是产品缺陷，而是营销策略。
+
+用户值得知道这其中的区别。

@@ -1,105 +1,105 @@
 ---
-title: "Finding the Perfect Quick Capture Tool"
+title: "寻找完美的快速记录工具"
 date: 2025-12-22
-tags: ["product", "pruductivity"]
+tags: ["product", "productivity"]
 draft: false
 ---
 
-### TL;DR: My Selection Summary
+### TL;DR：我的选型总结
 
-- **Simplenote**: No image support; functionality is too basic.
-- **Google Keep**: Data cannot be exported; no Markdown support; unfriendly to long text.
-- **Notion** : Requires internet connection; slow startup speed; unsuitable for quick capture.
-- **Obsidian**: Great for a knowledge base, but too heavy to serve as an Inbox.
-- **Upnote**: Rich-text oriented; not Markdown native; free version limits are too restrictive.
-- **Notesnook**: Not Markdown native; cannot copy text as Markdown.
-- **Apple Notes**: No Windows platform support.
-- **Anytype**: The Winner————Local-first, open source, Markdown, beautiful, encrypted.
+- **Simplenote**：不支持图片；功能过于基础。
+- **Google Keep**：数据无法导出；不支持 Markdown；对长文本不友好。
+- **Notion**：需要联网；启动速度慢；不适合快速记录。
+- **Obsidian**：作为知识库很棒，但作为收件箱太重了。
+- **Upnote**：富文本导向；非 Markdown 原生；免费版限制过于严苛。
+- **Notesnook**：非 Markdown 原生；无法将文本复制为 Markdown 格式。
+- **Apple Notes**：不支持 Windows 平台。
+- **Anytype**：最终胜出————本地优先、开源、Markdown、美观、加密。
 
 ---
 
-My obsession with "recording tools" has persisted for quite a long time. Because I frequently have text processing needs, I have been searching for the perfect portable, quick-capture tool.
+我对「记录工具」的执念已经持续了很长时间。由于我频繁有文本处理的需求，我一直在寻找那个完美的便携式快速记录工具。
 
-## The Early Days: From Paper to E-Ink
+## 早期：从纸质到电子墨水
 
-Early on, I was a loyal advocate of digital notes. Since junior high, I tried to abandon paper notebooks. The disadvantages of paper are obvious: the data is inflexible, cannot be exported, is hard to edit, and even simple typos or messy handwriting can clutter an entire page.
+早年间，我是数字化笔记的忠实拥护者。从初中开始，我就试图抛弃纸质笔记本。纸质笔记的缺点显而易见：数据不够灵活、无法导出、难以编辑，就连简单的错别字或潦草的字迹都能把一整页弄得乱七八糟。
 
-At that time, my only electronic device was a classic Kindle. It was eye-friendly, multi-functional, and compact. It could export reading notes directly into a spreadsheet, which was enough for me back then. However, as a recording tool, it had a fatal flaw: **it lacked any optimization for editing**. The E-ink refresh rate was low, requiring me to press every character "slowly and firmly" to type. Despite this, I specifically imported a custom e-book and did quite a bit of creative writing inside it using the annotation feature.
+那时我唯一的电子设备是一台经典的 Kindle。它护眼、多功能、小巧便携，可以把阅读笔记直接导出为表格，对当时的我来说已经足够了。然而作为记录工具，它有一个致命的缺陷：**对编辑毫无优化**。电子墨水的刷新率很低，要求我每输入一个字符都得「慢而有力」地按下去。尽管如此，我还是专门导入了一本自定义电子书，用批注功能在里面做了不少创意写作。
 
-## The Exploration Phase: Trial, Error, and Trade-offs
+## 探索阶段：试错与取舍
 
-### Simplenote: The Former Industry Standard
+### Simplenote：曾经的行业标杆
 
 {{< figure 
     src="1.png"
 >}}
 
-After entering college, Simplenote became my daily driver. It was practically the benchmark for the software industry: minimalist, high performance, Markdown support, excellent compatibility, forever free, and exportable data. Even looking back now, it’s hard for me to find fault with it.
+进入大学后，Simplenote 成了我的日常工具。它几乎可以说是软件行业的标杆：极简、高性能、支持 Markdown、兼容性极佳、永久免费、数据可导出。即使现在回过头看，我也很难挑出它的毛病。
 
-The main reason I eventually replaced it was simple: **it doesn't support images.**
-However, I really admired its recycling bin mechanism—when notes are deleted, they aren't automatically emptied but are kept forever. This unintentionally acted as an "automatic archive." Opening Simplenote occasionally during college and seeing texts I casually wrote in junior high often filled me with nostalgia.
+我最终替换掉它的原因很简单：**它不支持图片。**
+不过，我真的很欣赏它的回收站机制——笔记被删除后不会被自动清空，而是永久保留。这无意中起到了「自动归档」的作用。大学期间偶尔打开 Simplenote，看到自己初中时随手写下的文字，总会有一阵怀旧之感涌上来。
 
-### Google Keep: The Concern of Data Sovereignty
+### Google Keep：数据主权的隐忧
 
 {{< figure 
     src="3.png"
 >}}
 
-I briefly tried Google Keep after discovering it was integrated into Gemini. I was intrigued by the concept of "AI + Notes," so I thought about switching my quick capture tool to Google Keep.
+我短暂地试用过 Google Keep，起因是发现它被整合进了 Gemini。「AI + 笔记」这个概念吸引了我，于是我考虑将快速记录工具切换到 Google Keep。
 
-Keep has the typical Google product style: Web-native and lightweight. Its card stream view is great for an overview, and it supports images and collaboration.
+Keep 具有典型的 Google 产品风格：Web 原生且轻量。它的卡片流视图很适合纵览全局，也支持图片和协作。
 
-But its text formatting support is minimal (no Markdown), and it is unfriendly to long text. The core reason I abandoned it, however, was **the inability to export data**. As someone who values data control, I cannot tolerate the risk of my data instantly evaporating if my Google account were to be banned. Now, I only use it to record temporary information that I don't mind losing.
+但它的文本格式支持极为有限（不支持 Markdown），对长文本也不友好。我放弃它的核心原因则是**数据无法导出**。作为一个重视数据掌控权的人，我无法容忍这样的风险——一旦 Google 账号被封，我的数据就会瞬间蒸发。现在，我只用它记录一些丢了也无所谓的临时信息。
 
-### Upnote: Almost Perfect
+### Upnote：差一点就完美
 
 {{< figure 
     src="2.png"
 >}}
 
-I turned to Upnote as a modern alternative to Simplenote that supports images. Upnote features a notebook system, workspaces, and real-time Markdown rendering.
+我转向了 Upnote，将其视为 Simplenote 的现代替代品——一个支持图片版本的 Simplenote。Upnote 拥有笔记本系统、工作区以及实时 Markdown 渲染。
 
-Many people love its aesthetic, considering it clean, fast, and elegant. It does indeed perform well. But after using it for a while, I found it wasn't quite **polished** enough. The operation bar is too cluttered, and it feels strongly **Rich-text oriented** (you can't paste directly from Markdown source). The list layout on mobile wasn't compact enough for my liking.
+很多人喜欢它的美感，认为它干净、快速、优雅。它的表现确实不错。但用了一段时间后，我发现它还不够**精致**。操作栏过于杂乱，给人一种强烈的**富文本导向**的感觉（无法直接从 Markdown 源码粘贴）。移动端的列表布局对我来说也不够紧凑。
 
-Ultimately, the free version's limit of only 50 notes drove me away—paying for that feature set didn't feel worth it.
+最终，免费版仅限 50 条笔记的限制把我劝退了——为这套功能付费让我觉得不值。
 
-### Notesnook: The Conflict Between Encryption and Format
+### Notesnook：加密与格式之间的矛盾
 
 {{< figure 
     src="4.png"
 >}}
 
-After leaving Upnote, a newer, minimalist, encrypted note-taking app called Notesnook caught my attention.
+离开 Upnote 后，一款更新、更极简、支持加密的笔记应用 Notesnook 引起了我的注意。
 
-I thought this would be my next tool: concise, lightweight, modern, beautiful, open-source, private, and supporting images and publishing. I still think it’s a very good app, and I prefer it over Upnote.
+我以为它会成为我的下一个工具：简洁、轻量、现代、美观、开源、注重隐私，还支持图片和发布。我至今仍认为它是一款非常好的应用，比 Upnote 更合我心意。
 
-However, I abandoned it before diving too deep. It has a fatal pain point: **it is not Markdown native.** Does it support Markdown shortcuts during editing? Yes, but the underlying format isn't Markdown. This means I cannot easily copy notes out as Markdown text.
+但在深入使用之前我就放弃了。它有一个致命痛点：**非 Markdown 原生。** 它在编辑时支持 Markdown 快捷方式吗？支持。但底层格式并非 Markdown。这意味着我无法轻松地将笔记以 Markdown 文本的形式复制出来。
 
 
 
-## Why Weren't the Mainstream Tools Suitable?
+## 主流工具为何不适合？
 
-* **Evernote:** Used it very early on (elementary/middle school), but it quickly became unbearably bloated.
-* **Obsidian:** I still use Obsidian, but I have refactored it into a deep-linked "Knowledge Base" rather than using it for daily logging. Daily logging shouldn't cause my knowledge base to expand infinitely; it makes management difficult.
-* **Notion:** Powerful database features and a beautiful interface, but its speed and performance are issues. Limited by cloud services, every open requires loading, and it lacks offline functionality. This is fatal for a quick recording experience.
-* **OneNote:** I barely used it. I dislike OneNote's design, and it feels too bloated. Also, despite running Windows 11, I try to avoid the Microsoft ecosystem as much as possible.
-* **Apple Notes:** It’s truly a great app, but my Windows 11 PC can't use it.
-* **Bear:** I used it a long time ago. It was the peak of aesthetics back then, but it doesn't stand out much now. Plus, it also doesn't work on Windows, and the free version is too restricted.
+* **Evernote：** 很早就用过（小学/初中），但它很快变得臃肿到难以忍受。
+* **Obsidian：** 我至今仍在使用 Obsidian，但我已经把它重构成了一个深度链接的「知识库」，而非用于日常记录。日常记录不应该让知识库无限膨胀，那会让管理变得困难。
+* **Notion：** 强大的数据库功能和美观的界面，但速度和性能是问题。受限于云服务，每次打开都需要加载，且缺乏离线功能。这对快速记录体验来说是致命的。
+* **OneNote：** 几乎没用过。我不喜欢 OneNote 的设计，感觉太臃肿了。另外，尽管我用的是 Windows 11，但我尽量避免使用微软的生态系统。
+* **Apple Notes：** 它确实是一款很棒的应用，但我的 Windows 11 电脑用不了。
+* **Bear：** 很久以前用过。它曾是颜值巅峰，但现在已经不太突出了。而且它也不支持 Windows，免费版限制太多。
 
-## The Final Choice: Anytype
+## 最终选择：Anytype
 
 {{< figure 
     src="5.png"
 >}}
 
 
-Finally, we arrive at the software I am currently using—**Anytype**.
+最终，我们来到了我目前正在使用的软件——**Anytype**。
 
-I tried Anytype before but was initially confused by its "Object" logic. Now that I've revisited it, I find the logic quite easy to understand.
+我之前试过 Anytype，但当时被它的「对象」（Object）逻辑搞得一头雾水。现在重新体验后，我觉得这套逻辑其实很容易理解。
 
-I found that Anytype truly satisfies all my requirements: **Minimalist, Beautiful, Open Source, Private, Local-first, Image support, Publishing support, Markdown support, Data Export, and no major restrictions in the free version.**
+我发现 Anytype 真正满足了我的所有需求：**极简、美观、开源、注重隐私、本地优先、支持图片、支持发布、支持 Markdown、数据可导出，且免费版无重大限制。**
 
-My current workflow is very smooth: all notes can be assigned a status. Notes I want to archive are simply archived, and by setting up filters, I don't see them often, keeping the library clean. I can link notes freely and publish with one click. It has extensive features, and while it isn't perfect (the desktop client still has noticeable bugs and lacks the high degree of polish that Notion has), it gives me what I wanted most: **Control and Freedom.**
+我目前的工作流非常顺畅：所有笔记都可以分配一个状态。想归档的笔记直接归档即可，通过设置过滤器，我不会经常看到它们，保持了库的整洁。我可以自由地链接笔记，一键发布。它功能丰富，虽然并不完美（桌面客户端仍有明显的 bug，精致程度不及 Notion），但它给了我最想要的东西：**掌控与自由。**
 
 {{< figure 
     src="6.png"

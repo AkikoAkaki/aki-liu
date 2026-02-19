@@ -22,23 +22,21 @@
         {{ end }}
     {{ end }}
     
-    {{/* Get keys and sort them */}}
-    {{ $keys := slice }}
+    {{/* Build slice and sort by count (descending) */}}
+    {{ $tagSlice := slice }}
     {{ range $k, $v := $tags }}
-        {{ $keys = $keys | append $k }}
+        {{ $tagSlice = $tagSlice | append (dict "name" $k "count" $v) }}
     {{ end }}
-    {{ $keys = sort $keys }}
+    {{ $tagSlice = sort $tagSlice "count" "desc" }}
 
-    {{ if gt (len $keys) 0 }}
+    {{ if gt (len $tagSlice) 0 }}
     <div class="tag-list">
-        {{ range $keys }}
-            {{ $name := . }}
-            {{ $count := index $tags $name }}
-            {{ $slug := printf "/tags/%s/" ($name | urlize) }}
+        {{ range $tagSlice }}
+            {{ $slug := printf "/tags/%s/" (.name | urlize) }}
             {{ $page := site.GetPage $slug }}
             <a href="{{ if $page }}{{ $page.RelPermalink }}{{ else }}{{ $slug | relLangURL }}{{ end }}" class="tag-item">
-                <span>#{{ $name }}</span>
-                <span class="tag-count">{{ $count }}</span>
+                <span>#{{ .name }}</span>
+                <span class="tag-count">{{ .count }}</span>
             </a>
         {{ end }}
     </div>

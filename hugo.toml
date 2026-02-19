@@ -1,11 +1,23 @@
 # 网站的基本 URL，通常是部署后的域名
 baseURL = '/'
-# 网站使用的语言代码
-languageCode = 'en-us'
 # 网站的标题
 title = "Aki's Blog"
 # 使用的主题名称
 theme = 'paco'
+
+# 多语言配置
+defaultContentLanguage = 'zh'
+defaultContentLanguageInSubdir = false
+
+[languages]
+  [languages.zh]
+    languageCode = 'zh-CN'
+    languageName = '中文'
+    weight = 1
+  [languages.en]
+    languageCode = 'en'
+    languageName = 'English'
+    weight = 2
 
 # Hugo version requirements
 [module]

@@ -1,5 +1,5 @@
 ---
-title: "On Stay up Late"
+title: "关于熬夜"
 date: 2026-01-16
 tags: ["mental model"]
 draft: false
@@ -9,36 +9,36 @@ draft: false
 
 **TL;DR**
 
-The feeling of "needing something more" before sleep is a lie we tell ourselves to keep the lights on. To break the cycle of late-night scrolling, we must stop chasing satisfaction and learn to go to bed hungry.
+睡前那种「还需要再来点什么」的感觉，是我们给自己编造的谎言，好让自己有理由不关灯。要打破深夜刷手机的循环，我们必须停止追逐满足感，学会带着饥饿感入睡。
 
 </aside>
 
-I've been trying to figure out why I stay up so late.
+我一直在试图弄清楚，自己为什么熬夜。
 
-It's not because I'm stressed. My days are actually quite chill lately. I'm not dreading tomorrow, either; I'm generally optimistic about the future. Yet, every night, I find myself scrolling through feeds, refusing to go to sleep, even when my eyes hurt and my body is exhausted.
+不是因为压力大。我最近的日子其实挺轻松的。我也不是在恐惧明天——总体来说我对未来还是乐观的。然而每天晚上，我都发现自己在刷信息流，拒绝入睡，哪怕眼睛已经疼了，身体也已经精疲力竭。
 
-The standard explanation is "revenge bedtime procrastination"—the idea that you stay up to reclaim time you lost during the day. There is some truth to that. I do feel like my days are sold to other obligations, and the night is the only time that belongs to me.
+标准的解释是「报复性睡前拖延」——即你通过熬夜来夺回白天失去的时间。这有一定道理。我确实觉得白天被各种义务占据了，而夜晚是唯一属于我的时间。
 
-But that doesn't fully explain the mechanism.
+但这并不能完全解释其中的机制。
 
-For a long time, I thought the problem was the *quality* of what I was consuming. I felt a sort of "information hunger." I told myself that I was scrolling because I hadn't found anything satisfying yet. I believed that if I just watched a really good movie, or read a meaningful chapter of a book, I would feel "full" and be able to sleep.
+很长一段时间，我以为问题在于我消费内容的*质量*。我感到一种「信息饥饿感」。我告诉自己，我之所以还在刷，是因为我还没找到令人满意的东西。我相信，如果我看一部真正好的电影，或者读一本书中有意义的一章，我就会觉得「饱了」，然后可以安然入睡。
 
-So I tried that. I forced myself to watch long, high-quality videos and read books.
+于是我试了。我强迫自己看长视频、读质量高的内容。
 
-It didn't work. I didn't feel satisfied. In fact, I felt impatient. I found myself wanting to switch back to the endless, mindless feeds.
+没用。我并没有感到满足。事实上，我感到焦躁不耐烦。我发现自己想切回那些无止境的、无脑的信息流。
 
-That was the moment I realized I had the causality backwards.
+就在那一刻，我意识到我搞反了因果关系。
 
-I'm not staying awake because I'm hungry for information. I'm keeping myself hungry so that I have an excuse to stay awake.
+我不是因为信息饥饿才保持清醒——我是在保持饥饿状态，好给自己一个不睡觉的借口。
 
-The hunger is fake. It is a defense mechanism. Deep down, I simply don't want the day to end. Sleeping feels like admitting defeat, or at least admitting that this specific day is over. As long as I feel "unsatisfied," I have a valid reason to keep the lights on.
+这种饥饿感是假的。它是一种防御机制。在内心深处，我只是不想让这一天结束。入睡感觉像是承认失败，或者至少是承认今天到此为止了。只要我感觉「不满足」，我就有一个合理的理由不关灯。
 
-My brain rejects the "closure" of a movie or a book because closure implies it's time to stop. The endless feed of short videos is perfect not because it's interesting, but because it has no bottom. It guarantees I will never be full.
+我的大脑拒绝一部电影或一本书带来的「闭合感」，因为闭合意味着该停下来了。无尽的短视频信息流是完美的选择——不是因为它有趣，而是因为它没有尽头。它保证我永远不会吃饱。
 
-I used to think the solution was to find better things to watch. Now I realize the solution is much simpler, though harder to do.
+我过去以为，解决办法是找到更好的东西来看。现在我意识到，解决办法简单得多——但也难做得多。
 
-I have to go to bed hungry.
+我必须带着饥饿感上床睡觉。
 
-I have to accept that the feeling of "needing something more" is a lie I'm telling myself. I won't find that satisfaction in another video, because I'm actively preventing myself from finding it.
+我必须接受这样一个事实：「还需要再来点什么」的感觉，是我在自欺欺人。我不会在下一个视频里找到那种满足感，因为我正在主动阻止自己得到它。
 
-The only way to fix it is to just turn the lights off, unsatisfied.
+唯一的解决办法就是——在不满足的状态下，关掉灯。

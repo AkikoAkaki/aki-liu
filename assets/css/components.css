@@ -140,6 +140,40 @@
     display: block;
 }
 
+.list-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.list-meta .lang-switch--inline {
+    white-space: nowrap;
+    display: none;
+}
+
+/* Sidebar language switcher (above tags in right sidebar) */
+.sidebar-lang-switch {
+    margin-top: 3.15rem;
+    margin-bottom: 1.25rem;
+    font-family: var(--font-sans);
+}
+
+.sidebar-lang-switch .lang-switch {
+    font-size: 0.95rem;
+}
+
+/* Push tag sidebar down slightly when lang switch is present */
+.sidebar-lang-switch + .tag-sidebar {
+    margin-top: 0;
+}
+
+@media (max-width: 768px) {
+    .list-meta .lang-switch--inline {
+        display: inline;
+    }
+}
+
 .item-date {
     grid-column: 3;
     text-align: right;

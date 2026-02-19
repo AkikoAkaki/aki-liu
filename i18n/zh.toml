@@ -1,0 +1,17 @@
+[readInOtherLang]
+other = "Read in English"
+
+[readInChinese]
+other = "阅读中文版"
+
+[translationNoticeAI]
+other = "本文由 AI 翻译"
+
+[translationNoticeHuman]
+other = ""
+
+[translationNoticePartial]
+other = "本文由 AI 翻译，经人工部分校对"
+
+[langBadge]
+other = "en"

@@ -1,5 +1,5 @@
 ---
-title: "Why WeChat is the Best Remainder"
+title: "为什么微信是最好的待办清单"
 date: 2026-01-16
 tags: ["productivity", "mental model"]
 draft: false
@@ -9,66 +9,64 @@ draft: false
 
 **TL;DR**
 
-The best Todo list is the one you actually open. By comparing the "perfect" Todoist against the "bloated" WeChat, I realized that true execution power comes from social binding and zero-resistance access, not from complex sorting systems.
+最好的待办清单是你真的会去打开的那一个。真正的执行力来源于社交绑定和零阻力的触达，而非复杂的排序系统。
 
 </aside>
 
-I've often pondered: what exactly is the role of a Todo List supposed to be?
+我常常思考：待办清单的角色到底应该是什么？
 
-By current market "productivity standards," Todoist, which I currently use, is undoubtedly top-tier. It features project hierarchies, tag management, natural language input, and even Karma scores to gamify your progress. To organize my life, I subscribed to the Premium version, attempting to use the GTD (Get Things Done) philosophy to keep everything in perfect order.
+以当前市场的“效率标准”来看，我正在使用的 Todoist 无疑是顶尖的。它拥有项目层级、标签管理、自然语言输入，甚至还有 Karma 积分来游戏化你的进度。为了管理好我的生活，我订阅了高级版，尝试用 GTD（Getting Things Done）的哲学把一切安排得井井有条。
 
-But recently, I realized an awkward truth: **The biggest problem with Todoist is that, generally speaking, I simply don't open the app.**
+但最近，我意识到一个尴尬的真相：**Todoist 最大的问题在于，一般来说，我根本不会打开这个应用。**
 
-Conversely, WeChat—a social app criticized by countless people for being bloated or even called a "productivity black hole"—has unexpectedly become the place where my execution is strongest.
+相反，微信——一个被无数人批评为臃肿、甚至被称为“效率黑洞”的社交应用——出人意料地成为了我执行力最强的地方。
 
-### Todoist Is a "Creditor," WeChat Is "Life"
+### Todoist 是债主，微信是生活
 
-I carefully reviewed my behavioral patterns.
+我仔细回顾了自己的行为模式。
 
-My Todoist is sitting there, filled with tasks: trivial chores, school assignments, and plans I want to do but haven't started. When I pick up my phone out of boredom or a desire to relax, my finger subconsciously slides toward WeChat, Xiaohongshu (RedNote), or other social media apps.
+我的 Todoist 就在那里，堆满了任务：琐碎的杂事、学校作业、以及我想做但还没开始的计划。当我百无聊赖或者想放松拿起手机时，手指会下意识地滑向微信、小红书或其他社交媒体应用。
 
-**Who would scroll through a task list out of boredom?**
+但，谁会闲得无聊去翻看任务清单呢？
 
-Opening Todoist means **pressure** to me. It feels like a strict supervisor or a creditor holding a bill. The backlog of overdue tasks, with every red date, is screaming at me: "You didn't finish this again." This creates a psychological resistance—subconsciously, I just don't want to see it.
+打开 Todoist 对我来说意味着压力。它感觉像一个严厉的主管，或者一个拿着账单的债主。积压的逾期任务，每一个红色的日期，都在冲我喊：“你又没完成。”这制造了一种心理抗拒——在潜意识里，我就是不想看到它。
 
-WeChat is different. It is the gateway to traffic; it is life itself. I open WeChat to see what friends are posting, to check group gossip, or simply out of habit to clear those red notification dots. While clearing dots isn't exactly pleasurable, it's at least not painful, and even carries a subtle expectation of "social reward."
+微信不同。它是流量的入口，它就是生活本身。我打开微信，看看朋友们在做什么、翻翻群聊八卦，或者仅仅出于习惯去清除那些红色通知小圆点。虽然清除小圆点算不上愉悦，但至少不痛苦，甚至还带着一丝“社交奖赏”的微妙期待。
 
-Therefore, whenever I have something truly important that absolutely cannot be forgotten, I don't write it in Todoist. Instead, I set a "strong reminder" within WeChat or send it to the "File Transfer Assistant" and pin it to the top.
+因此，每当有真正重要的、绝对不能忘记的事情时，我不会把它写在 Todoist 里。相反，我会在微信里设置一个“强提醒”，或者发到“文件传输助手”并置顶。
 
-Because I know I might ignore a Todoist pop-up, but I will absolutely never ignore a WeChat message box.
+因为我知道，Todoist 的弹窗我可能会忽略，但微信的消息框我绝对不会放过。
 
-### Why Did "Precise Management" Fail?
+### “精确管理”为何失效？
 
-I used to think that as long as the tool was powerful enough, I could become an efficient person.
+我曾经以为，只要工具足够强大，我就能成为一个高效的人。
 
-Todoist solved many pain points I had with Google Tasks: sub-tasks, tags, filters... It felt great. I spent a lot of time building projects, tagging tasks, and setting priorities. Looking at that organized list, I did have the illusion that **"I have everything under control."**
+Todoist 解决了我在使用 Google Tasks 时的许多痛点：子任务、标签、筛选器……感觉棒极了。我花了大量时间建项目、打标签、设优先级。看着那个井然有序的列表，我确实产生了一种幻觉——“一切尽在掌握”。
 
-But the reality is: **The time I spend "managing tasks" often exceeds my expectations, while the time I actually spend "executing tasks" is often far less.**
+但现实是：我花在“管理任务”上的时间经常超出预期，而我真正花在“执行任务”上的时间往往少得多。
 
-This is simply the greatest irony of modern productivity.
+这简直是现代生产力的终极讽刺。
 
-Often, for quick, temporary tasks, I'm too lazy to categorize or tag them; for truly important, massive tasks, I feel that simple tags can't capture their complexity. The result is that Todoist has become an awkward "warehouse." It stores countless things I want to do, but it hasn't become the "launchpad" to execute them.
+往往是这样的情况：对于快速的临时任务，我懒得去分类打标签；对于真正重要的、庞大的任务，我又觉得简单的标签无法承载其复杂性。结果就是 Todoist 变成了一个尴尬的“仓库”——它储存了无数我想做的事情，但并没有成为执行它们的“发射台”。
 
-I even frequently bump tasks from "Today" to "Tomorrow." As long as there is no hard deadline, the tasks in Todoist are just lines of pale text with no binding force.
+我甚至经常把任务从“今天”推到“明天”。只要没有硬性截止日期，Todoist 里的任务就只是一行行苍白的文字，没有任何约束力。
 
-### True Binding Force Comes from "Connection"
+### 真正的约束力来自“连接”
 
-Why do I definitely check notifications from WeChat (or DMs on Instagram/social media)?
+为什么我一定会查看微信的通知（或 Instagram / 社交媒体上的私信）？我意识到，那是因为社交关系。
 
-I just realized it's because of **social relationships**.
+红色小圆点的背后是一个人。不回复可能会得罪人；忽略群通知可能意味着错过关键信息。这种基于“面子”或“责任”的社交属性，赋予了微信一种 Todoist 永远不可能拥有的强制力。
 
-Behind the red dot is a **person**. Not replying might offend someone; ignoring a group notice might mean missing critical information. This social attribute, based on "face" or "responsibility," gives WeChat a type of **mandatory power** that Todoist can never possess.
+Todoist 的通知可以一滑而过，因为它是我发给自己的。微信的消息必须处理，因为它是发给“社交中的我”的。
 
-A Todoist notification can be swiped away because it was sent to myself. A WeChat message must be dealt with because it was sent to the "social me."
+### 回归本能
 
-### Returning to Instinct
+我不是说微信是最好的待办清单——它显然不是。用它来管理复杂项目会是一场灾难。
 
-I'm not saying WeChat is the best Todo List—it obviously isn't. Using it to manage complex projects would be a disaster.
+我还没有完全决定取消 Todoist 的订阅，因为它作为作业和杂事的容器还算不错。但我的心态已经变了，在接下来的日子里我可能随时会取消。
 
-I haven't fully decided to unsubscribe from Todoist yet, as it's still a decent container for homework and chores. But my mindset has changed, and I might unsubscribe at any moment in the coming days.
+我开始意识到：**与人性本能作对的工具，最终都会被冷落。**
 
-I've started to realize: **Tools that fight against human instinct will eventually be given the cold shoulder.**
+如果一个工具需要我鼓起巨大的意志力才能打开，那它本身就成了阻力的一部分。也许有一天，我会放弃复杂的标签和过滤系统，回归一个灵活的、可控的纯文本清单。
 
-If a tool requires immense willpower just to open, it becomes part of the resistance itself. Perhaps one day, I will abandon complex tagging and filtering systems and return to a flexible, controllable plain text list.
-
-Because what I truly need is not a more powerful app, but a place that flows *with* my attention, allowing me to spend less time "organizing" and more time "doing."
+因为我真正需要的不是一个更强大的应用，而是一个能*顺着*我注意力流动的地方，让我花更少的时间去“整理”，花更多的时间去“行动”。

@@ -14,7 +14,15 @@
             </a>
             <h1 class="post-title">{{ .Title }}</h1>
         </div>
-        <time class="post-date">{{ .Date.Format "2006/01/02" }}</time>
+        <div class="post-meta">
+            <time class="post-date">{{ .Date.Format "2006/01/02" }}</time>
+            {{ if .Translations }}
+                {{ range .Translations }}
+                    <span class="meta-sep">·</span>
+                    <a class="lang-switch" href="{{ .RelPermalink }}">{{ i18n "readInOtherLang" }}</a>
+                {{ end }}
+            {{ end }}
+        </div>
     </header>
 
     {{ if .TableOfContents }}
@@ -26,6 +34,17 @@
     <div class="post-content">
         {{ .Content }}
     </div>
+
+    {{ $status := .Params.translationStatus }}
+    {{ if $status }}
+    <div class="translation-notice">
+        {{ if eq $status "ai" }}
+            {{ i18n "translationNoticeAI" }}
+        {{ else if eq $status "partial" }}
+            {{ i18n "translationNoticePartial" }}
+        {{ end }}
+    </div>
+    {{ end }}
 </article>
 
 <script>

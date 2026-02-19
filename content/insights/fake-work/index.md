@@ -1,5 +1,5 @@
 ---
-title: "The Trap of Fake Work"
+title: "假工作的陷阱"
 date: 2025-12-27
 tags: ["productivity", "mental model"]
 draft: false
@@ -9,39 +9,39 @@ draft: false
 
 **TL;DR**
 
-Busyness is often a "silt-out" that masks a lack of direction; by applying three heuristics—Asset vs. Consumable, the Domino, and the Pain test—knowledge workers can distinguish high-leverage "real work" from the noise of fake productivity.
+忙碌往往是一种“淤塞”，掩盖了方向的缺失。应该
 </aside>
 
-There is a distinct difference between being busy and doing work.
+忙碌和工作之间，有着本质的区别。
 
-I've noticed a pattern in myself recently. When my brain gets tired, I don't stop. Instead, I start clicking things. I check email; I organize files; I read news that I don't care about. I look like I'm working. I might even feel like I'm working. But I'm not. I am engaging in fake work to hide from the fact that I don't know what to do next.
+我最近注意到了自己的一个模式。当我的大脑感到疲惫时，我不会停下来，而是开始漫无目的地点击。我查邮件、整理文件、阅读我根本不关心的新闻。我看起来像在工作，甚至可能自己也觉得在工作。但实际上并不是。我只是在用假工作来逃避一个事实：我不知道接下来该做什么。
 
-This is a dangerous trap because it feels productive. But it is actually a form of laziness. It is laziness disguised as activity.
+这是一个危险的陷阱，因为它感觉上很高效。但它实际上是一种懒惰——披着活跃外衣的懒惰。
 
-### The Navigation Problem
+### 导航问题
 
-The problem is that figuring out what to do is much harder than actually doing it. Navigating is harder than driving. When the "navigation" part of our brain burns out, we just keep driving because stopping feels like failure.
+问题在于，弄清楚该做什么，远比实际去做要难得多。导航比开车难。当我们大脑中负责“导航”的那部分燃尽了，我们就会继续“开车”，因为总感觉停下来就是失败。
 
-Imagine you are driving on a highway and your GPS fails. The rational thing to do is to pull over and fix it. You wouldn't keep driving at 70 mph while staring at a blank phone screen. That would be suicide.
+想象你在高速公路上开车，GPS 突然坏了。理性的做法是靠边停车修好它。你不会一边盯着黑屏手机，一边以 120 公里时速继续开。那是在找死。
 
-But in office work, we do exactly that. We lose our direction, but we are terrified of the silence. We worry that if we stop moving, we are falling behind. So we keep driving blind. We fill the time with noise—emails, meetings, slack messages—hoping that movement counts as progress.
+但在办公室工作中，我们恰恰就是这么做的。我们失去了方向，但我们恐惧于沉默。我们担心一旦停下来，就会被甩在后面。于是我们继续盲目驾驶，用噪音填满时间——邮件、会议、Slack 消息——寄希望于运动等于进步。
 
-### The Silt-Out
+### 淤塞效应
 
-Cave divers have a term for what happens when you panic underwater: a "silt-out." If you don't know where you are and you start thrashing around, your fins kick up the sediment from the bottom. The water turns to chocolate milk. You can't see your hand in front of your face.
+洞穴潜水者有一个术语来描述在水下恐慌时会发生的事：“淤塞”（silt-out）。如果你不知道自己在哪里而开始胡乱挣扎，你的脚蹼会搅起底部的沉积物。水变成了巧克力牛奶的颜色，你连自己的手都看不见。
 
-Busyness is the silt of the knowledge worker. The more frantically you switch windows and chase notifications, the less you can see what actually matters.
+忙碌就是知识工作者的淤塞。你越疯狂地切换窗口、追逐通知，就越看不清什么才是真正重要的。
 
-The solution is counter-intuitive. You have to stop.
+解决方案是反直觉的——你必须停下来。
 
-When you feel that urge to tab-switch, it means your internal GPS has lost signal. You cannot fix it by driving faster. You have to pull over. Close the laptop. Stare at the wall. The brain needs silence to re-calculate the route.
+当你感到那股想要切换标签页的冲动时，说明你的内部 GPS 已经失去了信号。你无法通过开得更快来修复它。你必须靠边停车，合上笔记本电脑，盯着墙壁发呆。大脑需要安静来重新计算路线。
 
-### Three Heuristics
+### 三个启发式判断
 
-Once the silt settles, how do you tell the difference between real work and fake work? I use three heuristics.
+当淤泥沉淀下来之后，你该如何区分真工作和假工作？我使用三个启发式判断。
 
-1. The first is to ask if the work is an **asset** or a **consumable**. Consumable work is like answering email. You do it, and it's gone. Tomorrow the inbox is full again. It's maintenance. Asset work is like writing code or an essay. You do it once, and it keeps working for you. It compounds. If you spend your whole day on consumables, you are treading water.
-2. The second is to look for the **domino**. In any list of tasks, there is usually one item that, if done, makes the others irrelevant or much easier. That is the real work. The rest is just clutter. We often avoid the domino because it is heavy. We prefer to move the little pebbles because it feels like we are doing more.
-3. This leads to the third and most reliable test: the **pain**. Real work usually feels like resistance. It feels slightly unpleasant. It requires a level of concentration that the brain naturally wants to avoid. If what you are doing feels smooth and easy—if you can do it while listening to a podcast—it is probably fake work.
+1. 问自己，这项工作是一种**资产**还是一种**消耗品**。消耗性工作就像回复邮件——你做完了，它就消失了。明天收件箱又满了。这是维护。资产性工作就像写代码或写文章——你做一次，它会持续为你创造价值，会产生复利。如果你一整天都花在消耗品上，你只是在原地踏水。
+2. 寻找**多米诺骨牌**。在任何任务列表中，通常有一项任务，如果完成了它，其他任务要么变得无关紧要，要么变得容易得多。那才是真正的工作，其余的只是杂物。我们经常回避多米诺骨牌，因为它很重。我们更愿意搬动小石子，因为这让人感觉做了更多事。
+3. 这引出了第三个、也是最可靠的测试：**痛感**。真正的工作通常伴随着阻力，让人感觉有些不舒服，需要一种大脑天然想要回避的专注度。如果你正在做的事情感觉顺畅轻松——如果你能一边听播客一边做——那它很可能是假工作。
 
-The thing you are procrastinating on is usually the only thing that matters. The rest is just noise you create to drown out the guilt of not doing it.
+你一直在拖延的那件事，通常才是唯一重要的事。其余的不过是你制造的噪音，用来掩盖没做它的愧疚感。

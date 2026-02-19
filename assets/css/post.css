@@ -26,11 +26,44 @@
     font-size: 1.05rem;
 }
 
+.post-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+    margin-bottom: 4rem;
+}
+
 .post-date {
     font: var(--type-s);
     color: var(--text-meta);
-    display: block;
-    margin-bottom: 4rem;
+    display: inline;
+}
+
+.meta-sep {
+    font: var(--type-s);
+    color: var(--text-meta);
+    margin: 0 0.5em;
+}
+
+.lang-switch {
+    font: var(--type-s);
+    color: var(--text-meta);
+    text-decoration: none;
+    transition: color 0.18s ease;
+}
+
+.lang-switch:hover {
+    color: var(--text-color);
+}
+
+/* Translation notice at article bottom */
+.translation-notice {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    font: var(--type-s);
+    color: var(--text-meta);
+    font-style: italic;
 }
 
 @media (max-width: 768px) {
