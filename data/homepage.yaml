@@ -35,7 +35,7 @@ columns:
         link: /textlab/
       - title: Engineering
         desc: "Documentation of technical learnings, mathematical notes, and engineering practices."
-        link: /notes/
+        link: /engineering/
 
   - id: projects
     title: Projects

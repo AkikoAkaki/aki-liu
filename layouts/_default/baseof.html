@@ -43,12 +43,6 @@
         {{ end }}
 </head>
 <body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }}">
-    {{ $nav := .Site.Params.navigation }}
-    {{ $homeLabel := "Index" }}
-    {{ with $nav }}
-        {{ with .homeLabel }}{{ $homeLabel = . }}{{ end }}
-    {{ end }}
-    {{ $writingSection := .Site.GetPage "section" "writing" }}
     <div class="site-container">
         <aside class="site-sidebar"></aside>
         <main class="site-main">
