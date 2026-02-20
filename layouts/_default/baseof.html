@@ -3,67 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ block "title" . }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
-    {{ with .Permalink }}
-    <link rel="canonical" href="{{ . }}">
-    {{ end }}
-    {{ if .IsTranslated }}
-    {{ range .Translations }}
-    <link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}">
-    {{ end }}
-    <link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}">
-    {{ end }}
-    
-    <!-- Fonts: Inter (UI/Sans) & Newsreader (Serif/Index) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Newsreader:ital,wght@1,400&display=swap" rel="stylesheet">
-
-        {{ $base := resources.Get "css/base.css" }}
-        {{ $layout := resources.Get "css/layout.css" }}
-        {{ $components := resources.Get "css/components.css" }}
-        {{ $home := resources.Get "css/home.css" }}
-        {{ $post := resources.Get "css/post.css" }}
-        {{ $style := slice $base $layout $components $home $post | resources.Concat "css/bundle.css" | fingerprint }}
-        <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
-        {{ $enableKaTeX := or .Site.Params.enablekatex .Site.Params.enableKaTeX }}
-        {{ if $enableKaTeX }}
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
-        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
-        <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
-        <script defer>
-            document.addEventListener('DOMContentLoaded', function () {
-                if (typeof renderMathInElement === 'function') {
-                    renderMathInElement(document.body, {
-                        delimiters: [
-                            {left: '$$', right: '$$', display: true},
-                            {left: '\\(', right: '\\)', display: false},
-                            {left: '\\[', right: '\\]', display: true},
-                            {left: '$', right: '$', display: false}
-                        ],
-                        throwOnError: false
-                    });
-                }
-            });
-        </script>
-        {{ end }}
+    {{ partial "head/seo.html" (dict "page" .) }}
+    {{ partial "head/assets.html" . }}
 </head>
 <body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }}">
-    {{ $nav := .Site.Params.navigation }}
-    {{ $homeLabel := "Index" }}
-    {{ with $nav }}
-        {{ with .homeLabel }}{{ $homeLabel = . }}{{ end }}
-    {{ end }}
-    {{ $writingSection := .Site.GetPage "section" "writing" }}
     <div class="site-container">
         <aside class="site-sidebar"></aside>
         <main class="site-main">
             {{ block "main" . }}{{ end }}
             <footer class="site-footer">
-                <div class="footer-left">© 2025 Aki Liu, crafted with inspiration from <a href="https://paco.me" target="_blank" rel="noopener noreferrer">Paco Coursey</a></div>
+                <div class="footer-left">&copy; {{ now.Year }} Aki Liu, crafted with inspiration from <a href="https://paco.me" target="_blank" rel="noopener noreferrer">Paco Coursey</a></div>
             </footer>
         </main>
         <aside class="site-sidebar-right">{{ block "sidebar-right" . }}{{ end }}</aside>
     </div>
 </body>
 </html>
+

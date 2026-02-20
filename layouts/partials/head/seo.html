@@ -1,0 +1,146 @@
+{{- $page := .page -}}
+{{- $siteTitle := $page.Site.Title -}}
+{{- $title := printf "%s | %s" $page.Title $siteTitle -}}
+{{- if $page.IsHome -}}
+    {{- $title = $siteTitle -}}
+{{- end -}}
+{{- $siteBase := $page.Site.BaseURL -}}
+{{- $hasAbsoluteBase := or (hasPrefix $siteBase "http://") (hasPrefix $siteBase "https://") -}}
+{{- $siteURL := strings.TrimSuffix "/" ($page.Site.Params.siteURL | default "") -}}
+
+<title>{{ $title }}</title>
+
+{{- $description := "" -}}
+{{- with $page.Params.description -}}
+    {{- $description = . -}}
+{{- end -}}
+{{- if and (eq $description "") $page.IsPage -}}
+    {{- $summary := $page.Summary | plainify | strings.TrimSpace -}}
+    {{- if $summary -}}
+        {{- $description = $summary -}}
+    {{- end -}}
+{{- end -}}
+{{- if eq $description "" -}}
+    {{- with $page.Site.Params.description -}}
+        {{- $description = . -}}
+    {{- end -}}
+{{- end -}}
+{{- if ne $description "" -}}
+    {{- $description = $description | plainify | strings.TrimSpace | truncate 160 -}}
+    <meta name="description" content="{{ $description }}">
+{{- end -}}
+
+{{- $canonical := partial "head/resolve-url.html" (dict
+    "rel" $page.RelPermalink
+    "perm" $page.Permalink
+    "siteURL" $siteURL
+    "hasAbsoluteBase" $hasAbsoluteBase
+) -}}
+<link rel="canonical" href="{{ $canonical }}">
+
+{{- if $page.IsTranslated -}}
+    {{- $translations := sort $page.AllTranslations "Language.Weight" "asc" -}}
+    {{- range $translations -}}
+        {{- $href := partial "head/resolve-url.html" (dict
+            "rel" .RelPermalink
+            "perm" .Permalink
+            "siteURL" $siteURL
+            "hasAbsoluteBase" $hasAbsoluteBase
+        ) -}}
+        <link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ $href }}">
+    {{- end -}}
+    {{- with index $translations 0 -}}
+        {{- $href := partial "head/resolve-url.html" (dict
+            "rel" .RelPermalink
+            "perm" .Permalink
+            "siteURL" $siteURL
+            "hasAbsoluteBase" $hasAbsoluteBase
+        ) -}}
+        <link rel="alternate" hreflang="x-default" href="{{ $href }}">
+    {{- end -}}
+{{- end -}}
+
+{{- $truthy := slice "true" "1" "yes" "on" -}}
+{{- $noindex := in $truthy (lower (printf "%v" ($page.Params.noindex | default false))) -}}
+{{- if or (eq $page.Kind "404") $noindex -}}
+    <meta name="robots" content="noindex,nofollow">
+{{- else -}}
+    <meta name="robots" content="index,follow,max-image-preview:large">
+{{- end -}}
+
+{{- $ogLocale := replace ($page.Language.LanguageCode | default $page.Language.Lang) "-" "_" -}}
+<meta property="og:site_name" content="{{ $siteTitle }}">
+<meta property="og:locale" content="{{ $ogLocale }}">
+<meta property="og:type" content="{{ if $page.IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:url" content="{{ $canonical }}">
+{{- if ne $description "" -}}
+<meta property="og:description" content="{{ $description }}">
+{{- end -}}
+
+{{- if and $page.IsTranslated (gt (len $page.AllTranslations) 1) -}}
+    {{- range $page.AllTranslations -}}
+        {{- $altLocale := replace (.Language.LanguageCode | default .Language.Lang) "-" "_" -}}
+        {{- if ne $altLocale $ogLocale -}}
+            <meta property="og:locale:alternate" content="{{ $altLocale }}">
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+{{- $socialImage := "" -}}
+{{- with $page.Params.cover -}}
+    {{- $socialImage = printf "%v" . -}}
+{{- end -}}
+{{- if and (eq $socialImage "") $page.Site.Params.defaultSocialImage -}}
+    {{- $socialImage = printf "%v" $page.Site.Params.defaultSocialImage -}}
+{{- end -}}
+{{- if and $socialImage (not (hasPrefix $socialImage "http://")) (not (hasPrefix $socialImage "https://")) -}}
+    {{- $socialImage = $socialImage | absURL -}}
+{{- end -}}
+{{- if $socialImage -}}
+    <meta property="og:image" content="{{ $socialImage }}">
+    <meta name="twitter:image" content="{{ $socialImage }}">
+{{- end -}}
+
+<meta name="twitter:card" content="{{ if $socialImage }}summary_large_image{{ else }}summary{{ end }}">
+<meta name="twitter:title" content="{{ $title }}">
+{{- if ne $description "" -}}
+<meta name="twitter:description" content="{{ $description }}">
+{{- end -}}
+
+{{- if $page.IsHome -}}
+    {{- $websiteURL := partial "head/resolve-url.html" (dict
+        "rel" $page.Site.Home.RelPermalink
+        "perm" $page.Site.Home.Permalink
+        "siteURL" $siteURL
+        "hasAbsoluteBase" $hasAbsoluteBase
+    ) -}}
+    {{- $websiteSchema := dict
+        "@context" "https://schema.org"
+        "@type" "WebSite"
+        "name" $siteTitle
+        "url" $websiteURL
+        "inLanguage" ($page.Language.LanguageCode | default $page.Language.Lang)
+    -}}
+    {{- printf "<script type=\"application/ld+json\">%s</script>" ($websiteSchema | jsonify) | safeHTML -}}
+{{- else if $page.IsPage -}}
+    {{- $authorName := $page.Site.Params.author | default $siteTitle -}}
+    {{- $articleSchema := dict
+        "@context" "https://schema.org"
+        "@type" "BlogPosting"
+        "headline" $page.Title
+        "url" $canonical
+        "mainEntityOfPage" $canonical
+        "datePublished" ($page.Date.Format "2006-01-02T15:04:05Z07:00")
+        "dateModified" ($page.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+        "inLanguage" ($page.Language.LanguageCode | default $page.Language.Lang)
+        "author" (dict "@type" "Person" "name" $authorName)
+    -}}
+    {{- if ne $description "" -}}
+        {{- $articleSchema = merge $articleSchema (dict "description" $description) -}}
+    {{- end -}}
+    {{- if $socialImage -}}
+        {{- $articleSchema = merge $articleSchema (dict "image" (slice $socialImage)) -}}
+    {{- end -}}
+    {{- printf "<script type=\"application/ld+json\">%s</script>" ($articleSchema | jsonify) | safeHTML -}}
+{{- end -}}

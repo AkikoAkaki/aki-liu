@@ -1,0 +1,16 @@
+{{- /* Keep translation status mapping in one place for maintainability. */ -}}
+{{- $status := .Params.translationStatus -}}
+{{- $messageKey := "" -}}
+{{- if eq $status "ai" -}}
+    {{- $messageKey = "translationNoticeAI" -}}
+{{- else if eq $status "partial" -}}
+    {{- $messageKey = "translationNoticePartial" -}}
+{{- else if eq $status "human" -}}
+    {{- $messageKey = "translationNoticeHuman" -}}
+{{- end -}}
+
+{{- if $messageKey -}}
+<div class="translation-notice">
+    {{ i18n $messageKey }}
+</div>
+{{- end -}}

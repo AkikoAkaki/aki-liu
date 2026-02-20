@@ -2,7 +2,7 @@
 {{- $data := site.Data.homepage -}}
 
 <div class="home-container">
-    {{/* Intro Section */}}
+    {{/* Intro section */}}
     <section class="intro">
         <h1 class="author-name">{{ $data.intro.name }}</h1>
         {{- range $index, $para := $data.intro.bio }}
@@ -12,7 +12,7 @@
         {{- end }}
     </section>
 
-    {{/* Work Table Section */}}
+    {{/* Work table section */}}
     <section class="work-table-section">
         <div class="work-table-wrapper">
             <table class="work-table">
@@ -24,7 +24,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{- /* 计算最大行数 */ -}}
+                    {{- /* Determine the max row count across all columns. */ -}}
                     {{- $maxRows := 0 -}}
                     {{- range $data.columns -}}
                         {{- if gt (len .items) $maxRows -}}
@@ -32,13 +32,13 @@
                         {{- end -}}
                     {{- end -}}
 
-                    {{- /* 渲染每一行 */ -}}
+                    {{- /* Render each row and guard index access per column. */ -}}
                     {{- range $rowIndex := seq $maxRows }}
                     <tr>
                         {{- range $col := $data.columns }}
-                            {{- $item := index .items (sub $rowIndex 1) }}
-                            <td{{ with .cssClass }} class="{{ . }}"{{ end }}>
-                                {{- if $item }}
+                            <td{{ with $col.cssClass }} class="{{ . }}"{{ end }}>
+                                {{- if ge (len $col.items) $rowIndex }}
+                                {{- $item := index $col.items (sub $rowIndex 1) }}
                                 <div class="work-item">
                                     {{- if $item.link }}
                                     <a href="{{ $item.link | relLangURL }}" class="work-title">{{ $item.title }}</a>
@@ -57,15 +57,22 @@
         </div>
     </section>
 
-    {{/* Now Section */}}
+    {{/* Now section */}}
     <section class="now-section">
         <h2 class="section-title">{{ $data.now.title }}</h2>
+        {{- $cuteThingsHref := "/cute-things/" -}}
+        {{- with .Site.GetPage "/cute-things/" -}}
+            {{- $cuteThingsHref = .RelPermalink -}}
+        {{- end -}}
         {{- range $data.now.paragraphs }}
-        <p>{{ . | safeHTML }}</p>
+        {{- $paragraph := . -}}
+        {{- /* Use translated cute-things URL when available; fallback to canonical zh path. */ -}}
+        {{- $paragraph = replace $paragraph "href=\"/cute-things/\"" (printf "href=\"%s\"" $cuteThingsHref) -}}
+        <p>{{ $paragraph | safeHTML }}</p>
         {{- end }}
     </section>
 
-    {{/* Connect Section */}}
+    {{/* Connect section */}}
     <section class="connect-section">
         <h2 class="section-title">{{ $data.connect.title }}</h2>
         {{- range $data.connect.paragraphs }}

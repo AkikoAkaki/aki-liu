@@ -1,17 +1,30 @@
 [readInOtherLang]
-other = "阅读中文版"
+other = "\u9605\u8BFB\u4E2D\u6587"
 
 [readInChinese]
-other = "阅读中文版"
+other = "Read in Chinese"
 
 [translationNoticeAI]
 other = "This article was translated with AI assistance."
 
 [translationNoticeHuman]
-other = ""
+other = "This article was translated by a human."
 
 [translationNoticePartial]
 other = "This article was translated with AI assistance and partially reviewed."
 
 [langBadge]
 other = "zh"
+
+[navHome]
+other = "Home"
+
+[notFoundTitle]
+other = "Page not found."
+
+[notFoundDescription]
+other = "The page you are looking for no longer exists, or the URL was mistyped. Let's get you back on track."
+
+[notFoundBackHome]
+other = "Return home"
+

@@ -1,26 +1,17 @@
 {{ define "main" }}
 <article class="post-single">
     <header class="post-header">
-        {{ $backHref := .Site.Home.RelPermalink }}
-        {{ $backLabel := "Index" }}
-        {{ with .CurrentSection }}
-            {{ $backHref = .RelPermalink }}
-            {{ $backLabel = .Title }}
-        {{ end }}
-        <div class="title-with-back">
-            <a class="back-link" href="{{ $backHref }}">
-                {{ partial "icons/back-arrow.html" . }}
-                <span>{{ $backLabel }}</span>
-            </a>
-            <h1 class="post-title">{{ .Title }}</h1>
-        </div>
+        {{ $back := partial "back-link-data.html" (dict "page" . "section" .CurrentSection) }}
+        {{ partial "title-with-back.html" (dict
+            "href" $back.href
+            "label" $back.label
+            "title" .Title
+            "titleClass" "post-title"
+        ) }}
         <div class="post-meta">
             <time class="post-date">{{ .Date.Format "2006/01/02" }}</time>
             {{ if .Translations }}
-                {{ range .Translations }}
-                    <span class="meta-sep">·</span>
-                    <a class="lang-switch" href="{{ .RelPermalink }}">{{ i18n "readInOtherLang" }}</a>
-                {{ end }}
+                {{ partial "lang-switch-links.html" (dict "translations" .Translations "class" "lang-switch" "showSep" true) }}
             {{ end }}
         </div>
     </header>
@@ -35,80 +26,12 @@
         {{ .Content }}
     </div>
 
-    {{ $status := .Params.translationStatus }}
-    {{ if $status }}
-    <div class="translation-notice">
-        {{ if eq $status "ai" }}
-            {{ i18n "translationNoticeAI" }}
-        {{ else if eq $status "partial" }}
-            {{ i18n "translationNoticePartial" }}
-        {{ end }}
-    </div>
-    {{ end }}
+    {{ partial "translation-notice.html" . }}
 </article>
 
-<script>
-(function () {
-    const tocs = document.querySelectorAll('.post-toc');
-    if (!tocs.length) return;
-
-    const links = Array.from(document.querySelectorAll('.post-toc a'));
-    const headings = links
-        .map((link) => {
-            const id = link.getAttribute('href').slice(1);
-            return document.getElementById(id);
-        })
-        .filter(Boolean);
-
-    const scrollToHeading = (link) => {
-        const id = link.getAttribute('href').slice(1);
-        const target = document.getElementById(id);
-        if (target) {
-            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
-            const offsetPosition = targetPosition - window.innerHeight * 0.25;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }
-    };
-
-    links.forEach((link) => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            scrollToHeading(link);
-        });
-    });
-
-    const highlightActiveHeading = () => {
-        let current = null;
-        const scrollPos = window.scrollY + window.innerHeight * 0.26;
-
-        for (let i = headings.length - 1; i >= 0; i--) {
-            if (headings[i] && headings[i].offsetTop <= scrollPos) {
-                current = headings[i];
-                break;
-            }
-        }
-
-        links.forEach((link) => link.classList.remove('is-active'));
-        if (current) {
-            links
-                .filter((link) => link.getAttribute('href') === `#${current.id}`)
-                .forEach((link) => link.classList.add('is-active'));
-        }
-    };
-
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (ticking) return;
-        window.requestAnimationFrame(() => {
-            highlightActiveHeading();
-            ticking = false;
-        });
-        ticking = true;
-    });
-
-    highlightActiveHeading();
-})();
-</script>
+{{ if .TableOfContents }}
+{{ partial "post-toc-script.html" . }}
+{{ end }}
 {{ end }}
 
 {{ define "sidebar-right" }}
@@ -118,3 +41,4 @@
     </aside>
     {{ end }}
 {{ end }}
+

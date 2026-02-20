@@ -1,73 +1,7 @@
 {{ define "main" }}
-<div class="writing-container">
-    <div class="title-with-back">
-        <a class="back-link" href="{{ .Site.Home.RelPermalink }}">
-            {{ partial "icons/back-arrow.html" . }}
-            <span>Index</span>
-        </a>
-        <h1 class="writing-label">{{ .Title }}</h1>
-    </div>
-    <div class="list-meta">
-        {{ partial "tag-sidebar.html" (dict "variant" "inline" "context" .) }}
-        {{ if .IsTranslated }}
-            {{ range .Translations }}
-                <a class="lang-switch lang-switch--inline" href="{{ .RelPermalink }}">{{ i18n "readInOtherLang" }}</a>
-            {{ end }}
-        {{ end }}
-    </div>
-    
-    {{/* For English site, show all pages from the default (zh) site */}}
-    {{ $pages := .Pages }}
-    {{ if eq .Language.Lang "en" }}
-        {{ $zhSite := index .Sites 0 }}
-        {{ $zhSection := $zhSite.GetPage .Page.Path }}
-        {{ if $zhSection }}
-            {{ $pages = $zhSection.Pages }}
-        {{ end }}
-    {{ end }}
-
-    <div class="writing-list">
-        {{ range $pages.GroupByPublishDate "2006" }}
-            {{ $year := .Key }}
-            {{ range $index, $page := .Pages }}
-                {{ if eq $page.Kind "page" }}
-                {{ $isFirstOfYear := eq $index 0 }}
-                
-                {{/* For English site, link to English version if available, otherwise link to Chinese original */}}
-                {{ $href := $page.RelPermalink }}
-                {{ $title := $page.Title }}
-                {{ $currentLang := $page.Language.Lang }}
-                {{ if ne $currentLang $.Language.Lang }}
-                    {{ range $page.Translations }}
-                        {{ if eq .Language.Lang $.Language.Lang }}
-                            {{ $href = .RelPermalink }}
-                            {{ $title = .Title }}
-                        {{ end }}
-                    {{ end }}
-                {{ end }}
-
-                <article class="writing-item {{ if $isFirstOfYear }}first-of-year{{ end }}">
-                    <div class="item-divider"></div>
-                    <div class="item-year">
-                        {{ if $isFirstOfYear }}{{ $year }}{{ end }}
-                    </div>
-                    <a href="{{ $href }}" class="item-title">{{ $title }}</a>
-                    <time class="item-date">{{ $page.Date.Format "01/02" }}</time>
-                </article>
-                {{ end }}
-            {{ end }}
-        {{ end }}
-    </div>
-</div>
+{{ partial "writing-list-main.html" . }}
 {{ end }}
 
 {{ define "sidebar-right" }}
-    {{ if .IsTranslated }}
-    <div class="sidebar-lang-switch">
-        {{ range .Translations }}
-            <a class="lang-switch" href="{{ .RelPermalink }}">{{ i18n "readInOtherLang" }}</a>
-        {{ end }}
-    </div>
-    {{ end }}
-    {{ partial "tag-sidebar.html" (dict "context" .) }}
+    {{ partial "writing-list-sidebar.html" . }}
 {{ end }}
