@@ -1,0 +1,14 @@
+{{- /* Static head assets cached across pages in one build. */ -}}
+{{- /* Fonts */ -}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Newsreader:ital,wght@1,400&display=swap" rel="stylesheet">
+
+{{- /* CSS pipeline: concatenate, minify, fingerprint */ -}}
+{{- $base := resources.Get "css/base.css" -}}
+{{- $layout := resources.Get "css/layout.css" -}}
+{{- $components := resources.Get "css/components.css" -}}
+{{- $home := resources.Get "css/home.css" -}}
+{{- $post := resources.Get "css/post.css" -}}
+{{- $style := slice $base $layout $components $home $post | resources.Concat "css/bundle.css" | resources.Minify | fingerprint -}}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">

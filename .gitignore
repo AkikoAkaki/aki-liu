@@ -1,27 +1,32 @@
-# Hugo 生成的文件
+# Hugo build outputs
 /public/
 /resources/_gen/
 /assets/jsconfig.json
 hugo_stats.json
 
-# 操作系统文件
+# Generated observability reports (keep README/script tracked)
+/reports/metrics/latest.json
+/reports/metrics/latest.html
+/reports/metrics/history/
+
+# OS files
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# 编辑器和 IDE
+# Editors and IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# Node 相关（如果使用 npm/yarn）
+# Node
 node_modules/
 package-lock.json
 yarn.lock
 
-# 临时文件
+# Temp/build locks
 *.log
 *.tmp
 .hugo_build.lock

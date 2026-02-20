@@ -1,0 +1,6 @@
+{{ if .IsTranslated }}
+<div class="sidebar-lang-switch">
+    {{ partial "lang-switch-links.html" (dict "translations" .Translations "class" "lang-switch") }}
+</div>
+{{ end }}
+{{ partial "tag-sidebar.html" (dict "context" .) }}

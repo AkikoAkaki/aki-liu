@@ -1,0 +1,14 @@
+{{- /* Resolve URL with optional absolute siteURL/baseURL fallback. */ -}}
+{{- $rel := .rel | default "" -}}
+{{- $perm := .perm | default $rel -}}
+{{- $siteURL := .siteURL | default "" -}}
+{{- $hasAbsoluteBase := .hasAbsoluteBase | default false -}}
+
+{{- $url := $rel -}}
+{{- if $siteURL -}}
+    {{- $url = printf "%s%s" $siteURL $rel -}}
+{{- else if $hasAbsoluteBase -}}
+    {{- $url = $perm -}}
+{{- end -}}
+
+{{- return $url -}}

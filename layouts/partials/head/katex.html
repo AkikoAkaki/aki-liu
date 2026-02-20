@@ -1,0 +1,61 @@
+{{- $siteEnabled := or .Site.Params.enablekatex .Site.Params.enableKaTeX -}}
+{{- if $siteEnabled -}}
+    {{- $hasOverride := false -}}
+    {{- $pageEnabledRaw := false -}}
+    {{- if isset .Params "enablekatex" -}}
+        {{- $hasOverride = true -}}
+        {{- $pageEnabledRaw = .Params.enablekatex -}}
+    {{- else if isset .Params "enableKaTeX" -}}
+        {{- $hasOverride = true -}}
+        {{- $pageEnabledRaw = .Params.enableKaTeX -}}
+    {{- else if isset .Params "math" -}}
+        {{- $hasOverride = true -}}
+        {{- $pageEnabledRaw = .Params.math -}}
+    {{- end -}}
+
+    {{- $truthy := slice "true" "1" "yes" "on" -}}
+    {{- $pageEnabled := in $truthy (lower (printf "%v" $pageEnabledRaw)) -}}
+
+    {{- $hasMathDelimiters := false -}}
+    {{- if and (not $hasOverride) .IsPage -}}
+        {{- $raw := .RawContent -}}
+        {{- $maybeMath := or (in $raw "$") (in $raw "\\(") (in $raw "\\[") -}}
+        {{- if $maybeMath -}}
+            {{- $hasMathDelimiters = or
+                (gt (len (findRE `\$\$[\s\S]*?\$\$` $raw 1)) 0)
+                (gt (len (findRE `\\\([\s\S]*?\\\)` $raw 1)) 0)
+                (gt (len (findRE `\\\[[\s\S]*?\\\]` $raw 1)) 0)
+                (gt (len (findRE `(^|[^\\])\$[^$\n]+\$` $raw 1)) 0)
+            -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{- $enableKaTeX := false -}}
+    {{- if $hasOverride -}}
+        {{- $enableKaTeX = $pageEnabled -}}
+    {{- else -}}
+        {{- $enableKaTeX = $hasMathDelimiters -}}
+    {{- end -}}
+
+    {{- if $enableKaTeX -}}
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+    <script defer>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '\\(', right: '\\)', display: false},
+                        {left: '\\[', right: '\\]', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        });
+    </script>
+    {{- end -}}
+{{- end -}}

@@ -1,0 +1,33 @@
+{{- $pages := .pages -}}
+{{- $targetLang := .targetLang | default "" -}}
+{{- $resolveTranslation := .resolveTranslation | default false -}}
+
+<div class="writing-list">
+    {{ range $pages.GroupByPublishDate "2006" }}
+        {{ $year := .Key }}
+        {{ range $index, $page := .Pages }}
+            {{ $isFirstOfYear := eq $index 0 }}
+
+            {{/* Link to target-language translation when available, fallback to source page. */}}
+            {{ $href := $page.RelPermalink }}
+            {{ $title := $page.Title }}
+            {{ if and $resolveTranslation $targetLang (ne $page.Language.Lang $targetLang) }}
+                {{ range $page.Translations }}
+                    {{ if eq .Language.Lang $targetLang }}
+                        {{ $href = .RelPermalink }}
+                        {{ $title = .Title }}
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+
+            <article class="writing-item {{ if $isFirstOfYear }}first-of-year{{ end }}">
+                <div class="item-divider"></div>
+                <div class="item-year">
+                    {{ if $isFirstOfYear }}{{ $year }}{{ end }}
+                </div>
+                <a href="{{ $href }}" class="item-title">{{ $title }}</a>
+                <time class="item-date">{{ $page.Date.Format "01/02" }}</time>
+            </article>
+        {{ end }}
+    {{ end }}
+</div>
