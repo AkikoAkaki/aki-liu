@@ -1,9 +1,9 @@
-# Homepage Content Data File
-# 编辑此文件即可修改主页所有内容（页脚除外）
+# Homepage content data.
+# Edit this file to update homepage sections (footer excluded).
 
-# ==========================================================================
-# Intro Section - 个人介绍
-# ==========================================================================
+# -----------------------------------------------------------------------------
+# Intro
+# -----------------------------------------------------------------------------
 intro:
   name: "Aki Liu"
   tagline: "Build, Write, Create"
@@ -11,9 +11,9 @@ intro:
     - "Building scalable full-stack AI solutions with a focus on distributed systems and infrastructure architecture. Crafting products with attention to logic, performance, and aesthetics."
     - 'In the past I''ve engineered AI tools for <a href="https://artisk.ai" target="_blank">Artisk</a> and <a href="https://dentistjourney.com" target="_blank">Dentist Journey</a>, designing systems that balance reliability with user experience.'
 
-# ==========================================================================
-# Work Table - 工作/写作/项目表格
-# ==========================================================================
+# -----------------------------------------------------------------------------
+# Work Table
+# -----------------------------------------------------------------------------
 columns:
   - id: education
     title: Education
@@ -35,7 +35,7 @@ columns:
         link: /textlab/
       - title: Engineering
         desc: "Documentation of technical learnings, mathematical notes, and engineering practices."
-        link: /notes/
+        link: /engineering/
 
   - id: projects
     title: Projects
@@ -51,9 +51,9 @@ columns:
         desc: "Ensuring platform stability through rigorous testing workflows. Validating system logic to guarantee a reliable user experience."
         link: "https://dentistjourney.com"
 
-# ==========================================================================
-# Now Section - 当前状态
-# ==========================================================================
+# -----------------------------------------------------------------------------
+# Now
+# -----------------------------------------------------------------------------
 now:
   title: "Now"
   paragraphs:
@@ -62,9 +62,9 @@ now:
     - "Influenced by the aesthetics of Yukio Mishima, Roland Barthes, Tomas Tranströmer, and Sheena Ringo."
     - 'Here are some <a href="/cute-things/">cute things</a>.'
 
-# ==========================================================================
-# Connect Section - 联系方式
-# ==========================================================================
+# -----------------------------------------------------------------------------
+# Connect
+# -----------------------------------------------------------------------------
 connect:
   title: "Connect"
   paragraphs:
