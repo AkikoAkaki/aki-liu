@@ -6,10 +6,10 @@
 # -----------------------------------------------------------------------------
 intro:
   name: "Aki Liu"
-  tagline: "Build, Write, Create"
+  tagline: "AI Systems, Product Thinking, Digital Humanities"
   bio:
-    - "Building scalable full-stack AI solutions with a focus on distributed systems and infrastructure architecture. Crafting products with attention to logic, performance, and aesthetics."
-    - 'In the past I''ve engineered AI tools for <a href="https://artisk.ai" target="_blank">Artisk</a> and <a href="https://dentistjourney.com" target="_blank">Dentist Journey</a>, designing systems that balance reliability with user experience.'
+    - "Operating at the intersection of AI Infrastructure, Product Engineering, and Humanistic Inquiry. I build hardware-aware distributed systems while critically examining the cultural and ethical protocols of technology."
+    - "My engineering background is rooted in real-time AI inference and system reliability (<a href='https://artisk.ai' target='_blank'>Artisk</a>, <a href='https://dentistjourney.com' target='_blank'>Dentist Journey</a>). Beyond systems, I maintain a parallel practice in critical writing—engaging affect theory, psychogeography, East Asian surface culture, and the aesthetics of limit and negation."
 
 # -----------------------------------------------------------------------------
 # Work Table
@@ -31,16 +31,19 @@ columns:
         desc: "Reflections on software craftsmanship, industry dynamics, and personal growth."
         link: /insights/
       - title: Text Lab
-        desc: "Experiments in creative writing, cultural criticism, and diverse narratives."
+        desc: "Literary experiments, cultural critique, and pathological analyses of modern existence."
         link: /textlab/
       - title: Engineering
         desc: "Documentation of technical learnings, mathematical notes, and engineering practices."
         link: /engineering/
 
   - id: projects
-    title: Projects
+    title: Projects & Research
     cssClass: col-projects
     items:
+      - title: Bear Lab @ UofRochester
+        desc: "Investigated XR security and sensor-driven attack vectors. Modeled spatial interaction dynamics and kinematic constraints using MuJoCo."
+        link: "https://rochester-bear-lab.github.io/"
       - title: Async Task Platform
         desc: "A scalable, Redis-backed async task platform. Designed with clean architecture for high availability and fault tolerance."
         link: "https://github.com/AkikoAkaki/async-task-platform"
@@ -57,9 +60,9 @@ columns:
 now:
   title: "Now"
   paragraphs:
-    - "Deep diving into distributed systems and system design. Building infrastructure that scales while maintaining elegance."
-    - "Cultivating taste through rigorous building and writing. Relentlessly thinking and reflecting."
-    - "Influenced by the aesthetics of Yukio Mishima, Roland Barthes, Tomas Tranströmer, and Sheena Ringo."
+    - "Deep-diving into the intersection of AI Interaction Architecture and Distributed Systems: exploring Heterogeneous Computing, Cloud-Edge Collaboration, and Autonomous Agents within the context of Spatial Computing and Local-first intelligence."
+    - "Writing across affect theory and politics of perception, surface culture studies (表象文化論), psychogeography, negative and limit aesthetics, and phenomenology of the body—tracing how sensation, space, and form encode the conditions of contemporary existence."
+    - "A fuller <a href='/influences/'>map of influences</a>"
     - 'Here are some <a href="/cute-things/">cute things</a>.'
 
 # -----------------------------------------------------------------------------
