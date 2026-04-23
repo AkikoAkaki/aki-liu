@@ -14,70 +14,55 @@
 
     {{/* Work table section */}}
     <section class="work-table-section">
-        <div class="work-table-wrapper">
-            <table class="work-table">
-                <thead>
-                    <tr>
-                        {{- range $data.columns }}
-                        <th>{{ .title }}</th>
+        <h2 class="data-list-heading">Archive & Output</h2>
+        <div class="data-list">
+            {{- range $col := $data.columns }}
+                {{- range $item := $col.items }}
+                <div class="data-row">
+                    <div class="data-col data-col-category">{{ $col.title }}</div>
+                    <div class="data-col data-col-title">
+                        {{- if $item.link }}
+                        <a href="{{ $item.link | relLangURL }}" class="data-link">{{ $item.title }}</a>
+                        {{- else }}
+                        {{ $item.title }}
                         {{- end }}
-                    </tr>
-                </thead>
-                <tbody>
-                    {{- /* Determine the max row count across all columns. */ -}}
-                    {{- $maxRows := 0 -}}
-                    {{- range $data.columns -}}
-                        {{- if gt (len .items) $maxRows -}}
-                            {{- $maxRows = len .items -}}
-                        {{- end -}}
-                    {{- end -}}
-
-                    {{- /* Render each row and guard index access per column. */ -}}
-                    {{- range $rowIndex := seq $maxRows }}
-                    <tr>
-                        {{- range $col := $data.columns }}
-                            <td{{ with $col.cssClass }} class="{{ . }}"{{ end }}>
-                                {{- if ge (len $col.items) $rowIndex }}
-                                {{- $item := index $col.items (sub $rowIndex 1) }}
-                                <div class="work-item">
-                                    {{- if $item.link }}
-                                    <a href="{{ $item.link | relLangURL }}" class="work-title">{{ $item.title }}</a>
-                                    {{- else }}
-                                    <div class="work-title">{{ $item.title }}</div>
-                                    {{- end }}
-                                    <div class="work-desc">{{ $item.desc | safeHTML }}</div>
-                                </div>
-                                {{- end }}
-                            </td>
-                        {{- end }}
-                    </tr>
-                    {{- end }}
-                </tbody>
-            </table>
+                    </div>
+                    <div class="data-col data-col-desc">{{ $item.desc | safeHTML }}</div>
+                </div>
+                {{- end }}
+            {{- end }}
         </div>
     </section>
 
     {{/* Now section */}}
     <section class="now-section">
-        <h2 class="section-title">{{ $data.now.title }}</h2>
-        {{- $cuteThingsHref := "/cute-things/" -}}
-        {{- with .Site.GetPage "/cute-things/" -}}
-            {{- $cuteThingsHref = .RelPermalink -}}
-        {{- end -}}
-        {{- range $data.now.paragraphs }}
-        {{- $paragraph := . -}}
-        {{- /* Use translated cute-things URL when available; fallback to canonical zh path. */ -}}
-        {{- $paragraph = replace $paragraph "href=\"/cute-things/\"" (printf "href=\"%s\"" $cuteThingsHref) -}}
-        <p>{{ $paragraph | safeHTML }}</p>
-        {{- end }}
+        <h2 class="data-list-heading">{{ $data.now.title }}</h2>
+        <div class="now-card">
+            <div class="now-card-content">
+                {{- $cuteThingsHref := "/cute-things/" -}}
+                {{- with .Site.GetPage "/cute-things/" -}}
+                    {{- $cuteThingsHref = .RelPermalink -}}
+                {{- end -}}
+                {{- range $data.now.paragraphs }}
+                {{- $paragraph := . -}}
+                {{- /* Use translated cute-things URL when available; fallback to canonical zh path. */ -}}
+                {{- $paragraph = replace $paragraph "href=\"/cute-things/\"" (printf "href=\"%s\"" $cuteThingsHref) -}}
+                <p>{{ $paragraph | safeHTML }}</p>
+                {{- end }}
+            </div>
+        </div>
     </section>
 
     {{/* Connect section */}}
     <section class="connect-section">
-        <h2 class="section-title">{{ $data.connect.title }}</h2>
-        {{- range $data.connect.paragraphs }}
-        <p>{{ . | safeHTML }}</p>
-        {{- end }}
+        <h2 class="data-list-heading">{{ $data.connect.title }}</h2>
+        <div class="connect-pills">
+            {{- range $data.connect.paragraphs }}
+            <div class="connect-pill">
+                {{ . | safeHTML }}
+            </div>
+            {{- end }}
+        </div>
     </section>
 </div>
 {{ end }}
