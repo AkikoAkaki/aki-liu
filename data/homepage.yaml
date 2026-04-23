@@ -70,5 +70,20 @@ now:
 # -----------------------------------------------------------------------------
 connect:
   title: "Connect"
-  paragraphs:
-    - 'Reach me at <a href="mailto:aki.f.liu2004@gmail.com">aki.f.liu2004@gmail.com</a>'
+  items:
+    - platform: "Email"
+      value: "aki.f.liu2004@gmail.com"
+      action: "Write"
+      link: "mailto:aki.f.liu2004@gmail.com"
+    - platform: "GitHub"
+      value: "@AkikoAkaki"
+      action: "Follow"
+      link: "https://github.com/AkikoAkaki"
+    - platform: "Twitter"
+      value: "@ikakoikika"
+      action: "Follow"
+      link: "https://twitter.com/ikakoikika"
+    - platform: "Instagram"
+      value: "@__akikoakaki__"
+      action: "Follow"
+      link: "https://instagram.com/__akikoakaki__"

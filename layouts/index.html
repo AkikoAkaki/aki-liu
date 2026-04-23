@@ -57,10 +57,12 @@
     <section class="connect-section">
         <h2 class="data-list-heading">{{ $data.connect.title }}</h2>
         <div class="connect-pills">
-            {{- range $data.connect.paragraphs }}
-            <div class="connect-pill">
-                {{ . | safeHTML }}
-            </div>
+            {{- range $data.connect.items }}
+            <a href="{{ .link }}" class="connect-pill" target="{{ if strings.HasPrefix .link "http" }}_blank{{ else }}_self{{ end }}" rel="noopener noreferrer">
+                <span class="pill-platform">{{ .platform }}</span>
+                <span class="pill-value">{{ .value }}</span>
+                <span class="pill-action">{{ .action }}</span>
+            </a>
             {{- end }}
         </div>
     </section>

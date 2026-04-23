@@ -12,11 +12,11 @@
         <main class="site-main">
             {{ block "main" . }}{{ end }}
             <footer class="site-footer">
-                <div class="footer-left">&copy; {{ now.Year }} Aki Liu, crafted with inspiration from <a href="https://paco.me" target="_blank" rel="noopener noreferrer">Paco Coursey</a></div>
+                <span>AL-{{ now.Year }}</span>
+                <span>CREATIVE ENGINEER</span>
             </footer>
         </main>
         <aside class="site-sidebar-right">{{ block "sidebar-right" . }}{{ end }}</aside>
     </div>
 </body>
 </html>
-
