@@ -6,10 +6,10 @@
 # -----------------------------------------------------------------------------
 intro:
   name: "Aki Liu"
-  tagline: "AI Systems, Product Thinking, Digital Humanities"
+  tagline: "AI Infrastructure, MLSys, Writing, and Thinking"
   bio:
-    - "Operating at the intersection of AI Infrastructure, Product Engineering, and Humanistic Inquiry. I build hardware-aware distributed systems while critically examining the cultural and ethical protocols of technology."
-    - "My engineering background is rooted in real-time AI inference and system reliability (<a href='https://artisk.ai' target='_blank'>Artisk</a>, <a href='https://dentistjourney.com' target='_blank'>Dentist Journey</a>). Beyond systems, I maintain a parallel practice in critical writing—engaging affect theory, psychogeography, East Asian surface culture, and the aesthetics of limit and negation."
+    - "Junior at Rochester (dual degrees in CS + Applied MATH), building toward AI infrastructure and ML systems."
+    - "Alongside this, I write essays, fragments, and criticism on sensation, space, and the textures of contemporary existence. Some of it ends up in <a href='/textlab/'>Text Lab</a>."
 
 # -----------------------------------------------------------------------------
 # Work Table
@@ -28,13 +28,13 @@ columns:
     cssClass: col-writing
     items:
       - title: Insights
-        desc: "Reflections on software craftsmanship, industry dynamics, and personal growth."
+        desc: "Notes on product, mind, and systems thinking."
         link: /insights/
       - title: Text Lab
-        desc: "Literary experiments, cultural critique, and pathological analyses of modern existence."
+        desc: "Essays, fragments, and criticism."
         link: /textlab/
       - title: Engineering
-        desc: "Documentation of technical learnings, mathematical notes, and engineering practices."
+        desc: "Technical learning notes and documentation."
         link: /engineering/
 
   - id: projects
@@ -42,13 +42,13 @@ columns:
     cssClass: col-projects
     items:
       - title: Bear Lab @ UofRochester
-        desc: "Investigated XR security and sensor-driven attack vectors. Modeled spatial interaction dynamics and kinematic constraints using MuJoCo."
+        desc: "Investigated XR security and sensor-driven attack vectors. Worked through spatial interaction dynamics and kinematic simulation with MuJoCo."
         link: "https://rochester-bear-lab.github.io/"
       - title: Async Task Platform
         desc: "A scalable, Redis-backed async task platform. Designed with clean architecture for high availability and fault tolerance."
         link: "https://github.com/AkikoAkaki/async-task-platform"
       - title: Artisk
-        desc: "Engineering infrastructure for a generative AI creative suite. Focusing on backend scalability and high-concurrency model inference."
+        desc: "Built logging infrastructure, internal messaging, and application features for a generative AI platform."
         link: "https://artisk.ai"
       - title: Dentist Journey
         desc: "Ensuring platform stability through rigorous testing workflows. Validating system logic to guarantee a reliable user experience."
@@ -60,8 +60,8 @@ columns:
 now:
   title: "Now"
   paragraphs:
-    - "Deep-diving into the intersection of AI Interaction Architecture and Distributed Systems: exploring Heterogeneous Computing, Cloud-Edge Collaboration, and Autonomous Agents within the context of Spatial Computing and Local-first intelligence."
-    - "Writing across affect theory and politics of perception, surface culture studies (表象文化論), psychogeography, negative and limit aesthetics, and phenomenology of the body—tracing how sensation, space, and form encode the conditions of contemporary existence."
+    - "Currently: LLM inference systems and quantization—working toward operator-level GPU optimization and distributed ML infrastructure."
+    - "Writing across affect theory, psychogeography, negative aesthetics, and phenomenology of the body—tracing how sensation, space, and form encode the conditions of contemporary existence."
     - "A fuller <a href='/influences/'>map of influences</a>"
     - 'Here are some <a href="/cute-things/">cute things</a>.'
 

@@ -56,20 +56,33 @@
     margin: 0 0 3rem 0;
     text-align: center;
     width: 100%;
+    white-space: nowrap; /* 强制在一行显示 */
 }
 
 .bio-text {
-    font: var(--type-intro); /* 采用优雅的衬线大字体 */
+    font-family: var(--font-sans); /* 正文改为 Switzer sans */
+    font-size: clamp(1.2rem, 1.9vw, 1.6rem);
+    line-height: 1.5;
     margin: 0 auto 1.5rem auto;
     color: var(--color-heading);
-    max-width: 800px;
+    max-width: 850px;
     text-align: center;
+    font-weight: 400;
 }
 
 .bio-text em {
-    font-family: var(--font-sans);
+    font-family: inherit;
     font-style: normal;
-    font-weight: 600; /* 把原来的斜体变为无衬线的粗体，形成高级冲突感 */
+    font-weight: inherit;
+    font-size: 1em;
+    display: inline;
+    margin-bottom: 0;
+}
+
+.intro .bio-text:first-of-type > em {
+    font-family: var(--font-serif); /* 仅首段 tag 使用 serif */
+    font-style: italic;
+    font-weight: 400;
 }
 
 .bio-text a,
