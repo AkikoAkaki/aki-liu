@@ -36,20 +36,54 @@
 
     {{/* Now section */}}
     <section class="now-section">
-        <h2 class="data-list-heading">{{ $data.now.title }}</h2>
-        <div class="now-card">
-            <div class="now-card-content">
-                {{- $cuteThingsHref := "/cute-things/" -}}
-                {{- with .Site.GetPage "/cute-things/" -}}
-                    {{- $cuteThingsHref = .RelPermalink -}}
-                {{- end -}}
-                {{- range $data.now.paragraphs }}
-                {{- $paragraph := . -}}
-                {{- /* Use translated cute-things URL when available; fallback to canonical zh path. */ -}}
-                {{- $paragraph = replace $paragraph "href=\"/cute-things/\"" (printf "href=\"%s\"" $cuteThingsHref) -}}
-                <p>{{ $paragraph | safeHTML }}</p>
-                {{- end }}
+        <h2 class="data-list-heading">{{ default "Now" $data.now.title }}</h2>
+        <div class="now-cards-container">
+            {{- range $data.now.cards }}
+            <div class="now-card-expandable is-collapsed">
+                <button class="now-card-header" onclick="const p = this.parentElement; p.classList.toggle('is-expanded'); p.classList.toggle('is-collapsed');">
+                    <span class="nc-title-collapsed">{{ .title }}</span>
+                    <span class="nc-title-expanded">{{ .title }}</span>
+                    <span class="nc-icon">
+                        <svg class="icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        <svg class="icon-collapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6 M20 10h-6V4 M14 10l7-7 M3 21l7-7"/></svg>
+                    </span>
+                </button>
+                <div class="now-card-content-wrapper">
+                    <div class="now-card-body">
+                        {{- if .tagline }}
+                        <h3 class="nc-tagline">{{ .tagline | safeHTML }}</h3>
+                        {{- end }}
+                        <div class="nc-paragraphs">
+                            {{- range .paragraphs }}
+                            {{- $paragraph := . -}}
+                            {{- $cuteThingsHref := "/cute-things/" -}}
+                            {{- with $.Site.GetPage "/cute-things/" -}}
+                                {{- $cuteThingsHref = .RelPermalink -}}
+                            {{- end -}}
+                            {{- $paragraph = replace $paragraph "href=\"/cute-things/\"" (printf "href=\"%s\"" $cuteThingsHref) -}}
+                            <p>{{ $paragraph | safeHTML }}</p>
+                            {{- end }}
+                        </div>
+                        
+                        {{- if .pillars }}
+                        <div class="nc-pillars">
+                            {{- range .pillars }}
+                            <div class="nc-pillar">
+                                <div class="nc-pillar-indicator">
+                                    <div class="nc-pillar-num">{{ .num }}</div>
+                                </div>
+                                <div class="nc-pillar-content">
+                                    <h4 class="nc-pillar-title">{{ .title }}</h4>
+                                    <p class="nc-pillar-desc">{{ .desc }}</p>
+                                </div>
+                            </div>
+                            {{- end }}
+                        </div>
+                        {{- end }}
+                    </div>
+                </div>
             </div>
+            {{- end }}
         </div>
     </section>
 

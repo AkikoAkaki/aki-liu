@@ -59,11 +59,28 @@ columns:
 # -----------------------------------------------------------------------------
 now:
   title: "Now"
-  paragraphs:
-    - "Currently: LLM inference systems and quantization—working toward operator-level GPU optimization and distributed ML infrastructure."
-    - "Writing across affect theory, psychogeography, negative aesthetics, and phenomenology of the body—tracing how sensation, space, and form encode the conditions of contemporary existence."
-    - "A fuller <a href='/influences/'>map of influences</a>"
-    - 'Here are some <a href="/cute-things/">cute things</a>.'
+  cards:
+    - title: "My actual focus (Placeholder)"
+      paragraphs:
+        - "Currently: LLM inference systems and quantization—working toward operator-level GPU optimization and distributed ML infrastructure."
+        - "Writing across affect theory, psychogeography, negative aesthetics, and phenomenology of the body—tracing how sensation, space, and form encode the conditions of contemporary existence."
+        - "A fuller <a href='/influences/'>map of influences</a>"
+        - 'Here are some <a href="/cute-things/">cute things</a>.'
+    - title: "Leadership style (Demo)"
+      tagline: "Strategic, systems-driven, and impact-focused—leading design as a force multiplier within product and business."
+      paragraphs:
+        - "He prioritizes systems over features, ensuring that design decisions are supported by proof, context, and clear rationale. Aligning closely with decision-makers minimizes unnecessary churn and maximizes the influence of design at the highest levels."
+        - "When it comes to growing his team, he focuses on three core pillars:"
+      pillars:
+        - num: "1"
+          title: "Design excellence and craft"
+          desc: "Elevating execution through strong fundamentals, prototyping, and attention to detail, often leading by example and designing at the speed of conversation."
+        - num: "2"
+          title: "Product impact"
+          desc: "Ensuring design is driving meaningful improvements to the user experience and business, helping his team navigate the inherent tension within that spectrum."
+        - num: "3"
+          title: "Culture and team influence"
+          desc: "Strengthening collaboration, mentorship, connecting dots, and making sure the team is assembled for the best outcomes."
 
 # -----------------------------------------------------------------------------
 # Connect
