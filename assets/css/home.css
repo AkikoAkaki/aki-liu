@@ -50,15 +50,20 @@
     min-height: 75vh; /* 让首屏 Hero 区域占据约七成到八成的视口高度，将下方的列表顺势推至屏幕外 */
 }
 
-.author-name {
-    font: var(--type-hero); /* 采用第一步设置的超大可缩放字体 */
-    text-transform: uppercase;
-    letter-spacing: -0.04em; /* 压缩字间距增强力量感 */
-    color: var(--color-heading);
-    margin: 0 0 3rem -8vw; /* 增加负的左外边距，将文字微微向左偏移 */
-    text-align: center;
+.author-name-svg-wrapper {
     width: 100%;
-    white-space: nowrap; /* 强制在一行显示 */
+    max-width: 1200px; /* 控制 SVG 的最大宽度，防止在大屏上过大 */
+    margin: 0 auto 3rem auto;
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+    animation: fade-in-up 0.8s ease forwards;
+}
+
+.hero-svg {
+    width: 85%; /* 占据容器的大部分宽度 */
+    height: auto;
+    display: block;
 }
 
 .bio-text {
