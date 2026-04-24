@@ -58,29 +58,49 @@ columns:
 # Now
 # -----------------------------------------------------------------------------
 now:
-  title: "Now"
+  title: "More about me"
   cards:
-    - title: "My actual focus (Placeholder)"
+    - title: "Focusing Now"
+      tagline: "LLM inference systems and quantization. Working toward operator-level GPU optimization and distributed ML infrastructure."
       paragraphs:
-        - "Currently: LLM inference systems and quantization—working toward operator-level GPU optimization and distributed ML infrastructure."
-        - "Writing across affect theory, psychogeography, negative aesthetics, and phenomenology of the body—tracing how sensation, space, and form encode the conditions of contemporary existence."
-        - "A fuller <a href='/influences/'>map of influences</a>"
-        - 'Here are some <a href="/cute-things/">cute things</a>.'
-    - title: "Leadership style (Demo)"
-      tagline: "Strategic, systems-driven, and impact-focused—leading design as a force multiplier within product and business."
-      paragraphs:
-        - "He prioritizes systems over features, ensuring that design decisions are supported by proof, context, and clear rationale. Aligning closely with decision-makers minimizes unnecessary churn and maximizes the influence of design at the highest levels."
-        - "When it comes to growing his team, he focuses on three core pillars:"
+        - "Below is the current course I am taking:"
       pillars:
         - num: "1"
-          title: "Design excellence and craft"
-          desc: "Elevating execution through strong fundamentals, prototyping, and attention to detail, often leading by example and designing at the speed of conversation."
+          title: "CSC 254: Programming Language Design & Implementation"
+          desc: "Design and implementation of programming languages, with an emphasis on imperative languages and implementation tradeoffs. Topics include fundamental language concepts (names, values, types, abstraction, control flow), compilation and interpretation (syntactic and semantic analysis, code generation and optimization), and major language paradigms (imperative, object-oriented, functional, logic-based, concurrent)."
+
         - num: "2"
-          title: "Product impact"
-          desc: "Ensuring design is driving meaningful improvements to the user experience and business, helping his team navigate the inherent tension within that spectrum."
+          title: "CSC 282: Design & Analysis of Efficient Algorithms"
+          desc: "How does one design programs and ascertain their efficiency? Topics include greedy algorithms, dynamic programming, divide-and-conquer techniques, string processing, graph algorithms, and mathematical algorithms. Introduction to NP-completeness and linear programming."
+
         - num: "3"
-          title: "Culture and team influence"
-          desc: "Strengthening collaboration, mentorship, connecting dots, and making sure the team is assembled for the best outcomes."
+          title: "CSC 280: Computer Models & Limitations"
+          desc: "This course studies fundamental computer models and their computational limitations. After a quick review of finite-state machines, topics include the pumping lemma, context-free languages, Turing machines, undecidability, time complexity, space complexity, and randomized computation."
+
+        - num: "4"
+          title: "MATH 282: Intro to Complex Analysis"
+          desc: "Introduction to complex analysis covering the algebra and geometry of complex numbers, analytic functions, Cauchy-Riemann equations, contour integration, Cauchy's theorem and integral formula, Taylor and Laurent series, singularities, the residue theorem, and applications to improper integrals."
+
+        - num: "5"
+          title: "CSC 299W: Social Implications of Computing"
+          desc: "Computers and the Internet have transformed society over the past 50 years, bringing dramatic increases in productivity and communication alongside unprecedented threats to privacy, new forms of crime, and large-scale systemic risks. In this discussion- and writing-oriented class, students examine the social, legal, and ethical dimensions of computing technology."
+    - title: "More"
+      paragraphs:
+        - "Writing across affect theory, psychogeography, negative aesthetics, and phenomenology of the body, tracing how sensation, space, and form encode the conditions of contemporary existence."
+        - "A fuller <a href='/influences/'>map of influences</a>"
+        - 'Here are some <a href="/cute-things/">cute things</a>.'
+    - title: "What I'm Using"
+      pillars:
+        - num: "1"
+          title: "Fragrances for Spring & Summer"
+          desc: "Terre d'Hermès Eau Givrée by Hermès, Colonia Il Profumo by Acqua di Parma, Grey Vetiver by Tom Ford, and Explorer by Montblanc."
+        - num: "2"
+          title: "Electronics"
+          desc: "Apple iPhone 16 Pro (512 GB), ASUS ROG Zephyrus G16 (2023) GU603, Logitech G PRO X SUPERLIGHT 2, Apple iPad Pro 11-inch (2nd generation), Apple AirPods Pro (1st generation)"
+        - num: "3"
+          title: "Clothing"
+          desc: "I've always admired the clothing from brands like Comme des Garçons, Alexander McQueen, Yohji Yamamoto, Prada, Our Legacy, and Ann Demeulemeester, but they're out of my price range. Most of what I own is fast fashion or mainstream brands — primarily Uniqlo and Zara."
+    
 
 # -----------------------------------------------------------------------------
 # Connect

@@ -39,7 +39,7 @@ A range held together by formal intensity rather than style: the violent interio
 - Yukio Mishima (三島由紀夫)
 - Kenji Miyazawa (宮沢賢治)
 - Gabriel García Márquez
-- Mo Yan
+- Mo Yan (莫言)
 - Olga Tokarczuk
 - César Aira
 - Ryū Murakami (村上龍)
@@ -72,7 +72,7 @@ Poets of rupture, grief, and precision. Celan's language pushed to and past its 
 - Tomas Tranströmer
 - Giuseppe Ungaretti
 - César Vallejo
-- Luo Fu
+- Luo Fu (洛夫)
 - T.S. Eliot
 - Sylvia Plath
 - Le Corbusier
