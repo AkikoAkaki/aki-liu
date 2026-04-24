@@ -81,6 +81,17 @@
     text-decoration-color: var(--text-color);
 }
 
+.footer-line-preserve-case {
+    text-transform: none;
+}
+
+.footer-signature {
+    width: clamp(68px, 9vw, 104px);
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
 .footer-right {
     display: flex;
     align-items: center;

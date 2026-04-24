@@ -2,80 +2,80 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Aki&#39;s Blog</title>
-    <link>//localhost:2693/tags/</link>
+    <link>//localhost:10765/tags/</link>
     <description>Recent content in Tags on Aki&#39;s Blog</description>
     <generator>Hugo</generator>
     <language>zh-CN</language>
     <lastBuildDate>Sun, 15 Feb 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="//localhost:2693/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//localhost:10765/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Critique</title>
-      <link>//localhost:2693/tags/critique/</link>
+      <link>//localhost:10765/tags/critique/</link>
       <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:2693/tags/critique/</guid>
+      <guid>//localhost:10765/tags/critique/</guid>
       <description></description>
     </item>
     <item>
       <title>Content Analysis</title>
-      <link>//localhost:2693/tags/content-analysis/</link>
+      <link>//localhost:10765/tags/content-analysis/</link>
       <pubDate>Wed, 28 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:2693/tags/content-analysis/</guid>
+      <guid>//localhost:10765/tags/content-analysis/</guid>
       <description></description>
     </item>
     <item>
       <title>Product</title>
-      <link>//localhost:2693/tags/product/</link>
+      <link>//localhost:10765/tags/product/</link>
       <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:2693/tags/product/</guid>
+      <guid>//localhost:10765/tags/product/</guid>
       <description></description>
     </item>
     <item>
       <title>Productivity</title>
-      <link>//localhost:2693/tags/productivity/</link>
+      <link>//localhost:10765/tags/productivity/</link>
       <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:2693/tags/productivity/</guid>
+      <guid>//localhost:10765/tags/productivity/</guid>
       <description></description>
     </item>
     <item>
       <title>Mental Model</title>
-      <link>//localhost:2693/tags/mental-model/</link>
+      <link>//localhost:10765/tags/mental-model/</link>
       <pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>//localhost:2693/tags/mental-model/</guid>
+      <guid>//localhost:10765/tags/mental-model/</guid>
       <description></description>
     </item>
     <item>
       <title>Fiction</title>
-      <link>//localhost:2693/tags/fiction/</link>
+      <link>//localhost:10765/tags/fiction/</link>
       <pubDate>Sat, 21 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:2693/tags/fiction/</guid>
+      <guid>//localhost:10765/tags/fiction/</guid>
       <description></description>
     </item>
     <item>
       <title>Poetry</title>
-      <link>//localhost:2693/tags/poetry/</link>
+      <link>//localhost:10765/tags/poetry/</link>
       <pubDate>Sat, 21 Jun 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:2693/tags/poetry/</guid>
+      <guid>//localhost:10765/tags/poetry/</guid>
       <description></description>
     </item>
     <item>
       <title>Essay</title>
-      <link>//localhost:2693/tags/essay/</link>
+      <link>//localhost:10765/tags/essay/</link>
       <pubDate>Sat, 10 May 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:2693/tags/essay/</guid>
+      <guid>//localhost:10765/tags/essay/</guid>
       <description></description>
     </item>
     <item>
       <title>Drama</title>
-      <link>//localhost:2693/tags/drama/</link>
+      <link>//localhost:10765/tags/drama/</link>
       <pubDate>Wed, 15 Nov 2023 00:00:00 +0000</pubDate>
-      <guid>//localhost:2693/tags/drama/</guid>
+      <guid>//localhost:10765/tags/drama/</guid>
       <description></description>
     </item>
     <item>
       <title>Translation</title>
-      <link>//localhost:2693/tags/translation/</link>
+      <link>//localhost:10765/tags/translation/</link>
       <pubDate>Tue, 05 Apr 2022 00:00:00 +0000</pubDate>
-      <guid>//localhost:2693/tags/translation/</guid>
+      <guid>//localhost:10765/tags/translation/</guid>
       <description></description>
     </item>
   </channel>

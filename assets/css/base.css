@@ -163,8 +163,8 @@
     /* 大标题切换为本地 Hero 字体 */
     --font-display: "Hero", "Syncopate", "Helvetica Neue", Helvetica, Arial, sans-serif;
     
-    /* 衬线体首选 Playfair Display（备用 Newsreader） */
-    --font-serif: "Playfair Display", "Newsreader", "EB Garamond", "SimSun", serif;
+    /* 衬线体首选 Newsreader（备用 Playfair Display */
+    --font-serif: "Newsreader", "Playfair Display", "EB Garamond", "SimSun", serif;
     
     /* 数据等宽首选 JetBrains Mono（备选 Geist Mono 也可以在此直接切换前置） */
     --font-mono: "JetBrains Mono", "Geist Mono", "Space Mono", "Consolas", monospace;
@@ -175,9 +175,9 @@
     --font-ui: "Switzer", "Inter", "Microsoft YaHei", -apple-system, sans-serif;
 
     /* 排版预设 - 构建剧烈视差 */
-    --type-hero: 700 clamp(4rem, 14vw, 20rem)/1 var(--font-display); /* Syncopate 自带字间宽，将 line-height 稍微回调至 1 */
+    --type-hero: 700 clamp(4rem, 14vw, 20rem)/1 var(--font-display);
     --type-intro: 400 clamp(1.2rem, 2vw, 1.6rem)/1.6 var(--font-serif);
-    --type-data: 500 10.5px/16px var(--font-mono); /* 调整为 JetBrains 适用的极小码农感 */
+    --type-data: 500 12px/16px var(--font-mono); /* 稍微改大一点，提升可读性 */
     --type-heading: 300 16px/24px var(--font-sans);
     --type-heading-l: 300 16px/28px var(--font-sans);
     --type-italic: 400 italic 1.1rem/normal var(--font-serif);
