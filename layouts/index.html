@@ -14,70 +14,91 @@
 
     {{/* Work table section */}}
     <section class="work-table-section">
-        <div class="work-table-wrapper">
-            <table class="work-table">
-                <thead>
-                    <tr>
-                        {{- range $data.columns }}
-                        <th>{{ .title }}</th>
+        <h2 class="data-list-heading">Archive & Output</h2>
+        <div class="data-list">
+            {{- range $col := $data.columns }}
+                {{- range $item := $col.items }}
+                <div class="data-row">
+                    <div class="data-col data-col-category">{{ $col.title }}</div>
+                    <div class="data-col data-col-title">
+                        {{- if $item.link }}
+                        <a href="{{ $item.link | relLangURL }}" class="data-link">{{ $item.title }}</a>
+                        {{- else }}
+                        {{ $item.title }}
                         {{- end }}
-                    </tr>
-                </thead>
-                <tbody>
-                    {{- /* Determine the max row count across all columns. */ -}}
-                    {{- $maxRows := 0 -}}
-                    {{- range $data.columns -}}
-                        {{- if gt (len .items) $maxRows -}}
-                            {{- $maxRows = len .items -}}
-                        {{- end -}}
-                    {{- end -}}
-
-                    {{- /* Render each row and guard index access per column. */ -}}
-                    {{- range $rowIndex := seq $maxRows }}
-                    <tr>
-                        {{- range $col := $data.columns }}
-                            <td{{ with $col.cssClass }} class="{{ . }}"{{ end }}>
-                                {{- if ge (len $col.items) $rowIndex }}
-                                {{- $item := index $col.items (sub $rowIndex 1) }}
-                                <div class="work-item">
-                                    {{- if $item.link }}
-                                    <a href="{{ $item.link | relLangURL }}" class="work-title">{{ $item.title }}</a>
-                                    {{- else }}
-                                    <div class="work-title">{{ $item.title }}</div>
-                                    {{- end }}
-                                    <div class="work-desc">{{ $item.desc | safeHTML }}</div>
-                                </div>
-                                {{- end }}
-                            </td>
-                        {{- end }}
-                    </tr>
-                    {{- end }}
-                </tbody>
-            </table>
+                    </div>
+                    <div class="data-col data-col-desc">{{ $item.desc | safeHTML }}</div>
+                </div>
+                {{- end }}
+            {{- end }}
         </div>
     </section>
 
     {{/* Now section */}}
     <section class="now-section">
-        <h2 class="section-title">{{ $data.now.title }}</h2>
-        {{- $cuteThingsHref := "/cute-things/" -}}
-        {{- with .Site.GetPage "/cute-things/" -}}
-            {{- $cuteThingsHref = .RelPermalink -}}
-        {{- end -}}
-        {{- range $data.now.paragraphs }}
-        {{- $paragraph := . -}}
-        {{- /* Use translated cute-things URL when available; fallback to canonical zh path. */ -}}
-        {{- $paragraph = replace $paragraph "href=\"/cute-things/\"" (printf "href=\"%s\"" $cuteThingsHref) -}}
-        <p>{{ $paragraph | safeHTML }}</p>
-        {{- end }}
+        <h2 class="data-list-heading">{{ default "Now" $data.now.title }}</h2>
+        <div class="now-cards-container">
+            {{- range $data.now.cards }}
+            <div class="now-card-expandable is-collapsed">
+                <button class="now-card-header" onclick="const p = this.parentElement; p.classList.toggle('is-expanded'); p.classList.toggle('is-collapsed');">
+                    <span class="nc-title-collapsed">{{ .title }}</span>
+                    <span class="nc-title-expanded">{{ .title }}</span>
+                    <span class="nc-icon">
+                        <svg class="icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        <svg class="icon-collapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h6v6 M20 10h-6V4 M14 10l7-7 M3 21l7-7"/></svg>
+                    </span>
+                </button>
+                <div class="now-card-content-wrapper">
+                    <div class="now-card-body">
+                        {{- if .tagline }}
+                        <h3 class="nc-tagline">{{ .tagline | safeHTML }}</h3>
+                        {{- end }}
+                        <div class="nc-paragraphs">
+                            {{- range .paragraphs }}
+                            {{- $paragraph := . -}}
+                            {{- $cuteThingsHref := "/cute-things/" -}}
+                            {{- with $.Site.GetPage "/cute-things/" -}}
+                                {{- $cuteThingsHref = .RelPermalink -}}
+                            {{- end -}}
+                            {{- $paragraph = replace $paragraph "href=\"/cute-things/\"" (printf "href=\"%s\"" $cuteThingsHref) -}}
+                            <p>{{ $paragraph | safeHTML }}</p>
+                            {{- end }}
+                        </div>
+                        
+                        {{- if .pillars }}
+                        <div class="nc-pillars">
+                            {{- range .pillars }}
+                            <div class="nc-pillar">
+                                <div class="nc-pillar-indicator">
+                                    <div class="nc-pillar-num">{{ .num }}</div>
+                                </div>
+                                <div class="nc-pillar-content">
+                                    <h4 class="nc-pillar-title">{{ .title }}</h4>
+                                    <p class="nc-pillar-desc">{{ .desc }}</p>
+                                </div>
+                            </div>
+                            {{- end }}
+                        </div>
+                        {{- end }}
+                    </div>
+                </div>
+            </div>
+            {{- end }}
+        </div>
     </section>
 
     {{/* Connect section */}}
     <section class="connect-section">
-        <h2 class="section-title">{{ $data.connect.title }}</h2>
-        {{- range $data.connect.paragraphs }}
-        <p>{{ . | safeHTML }}</p>
-        {{- end }}
+        <h2 class="data-list-heading">{{ $data.connect.title }}</h2>
+        <div class="connect-pills">
+            {{- range $data.connect.items }}
+            <a href="{{ .link }}" class="connect-pill" target="{{ if strings.HasPrefix .link "http" }}_blank{{ else }}_self{{ end }}" rel="noopener noreferrer">
+                <span class="pill-platform">{{ .platform }}</span>
+                <span class="pill-value">{{ .value }}</span>
+                <span class="pill-action">{{ .action }}</span>
+            </a>
+            {{- end }}
+        </div>
     </section>
 </div>
 {{ end }}

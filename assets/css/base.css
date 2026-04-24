@@ -3,15 +3,181 @@
    CSS 变量、重置样式、基础元素
    ========================================================================== */
 
+/* Hero display font (copy Hero.ttf into /static/fonts/hero/) */
+@font-face {
+    font-family: "Hero";
+    src: url("/fonts/hero/Hero.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Switzer local font family (copy files into /static/fonts/switzer/) */
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Thin.otf") format("opentype");
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-ThinItalic.otf") format("opentype");
+    font-weight: 100;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Extralight.otf") format("opentype");
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-ExtralightItalic.otf") format("opentype");
+    font-weight: 200;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Light.otf") format("opentype");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-LightItalic.otf") format("opentype");
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Regular.otf") format("opentype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Italic.otf") format("opentype");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Medium.otf") format("opentype");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-MediumItalic.otf") format("opentype");
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Semibold.otf") format("opentype");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-SemiboldItalic.otf") format("opentype");
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Bold.otf") format("opentype");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-BoldItalic.otf") format("opentype");
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Extrabold.otf") format("opentype");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-ExtraboldItalic.otf") format("opentype");
+    font-weight: 800;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Black.otf") format("opentype");
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-BlackItalic.otf") format("opentype");
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
 /* 全局变量：字体、颜色、间距统一在这里配置 */
 :root {
-    /* 字体栈 */
-    --font-sans: "Inter", "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --font-serif: "Newsreader", "SimSun", "Songti SC", "Signifier", "Times", serif;
-    --font-ui: "Inter", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: "Consolas", "Monaco", "Courier New", monospace;
+    /* 字体栈 - 引入高级对比 */
+    /* 大标题切换为本地 Hero 字体 */
+    --font-display: "Hero", "Syncopate", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    
+    /* 衬线体首选 Newsreader（备用 Playfair Display */
+    --font-serif: "Newsreader", "Playfair Display", "EB Garamond", "SimSun", serif;
+    
+    /* 数据等宽首选 JetBrains Mono（备选 Geist Mono 也可以在此直接切换前置） */
+    --font-mono: "JetBrains Mono", "Geist Mono", "Space Mono", "Consolas", monospace;
+    
+    /* 常规无衬线切换为本地 Switzer */
+    --font-sans: "Switzer", "Inter", "Microsoft YaHei", "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
+    
+    --font-ui: "Switzer", "Inter", "Microsoft YaHei", -apple-system, sans-serif;
 
-    /* 排版预设 */
+    /* 排版预设 - 构建剧烈视差 */
+    --type-hero: 700 clamp(4rem, 14vw, 20rem)/1 var(--font-display);
+    --type-intro: 400 clamp(1.2rem, 2vw, 1.6rem)/1.6 var(--font-serif);
+    --type-data: 500 12px/16px var(--font-mono); /* 稍微改大一点，提升可读性 */
     --type-heading: 300 16px/24px var(--font-sans);
     --type-heading-l: 300 16px/28px var(--font-sans);
     --type-italic: 400 italic 1.1rem/normal var(--font-serif);

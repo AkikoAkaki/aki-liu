@@ -6,10 +6,10 @@
 # -----------------------------------------------------------------------------
 intro:
   name: "Aki Liu"
-  tagline: "AI Systems, Product Thinking, Digital Humanities"
+  tagline: "AI Infrastructure, MLSys, Writing, and Thinking"
   bio:
-    - "Operating at the intersection of AI Infrastructure, Product Engineering, and Humanistic Inquiry. I build hardware-aware distributed systems while critically examining the cultural and ethical protocols of technology."
-    - "My engineering background is rooted in real-time AI inference and system reliability (<a href='https://artisk.ai' target='_blank'>Artisk</a>, <a href='https://dentistjourney.com' target='_blank'>Dentist Journey</a>). Beyond systems, I maintain a parallel practice in critical writing—engaging affect theory, psychogeography, East Asian surface culture, and the aesthetics of limit and negation."
+    - "Junior at University of Rochester (dual degrees in CS + Applied MATH), building toward AI infrastructure and ML systems."
+    - "Alongside this, I write essays, fragments, and criticism on sensation, space, and the textures of contemporary existence. Some of it ends up in <a href='/textlab/'>Text Lab</a>."
 
 # -----------------------------------------------------------------------------
 # Work Table
@@ -28,13 +28,13 @@ columns:
     cssClass: col-writing
     items:
       - title: Insights
-        desc: "Reflections on software craftsmanship, industry dynamics, and personal growth."
+        desc: "Notes on product, mind, and systems thinking."
         link: /insights/
       - title: Text Lab
-        desc: "Literary experiments, cultural critique, and pathological analyses of modern existence."
+        desc: "Essays, fragments, and criticism."
         link: /textlab/
       - title: Engineering
-        desc: "Documentation of technical learnings, mathematical notes, and engineering practices."
+        desc: "Technical learning notes and documentation."
         link: /engineering/
 
   - id: projects
@@ -42,13 +42,13 @@ columns:
     cssClass: col-projects
     items:
       - title: Bear Lab @ UofRochester
-        desc: "Investigated XR security and sensor-driven attack vectors. Modeled spatial interaction dynamics and kinematic constraints using MuJoCo."
+        desc: "Investigated XR security and sensor-driven attack vectors. Worked through spatial interaction dynamics and kinematic simulation with MuJoCo."
         link: "https://rochester-bear-lab.github.io/"
       - title: Async Task Platform
         desc: "A scalable, Redis-backed async task platform. Designed with clean architecture for high availability and fault tolerance."
         link: "https://github.com/AkikoAkaki/async-task-platform"
       - title: Artisk
-        desc: "Engineering infrastructure for a generative AI creative suite. Focusing on backend scalability and high-concurrency model inference."
+        desc: "Built logging infrastructure, internal messaging, and application features for a generative AI platform."
         link: "https://artisk.ai"
       - title: Dentist Journey
         desc: "Ensuring platform stability through rigorous testing workflows. Validating system logic to guarantee a reliable user experience."
@@ -58,17 +58,69 @@ columns:
 # Now
 # -----------------------------------------------------------------------------
 now:
-  title: "Now"
-  paragraphs:
-    - "Deep-diving into the intersection of AI Interaction Architecture and Distributed Systems: exploring Heterogeneous Computing, Cloud-Edge Collaboration, and Autonomous Agents within the context of Spatial Computing and Local-first intelligence."
-    - "Writing across affect theory and politics of perception, surface culture studies (表象文化論), psychogeography, negative and limit aesthetics, and phenomenology of the body—tracing how sensation, space, and form encode the conditions of contemporary existence."
-    - "A fuller <a href='/influences/'>map of influences</a>"
-    - 'Here are some <a href="/cute-things/">cute things</a>.'
+  title: "More about me"
+  cards:
+    - title: "Focusing Now"
+      tagline: "LLM inference systems and quantization. Working toward operator-level GPU optimization and distributed ML infrastructure."
+      paragraphs:
+        - "Below is the current course I am taking:"
+      pillars:
+        - num: "1"
+          title: "CSC 254: Programming Language Design & Implementation"
+          desc: "Design and implementation of programming languages, with an emphasis on imperative languages and implementation tradeoffs. Topics include fundamental language concepts (names, values, types, abstraction, control flow), compilation and interpretation (syntactic and semantic analysis, code generation and optimization), and major language paradigms (imperative, object-oriented, functional, logic-based, concurrent)."
+
+        - num: "2"
+          title: "CSC 282: Design & Analysis of Efficient Algorithms"
+          desc: "How does one design programs and ascertain their efficiency? Topics include greedy algorithms, dynamic programming, divide-and-conquer techniques, string processing, graph algorithms, and mathematical algorithms. Introduction to NP-completeness and linear programming."
+
+        - num: "3"
+          title: "CSC 280: Computer Models & Limitations"
+          desc: "This course studies fundamental computer models and their computational limitations. After a quick review of finite-state machines, topics include the pumping lemma, context-free languages, Turing machines, undecidability, time complexity, space complexity, and randomized computation."
+
+        - num: "4"
+          title: "MATH 282: Intro to Complex Analysis"
+          desc: "Introduction to complex analysis covering the algebra and geometry of complex numbers, analytic functions, Cauchy-Riemann equations, contour integration, Cauchy's theorem and integral formula, Taylor and Laurent series, singularities, the residue theorem, and applications to improper integrals."
+
+        - num: "5"
+          title: "CSC 299W: Social Implications of Computing"
+          desc: "Computers and the Internet have transformed society over the past 50 years, bringing dramatic increases in productivity and communication alongside unprecedented threats to privacy, new forms of crime, and large-scale systemic risks. In this discussion- and writing-oriented class, students examine the social, legal, and ethical dimensions of computing technology."
+    - title: "More"
+      paragraphs:
+        - "Writing across affect theory, psychogeography, negative aesthetics, and phenomenology of the body, tracing how sensation, space, and form encode the conditions of contemporary existence."
+        - "A fuller <a href='/influences/'>map of influences</a>"
+        - 'Here are some <a href="/cute-things/">cute things</a>.'
+    - title: "What I'm Using"
+      pillars:
+        - num: "1"
+          title: "Fragrances for Spring & Summer"
+          desc: "Terre d'Hermès Eau Givrée by Hermès, Colonia Il Profumo by Acqua di Parma, Grey Vetiver by Tom Ford, and Explorer by Montblanc."
+        - num: "2"
+          title: "Electronics"
+          desc: "Apple iPhone 16 Pro (512 GB), ASUS ROG Zephyrus G16 (2023) GU603, Logitech G PRO X SUPERLIGHT 2, Apple iPad Pro 11-inch (2nd generation), Apple AirPods Pro (1st generation)"
+        - num: "3"
+          title: "Clothing"
+          desc: "I've always admired the clothing from brands like Comme des Garçons, Alexander McQueen, Yohji Yamamoto, Prada, Our Legacy, and Ann Demeulemeester, but they're out of my price range. Most of what I own is fast fashion or mainstream brands — primarily Uniqlo and Zara."
+    
 
 # -----------------------------------------------------------------------------
 # Connect
 # -----------------------------------------------------------------------------
 connect:
   title: "Connect"
-  paragraphs:
-    - 'Reach me at <a href="mailto:aki.f.liu2004@gmail.com">aki.f.liu2004@gmail.com</a>'
+  items:
+    - platform: "Email"
+      value: "aki.f.liu2004@gmail.com"
+      action: "Write"
+      link: "mailto:aki.f.liu2004@gmail.com"
+    - platform: "GitHub"
+      value: "@AkikoAkaki"
+      action: "Follow"
+      link: "https://github.com/AkikoAkaki"
+    - platform: "Twitter"
+      value: "@ikakoikika"
+      action: "Follow"
+      link: "https://twitter.com/ikakoikika"
+    - platform: "Instagram"
+      value: "@__akikoakaki__"
+      action: "Follow"
+      link: "https://instagram.com/__akikoakaki__"

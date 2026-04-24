@@ -14,6 +14,13 @@
     min-height: 100vh;
 }
 
+/* 解除首页 650px 封印：将其释放为全屏自适应，极限放大横向空间 */
+.home-page .site-container {
+    grid-template-columns: 1fr minmax(auto, 1440px) 1fr;
+    padding-left: 4vw;
+    padding-right: 4vw;
+}
+
 /* 侧边栏 */
 .site-sidebar {
     grid-column: 1;
@@ -48,14 +55,18 @@
 /* 页脚 */
 .site-footer {
     margin-top: auto;
-    padding-top: 6rem;
-    padding-bottom: 2rem;
+    padding-top: 8rem;
+    padding-bottom: 4rem;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    font-size: 0.85rem;
-    color: var(--text-meta);
-    font-family: var(--font-ui);
+    gap: 0.25rem;
+    font: var(--type-data);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-heading);
+    opacity: 0.5;
 }
 
 .site-footer a {
@@ -68,6 +79,17 @@
 
 .site-footer a:hover {
     text-decoration-color: var(--text-color);
+}
+
+.footer-line-preserve-case {
+    text-transform: none;
+}
+
+.footer-signature {
+    width: clamp(68px, 9vw, 104px);
+    height: auto;
+    display: block;
+    object-fit: contain;
 }
 
 .footer-right {

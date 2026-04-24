@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:gwen.net)",
+      "WebFetch(domain:gwern.net)",
+      "WebFetch(domain:www.benjamintousley.com)",
+      "WebFetch(domain:rauno.me)",
+      "WebFetch(domain:maggieappleton.com)",
+      "WebFetch(domain:www.andrewherzog.com)",
+      "WebFetch(domain:sspeier.com)",
+      "WebFetch(domain:paulstamatiou.com)"
+    ]
+  }
+}

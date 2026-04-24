@@ -12,11 +12,16 @@
         <main class="site-main">
             {{ block "main" . }}{{ end }}
             <footer class="site-footer">
-                <div class="footer-left">&copy; {{ now.Year }} Aki Liu, crafted with inspiration from <a href="https://paco.me" target="_blank" rel="noopener noreferrer">Paco Coursey</a></div>
+                <span>©2026</span>
+                <span>ALL RIGHTS RESERVED</span>
+                <span class="footer-line-preserve-case">ENGINEER with THOUGHTS</span>
+                <img src="/images/signature.png" alt="AKI LIU" class="footer-signature">
+                <span>MADE WITH HUGO</span>
+                <span>SWITZER · NEWSREADER · JETBRAINS MONO</span>
+                <span>INSPIRED BY <a href="https://sspeier.com/" target="_blank" rel="noopener">SSPEIER®</a></span>
             </footer>
         </main>
         <aside class="site-sidebar-right">{{ block "sidebar-right" . }}{{ end }}</aside>
     </div>
 </body>
 </html>
-
