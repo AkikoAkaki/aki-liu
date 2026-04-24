@@ -4,7 +4,9 @@
 <div class="home-container">
     {{/* Intro section */}}
     <section class="intro">
-        <h1 class="author-name">{{ $data.intro.name }}</h1>
+        <div class="author-name-svg-wrapper">
+            <img src="/Hero.svg" alt="{{ $data.intro.name }}" class="hero-svg">
+        </div>
         {{- range $index, $para := $data.intro.bio }}
         <p class="bio-text">
             {{- if eq $index 0 }}<em>{{ $data.intro.tagline }}</em>. {{ end }}{{ $para | safeHTML }}
