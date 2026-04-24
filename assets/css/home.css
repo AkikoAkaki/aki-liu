@@ -47,7 +47,7 @@
     flex-direction: column;
     align-items: center; /* 整体居中 */
     justify-content: center; /* 垂直方向向下压，保持页面中心位置 */
-    min-height: 70vh; /* 让首屏 Hero 区域占据约七成到八成的视口高度，将下方的列表顺势推至屏幕外 */
+    min-height: 75vh; /* 让首屏 Hero 区域占据约七成到八成的视口高度，将下方的列表顺势推至屏幕外 */
 }
 
 .author-name {
@@ -55,7 +55,7 @@
     text-transform: uppercase;
     letter-spacing: -0.04em; /* 压缩字间距增强力量感 */
     color: var(--color-heading);
-    margin: 0 0 3rem 0;
+    margin: 0 0 3rem -8vw; /* 增加负的左外边距，将文字微微向左偏移 */
     text-align: center;
     width: 100%;
     white-space: nowrap; /* 强制在一行显示 */
@@ -121,7 +121,7 @@
     font-size: clamp(1.2rem, 1.9vw, 1.6rem);
     font-weight: 400;
     text-align: center;
-    margin: 0 auto 4rem auto;
+    margin: 0 auto 2rem auto; /* 将之前的 4rem 减半至 2rem */
     color: var(--color-heading);
 }
 
@@ -258,28 +258,35 @@
 .connect-pills {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem; /* 收紧名片间隙使其如表单一样 */
+    gap: 0; /* 移除单个名片间隙，合并为一个整体 */
     width: 100%;
     max-width: 800px;
+    background-color: var(--color-bg-muted); /* 整体外层圆角包裹 */
+    border-radius: 12px;
+    overflow: hidden; /* 防止内部条目边角溢出 */
 }
 
 .connect-pill {
-    background-color: var(--color-bg-muted); /* 淡灰背景包裹 */
-    border-radius: 12px; /* 方形圆角更适合信息表格组合 */
+    background-color: transparent; /* 取消个体背景色 */
     padding: 1.5rem 2rem;
     font: var(--type-data); 
     text-transform: uppercase;
     letter-spacing: 0.05em;
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr; /* 三列：左对齐 / 居中 / 右对齐 */
+    grid-template-columns: 35% 1fr auto; /* 平台固定占比，信息主占位，动作右靠齐 */
     align-items: center;
     color: var(--color-heading);
     text-decoration: none;
-    transition: transform 0.2s ease, background 0.2s ease;
+    border-bottom: 1px solid var(--color-divider); /* 内部轻微分界线 */
+    transition: background 0.2s ease;
+}
+
+.connect-pill:last-child {
+    border-bottom: none; /* 最后一项去下边界 */
 }
 
 .connect-pill:hover {
-    background-color: var(--border-color);
+    background-color: var(--color-divider);
     text-decoration: none; /* 强制覆盖 a 标签下划线 */
 }
 
@@ -290,8 +297,8 @@
 }
 
 .pill-value {
-    text-align: center;
-    font-weight: 700;
+    text-align: left; /* 改为左对齐 */
+    font-weight: 500; /* 去掉极度加粗，贴近参考网站统一风格 */
 }
 
 .pill-action {
