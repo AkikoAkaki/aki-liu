@@ -15,22 +15,35 @@ intro:
 # Work Table
 # -----------------------------------------------------------------------------
 columns:
-  - id: projects
-    title: Projects & Research
-    cssClass: col-projects
+  - id: work
+    title: Work
+    cssClass: col-work
     items:
-      - title: Bear Lab @ UofRochester
-        desc: "Investigated XR security and sensor-driven attack vectors. Worked through spatial interaction dynamics and kinematic simulation with MuJoCo."
-        link: "https://rochester-bear-lab.github.io/"
-      - title: Async Task Platform
-        desc: "A scalable, Redis-backed async task platform. Designed with clean architecture for high availability and fault tolerance."
-        link: "https://github.com/AkikoAkaki/async-task-platform"
       - title: Artisk
-        desc: "Built logging infrastructure, internal messaging, and application features for a generative AI platform."
+        role: Full-stack AI Engineer Intern
+        desc: "Built streaming AI features and backend infrastructure for an AI-powered brand design platform."
         link: "https://artisk.ai"
       - title: Dentist Journey
-        desc: "Ensuring platform stability through rigorous testing workflows. Validating system logic to guarantee a reliable user experience."
+        role: QA & Test Intern
+        desc: "Surfaced critical security and revenue-blocking defects across 320+ automated API tests for an AI dental school application platform."
         link: "https://dentistjourney.com"
+  - id: research
+    title: Research
+    cssClass: col-research
+    items:
+      - title: Bear Lab @URochester
+        desc: "Explored XR security literature and MuJoCo kinematic simulation under Yukang Yan at University of Rochester."
+        link: "https://rochester-bear-lab.github.io/"
+  - id: projects
+    title: Projects
+    cssClass: col-projects
+    items:
+      - title: LLM Quant Profiler
+        desc: "Profiled INT4 vs FP16 decode latency on RTX 4060 and traced the quantization tax to dequantization memory overhead."
+        link: "https://github.com/AkikoAkaki/llm-quant-profiler"
+      - title: MoodStream
+        desc: "Real-time danmu aggregation platform built on Go, Redis, gRPC, and SSE."
+        link: "https://github.com/AkikoAkaki/moodstream"
 
 # -----------------------------------------------------------------------------
 # Now

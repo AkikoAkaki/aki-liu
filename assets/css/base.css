@@ -328,6 +328,17 @@ body:has(.nav-links a:hover)::after {
     opacity: 0.6;
 }
 
+/* 隐形触发区域：覆盖文字、斜杠及周围间隙，防止位移时鼠标脱离导致疯狂抖动 */
+.site-nav a::after {
+    content: '';
+    position: absolute;
+    top: -15px;
+    bottom: -15px;
+    left: -30px; /* 向左延伸足够长，抵消 translateX(8px) 带来的位置偏移 */
+    right: -15px;
+    z-index: 10;
+}
+
 .site-nav a.active {
     opacity: 1;
 }
@@ -340,6 +351,7 @@ body:has(.nav-links a:hover)::after {
     opacity: 0;
     transform: translateX(-5px);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
 }
 
 /* 聚光灯效应：悬停导航区域时，整体变暗 */

@@ -165,6 +165,15 @@
     font-weight: 700; /* 加粗项目名称 */
 }
 
+.data-item-role {
+    color: var(--color-secondary);
+    font: var(--type-data);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
 .data-col-desc {
     color: var(--color-heading);
     text-align: left; /* 保留左对齐适应长描述 */
