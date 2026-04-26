@@ -15,14 +15,6 @@ intro:
 # Work Table
 # -----------------------------------------------------------------------------
 columns:
-  - id: education
-    title: Education
-    cssClass: col-building
-    items:
-      - title: University of Rochester
-        desc: "B.S. in Computer Science<br>B.S. in Applied Mathematics"
-        link: "https://www.rochester.edu/"
-
   - id: writing
     title: Writing
     cssClass: col-writing
