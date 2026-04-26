@@ -15,20 +15,6 @@ intro:
 # Work Table
 # -----------------------------------------------------------------------------
 columns:
-  - id: writing
-    title: Writing
-    cssClass: col-writing
-    items:
-      - title: Insights
-        desc: "Notes on product, mind, and systems thinking."
-        link: /insights/
-      - title: Text Lab
-        desc: "Essays, fragments, and criticism."
-        link: /textlab/
-      - title: Engineering
-        desc: "Technical learning notes and documentation."
-        link: /engineering/
-
   - id: projects
     title: Projects & Research
     cssClass: col-projects

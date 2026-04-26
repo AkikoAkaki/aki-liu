@@ -8,6 +8,15 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
 <body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }}">
+    <nav class="site-nav">
+        <div class="nav-links">
+            <a href="/" class="{{ if .IsHome }}active{{ end }}" data-desc="Index of everything">HOME</a>
+            <a href="/insights/" class="{{ if eq .Section "insights" }}active{{ end }}" data-desc="Thoughts & observations">INSIGHTS</a>
+            <a href="/textlab/" class="{{ if eq .Section "textlab" }}active{{ end }}" data-desc="Experimental writings">TEXT LAB</a>
+            <a href="/engineering/" class="{{ if eq .Section "engineering" }}active{{ end }}" data-desc="Code & architecture">ENGINEERING</a>
+        </div>
+        <div id="nav-desc" class="nav-description-display"></div>
+    </nav>
     <div class="site-container">
         <aside class="site-sidebar"></aside>
         <main class="site-main">
@@ -24,5 +33,25 @@
         </main>
         <aside class="site-sidebar-right">{{ block "sidebar-right" . }}{{ end }}</aside>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const descDisplay = document.getElementById('nav-desc');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    const desc = link.getAttribute('data-desc');
+                    if (desc) {
+                        descDisplay.textContent = desc;
+                        descDisplay.classList.add('show');
+                    }
+                });
+                link.addEventListener('mouseleave', () => {
+                    descDisplay.classList.remove('show');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
