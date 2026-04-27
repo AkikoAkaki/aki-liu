@@ -165,5 +165,87 @@
             });
         })();
     </script>
+
+    <script>
+        (function () {
+            document.addEventListener('DOMContentLoaded', () => {
+                const searchBar = document.querySelector('.textlab-search');
+                if (!searchBar) return;
+
+                const input = searchBar.querySelector('.search-input');
+                const fakePlaceholder = searchBar.querySelector('.search-fake-placeholder');
+                if (!fakePlaceholder || !input) return;
+
+                const text = fakePlaceholder.textContent;
+                fakePlaceholder.innerHTML = '';
+                [...text].forEach(char => {
+                    if (char === ' ') {
+                        fakePlaceholder.appendChild(document.createTextNode(char));
+                    } else {
+                        const span = document.createElement('span');
+                        span.className = 'link-char';
+                        span.textContent = char;
+                        fakePlaceholder.appendChild(span);
+                    }
+                });
+
+                const FONT_MONO = '"JetBrains Mono", "Geist Mono", monospace';
+                const STAGGER = 35;
+                let timers = [];
+                let debounceTimer = null;
+                let isHidden = false;
+
+                function cancel() { timers.forEach(clearTimeout); timers = []; }
+                function getChars() { return [...fakePlaceholder.querySelectorAll('.link-char')]; }
+
+                function animateToMono() {
+                    cancel();
+                    getChars().forEach((char, i) => {
+                        timers.push(setTimeout(() => { char.style.fontFamily = FONT_MONO; }, i * STAGGER));
+                    });
+                }
+
+                function animateToSans() {
+                    cancel();
+                    getChars().reverse().forEach((char, i) => {
+                        timers.push(setTimeout(() => { char.style.fontFamily = ''; }, i * STAGGER));
+                    });
+                }
+
+                searchBar.addEventListener('mouseenter', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => { if (!isHidden) animateToMono(); }, 20);
+                });
+
+                searchBar.addEventListener('mouseleave', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => { if (!isHidden) animateToSans(); }, 20);
+                });
+
+                searchBar.addEventListener('click', () => input.focus());
+
+                input.addEventListener('focus', () => {
+                    if (!isHidden) {
+                        isHidden = true;
+                        cancel();
+                        fakePlaceholder.classList.add('is-hiding');
+                    }
+                });
+
+                fakePlaceholder.addEventListener('animationend', () => {
+                    if (isHidden) fakePlaceholder.style.opacity = '0';
+                });
+
+                input.addEventListener('blur', () => {
+                    if (input.value === '') {
+                        isHidden = false;
+                        fakePlaceholder.classList.remove('is-hiding');
+                        fakePlaceholder.style.opacity = '';
+                        getChars().forEach(char => { char.style.fontFamily = ''; });
+                    }
+                });
+            });
+        })();
+    </script>
 </body>
 </html>
