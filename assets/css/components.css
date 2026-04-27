@@ -551,7 +551,7 @@
     color: var(--color-heading);
     opacity: 0;
     transform: translate(-10px, -50%);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.4s; /* Wait for background to finish before restoring */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.05s; /* Arrow disappears first */
     pointer-events: none;
     display: flex;
     align-items: center;
@@ -579,7 +579,7 @@
     position: relative;
     padding: 0.2rem 0.4rem;
     margin-left: -0.4rem;
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.4s; /* Matches arrow reverse timing */
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.05s; /* Matches arrow reset timing */
     z-index: 1;
     will-change: transform;
     backface-visibility: hidden;
@@ -629,14 +629,14 @@
     z-index: -1;
     transform-origin: left;
     transform: scaleX(0);
-    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.5s; /* Pause briefly, then shrink */
+    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.35s; /* Pause after arrow, then shrink */
 }
 
 .textlab-item:hover .item-year::after,
 .textlab-item:hover .item-title::after {
     transform: scaleX(1);
-    /* Wait for hover intent (0.25s) + arrow animate (0.2s) = 0.45s, plus 0.15s pause = 0.6s delay */
-    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.6s; 
+    /* Wait for hover intent (0.25s) + arrow animate (0.2s) = 0.45s, plus 0.01s pause = 0.46s delay */
+    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.46s; 
 }
 
 .item-tag-dots {
