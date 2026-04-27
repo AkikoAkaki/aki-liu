@@ -382,3 +382,73 @@ body:has(.nav-links a:hover)::after {
     opacity: 1;
     transform: translateX(0);
 }
+
+/* ==========================================================================
+   Responsive: Mobile Navigation & Top Mask
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    /* 顶部渐变遮罩高度收紧，避免在手机视口占据过多空间 */
+    body::after {
+        height: 90px;
+    }
+
+    body:has(.nav-links a:hover)::after {
+        height: 90px;
+    }
+
+    .site-nav {
+        padding: 18px 1rem 14px;
+    }
+
+    .nav-links {
+        gap: 22px;
+    }
+
+    .site-nav a {
+        font-size: 12px;
+        letter-spacing: 0.08em;
+    }
+
+    /* 触摸场景下取消位移与斜杠动效，避免点击瞬间的视觉抖动 */
+    .nav-links a:hover {
+        transform: none;
+    }
+
+    .nav-links a::before {
+        display: none;
+    }
+
+    /* 触摸 hitbox 适度收紧，避免相邻链接的隐形热区相互重叠 */
+    .site-nav a::after {
+        top: -10px;
+        bottom: -10px;
+        left: -8px;
+        right: -8px;
+    }
+
+    /* 手机端无 hover 语义，主动隐藏描述副标题 */
+    .nav-description-display {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    body::after,
+    body:has(.nav-links a:hover)::after {
+        height: 70px;
+    }
+
+    .site-nav {
+        padding: 14px 0.75rem 12px;
+    }
+
+    .nav-links {
+        gap: 16px;
+    }
+
+    .site-nav a {
+        font-size: 11px;
+        letter-spacing: 0.06em;
+    }
+}
