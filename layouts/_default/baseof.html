@@ -1,31 +1,35 @@
 <!DOCTYPE html>
 <html lang="{{ .Language.Lang }}">
 <head>
+    {{- $homePage := .Site.Home -}}
+    {{- $ideasPage := .Site.GetPage "section" "ideas" -}}
+    {{- $textLabPage := .Site.GetPage "section" "textlab" -}}
+    {{- $technicalPage := .Site.GetPage "section" "technical" -}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {{ partial "head/seo.html" (dict "page" .) }}
     {{ partial "head/assets.html" . }}
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
 </head>
-<body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }}">
+<body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} kind-{{ .Kind }}">
     <nav class="site-nav">
         <div class="nav-links">
-            <a href="/" class="{{ if .IsHome }}active{{ end }}" data-desc="Index of everything">HOME</a>
-            <a href="/ideas/" class="{{ if eq .Section "ideas" }}active{{ end }}" data-desc="Lighter writing, observations and notes on various topics">IDEAS</a>
-            <a href="/textlab/" class="{{ if eq .Section "textlab" }}active{{ end }}" data-desc="Essays, poems, criticisms, fiction, more experimental and stylized writing">TEXT LAB</a>
-            <a href="/technical/" class="{{ if eq .Section "technical" }}active{{ end }}" data-desc="Notes and thoughts on engineering and theory">TECHNICAL</a>
+            <a href="{{ $homePage.RelPermalink }}" class="{{ if .IsHome }}active{{ end }}" data-desc="Index of everything">HOME</a>
+            <a href="{{ with $ideasPage }}{{ .RelPermalink }}{{ else }}{{ "ideas/" | relLangURL }}{{ end }}" class="{{ if eq .Section "ideas" }}active{{ end }}" data-desc="Lighter writing, observations and notes on various topics">IDEAS</a>
+            <a href="{{ with $textLabPage }}{{ .RelPermalink }}{{ else }}{{ "textlab/" | relLangURL }}{{ end }}" class="{{ if eq .Section "textlab" }}active{{ end }}" data-desc="Essays, poems, criticisms, fiction, more experimental and stylized writing">TEXT LAB</a>
+            <a href="{{ with $technicalPage }}{{ .RelPermalink }}{{ else }}{{ "technical/" | relLangURL }}{{ end }}" class="{{ if eq .Section "technical" }}active{{ end }}" data-desc="Notes and thoughts on engineering and theory">TECHNICAL</a>
         </div>
         <div id="nav-desc" class="nav-description-display"></div>
     </nav>
     <div class="site-container">
-        <aside class="site-sidebar"></aside>
+        <aside class="site-sidebar">{{ block "sidebar-left" . }}{{ end }}</aside>
         <main class="site-main">
             {{ block "main" . }}{{ end }}
             <footer class="site-footer">
                 <span>©2026</span>
                 <span>ALL RIGHTS RESERVED</span>
                 <span class="footer-line-preserve-case">ENGINEER with THOUGHTS</span>
-                <img src="/images/signature.png" alt="AKI LIU" class="footer-signature">
+                <img src="{{ "images/signature.png" | relURL }}" alt="AKI LIU" class="footer-signature">
                 <span>MADE WITH HUGO</span>
                 <span>SWITZER · NEWSREADER · JETBRAINS MONO</span>
                 <span>INSPIRED BY <a href="https://sspeier.com/" target="_blank" rel="noopener">SSPEIER®</a></span>
@@ -113,27 +117,17 @@
                     wrapChars(link);
 
                     let timers = [];
-                    let ulTimer = null;
                     let debounceTimer = null;
 
                     function cancel() {
                         timers.forEach(clearTimeout);
                         timers = [];
-                        if (ulTimer) { clearTimeout(ulTimer); ulTimer = null; }
                     }
 
-                    function wipeUnderline() {
-                        link.style.transition = 'background-size 0.1s ease';
-                        link.style.backgroundPosition = '100% 100%';
-                        link.style.backgroundSize = '0% 1px';
-                        ulTimer = setTimeout(() => {
-                            link.style.transition = 'none';
-                            link.style.backgroundPosition = '0% 100%';
-                            requestAnimationFrame(() => requestAnimationFrame(() => {
-                                link.style.transition = 'background-size 0.12s ease';
-                                link.style.backgroundSize = '100% 1px';
-                            }));
-                        }, 105);
+                    function triggerWipe() {
+                        link.classList.remove('link-wiping');
+                        void link.offsetWidth;
+                        link.classList.add('link-wiping');
                     }
 
                     function handleEnter() {
@@ -144,7 +138,7 @@
                                 char.style.fontStyle  = target.style;
                             }, i * STAGGER));
                         });
-                        wipeUnderline();
+                        triggerWipe();
                     }
 
                     function handleLeave() {
@@ -155,7 +149,7 @@
                                 char.style.fontStyle  = origStyle;
                             }, i * STAGGER));
                         });
-                        wipeUnderline();
+                        triggerWipe();
                     }
 
                     link.addEventListener('mouseenter', () => {

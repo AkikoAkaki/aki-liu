@@ -105,6 +105,74 @@
 }
 
 /* ==========================================================================
+   Text Lab List Page Layout (4-Column Style)
+   ========================================================================== */
+
+.section-textlab.kind-section .site-container {
+    grid-template-columns: 2fr 5fr 3fr; /* Left sidebar, Main list, Right sidebars combined */
+    padding-left: 3vw;
+    padding-right: 3vw;
+    max-width: 1800px;
+    gap: 4vw;
+}
+
+.section-textlab.kind-section .site-sidebar,
+.section-textlab.kind-section .site-sidebar-right {
+    display: block; /* Ensure they are visible even if empty in other pages */
+    justify-self: stretch;
+    padding-right: 0;
+}
+
+/* 内部的两列拆分 (View 和 Index) */
+.textlab-right-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3vw;
+}
+
+/* Placeholder basic styles for textlab layout elements */
+.textlab-col-header {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    color: var(--color-secondary);
+}
+
+.textlab-site-title {
+    font-family: var(--font-sans);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 4rem;
+}
+
+.textlab-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.textlab-nav-list a {
+    text-decoration: none;
+    color: var(--color-heading);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+}
+
+.textlab-nav-list a:hover, .textlab-nav-list a.active {
+    text-decoration: underline;
+}
+
+.textlab-search {
+    font-family: var(--font-sans);
+    color: var(--color-secondary);
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-top: 2rem;
+}
+
+/* ==========================================================================
    Responsive Layout
    ========================================================================== */
 
@@ -198,5 +266,27 @@
     .site-footer {
         padding-top: 1rem;
         padding-bottom: 0.75rem;
+    }
+
+    /* Text Lab Responsive Overrides */
+    .section-textlab.kind-section .site-container {
+        grid-template-columns: 1fr;
+        padding-top: 4rem;
+        gap: 3rem;
+    }
+    
+    .section-textlab.kind-section .site-sidebar,
+    .section-textlab.kind-section .site-sidebar-right {
+        display: block;
+        margin-top: 0;
+    }
+    
+    .textlab-right-cols {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+    
+    .textlab-sidebar-bottom {
+        margin-top: 2.5rem;
     }
 }

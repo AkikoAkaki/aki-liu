@@ -16,7 +16,12 @@
       "Bash(git commit -m ' *)",
       "Bash(git checkout *)",
       "Bash(git merge *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(git mv *)",
+      "Bash(git restore *)",
+      "Skill(commit-commands:commit-push-pr)",
+      "Bash(gh pr *)",
+      "Bash(gh api *)"
     ]
   }
 }

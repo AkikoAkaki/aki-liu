@@ -1,0 +1,42 @@
+{{- $pages := .pages -}}
+{{- $targetLang := .targetLang | default "" -}}
+{{- $resolveTranslation := .resolveTranslation | default false -}}
+
+<div class="textlab-list">
+    {{ range $pages.GroupByPublishDate "2006" }}
+        {{ $year := .Key }}
+        {{ range $index, $page := .Pages }}
+            {{/* Link to target-language translation when available, fallback to source page. */}}
+            {{ $href := $page.RelPermalink }}
+            {{ $title := $page.Title }}
+            {{ if and $resolveTranslation $targetLang (ne $page.Language.Lang $targetLang) }}
+                {{ range $page.Translations }}
+                    {{ if eq .Language.Lang $targetLang }}
+                        {{ $href = .RelPermalink }}
+                        {{ $title = .Title }}
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+
+            <article class="textlab-item">
+                <div class="item-year">
+                    {{ $page.Date.Format "2006" }}
+                </div>
+                <div class="item-title-wrapper">
+                    <a href="{{ $href }}" class="item-title">{{ $title }}</a>
+                    
+                    {{/* Fetch tags for the item to render colored dots */}}
+                    {{ $tags := $page.GetTerms "tags" }}
+                    {{ if gt (len $tags) 0 }}
+                        <div class="item-tag-dots">
+                            {{ range $i, $tag := $tags }}
+                                {{/* We use data-index or a class based on tag name to assign color in CSS */}}
+                                <span class="item-dot" data-tag="{{ $tag.LinkTitle | urlize }}"></span>
+                            {{ end }}
+                        </div>
+                    {{ end }}
+                </div>
+            </article>
+        {{ end }}
+    {{ end }}
+</div>

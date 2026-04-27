@@ -258,6 +258,226 @@
 }
 
 /* ==========================================================================
+   Text Lab Sidebar Components (Phase 2)
+   ========================================================================== */
+
+.textlab-left-col {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.textlab-site-title {
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    margin-bottom: 4rem;
+}
+
+.textlab-filter-section {
+    flex: 1;
+}
+
+.textlab-search {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--color-heading);
+    padding-bottom: 0.4rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+}
+
+.textlab-search .search-icon {
+    margin-right: 0.5rem;
+    opacity: 0.6;
+}
+
+.textlab-search .search-input {
+    border: none;
+    background: transparent;
+    flex: 1;
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--color-heading);
+    outline: none;
+}
+
+.textlab-search .search-action {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.textlab-search:hover .search-action {
+    opacity: 1;
+}
+
+.textlab-filters-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.textlab-tags-list,
+.textlab-years-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.textlab-tags-list {
+    flex-grow: 1;
+}
+
+.textlab-tag-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    color: var(--color-heading);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    max-width: 130px;
+    transition: opacity 0.2s ease;
+}
+
+.textlab-tag-item:hover {
+    opacity: 0.6;
+}
+
+.textlab-tag-item .tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #ccc;
+    display: inline-block;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+}
+
+/* Dynamic colors for tags mapped by name */
+.textlab-tag-item[data-tag="essay"] .tag-dot, .item-dot[data-tag="essay"] { background-color: #00A3FF; }
+.textlab-tag-item[data-tag="critique"] .tag-dot, .item-dot[data-tag="critique"] { background-color: #FF3B30; }
+.textlab-tag-item[data-tag="poetry"] .tag-dot, .item-dot[data-tag="poetry"] { background-color: #34C759; }
+.textlab-tag-item[data-tag="fiction"] .tag-dot, .item-dot[data-tag="fiction"] { background-color: #FF9500; }
+.textlab-tag-item[data-tag="content-analysis"] .tag-dot, .item-dot[data-tag="content-analysis"] { background-color: #5856D6; }
+.textlab-tag-item[data-tag="drama"] .tag-dot, .item-dot[data-tag="drama"] { background-color: #A2845E; }
+.textlab-tag-item[data-tag="translation"] .tag-dot, .item-dot[data-tag="translation"] { background-color: #FF2D55; }
+.textlab-tag-item .tag-dot, .item-dot { background-color: #8E8E93; } /* Default gray */
+
+.textlab-year-item {
+    text-decoration: none;
+    color: var(--color-heading);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    transition: opacity 0.2s ease;
+    border-bottom: 1px solid currentColor;
+    line-height: 1.1;
+    width: max-content;
+}
+
+.textlab-year-item:hover {
+    opacity: 0.6;
+}
+
+.textlab-sidebar-bottom {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4rem;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--color-heading);
+}
+
+.totals-col, .years-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.totals-label {
+    opacity: 0.6;
+    margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   Text Lab Main Content (Phase 3)
+   ========================================================================== */
+
+.textlab-intro-text {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-heading);
+    margin-bottom: 4rem;
+    max-width: 650px;
+}
+
+.textlab-list-header {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 2rem;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--color-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.textlab-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.textlab-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.textlab-item .item-year {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-heading);
+}
+
+.textlab-item .item-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.textlab-item .item-title {
+    text-decoration: none;
+    color: var(--color-heading);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    transition: opacity 0.2s ease;
+}
+
+.textlab-item .item-title:hover {
+    opacity: 0.6;
+}
+
+.item-tag-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-left: 0.2rem;
+}
+
+.item-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* ==========================================================================
    404 Page
    ========================================================================== */
 

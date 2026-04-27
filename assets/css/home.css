@@ -105,12 +105,21 @@
 .now-section a,
 .connect-section a:not(.connect-pill) {
     text-decoration: none;
-    background-image: linear-gradient(currentColor, currentColor);
-    background-repeat: no-repeat;
-    background-position: 0% 100%;
-    background-size: 100% 1px;
+    position: relative;
     padding-bottom: 2px;
     color: inherit;
+}
+
+.bio-text a::after,
+.now-section a::after,
+.connect-section a:not(.connect-pill)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
 }
 
 @media (max-width: 768px) {
@@ -230,11 +239,31 @@
 
 .data-link {
     text-decoration: none;
-    background-image: linear-gradient(currentColor, currentColor);
-    background-repeat: no-repeat;
-    background-position: 0% 100%;
-    background-size: 100% 1px;
+    display: inline-block;
+    position: relative;
+    line-height: 1;
     padding-bottom: 2px;
+}
+
+.data-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+}
+
+@keyframes link-wipe {
+    0%   { transform: scaleX(1);     transform-origin: right; }
+    49%  { transform: scaleX(0.001); transform-origin: right; }
+    50%  { transform: scaleX(0.001); transform-origin: left;  }
+    100% { transform: scaleX(1);     transform-origin: left;  }
+}
+
+.link-wiping::after {
+    animation: link-wipe 0.22s ease forwards;
 }
 
 .link-char {
