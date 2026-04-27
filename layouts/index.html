@@ -16,17 +16,24 @@
 
     {{/* Work table section */}}
     <section class="work-table-section">
-        <h2 class="data-list-heading">Archive & Output</h2>
+        <h2 class="data-list-heading">Experiences</h2>
         <div class="data-list">
             {{- range $col := $data.columns }}
-                {{- range $item := $col.items }}
+                {{- range $index, $item := $col.items }}
                 <div class="data-row">
-                    <div class="data-col data-col-category">{{ $col.title }}</div>
+                    <div class="data-col data-col-category">
+                        {{- if eq $index 0 }}
+                        {{ $col.title }}
+                        {{- end }}
+                    </div>
                     <div class="data-col data-col-title">
                         {{- if $item.link }}
                         <a href="{{ $item.link | relLangURL }}" class="data-link">{{ $item.title }}</a>
                         {{- else }}
                         {{ $item.title }}
+                        {{- end }}
+                        {{- if $item.role }}
+                        <div class="data-item-role">{{ $item.role }}</div>
                         {{- end }}
                     </div>
                     <div class="data-col data-col-desc">{{ $item.desc | safeHTML }}</div>

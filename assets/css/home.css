@@ -94,19 +94,14 @@
 
 .bio-text a,
 .now-section a,
-.connect-section a {
-    text-decoration: underline;
-    text-decoration-color: var(--border-color);
-    text-underline-offset: 2px;
+.connect-section a:not(.connect-pill) {
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0% 100%;
+    background-size: 100% 1px;
+    padding-bottom: 2px;
     color: inherit;
-    transition: text-decoration-color 0.2s ease;
-}
-
-.bio-text a:hover,
-.now-section a:hover,
-.connect-section a:hover {
-    color: var(--text-color);
-    text-decoration-color: var(--text-color);
 }
 
 /* ==========================================================================
@@ -134,23 +129,16 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-width: 960px;
     margin: 0 auto;
 }
 
 .data-row {
     display: grid;
-    grid-template-columns: 2fr 3fr 5fr;
-    gap: 1.5rem;
-    padding: 1.25rem 0;
-    font: var(--type-data);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+    grid-template-columns: 1.5fr 2fr 6.5fr;
+    gap: 2rem;
+    padding: 1.5rem 0;
     align-items: baseline;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.data-row:first-child {
-    border-top: 1px solid var(--border-color);
 }
 
 .data-col {
@@ -159,28 +147,52 @@
 
 .data-col-category {
     color: var(--color-secondary);
+    font: var(--type-data);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 
 .data-col-title {
     color: var(--color-heading);
+    font: var(--type-data);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     font-weight: 700; /* 加粗项目名称 */
+}
+
+.data-item-role {
+    color: var(--color-secondary);
+    font: var(--type-data);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin-top: 0.25rem;
 }
 
 .data-col-desc {
     color: var(--color-heading);
     text-align: left; /* 保留左对齐适应长描述 */
-    max-width: 480px;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-transform: none;
+    letter-spacing: normal;
+    max-width: 520px;
+    padding-left: 2.5rem;
 }
 
 .data-link {
-    text-decoration: underline;
-    text-decoration-color: transparent;
-    text-underline-offset: 4px;
-    transition: text-decoration-color 0.2s ease;
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0% 100%;
+    background-size: 100% 1px;
+    padding-bottom: 2px;
 }
 
-.data-link:hover {
-    text-decoration-color: var(--color-heading);
+.link-char {
+    display: inline-block;
+    vertical-align: bottom;
 }
 
 @media (max-width: 768px) {
@@ -482,7 +494,7 @@
     width: 100%;
     max-width: 680px; /* 缩小共享宽度 */
     background-color: var(--color-bg-muted); /* 整体外层圆角包裹 */
-    border-radius: 12px;
+    border-radius: 20px;
     overflow: hidden; /* 防止内部条目边角溢出 */
 }
 
@@ -524,7 +536,13 @@
 .pill-action {
     text-align: right;
     font-weight: 500;
-    opacity: 0.8;
+    opacity: 0.45;
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.connect-pill:hover .pill-action {
+    opacity: 1;
+    transform: translateX(4px);
 }
 
 @media (max-width: 768px) {

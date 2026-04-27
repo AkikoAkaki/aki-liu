@@ -15,44 +15,35 @@ intro:
 # Work Table
 # -----------------------------------------------------------------------------
 columns:
-  - id: education
-    title: Education
-    cssClass: col-building
+  - id: work
+    title: Work
+    cssClass: col-work
     items:
-      - title: University of Rochester
-        desc: "B.S. in Computer Science<br>B.S. in Applied Mathematics"
-        link: "https://www.rochester.edu/"
-
-  - id: writing
-    title: Writing
-    cssClass: col-writing
-    items:
-      - title: Insights
-        desc: "Notes on product, mind, and systems thinking."
-        link: /insights/
-      - title: Text Lab
-        desc: "Essays, fragments, and criticism."
-        link: /textlab/
-      - title: Engineering
-        desc: "Technical learning notes and documentation."
-        link: /engineering/
-
-  - id: projects
-    title: Projects & Research
-    cssClass: col-projects
-    items:
-      - title: Bear Lab @ UofRochester
-        desc: "Investigated XR security and sensor-driven attack vectors. Worked through spatial interaction dynamics and kinematic simulation with MuJoCo."
-        link: "https://rochester-bear-lab.github.io/"
-      - title: Async Task Platform
-        desc: "A scalable, Redis-backed async task platform. Designed with clean architecture for high availability and fault tolerance."
-        link: "https://github.com/AkikoAkaki/async-task-platform"
       - title: Artisk
-        desc: "Built logging infrastructure, internal messaging, and application features for a generative AI platform."
+        role: Full-stack AI Engineer Intern
+        desc: "Built streaming AI features and backend infrastructure for an AI-powered brand design platform."
         link: "https://artisk.ai"
       - title: Dentist Journey
-        desc: "Ensuring platform stability through rigorous testing workflows. Validating system logic to guarantee a reliable user experience."
+        role: QA & Test Intern
+        desc: "Surfaced critical security and revenue-blocking defects across 320+ automated API tests for an AI dental school application platform."
         link: "https://dentistjourney.com"
+  - id: research
+    title: Research
+    cssClass: col-research
+    items:
+      - title: Bear Lab @URochester
+        desc: "Explored XR security literature and MuJoCo kinematic simulation under Yukang Yan at University of Rochester."
+        link: "https://rochester-bear-lab.github.io/"
+  - id: projects
+    title: Projects
+    cssClass: col-projects
+    items:
+      - title: LLM Quant Profiler
+        desc: "Profiled INT4 vs FP16 decode latency on RTX 4060 and traced the quantization tax to dequantization memory overhead."
+        link: "https://github.com/AkikoAkaki/llm-quant-profiler"
+      - title: MoodStream
+        desc: "Real-time danmu aggregation platform built on Go, Redis, gRPC, and SSE."
+        link: "https://github.com/AkikoAkaki/moodstream"
 
 # -----------------------------------------------------------------------------
 # Now
@@ -84,11 +75,10 @@ now:
         - num: "5"
           title: "CSC 299W: Social Implications of Computing"
           desc: "Computers and the Internet have transformed society over the past 50 years, bringing dramatic increases in productivity and communication alongside unprecedented threats to privacy, new forms of crime, and large-scale systemic risks. In this discussion- and writing-oriented class, students examine the social, legal, and ethical dimensions of computing technology."
-    - title: "More"
+    - title: "Elsewhere"
       paragraphs:
         - "Writing across affect theory, psychogeography, negative aesthetics, and phenomenology of the body, tracing how sensation, space, and form encode the conditions of contemporary existence."
         - "A fuller <a href='/influences/'>map of influences</a>"
-        - 'Here are some <a href="/cute-things/">cute things</a>.'
     - title: "What I'm Using"
       pillars:
         - num: "1"

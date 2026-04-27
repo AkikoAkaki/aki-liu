@@ -8,6 +8,15 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
 <body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }}">
+    <nav class="site-nav">
+        <div class="nav-links">
+            <a href="/" class="{{ if .IsHome }}active{{ end }}" data-desc="Index of everything">HOME</a>
+            <a href="/ideas/" class="{{ if eq .Section "ideas" }}active{{ end }}" data-desc="Lighter writing, observations and notes on various topics">IDEAS</a>
+            <a href="/textlab/" class="{{ if eq .Section "textlab" }}active{{ end }}" data-desc="Essays, poems, criticisms, fiction, more experimental and stylized writing">TEXT LAB</a>
+            <a href="/technical/" class="{{ if eq .Section "technical" }}active{{ end }}" data-desc="Notes and thoughts on engineering and theory">TECHNICAL</a>
+        </div>
+        <div id="nav-desc" class="nav-description-display"></div>
+    </nav>
     <div class="site-container">
         <aside class="site-sidebar"></aside>
         <main class="site-main">
@@ -24,5 +33,143 @@
         </main>
         <aside class="site-sidebar-right">{{ block "sidebar-right" . }}{{ end }}</aside>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const descDisplay = document.getElementById('nav-desc');
+
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    const desc = link.getAttribute('data-desc');
+                    if (desc) {
+                        descDisplay.textContent = desc;
+                        descDisplay.classList.add('show');
+                    }
+                });
+                link.addEventListener('mouseleave', () => {
+                    descDisplay.classList.remove('show');
+                });
+            });
+        });
+    </script>
+
+    <script>
+        (function () {
+            const FONT_SERIF = '"Newsreader", "Playfair Display", serif';
+            const FONT_SANS  = '"Switzer", "Inter", sans-serif';
+            const FONT_MONO  = '"JetBrains Mono", "Geist Mono", monospace';
+
+            const FONT_MAP = {
+                sans:  { family: FONT_SERIF, style: 'italic' },
+                mono:  { family: FONT_SANS,  style: 'normal' },
+                serif: { family: FONT_MONO,  style: 'normal' },
+            };
+
+            function detectType(fontFamily) {
+                if (/JetBrains|Mono|Space Mono|Consolas/i.test(fontFamily)) return 'mono';
+                if (/Newsreader|Playfair|Garamond/i.test(fontFamily)) return 'serif';
+                return 'sans';
+            }
+
+            function wrapChars(link) {
+                if (link.dataset.charsWrapped) return;
+                const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
+                const textNodes = [];
+                let node;
+                while ((node = walker.nextNode())) textNodes.push(node);
+
+                textNodes.forEach(textNode => {
+                    const frag = document.createDocumentFragment();
+                    [...textNode.textContent].forEach(char => {
+                        if (char === ' ' || char === ' ') {
+                            frag.appendChild(document.createTextNode(char));
+                        } else {
+                            const span = document.createElement('span');
+                            span.className = 'link-char';
+                            span.textContent = char;
+                            frag.appendChild(span);
+                        }
+                    });
+                    textNode.parentNode.replaceChild(frag, textNode);
+                });
+
+                link.dataset.charsWrapped = 'true';
+            }
+
+            const STAGGER = 35;
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const links = document.querySelectorAll(
+                    '.bio-text a, .now-section a, .connect-section a:not(.connect-pill), .data-link'
+                );
+
+                links.forEach(link => {
+                    const computed = getComputedStyle(link);
+                    const origFamily = computed.fontFamily;
+                    const origStyle  = computed.fontStyle;
+                    const target = FONT_MAP[detectType(origFamily)];
+
+                    wrapChars(link);
+
+                    let timers = [];
+                    let ulTimer = null;
+                    let debounceTimer = null;
+
+                    function cancel() {
+                        timers.forEach(clearTimeout);
+                        timers = [];
+                        if (ulTimer) { clearTimeout(ulTimer); ulTimer = null; }
+                    }
+
+                    function wipeUnderline() {
+                        link.style.transition = 'background-size 0.1s ease';
+                        link.style.backgroundPosition = '100% 100%';
+                        link.style.backgroundSize = '0% 1px';
+                        ulTimer = setTimeout(() => {
+                            link.style.transition = 'none';
+                            link.style.backgroundPosition = '0% 100%';
+                            requestAnimationFrame(() => requestAnimationFrame(() => {
+                                link.style.transition = 'background-size 0.12s ease';
+                                link.style.backgroundSize = '100% 1px';
+                            }));
+                        }, 105);
+                    }
+
+                    function handleEnter() {
+                        cancel();
+                        [...link.querySelectorAll('.link-char')].forEach((char, i) => {
+                            timers.push(setTimeout(() => {
+                                char.style.fontFamily = target.family;
+                                char.style.fontStyle  = target.style;
+                            }, i * STAGGER));
+                        });
+                        wipeUnderline();
+                    }
+
+                    function handleLeave() {
+                        cancel();
+                        [...link.querySelectorAll('.link-char')].reverse().forEach((char, i) => {
+                            timers.push(setTimeout(() => {
+                                char.style.fontFamily = origFamily;
+                                char.style.fontStyle  = origStyle;
+                            }, i * STAGGER));
+                        });
+                        wipeUnderline();
+                    }
+
+                    link.addEventListener('mouseenter', () => {
+                        clearTimeout(debounceTimer);
+                        debounceTimer = setTimeout(handleEnter, 20);
+                    });
+
+                    link.addEventListener('mouseleave', () => {
+                        clearTimeout(debounceTimer);
+                        debounceTimer = setTimeout(handleLeave, 20);
+                    });
+                });
+            });
+        })();
+    </script>
 </body>
 </html>

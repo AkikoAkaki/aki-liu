@@ -25,7 +25,7 @@ defaultContentLanguageInSubdir = false
     min = "0.152.0"
 
 # Content grouping
-mainSections = ["insights", "engineering", "textlab"]
+mainSections = ["ideas", "technical", "textlab"]
 
 [taxonomies]
   tag = "tags"
