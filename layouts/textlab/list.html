@@ -52,14 +52,13 @@
     </div>
     
     <div class="textlab-sidebar-bottom">
-        <div class="totals-col">
-            <span class="totals-label">Totals:</span>
-            <span class="totals-val">Entries: {{ len $regularPages }}</span>
-        </div>
-        <div class="years-col">
-            <span class="totals-label">Years: {{ len $years }}</span>
+        <div class="totals-row">
+            <div class="totals-item">Entries: {{ len $regularPages }}</div>
+            <div class="totals-item">Years: {{ len $years }}</div>
         </div>
     </div>
+    
+    <div class="textlab-copyright">© Aki Liu</div>
 </div>
 {{ end }}
 

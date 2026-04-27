@@ -450,23 +450,53 @@
 }
 
 .textlab-sidebar-bottom {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 4rem;
-    font-family: var(--font-sans);
-    font-size: 0.85rem;
-    color: var(--color-heading);
-}
-
-.totals-col, .years-col {
+    position: fixed;
+    bottom: 4.2rem;
+    left: 3vw;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-heading);
+    z-index: 100;
 }
 
-.totals-label {
-    opacity: 0.6;
-    margin-bottom: 0.5rem;
+.totals-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+}
+
+.textlab-copyright {
+    margin-top: auto;
+    margin-bottom: 1rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-heading);
+    white-space: nowrap;
+}
+
+/* Hide main site footer on Text Lab page */
+.section-textlab .site-footer {
+    display: none;
+}
+
+@media (min-width: 1800px) {
+    .textlab-sidebar-bottom {
+        left: calc((100vw - 1800px) / 2 + 3vw);
+    }
+}
+
+.totals-item {
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .textlab-sidebar-bottom {
+        position: static;
+        margin-top: 2rem;
+        padding-bottom: 1rem;
+    }
 }
 
 /* ==========================================================================
