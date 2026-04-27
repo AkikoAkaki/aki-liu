@@ -16,7 +16,12 @@
     {{ $years = $years | append .Key }}
 {{ end }}
 <div class="textlab-left-col">
-    <h1 class="textlab-site-title">Studio A.H.</h1> <!-- Hardcoded title based on Image 1, user can customize -->
+    <div class="textlab-logo-container">
+        <a href="{{ .Site.Home.RelPermalink }}">
+            <img src="{{ "Hero.svg" | relURL }}" alt="Aki Liu" class="textlab-hero-svg">
+        </a>
+        <div class="textlab-page-subtitle">Text Lab</div>
+    </div>
     
     <div class="textlab-filter-section">
         <h3 class="textlab-col-header">Filter:</h3>
@@ -58,14 +63,19 @@
 
 {{ define "main" }}
 <div class="textlab-main-col">
-    {{ if .Content }}
-    <div class="textlab-intro-text">
-        {{ .Content }}
+    <div class="textlab-intro-section">
+        <h3 class="textlab-col-header">Info:</h3>
+        <div class="textlab-intro-text">
+            {{ if .Content }}
+                {{ .Content }}
+            {{ else }}
+                The Archive is a compilation of art and design projects, both realized and unrealized, press materials, teaching endeavors, experiments, and lectures. The design projects, spanning from 2019 to the present, primarily originate from School, where Herzog serves as a partner and director. The Archive, as a whole, offers valuable context for the gradual accumulation of work over time, encompassing various mediums and disciplines. The filters are not intended to serve as a rigid classification system that sparks debates about the separation of art and design. Instead, they are designed as useful navigation tools to facilitate exploration within this expanding body of work.
+            {{ end }}
+        </div>
     </div>
-    {{ end }}
     
     <div class="textlab-list-header">
-        <span class="header-col-year">Year:</span>
+        <span class="header-col-year">Date:</span>
         <span class="header-col-project">Project:</span>
     </div>
 

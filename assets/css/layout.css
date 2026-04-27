@@ -110,6 +110,7 @@
 
 .section-textlab.kind-section .site-container {
     grid-template-columns: 2fr 5fr 3fr; /* Left sidebar, Main list, Right sidebars combined */
+    padding-top: 3.5rem; /* Reduced top spacing */
     padding-left: 3vw;
     padding-right: 3vw;
     max-width: 1800px;

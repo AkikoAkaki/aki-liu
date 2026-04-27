@@ -267,12 +267,24 @@
     height: 100%;
 }
 
-.textlab-site-title {
-    font-family: var(--font-sans);
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin-top: 0.5rem;
+.textlab-logo-container {
+    margin-top: 0.2rem;
     margin-bottom: 4rem;
+}
+
+.textlab-hero-svg {
+    width: 140px; /* Smaller than homepage */
+    height: auto;
+    display: block;
+}
+
+.textlab-page-subtitle {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-secondary);
+    margin-top: 0.2rem;
+    margin-left: 0.1rem;
 }
 
 .textlab-filter-section {
@@ -404,21 +416,24 @@
 }
 
 /* ==========================================================================
-   Text Lab Main Content (Phase 3)
+   Text Lab Main Content (Phase 3 & Info Block)
    ========================================================================== */
+
+.textlab-intro-section {
+    margin-bottom: 3.5rem;
+}
 
 .textlab-intro-text {
     font-family: var(--font-sans);
     font-size: 0.95rem;
     line-height: 1.6;
     color: var(--color-heading);
-    margin-bottom: 4rem;
     max-width: 650px;
 }
 
 .textlab-list-header {
     display: grid;
-    grid-template-columns: 80px 1fr;
+    grid-template-columns: 110px 1fr;
     gap: 2rem;
     font-family: var(--font-sans);
     font-size: 0.85rem;
@@ -434,7 +449,7 @@
 
 .textlab-item {
     display: grid;
-    grid-template-columns: 80px 1fr;
+    grid-template-columns: 110px 1fr;
     gap: 2rem;
     align-items: center;
 }
