@@ -104,22 +104,66 @@
 {{ define "sidebar-right" }}
 <div class="textlab-right-cols">
     <div class="textlab-view-col">
-        <h3 class="textlab-col-header">View:</h3>
-        <nav class="textlab-nav-list">
-            <a href="#" class="active">List</a>
-            <a href="#">Gallery</a>
-        </nav>
-        <h3 class="textlab-col-header" style="margin-top: 4rem;">Preview:</h3>
-    </div>
-    
-    <div class="textlab-index-col">
-        <h3 class="textlab-col-header">Index:</h3>
-        <nav class="textlab-nav-list">
-            <a href="#">Selected Works</a>
-            <a href="#">Archive</a>
-            <a href="#">Info</a>
-            <a href="#">Shop</a>
-        </nav>
+        <h3 class="textlab-col-header">Preview:</h3>
+        
+        <div id="textlab-preview-container" class="preview-container">
+            <!-- Content injected by JS -->
+        </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const items = document.querySelectorAll('.textlab-item');
+    const previewContainer = document.getElementById('textlab-preview-container');
+    
+    // 初始化为空
+    previewContainer.innerHTML = '';
+    
+    let currentHoverNode = null;
+    let leaveTimeout = null;
+
+    items.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            if (leaveTimeout) clearTimeout(leaveTimeout);
+            
+            if (currentHoverNode === item) {
+                previewContainer.style.opacity = '1';
+                return;
+            }
+            
+            currentHoverNode = item;
+            const previewData = item.querySelector('.item-preview-data');
+            
+            if (previewData) {
+                previewContainer.style.opacity = '0';
+                setTimeout(() => {
+                    if (currentHoverNode === item) {
+                        previewContainer.innerHTML = previewData.innerHTML;
+
+                        // Remove video elements that would break the preview layout
+                        previewContainer.querySelectorAll('figure.local-video, video, audio, iframe').forEach(el => el.remove());
+
+                        previewContainer.style.opacity = '1';
+                    }
+                }, 100);
+            }
+        });
+        
+        item.addEventListener('mouseleave', () => {
+            if (currentHoverNode === item) {
+                leaveTimeout = setTimeout(() => {
+                    previewContainer.style.opacity = '0';
+                    currentHoverNode = null;
+                    setTimeout(() => {
+                        if (!currentHoverNode) {
+                            previewContainer.innerHTML = '';
+                        }
+                    }, 200); // Wait for fade out transition
+                }, 150); // Short delay to see if they moved to the next item
+            }
+        });
+    });
+});
+</script>
 {{ end }}

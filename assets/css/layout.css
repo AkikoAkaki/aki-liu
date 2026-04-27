@@ -124,11 +124,22 @@
     padding-right: 0;
 }
 
-/* 内部的两列拆分 (View 和 Index) */
+/* 内部的两列拆分 (View 和 Index) - 现在统一为占据整个右侧，并附着悬浮 */
 .textlab-right-cols {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3vw;
+    display: block;
+    width: 100%;
+    position: sticky;
+    top: 4rem; /* 预留一点上边距跟随视图往下滚 */
+    max-height: calc(100vh - 6rem); /* 限制最高不超过屏幕视口高度 */
+    overflow-y: auto; /* 如果内容超长，就在这个模块内部产生滚动 */
+    padding-bottom: 2rem; /* 留出一点空隙别顶到底部 */
+    z-index: 60; /* = 覆盖在 body::after 渐变之上 */
+    scrollbar-width: none; /* 隐藏滚动条让排版干净 (Firefox) */
+}
+
+/* 隐藏滚动条让排版干净 (Chrome/Safari) */
+.textlab-right-cols::-webkit-scrollbar {
+    display: none;
 }
 
 /* Placeholder basic styles for textlab layout elements */

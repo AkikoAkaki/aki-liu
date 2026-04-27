@@ -245,7 +245,7 @@ a {
 /* 斜体统一使用 Serif 字体栈 */
 em, i {
     font-family: var(--font-serif);
-    font-style: italic;
+    font-style: normal;
     font-size: 1.1em;
 }
 
