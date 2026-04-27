@@ -133,9 +133,10 @@
 
 /* Placeholder basic styles for textlab layout elements */
 .textlab-col-header {
-    font-family: var(--font-sans);
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    font-weight: normal;
+    text-transform: uppercase;
     margin-bottom: 1.5rem;
     color: var(--color-secondary);
 }
