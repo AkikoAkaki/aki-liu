@@ -75,11 +75,10 @@ now:
         - num: "5"
           title: "CSC 299W: Social Implications of Computing"
           desc: "Computers and the Internet have transformed society over the past 50 years, bringing dramatic increases in productivity and communication alongside unprecedented threats to privacy, new forms of crime, and large-scale systemic risks. In this discussion- and writing-oriented class, students examine the social, legal, and ethical dimensions of computing technology."
-    - title: "More"
+    - title: "Elsewhere"
       paragraphs:
         - "Writing across affect theory, psychogeography, negative aesthetics, and phenomenology of the body, tracing how sensation, space, and form encode the conditions of contemporary existence."
         - "A fuller <a href='/influences/'>map of influences</a>"
-        - 'Here are some <a href="/cute-things/">cute things</a>.'
     - title: "What I'm Using"
       pillars:
         - num: "1"
