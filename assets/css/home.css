@@ -29,8 +29,17 @@
 
 @media (max-width: 768px) {
     .home-container {
-        padding-top: 2rem;
-        gap: 8rem;
+        padding-top: 1.5rem;
+        padding-bottom: 3rem;
+        gap: 5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-container {
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+        gap: 4rem;
     }
 }
 
@@ -102,6 +111,44 @@
     background-size: 100% 1px;
     padding-bottom: 2px;
     color: inherit;
+}
+
+@media (max-width: 768px) {
+    .intro {
+        min-height: 0;
+        padding-top: 1rem;
+    }
+
+    .author-name-svg-wrapper {
+        margin: 0 auto 2rem auto;
+    }
+
+    .hero-svg {
+        width: 92%;
+    }
+
+    .bio-text {
+        font-size: clamp(1rem, 4.2vw, 1.2rem);
+        line-height: 1.4;
+        padding: 0 0.25rem;
+        margin-bottom: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .author-name-svg-wrapper {
+        margin: 0 auto 1.5rem auto;
+    }
+
+    .hero-svg {
+        width: 96%;
+    }
+
+    .bio-text {
+        font-size: 1rem;
+        line-height: 1.45;
+        margin-bottom: 1rem;
+    }
 }
 
 /* ==========================================================================
@@ -196,14 +243,39 @@
 }
 
 @media (max-width: 768px) {
+    .data-list-heading {
+        margin: 0 auto 1.25rem auto;
+    }
+
     .data-row {
         grid-template-columns: 1fr;
-        gap: 0.5rem;
-        padding: 1.5rem 0;
+        gap: 0.4rem;
+        padding: 1.25rem 0;
     }
+
     .data-col-category {
         font-size: 0.9em;
         margin-bottom: 0.25rem;
+    }
+
+    .data-col-desc {
+        padding-left: 0;
+        font-size: 0.95rem;
+        line-height: 1.55;
+    }
+
+    .data-item-role {
+        margin-top: 0.15rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .data-row {
+        padding: 1rem 0;
+    }
+
+    .data-col-desc {
+        font-size: 0.92rem;
     }
 }
 
@@ -458,16 +530,96 @@
 }
 
 @media (max-width: 768px) {
+    .now-card-expandable {
+        border-radius: 16px;
+    }
+
     .now-card-header {
-        padding: 1.25rem 1.5rem;
+        padding: 1.1rem 1.25rem;
     }
-    
+
+    .nc-title-collapsed {
+        font-size: 0.95rem;
+    }
+
+    .nc-title-expanded {
+        font-size: 0.78rem;
+    }
+
     .now-card-body {
-        padding: 0 1.5rem;
+        padding: 0 1.25rem;
     }
-    
+
     .now-card-expandable.is-expanded .now-card-body {
-        padding-bottom: 1.5rem;
+        padding-bottom: 1.25rem;
+    }
+
+    .nc-tagline {
+        font-size: 1.08rem;
+        line-height: 1.35;
+        margin-bottom: 0.7rem;
+    }
+
+    .nc-paragraphs p,
+    .now-card-expandable.is-expanded .nc-paragraphs p {
+        font-size: 0.92rem;
+        line-height: 1.45;
+        letter-spacing: 0;
+    }
+
+    .nc-pillars {
+        gap: 1rem;
+    }
+
+    .nc-pillars::before {
+        left: 14px;
+    }
+
+    .nc-pillar {
+        gap: 1rem;
+    }
+
+    .nc-pillar-num {
+        width: 28px;
+        height: 28px;
+        outline-width: 5px;
+    }
+
+    .nc-pillar-content {
+        padding-top: 0.2rem;
+    }
+
+    .nc-pillar-title {
+        font-size: 0.95rem;
+    }
+
+    .nc-pillar-desc {
+        font-size: 0.92rem;
+        line-height: 1.45;
+        letter-spacing: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .now-card-header {
+        padding: 1rem 1.1rem;
+    }
+
+    .now-card-body {
+        padding: 0 1.1rem;
+    }
+
+    .now-card-expandable.is-expanded .now-card-body {
+        padding-bottom: 1.1rem;
+    }
+
+    .nc-tagline {
+        font-size: 1.02rem;
+    }
+
+    .nc-paragraphs p,
+    .now-card-expandable.is-expanded .nc-paragraphs p {
+        font-size: 0.9rem;
     }
 }
 
@@ -546,15 +698,37 @@
 }
 
 @media (max-width: 768px) {
+    .connect-section {
+        margin-bottom: 2rem;
+    }
+
+    .connect-pills {
+        border-radius: 16px;
+    }
+
     .connect-pill {
         grid-template-columns: 1fr auto;
         display: flex;
         justify-content: space-between;
-        padding: 1.25rem 1.5rem;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.1rem 1.25rem;
     }
-    
-    /* 手机端隐藏中间长 ID 防止挤压，仅留“平台”与“动作” */
+
+    /* 手机端隐藏中间长 ID 防止挤压，仅留"平台"与"动作" */
     .pill-value {
-        display: none; 
+        display: none;
+    }
+
+    /* 移动端取消 hover 位移效果，保持纯触摸语义 */
+    .connect-pill:hover .pill-action {
+        transform: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .connect-pill {
+        padding: 1rem 1.1rem;
+        font-size: 11px;
     }
 }

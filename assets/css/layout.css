@@ -147,10 +147,19 @@
     .site-container {
         grid-template-columns: 1fr;
         grid-template-rows: 1fr auto;
-        padding: 3.5rem 1.5rem calc(0.5rem + env(safe-area-inset-bottom));
+        padding: 2rem 1.25rem calc(0.5rem + env(safe-area-inset-bottom));
         gap: 1rem;
         min-height: 100vh;
         min-height: 100svh;
+    }
+
+    /* 覆盖桌面端 4vw 的左右内边距与三列网格：手机上需要单列 + 1.25rem 内边距，
+       由于 .home-page .site-container 的特异度(0,2,0)高于 .site-container(0,1,0)，
+       必须在此显式覆盖 grid-template-columns，否则桌面端 3 列定义会泄露到手机端 */
+    .home-page .site-container {
+        grid-template-columns: 1fr;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
     }
 
     .site-main {
@@ -165,8 +174,29 @@
 
     .site-footer {
         margin-top: auto;
-        padding-top: 0.75rem;
-        padding-bottom: 0;
+        padding-top: 1.5rem;
+        padding-bottom: 1rem;
         margin-bottom: 0;
+        gap: 0.3rem;
+    }
+
+    .footer-signature {
+        width: clamp(56px, 18vw, 80px);
+    }
+}
+
+@media (max-width: 480px) {
+    .site-container {
+        padding: 1.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom));
+    }
+
+    .home-page .site-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .site-footer {
+        padding-top: 1rem;
+        padding-bottom: 0.75rem;
     }
 }
