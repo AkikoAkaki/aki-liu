@@ -28,18 +28,19 @@
                     {{ $page.Date.Format "2006.01.02" }}
                 </div>
                 <div class="item-title-wrapper">
-                    <a href="{{ $href }}" class="item-title">{{ $title }}</a>
-                    
-                    {{/* Fetch tags for the item to render colored dots */}}
-                    {{ $tags := $page.GetTerms "tags" }}
-                    {{ if gt (len $tags) 0 }}
-                        <div class="item-tag-dots">
-                            {{ range $i, $tag := $tags }}
-                                {{/* We use data-index or a class based on tag name to assign color in CSS */}}
-                                <span class="item-dot" data-tag="{{ $tag.LinkTitle | urlize }}"></span>
-                            {{ end }}
-                        </div>
-                    {{ end }}
+                    <a href="{{ $href }}" class="item-title">
+                        {{- $title -}}
+                        {{- /* Fetch tags for the item to render colored dots */ -}}
+                        {{- $tags := $page.GetTerms "tags" -}}
+                        {{- if gt (len $tags) 0 -}}
+                            <span class="item-tag-dots">
+                                {{- range $i, $tag := $tags -}}
+                                    {{- /* We use data-index or a class based on tag name to assign color in CSS */ -}}
+                                    <span class="item-dot" data-tag="{{ $tag.LinkTitle | urlize }}"></span>
+                                {{- end -}}
+                            </span>
+                        {{- end -}}
+                    </a>
                 </div>
                 
                 {{/* 这是给右侧 Preview 区域准备的隐藏数据 */}}

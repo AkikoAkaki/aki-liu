@@ -105,14 +105,18 @@
 
             document.addEventListener('DOMContentLoaded', () => {
                 const links = document.querySelectorAll(
-                    '.bio-text a, .now-section a, .connect-section a:not(.connect-pill), .data-link'
+                    '.bio-text a, .now-section a, .connect-section a:not(.connect-pill), .data-link, .textlab-tag-item, .textlab-year-item'
                 );
 
                 links.forEach(link => {
                     const computed = getComputedStyle(link);
                     const origFamily = computed.fontFamily;
                     const origStyle  = computed.fontStyle;
-                    const target = FONT_MAP[detectType(origFamily)];
+                    let target = FONT_MAP[detectType(origFamily)];
+                    
+                    if (link.classList.contains('hover-mono') || link.closest('.textlab-filters-container')) {
+                        target = { family: FONT_MONO, style: 'normal' };
+                    }
 
                     wrapChars(link);
 
@@ -132,7 +136,11 @@
 
                     function handleEnter() {
                         cancel();
-                        [...link.querySelectorAll('.link-char')].forEach((char, i) => {
+                        let chars = [...link.querySelectorAll('.link-char')];
+                        if (link.classList.contains('textlab-year-item')) {
+                            chars.reverse();
+                        }
+                        chars.forEach((char, i) => {
                             timers.push(setTimeout(() => {
                                 char.style.fontFamily = target.family;
                                 char.style.fontStyle  = target.style;
@@ -143,7 +151,11 @@
 
                     function handleLeave() {
                         cancel();
-                        [...link.querySelectorAll('.link-char')].reverse().forEach((char, i) => {
+                        let chars = [...link.querySelectorAll('.link-char')].reverse();
+                        if (link.classList.contains('textlab-year-item')) {
+                            chars.reverse(); // Reverse again to animate left to right on leave
+                        }
+                        chars.forEach((char, i) => {
                             timers.push(setTimeout(() => {
                                 char.style.fontFamily = origFamily;
                                 char.style.fontStyle  = origStyle;
