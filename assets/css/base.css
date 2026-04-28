@@ -3,15 +3,6 @@
    CSS 变量、重置样式、基础元素
    ========================================================================== */
 
-/* Hero display font (copy Hero.ttf into /static/fonts/hero/) */
-@font-face {
-    font-family: "Hero";
-    src: url("/fonts/hero/Hero.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
 /* Switzer local font family (copy files into /static/fonts/switzer/) */
 @font-face {
     font-family: "Switzer";

@@ -1,7 +1,7 @@
 {{- /* Build back-link href/label from section or page collection. */ -}}
 {{- $page := .page -}}
 {{- $href := $page.Site.Home.RelPermalink -}}
-{{- $label := i18n "navHome" -}}
+{{- $label := "Home" -}}
 
 {{- with .section -}}
     {{- $href = .RelPermalink -}}

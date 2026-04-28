@@ -1,16 +1,6 @@
 {{ define "sidebar-left" }}
-{{- $tagSlice := partialCached "tag-sidebar-data.html" . .Path .Language.Lang -}}
-{{ $pages := .Pages }}
-{{ if and (eq .Language.Lang "en") .IsTranslated }}
-    {{ $translationsByWeight := sort .AllTranslations "Language.Weight" "asc" }}
-    {{ if gt (len $translationsByWeight) 0 }}
-        {{ $primarySection := index $translationsByWeight 0 }}
-        {{ if ne $primarySection.Language.Lang .Language.Lang }}
-            {{ $pages = $primarySection.Pages }}
-        {{ end }}
-    {{ end }}
-{{ end }}
-{{ $regularPages := where $pages "Kind" "page" }}
+{{- $tagSlice := partialCached "tag-sidebar-data.html" . .Path -}}
+{{ $regularPages := where .Pages "Kind" "page" }}
 {{ $years := slice }}
 {{ range $regularPages.GroupByPublishDate "2006" }}
     {{ $years = $years | append .Key }}
@@ -78,23 +68,9 @@
         <span class="header-col-project">Project:</span>
     </div>
 
-    {{ $pages := .Pages }}
-    {{ if and (eq .Language.Lang "en") .IsTranslated }}
-        {{ $translationsByWeight := sort .AllTranslations "Language.Weight" "asc" }}
-        {{ if gt (len $translationsByWeight) 0 }}
-            {{ $primarySection := index $translationsByWeight 0 }}
-            {{ if ne $primarySection.Language.Lang .Language.Lang }}
-                {{ $pages = $primarySection.Pages }}
-            {{ end }}
-        {{ end }}
-    {{ end }}
-    {{ $regularPages := where $pages "Kind" "page" }}
+    {{ $regularPages := where .Pages "Kind" "page" }}
 
-    {{ partial "archive-list-items.html" (dict
-        "pages" $regularPages
-        "targetLang" .Language.Lang
-        "resolveTranslation" true
-    ) }}
+    {{ partial "archive-list-items.html" (dict "pages" $regularPages) }}
 </div>
 {{ end }}
 

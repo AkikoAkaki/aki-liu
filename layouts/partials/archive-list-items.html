@@ -1,23 +1,8 @@
 {{- $pages := .pages -}}
-{{- $targetLang := .targetLang | default "" -}}
-{{- $resolveTranslation := .resolveTranslation | default false -}}
 
 <div class="archive-list">
     {{ range $pages.GroupByPublishDate "2006" }}
-        {{ $year := .Key }}
-        {{ range $index, $page := .Pages }}
-            {{/* Link to target-language translation when available, fallback to source page. */}}
-            {{ $href := $page.RelPermalink }}
-            {{ $title := $page.Title }}
-            {{ if and $resolveTranslation $targetLang (ne $page.Language.Lang $targetLang) }}
-                {{ range $page.Translations }}
-                    {{ if eq .Language.Lang $targetLang }}
-                        {{ $href = .RelPermalink }}
-                        {{ $title = .Title }}
-                    {{ end }}
-                {{ end }}
-            {{ end }}
-
+        {{ range .Pages }}
             <article class="archive-item">
                 <div class="item-hover-arrow">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -25,18 +10,16 @@
                     </svg>
                 </div>
                 <div class="item-year">
-                    {{ $page.Date.Format "2006.01.02" }}
+                    {{ .Date.Format "2006.01.02" }}
                 </div>
                 <div class="item-title-wrapper">
-                    <a href="{{ $href }}" class="item-title">
-                        {{- $title -}}
-                        {{- /* Fetch tags for the item to render colored dots */ -}}
-                        {{- $tags := $page.GetTerms "tags" -}}
+                    <a href="{{ .RelPermalink }}" class="item-title">
+                        {{- .Title -}}
+                        {{- $tags := .GetTerms "tags" -}}
                         {{- if gt (len $tags) 0 -}}
                             <span class="item-tag-dots">
-                                {{- range $i, $tag := $tags -}}
-                                    {{- /* We use data-index or a class based on tag name to assign color in CSS */ -}}
-                                    <span class="item-dot" data-tag="{{ $tag.LinkTitle | urlize }}"></span>
+                                {{- range $tags -}}
+                                    <span class="item-dot" data-tag="{{ .LinkTitle | urlize }}"></span>
                                 {{- end -}}
                             </span>
                         {{- end -}}
@@ -44,10 +27,10 @@
                 </div>
 
                 {{/* 这是给右侧 Preview 区域准备的隐藏数据 */}}
-                <div class="item-preview-data" data-href="{{ $href }}" style="display: none;">
-                    <h4 class="preview-title">{{ $title }}</h4>
+                <div class="item-preview-data" data-href="{{ .RelPermalink }}" style="display: none;">
+                    <h4 class="preview-title">{{ .Title }}</h4>
                     <div class="preview-summary raw-content-preview">
-                        {{ $page.Content }}
+                        {{ .Content }}
                     </div>
                 </div>
             </article>

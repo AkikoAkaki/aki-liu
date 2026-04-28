@@ -1,7 +1,6 @@
 # Site
 title = "Aki's Blog"
 baseURL = "/"
-theme = "paco"
 enableRobotsTXT = true
 
 # Language
