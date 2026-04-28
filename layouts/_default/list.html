@@ -1,7 +1,263 @@
+{{ define "sidebar-left" }}
+{{- $tagSlice := partialCached "tag-sidebar-data.html" . .Path .Language.Lang -}}
+{{ $pages := .Pages }}
+{{ if and (eq .Language.Lang "en") .IsTranslated }}
+    {{ $translationsByWeight := sort .AllTranslations "Language.Weight" "asc" }}
+    {{ if gt (len $translationsByWeight) 0 }}
+        {{ $primarySection := index $translationsByWeight 0 }}
+        {{ if ne $primarySection.Language.Lang .Language.Lang }}
+            {{ $pages = $primarySection.Pages }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+{{ $regularPages := where $pages "Kind" "page" }}
+{{ $years := slice }}
+{{ range $regularPages.GroupByPublishDate "2006" }}
+    {{ $years = $years | append .Key }}
+{{ end }}
+<div class="archive-left-col">
+    <div class="archive-logo-container">
+        <a href="{{ .Site.Home.RelPermalink }}">
+            <img src="{{ "Hero.svg" | relURL }}" alt="Aki Liu" class="archive-hero-svg">
+        </a>
+        <div class="archive-page-subtitle">{{ .Title }}</div>
+    </div>
+
+    <div class="archive-filter-section">
+        <h3 class="archive-col-header">Filter:</h3>
+
+        <div class="archive-search">
+            <span class="search-icon"><svg fill="currentColor" width="14" height="14" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg"><path d="M49.62,45.27,36.22,32a18.9,18.9,0,1,0-34.1-9.2A18.91,18.91,0,0,0,32,36.27l13.3,13.3a1.45,1.45,0,0,0,2.1,0l2.1-2.1A1.68,1.68,0,0,0,49.62,45.27Zm-28.7-11.5a12.9,12.9,0,1,1,12.9-12.9A12.87,12.87,0,0,1,20.92,33.77Z" fill-rule="evenodd"/></svg></span>
+            <div class="search-input-wrapper">
+                <span class="search-fake-placeholder" aria-hidden="true">Search...</span>
+                <input type="text" class="search-input" autocomplete="off" />
+            </div>
+        </div>
+
+        <div class="archive-filters-container">
+            <div class="archive-tags-list">
+                {{ range $tagSlice }}
+                    {{ $href := printf "/tags/%s/" (.name | urlize) | relLangURL }}
+                    <a href="{{ $href }}" class="archive-tag-item" data-tag="{{ .name | urlize }}">
+                        <span class="tag-name">{{ .name | title }}</span><span class="tag-dot"></span>
+                    </a>
+                {{ end }}
+            </div>
+            <div class="archive-years-list">
+                {{ range $years }}
+                    <a href="#" class="archive-year-item">{{ . }}</a>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+
+    <div class="archive-sidebar-bottom">
+        <div class="totals-row">
+            <div class="totals-item">Entries: {{ len $regularPages }}</div>
+            <div class="totals-item">Years: {{ len $years }}</div>
+        </div>
+    </div>
+
+    <div class="archive-copyright">© Aki Liu</div>
+</div>
+{{ end }}
+
 {{ define "main" }}
-{{ partial "writing-list-main.html" . }}
+<div class="archive-main-col">
+    {{ if .Content }}
+    <div class="archive-intro-section">
+        <h3 class="archive-col-header">Info:</h3>
+        <div class="archive-intro-text">
+            {{ .Content }}
+        </div>
+    </div>
+    {{ end }}
+
+    <div class="archive-list-header">
+        <span class="header-col-year">Date:</span>
+        <span class="header-col-project">Project:</span>
+    </div>
+
+    {{ $pages := .Pages }}
+    {{ if and (eq .Language.Lang "en") .IsTranslated }}
+        {{ $translationsByWeight := sort .AllTranslations "Language.Weight" "asc" }}
+        {{ if gt (len $translationsByWeight) 0 }}
+            {{ $primarySection := index $translationsByWeight 0 }}
+            {{ if ne $primarySection.Language.Lang .Language.Lang }}
+                {{ $pages = $primarySection.Pages }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+    {{ $regularPages := where $pages "Kind" "page" }}
+
+    {{ partial "archive-list-items.html" (dict
+        "pages" $regularPages
+        "targetLang" .Language.Lang
+        "resolveTranslation" true
+    ) }}
+</div>
 {{ end }}
 
 {{ define "sidebar-right" }}
-    {{ partial "writing-list-sidebar.html" . }}
+<div class="archive-right-cols">
+    <div class="archive-view-col">
+        <h3 class="archive-col-header">Preview:</h3>
+
+        <div id="archive-preview-container" class="preview-container">
+            <!-- Content injected by JS -->
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const items = document.querySelectorAll('.archive-item');
+    const previewContainer = document.getElementById('archive-preview-container');
+    if (!previewContainer) return;
+
+    previewContainer.innerHTML = '';
+
+    let currentHoverNode = null;
+    let leaveTimeout = null;
+    let renderToken = 0;
+
+    function injectContent(item) {
+        const previewData = item.querySelector('.item-preview-data');
+        if (!previewData) return false;
+        previewContainer.innerHTML = previewData.innerHTML;
+        previewContainer.dataset.href = previewData.dataset.href || '';
+        previewContainer.querySelectorAll('figure.local-video, video, audio, iframe').forEach(el => el.remove());
+        return true;
+    }
+
+    function computeBottomLimit() {
+        const rightCols = previewContainer.closest('.archive-right-cols');
+        const viewportBottom = window.innerHeight;
+        if (!rightCols) return viewportBottom - 8;
+        const rect = rightCols.getBoundingClientRect();
+        const styles = getComputedStyle(rightCols);
+        const paddingBottom = parseFloat(styles.paddingBottom) || 0;
+        const colsBottom = rect.bottom - paddingBottom;
+        // 取容器内边和视口下边的较小值：sticky 未生效时容器底可能超出视口
+        return Math.min(colsBottom, viewportBottom) - 8;
+    }
+
+    async function fitPreview(token) {
+        const summary = previewContainer.querySelector('.preview-summary');
+        if (!summary) return;
+        const href = previewContainer.dataset.href || '#';
+
+        if (document.fonts && document.fonts.ready) {
+            try { await document.fonts.ready; } catch (e) {}
+        }
+        if (token !== renderToken) return;
+
+        const imgs = Array.from(summary.querySelectorAll('img'));
+        await Promise.all(imgs.map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+                img.addEventListener('load', resolve, { once: true });
+                img.addEventListener('error', resolve, { once: true });
+            });
+        }));
+        if (token !== renderToken) return;
+
+        const liveSummary = previewContainer.querySelector('.preview-summary');
+        if (!liveSummary || liveSummary !== summary) return;
+
+        const bottomLimit = computeBottomLimit();
+        const children = Array.from(summary.children);
+        let firstOverflowIndex = -1;
+        for (let i = 0; i < children.length; i++) {
+            if (children[i].getBoundingClientRect().bottom > bottomLimit) {
+                firstOverflowIndex = i;
+                break;
+            }
+        }
+
+        if (firstOverflowIndex === -1) return;
+
+        for (let i = children.length - 1; i >= firstOverflowIndex; i--) {
+            children[i].remove();
+        }
+
+        const marker = document.createElement('a');
+        marker.className = 'preview-continuation';
+        marker.href = href;
+        marker.textContent = '(to be continued)';
+        summary.appendChild(marker);
+
+        while (summary.children.length > 1 && marker.getBoundingClientRect().bottom > bottomLimit) {
+            const prev = marker.previousElementSibling;
+            if (!prev) break;
+            prev.remove();
+        }
+    }
+
+    async function renderForItem(item) {
+        const token = ++renderToken;
+        if (!injectContent(item)) return;
+        await fitPreview(token);
+        if (token === renderToken) {
+            previewContainer.style.opacity = '1';
+        }
+    }
+
+    let resizeRaf = 0;
+    const resizeObserver = new ResizeObserver(() => {
+        if (!currentHoverNode) return;
+        if (resizeRaf) cancelAnimationFrame(resizeRaf);
+        resizeRaf = requestAnimationFrame(() => {
+            if (currentHoverNode) renderForItem(currentHoverNode);
+        });
+    });
+    const rightCols = document.querySelector('.archive-right-cols');
+    if (rightCols) resizeObserver.observe(rightCols);
+    window.addEventListener('resize', () => {
+        if (currentHoverNode) renderForItem(currentHoverNode);
+    });
+
+    let scrollRaf = 0;
+    window.addEventListener('scroll', () => {
+        if (!currentHoverNode) return;
+        if (scrollRaf) cancelAnimationFrame(scrollRaf);
+        scrollRaf = requestAnimationFrame(() => {
+            if (currentHoverNode) renderForItem(currentHoverNode);
+        });
+    }, { passive: true });
+
+    items.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            if (leaveTimeout) clearTimeout(leaveTimeout);
+
+            if (currentHoverNode === item) {
+                previewContainer.style.opacity = '1';
+                return;
+            }
+
+            currentHoverNode = item;
+            previewContainer.style.opacity = '0';
+            setTimeout(() => {
+                if (currentHoverNode === item) renderForItem(item);
+            }, 100);
+        });
+
+        item.addEventListener('mouseleave', () => {
+            if (currentHoverNode === item) {
+                leaveTimeout = setTimeout(() => {
+                    previewContainer.style.opacity = '0';
+                    currentHoverNode = null;
+                    renderToken++;
+                    setTimeout(() => {
+                        if (!currentHoverNode) {
+                            previewContainer.innerHTML = '';
+                            delete previewContainer.dataset.href;
+                        }
+                    }, 200);
+                }, 150);
+            }
+        });
+    });
+});
+</script>
 {{ end }}

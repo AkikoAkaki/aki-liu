@@ -2,7 +2,7 @@
 {{- $targetLang := .targetLang | default "" -}}
 {{- $resolveTranslation := .resolveTranslation | default false -}}
 
-<div class="textlab-list">
+<div class="archive-list">
     {{ range $pages.GroupByPublishDate "2006" }}
         {{ $year := .Key }}
         {{ range $index, $page := .Pages }}
@@ -18,7 +18,7 @@
                 {{ end }}
             {{ end }}
 
-            <article class="textlab-item">
+            <article class="archive-item">
                 <div class="item-hover-arrow">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M21.71,11.29l-7-7a1,1,0,0,0-1.42,1.42L18.59,11.15H3a0.85,0.85,0,0,0,0,1.7H18.59l-5.3,5.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l7-7A1,1,0,0,0,21.71,11.29Z" fill="currentColor"></path>
@@ -42,7 +42,7 @@
                         {{- end -}}
                     </a>
                 </div>
-                
+
                 {{/* 这是给右侧 Preview 区域准备的隐藏数据 */}}
                 <div class="item-preview-data" data-href="{{ $href }}" style="display: none;">
                     <h4 class="preview-title">{{ $title }}</h4>

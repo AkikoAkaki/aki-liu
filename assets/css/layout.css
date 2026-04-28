@@ -105,10 +105,10 @@
 }
 
 /* ==========================================================================
-   Text Lab List Page Layout (4-Column Style)
+   Archive List Page Layout (4-Column Style)
    ========================================================================== */
 
-.section-textlab.kind-section .site-container {
+.kind-section .site-container {
     grid-template-columns: 2fr 5fr 3fr; /* Left sidebar, Main list, Right sidebars combined */
     padding-top: 3.5rem; /* Reduced top spacing */
     padding-left: 3vw;
@@ -117,15 +117,15 @@
     gap: 4vw;
 }
 
-.section-textlab.kind-section .site-sidebar,
-.section-textlab.kind-section .site-sidebar-right {
+.kind-section .site-sidebar,
+.kind-section .site-sidebar-right {
     display: block; /* Ensure they are visible even if empty in other pages */
     justify-self: stretch;
     padding-right: 0;
 }
 
 /* 内部的两列拆分 (View 和 Index) - 现在统一为占据整个右侧，并附着悬浮 */
-.textlab-right-cols {
+.archive-right-cols {
     display: block;
     width: 100%;
     position: sticky;
@@ -138,12 +138,12 @@
 }
 
 /* 隐藏滚动条让排版干净 (Chrome/Safari) */
-.textlab-right-cols::-webkit-scrollbar {
+.archive-right-cols::-webkit-scrollbar {
     display: none;
 }
 
-/* Placeholder basic styles for textlab layout elements */
-.textlab-col-header {
+/* Placeholder basic styles for archive layout elements */
+.archive-col-header {
     font-family: var(--font-mono, monospace);
     font-size: 0.75rem;
     font-weight: normal;
@@ -152,31 +152,31 @@
     color: var(--color-secondary);
 }
 
-.textlab-site-title {
+.archive-site-title {
     font-family: var(--font-sans);
     font-size: 1.2rem;
     font-weight: 500;
     margin-bottom: 4rem;
 }
 
-.textlab-nav-list {
+.archive-nav-list {
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
 }
 
-.textlab-nav-list a {
+.archive-nav-list a {
     text-decoration: none;
     color: var(--color-heading);
     font-family: var(--font-sans);
     font-size: 0.95rem;
 }
 
-.textlab-nav-list a:hover, .textlab-nav-list a.active {
+.archive-nav-list a:hover, .archive-nav-list a.active {
     text-decoration: underline;
 }
 
-.textlab-search {
+.archive-search {
     font-family: var(--font-sans);
     color: var(--color-secondary);
     font-size: 0.95rem;
@@ -281,20 +281,20 @@
         padding-bottom: 0.75rem;
     }
 
-    /* Text Lab Responsive Overrides */
-    .section-textlab.kind-section .site-container {
+    /* Archive Responsive Overrides */
+    .kind-section .site-container {
         grid-template-columns: 1fr;
         padding-top: 4rem;
         gap: 3rem;
     }
     
-    .section-textlab.kind-section .site-sidebar,
-    .section-textlab.kind-section .site-sidebar-right {
+    .kind-section .site-sidebar,
+    .kind-section .site-sidebar-right {
         display: block;
         margin-top: 0;
     }
     
-    .textlab-right-cols {
+    .archive-right-cols {
         grid-template-columns: 1fr;
         gap: 2.5rem;
     }

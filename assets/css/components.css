@@ -258,27 +258,27 @@
 }
 
 /* ==========================================================================
-   Text Lab Sidebar Components (Phase 2)
+   Archive Sidebar Components (Phase 2)
    ========================================================================== */
 
-.textlab-left-col {
+.archive-left-col {
     display: flex;
     flex-direction: column;
     min-height: 100%;
 }
 
-.textlab-logo-container {
+.archive-logo-container {
     margin-top: 0.2rem;
     margin-bottom: 4rem;
 }
 
-.textlab-hero-svg {
+.archive-hero-svg {
     width: 140px; /* Smaller than homepage */
     height: auto;
     display: block;
 }
 
-.textlab-page-subtitle {
+.archive-page-subtitle {
     font-family: var(--font-mono, monospace);
     font-size: 0.75rem;
     font-weight: normal;
@@ -288,11 +288,11 @@
     margin-left: 0.1rem;
 }
 
-.textlab-filter-section {
+.archive-filter-section {
     flex: 1;
 }
 
-.textlab-search {
+.archive-search {
     display: flex;
     align-items: center;
     border-bottom: 1px solid var(--color-heading);
@@ -305,12 +305,12 @@
     transition: color 0.2s ease, border-bottom-color 0.2s ease;
 }
 
-.textlab-search:hover {
+.archive-search:hover {
     color: var(--color-secondary);
     border-bottom-color: var(--color-secondary);
 }
 
-.textlab-search .search-icon {
+.archive-search .search-icon {
     margin-right: 0.25rem;
     display: flex;
     align-items: center;
@@ -351,7 +351,7 @@
     animation: search-placeholder-hide 0.08s ease forwards;
 }
 
-.textlab-search .search-input {
+.archive-search .search-input {
     border: none;
     background: transparent;
     width: 100%;
@@ -362,7 +362,7 @@
     caret-color: var(--color-heading);
 }
 
-.textlab-search .search-action {
+.archive-search .search-action {
     opacity: 0;
     transition: opacity 0.2s ease;
     cursor: pointer;
@@ -377,31 +377,31 @@
     height: 12px;
 }
 
-.textlab-search:hover .search-action {
+.archive-search:hover .search-action {
     opacity: 1;
 }
 
-.textlab-filters-container {
+.archive-filters-container {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
 }
 
-.textlab-tags-list {
+.archive-tags-list {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
     flex-grow: 1;
 }
 
-.textlab-years-list {
+.archive-years-list {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
     align-items: flex-end; /* Anchor right to prevent column shift when mono font expands width */
 }
 
-.textlab-tag-item {
+.archive-tag-item {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -413,11 +413,11 @@
     transition: color 0.2s ease;
 }
 
-.textlab-tag-item:hover {
+.archive-tag-item:hover {
     color: var(--color-secondary);
 }
 
-.textlab-tag-item .tag-dot {
+.archive-tag-item .tag-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
@@ -429,16 +429,16 @@
 }
 
 /* Dynamic colors for tags mapped by name */
-.textlab-tag-item[data-tag="essay"] .tag-dot, .item-dot[data-tag="essay"] { background-color: #00A3FF; }
-.textlab-tag-item[data-tag="critique"] .tag-dot, .item-dot[data-tag="critique"] { background-color: #FF3B30; }
-.textlab-tag-item[data-tag="poetry"] .tag-dot, .item-dot[data-tag="poetry"] { background-color: #34C759; }
-.textlab-tag-item[data-tag="fiction"] .tag-dot, .item-dot[data-tag="fiction"] { background-color: #FF9500; }
-.textlab-tag-item[data-tag="content-analysis"] .tag-dot, .item-dot[data-tag="content-analysis"] { background-color: #5856D6; }
-.textlab-tag-item[data-tag="drama"] .tag-dot, .item-dot[data-tag="drama"] { background-color: #A2845E; }
-.textlab-tag-item[data-tag="translation"] .tag-dot, .item-dot[data-tag="translation"] { background-color: #FF2D55; }
-.textlab-tag-item .tag-dot, .item-dot { background-color: #8E8E93; } /* Default gray */
+.archive-tag-item[data-tag="essay"] .tag-dot, .item-dot[data-tag="essay"] { background-color: #00A3FF; }
+.archive-tag-item[data-tag="critique"] .tag-dot, .item-dot[data-tag="critique"] { background-color: #FF3B30; }
+.archive-tag-item[data-tag="poetry"] .tag-dot, .item-dot[data-tag="poetry"] { background-color: #34C759; }
+.archive-tag-item[data-tag="fiction"] .tag-dot, .item-dot[data-tag="fiction"] { background-color: #FF9500; }
+.archive-tag-item[data-tag="content-analysis"] .tag-dot, .item-dot[data-tag="content-analysis"] { background-color: #5856D6; }
+.archive-tag-item[data-tag="drama"] .tag-dot, .item-dot[data-tag="drama"] { background-color: #A2845E; }
+.archive-tag-item[data-tag="translation"] .tag-dot, .item-dot[data-tag="translation"] { background-color: #FF2D55; }
+.archive-tag-item .tag-dot, .item-dot { background-color: #8E8E93; } /* Default gray */
 
-.textlab-year-item {
+.archive-year-item {
     text-decoration: none;
     color: var(--color-heading);
     font-family: var(--font-sans);
@@ -449,12 +449,12 @@
     width: max-content;
 }
 
-.textlab-year-item:hover {
+.archive-year-item:hover {
     color: var(--color-secondary);
     border-bottom-color: var(--color-secondary);
 }
 
-.textlab-sidebar-bottom {
+.archive-sidebar-bottom {
     position: fixed;
     bottom: 4.2rem;
     /* Omitting 'left' keeps it at its static horizontal position (perfectly aligned with the column) */
@@ -474,7 +474,7 @@
     gap: 1.5rem;
 }
 
-.textlab-copyright {
+.archive-copyright {
     margin-top: 1rem;
     margin-bottom: 1rem;
     font-family: var(--font-sans);
@@ -483,8 +483,8 @@
     white-space: nowrap;
 }
 
-/* Hide main site footer on Text Lab page */
-.section-textlab .site-footer {
+/* Hide main site footer on archive list pages */
+.kind-section .site-footer {
     display: none;
 }
 
@@ -493,7 +493,7 @@
 }
 
 @media (max-width: 768px) {
-    .textlab-sidebar-bottom {
+    .archive-sidebar-bottom {
         position: static;
         margin-top: 2rem;
         padding-bottom: 1rem;
@@ -501,14 +501,14 @@
 }
 
 /* ==========================================================================
-   Text Lab Main Content (Phase 3 & Info Block)
+   Archive Main Content (Phase 3 & Info Block)
    ========================================================================== */
 
-.textlab-intro-section {
+.archive-intro-section {
     margin-bottom: 3.5rem;
 }
 
-.textlab-intro-text {
+.archive-intro-text {
     font-family: var(--font-sans);
     font-size: 0.95rem;
     line-height: 1.6;
@@ -516,7 +516,7 @@
     max-width: 850px; /* Widened info block */
 }
 
-.textlab-list-header {
+.archive-list-header {
     display: grid;
     grid-template-columns: 110px 1fr;
     gap: 2rem;
@@ -528,12 +528,12 @@
     margin-bottom: 1.5rem;
 }
 
-.textlab-list {
+.archive-list {
     display: flex;
     flex-direction: column;
 }
 
-.textlab-item {
+.archive-item {
     display: grid;
     grid-template-columns: 110px 1fr;
     gap: 2rem;
@@ -543,7 +543,7 @@
 }
 
 /* Hover Arrow SVG */
-.textlab-item .item-hover-arrow {
+.archive-item .item-hover-arrow {
     position: absolute;
     left: -0.2rem;
     top: 50%;
@@ -559,19 +559,19 @@
     justify-content: center;
 }
 
-.textlab-item .item-hover-arrow svg {
+.archive-item .item-hover-arrow svg {
     width: 100%;
     height: 100%;
     fill: currentColor;
 }
 
-.textlab-item:hover .item-hover-arrow {
+.archive-item:hover .item-hover-arrow {
     opacity: 1;
     transform: translate(0, -50%);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.25s; /* Hover intent pause 0.25s (debounce) */
 }
 
-.textlab-item .item-year {
+.archive-item .item-year {
     font-family: var(--font-sans);
     font-size: 0.95rem;
     color: var(--color-heading);
@@ -588,18 +588,18 @@
     -webkit-font-smoothing: antialiased;
 }
 
-.textlab-item:hover .item-year {
+.archive-item:hover .item-year {
     transform: translateX(22px);
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.25s; /* Matches arrow timing */
 }
 
-.textlab-item .item-title-wrapper {
+.archive-item .item-title-wrapper {
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.textlab-item .item-title {
+.archive-item .item-title {
     text-decoration: none;
     color: var(--color-heading);
     font-family: var(--font-sans);
@@ -617,8 +617,8 @@
 }
 
 /* Background sliding pseudo-elements */
-.textlab-item .item-year::after,
-.textlab-item .item-title::after {
+.archive-item .item-year::after,
+.archive-item .item-title::after {
     content: '';
     position: absolute;
     top: 0;
@@ -633,8 +633,8 @@
     transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.35s; /* Pause after arrow, then shrink */
 }
 
-.textlab-item:hover .item-year::after,
-.textlab-item:hover .item-title::after {
+.archive-item:hover .item-year::after,
+.archive-item:hover .item-title::after {
     transform: scaleX(1);
     /* Wait for hover intent (0.25s) + arrow animate (0.2s) = 0.45s, plus 0.01s pause = 0.46s delay */
     transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.46s; 
@@ -705,22 +705,22 @@
 }
 
 /* ==========================================================================
-   Text Lab Preview Container
+   Archive Preview Container
    ========================================================================== */
 
-#textlab-preview-container {
+#archive-preview-container {
     margin-top: 1.5rem;
     transition: opacity 0.15s ease-out;
 }
 
-#textlab-preview-container .preview-empty {
+#archive-preview-container .preview-empty {
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 0.75rem;
     color: #999;
     text-transform: uppercase;
 }
 
-#textlab-preview-container .preview-title {
+#archive-preview-container .preview-title {
     margin: 0 0 0.5rem;
     font-family: var(--font-sans);
     font-size: 1.1rem;
@@ -730,14 +730,14 @@
 }
 
 
-#textlab-preview-container .preview-summary {
+#archive-preview-container .preview-summary {
     font-family: var(--font-serif);
     font-size: 0.95rem;
     line-height: 1.6;
     color: var(--color-heading);
 }
 
-#textlab-preview-container img {
+#archive-preview-container img {
     width: auto;
     height: auto;
     max-width: 100%;
@@ -748,7 +748,7 @@
     display: block;
 }
 
-#textlab-preview-container .preview-continuation {
+#archive-preview-container .preview-continuation {
     display: block;
     margin-top: 1.25rem;
     font-family: var(--font-mono, monospace);
@@ -760,33 +760,33 @@
     transition: color 0.15s ease;
 }
 
-#textlab-preview-container .preview-continuation:hover {
+#archive-preview-container .preview-continuation:hover {
     color: var(--color-heading);
 }
 
-#textlab-preview-container hr {
+#archive-preview-container hr {
     border: none;
     border-top: 1px solid rgba(0, 0, 0, 0.08); /* 极轻微的分割线 */
     margin: 2rem auto;
     width: 30%; /* 缩短长度显得不突兀 */
 }
 
-#textlab-preview-container .preview-summary p {
+#archive-preview-container .preview-summary p {
     margin-bottom: 1rem;
 }
 
 /* Prevent any italic inheritance in preview body text */
-#textlab-preview-container .preview-summary {
+#archive-preview-container .preview-summary {
     font-style: normal;
 }
 
 /* Scale down headings to body size — no browser-default 2em h1 here */
-#textlab-preview-container .preview-summary h1,
-#textlab-preview-container .preview-summary h2,
-#textlab-preview-container .preview-summary h3,
-#textlab-preview-container .preview-summary h4,
-#textlab-preview-container .preview-summary h5,
-#textlab-preview-container .preview-summary h6 {
+#archive-preview-container .preview-summary h1,
+#archive-preview-container .preview-summary h2,
+#archive-preview-container .preview-summary h3,
+#archive-preview-container .preview-summary h4,
+#archive-preview-container .preview-summary h5,
+#archive-preview-container .preview-summary h6 {
     font-family: var(--font-serif);
     font-weight: 600;
     font-size: 1.05rem;
@@ -797,19 +797,19 @@
 }
 
 /* Hide video figures so they don't blow up the preview layout */
-#textlab-preview-container .preview-summary figure.local-video,
-#textlab-preview-container .preview-summary video,
-#textlab-preview-container .preview-summary audio,
-#textlab-preview-container .preview-summary iframe {
+#archive-preview-container .preview-summary figure.local-video,
+#archive-preview-container .preview-summary video,
+#archive-preview-container .preview-summary audio,
+#archive-preview-container .preview-summary iframe {
     display: none;
 }
 
 /* Regular figures: reset browser default horizontal margin so images align with paragraphs */
-#textlab-preview-container .preview-summary figure:not(.local-video) {
+#archive-preview-container .preview-summary figure:not(.local-video) {
     margin: 1rem 0;
     width: 100%;
 }
 
-#textlab-preview-container .preview-summary figure:not(.local-video) img {
+#archive-preview-container .preview-summary figure:not(.local-video) img {
     margin: 0;
 }

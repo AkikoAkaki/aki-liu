@@ -105,7 +105,7 @@
 
             document.addEventListener('DOMContentLoaded', () => {
                 const links = document.querySelectorAll(
-                    '.bio-text a, .now-section a, .connect-section a:not(.connect-pill), .data-link, .textlab-tag-item, .textlab-year-item'
+                    '.bio-text a, .now-section a, .connect-section a:not(.connect-pill), .data-link, .archive-tag-item, .archive-year-item'
                 );
 
                 links.forEach(link => {
@@ -114,7 +114,7 @@
                     const origStyle  = computed.fontStyle;
                     let target = FONT_MAP[detectType(origFamily)];
                     
-                    if (link.classList.contains('hover-mono') || link.closest('.textlab-filters-container')) {
+                    if (link.classList.contains('hover-mono') || link.closest('.archive-filters-container')) {
                         target = { family: FONT_MONO, style: 'normal' };
                     }
 
@@ -137,7 +137,7 @@
                     function handleEnter() {
                         cancel();
                         let chars = [...link.querySelectorAll('.link-char')];
-                        if (link.classList.contains('textlab-year-item')) {
+                        if (link.classList.contains('archive-year-item')) {
                             chars.reverse();
                         }
                         chars.forEach((char, i) => {
@@ -152,7 +152,7 @@
                     function handleLeave() {
                         cancel();
                         let chars = [...link.querySelectorAll('.link-char')].reverse();
-                        if (link.classList.contains('textlab-year-item')) {
+                        if (link.classList.contains('archive-year-item')) {
                             chars.reverse(); // Reverse again to animate left to right on leave
                         }
                         chars.forEach((char, i) => {
@@ -181,7 +181,7 @@
     <script>
         (function () {
             document.addEventListener('DOMContentLoaded', () => {
-                const searchBar = document.querySelector('.textlab-search');
+                const searchBar = document.querySelector('.archive-search');
                 if (!searchBar) return;
 
                 const input = searchBar.querySelector('.search-input');
