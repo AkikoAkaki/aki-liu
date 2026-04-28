@@ -44,7 +44,7 @@
                 </div>
                 
                 {{/* 这是给右侧 Preview 区域准备的隐藏数据 */}}
-                <div class="item-preview-data" style="display: none;">
+                <div class="item-preview-data" data-href="{{ $href }}" style="display: none;">
                     <h4 class="preview-title">{{ $title }}</h4>
                     <div class="preview-summary raw-content-preview">
                         {{ $page.Content }}

@@ -131,7 +131,7 @@
     position: sticky;
     top: 4rem; /* 预留一点上边距跟随视图往下滚 */
     max-height: calc(100vh - 6rem); /* 限制最高不超过屏幕视口高度 */
-    overflow-y: auto; /* 如果内容超长，就在这个模块内部产生滚动 */
+    overflow: hidden; /* 内容由 JS 按段落截断，硬裁掉残余溢出 */
     padding-bottom: 2rem; /* 留出一点空隙别顶到底部 */
     z-index: 60; /* = 覆盖在 body::after 渐变之上 */
     scrollbar-width: none; /* 隐藏滚动条让排版干净 (Firefox) */
