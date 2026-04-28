@@ -105,6 +105,87 @@
 }
 
 /* ==========================================================================
+   Archive List Page Layout (4-Column Style)
+   ========================================================================== */
+
+.kind-section .site-container {
+    grid-template-columns: 2fr 5fr 3fr; /* Left sidebar, Main list, Right sidebars combined */
+    padding-top: 3.5rem; /* Reduced top spacing */
+    padding-left: 3vw;
+    padding-right: 3vw;
+    max-width: 1800px;
+    gap: 4vw;
+}
+
+.kind-section .site-sidebar,
+.kind-section .site-sidebar-right {
+    display: block; /* Ensure they are visible even if empty in other pages */
+    justify-self: stretch;
+    padding-right: 0;
+}
+
+/* 内部的两列拆分 (View 和 Index) - 现在统一为占据整个右侧，并附着悬浮 */
+.archive-right-cols {
+    display: block;
+    width: 100%;
+    position: sticky;
+    top: 4rem; /* 预留一点上边距跟随视图往下滚 */
+    max-height: calc(100vh - 6rem); /* 限制最高不超过屏幕视口高度 */
+    overflow: hidden; /* 内容由 JS 按段落截断，硬裁掉残余溢出 */
+    padding-bottom: 2rem; /* 留出一点空隙别顶到底部 */
+    z-index: 60; /* = 覆盖在 body::after 渐变之上 */
+    scrollbar-width: none; /* 隐藏滚动条让排版干净 (Firefox) */
+}
+
+/* 隐藏滚动条让排版干净 (Chrome/Safari) */
+.archive-right-cols::-webkit-scrollbar {
+    display: none;
+}
+
+/* Placeholder basic styles for archive layout elements */
+.archive-col-header {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    color: var(--color-secondary);
+}
+
+.archive-site-title {
+    font-family: var(--font-sans);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 4rem;
+}
+
+.archive-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.archive-nav-list a {
+    text-decoration: none;
+    color: var(--color-heading);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+}
+
+.archive-nav-list a:hover, .archive-nav-list a.active {
+    text-decoration: underline;
+}
+
+.archive-search {
+    font-family: var(--font-sans);
+    color: var(--color-secondary);
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-top: 2rem;
+}
+
+/* ==========================================================================
    Responsive Layout
    ========================================================================== */
 
@@ -199,4 +280,24 @@
         padding-top: 1rem;
         padding-bottom: 0.75rem;
     }
+
+    /* Archive Responsive Overrides */
+    .kind-section .site-container {
+        grid-template-columns: 1fr;
+        padding-top: 4rem;
+        gap: 3rem;
+    }
+    
+    .kind-section .site-sidebar,
+    .kind-section .site-sidebar-right {
+        display: block;
+        margin-top: 0;
+    }
+    
+    .archive-right-cols {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+    
+
 }

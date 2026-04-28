@@ -1,0 +1,39 @@
+{{- $pages := .pages -}}
+
+<div class="archive-list">
+    {{ range $pages.GroupByPublishDate "2006" }}
+        {{ range .Pages }}
+            <article class="archive-item">
+                <div class="item-hover-arrow">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21.71,11.29l-7-7a1,1,0,0,0-1.42,1.42L18.59,11.15H3a0.85,0.85,0,0,0,0,1.7H18.59l-5.3,5.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l7-7A1,1,0,0,0,21.71,11.29Z" fill="currentColor"></path>
+                    </svg>
+                </div>
+                <div class="item-year">
+                    {{ .Date.Format "2006.01.02" }}
+                </div>
+                <div class="item-title-wrapper">
+                    <a href="{{ .RelPermalink }}" class="item-title">
+                        {{- .Title -}}
+                        {{- $tags := .GetTerms "tags" -}}
+                        {{- if gt (len $tags) 0 -}}
+                            <span class="item-tag-dots">
+                                {{- range $tags -}}
+                                    <span class="item-dot" data-tag="{{ .LinkTitle | urlize }}"></span>
+                                {{- end -}}
+                            </span>
+                        {{- end -}}
+                    </a>
+                </div>
+
+                {{/* 这是给右侧 Preview 区域准备的隐藏数据 */}}
+                <div class="item-preview-data" data-href="{{ .RelPermalink }}" style="display: none;">
+                    <h4 class="preview-title">{{ .Title }}</h4>
+                    <div class="preview-summary raw-content-preview">
+                        {{ .Content }}
+                    </div>
+                </div>
+            </article>
+        {{ end }}
+    {{ end }}
+</div>

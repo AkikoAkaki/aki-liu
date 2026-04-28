@@ -1,15 +1,40 @@
 {{ define "main" }}
 {{- $data := site.Data.homepage -}}
+{{- $heroHref := "Hero.svg" | relURL -}}
+{{- $textLabHref := "/textlab/" -}}
+{{- with .Site.GetPage "section" "textlab" -}}
+    {{- $textLabHref = .RelPermalink -}}
+{{- end -}}
+{{- $influencesHref := "/influences/" -}}
+{{- with .Site.GetPage "/influences" -}}
+    {{- $influencesHref = .RelPermalink -}}
+{{- end -}}
+{{- $cuteThingsHref := "/cute-things/" -}}
+{{- with .Site.GetPage "/cute-things/" -}}
+    {{- $cuteThingsHref = .RelPermalink -}}
+{{- end -}}
+{{- $internalHrefReplacements := dict
+    "href='/textlab/'" (printf "href='%s'" $textLabHref)
+    "href=\"/textlab/\"" (printf "href=\"%s\"" $textLabHref)
+    "href='/influences/'" (printf "href='%s'" $influencesHref)
+    "href=\"/influences/\"" (printf "href=\"%s\"" $influencesHref)
+    "href='/cute-things/'" (printf "href='%s'" $cuteThingsHref)
+    "href=\"/cute-things/\"" (printf "href=\"%s\"" $cuteThingsHref)
+-}}
 
 <div class="home-container">
     {{/* Intro section */}}
     <section class="intro">
         <div class="author-name-svg-wrapper">
-            <img src="/Hero.svg" alt="{{ $data.intro.name }}" class="hero-svg">
+            <img src="{{ $heroHref }}" alt="{{ $data.intro.name }}" class="hero-svg">
         </div>
         {{- range $index, $para := $data.intro.bio }}
+        {{- $paragraph := $para -}}
+        {{- range $from, $to := $internalHrefReplacements -}}
+            {{- $paragraph = replace $paragraph $from $to -}}
+        {{- end -}}
         <p class="bio-text">
-            {{- if eq $index 0 }}<em>{{ $data.intro.tagline }}</em>. {{ end }}{{ $para | safeHTML }}
+            {{- if eq $index 0 }}<em>{{ $data.intro.tagline }}</em>. {{ end }}{{ $paragraph | safeHTML }}
         </p>
         {{- end }}
     </section>
@@ -65,11 +90,9 @@
                         <div class="nc-paragraphs">
                             {{- range .paragraphs }}
                             {{- $paragraph := . -}}
-                            {{- $cuteThingsHref := "/cute-things/" -}}
-                            {{- with $.Site.GetPage "/cute-things/" -}}
-                                {{- $cuteThingsHref = .RelPermalink -}}
+                            {{- range $from, $to := $internalHrefReplacements -}}
+                                {{- $paragraph = replace $paragraph $from $to -}}
                             {{- end -}}
-                            {{- $paragraph = replace $paragraph "href=\"/cute-things/\"" (printf "href=\"%s\"" $cuteThingsHref) -}}
                             <p>{{ $paragraph | safeHTML }}</p>
                             {{- end }}
                         </div>
