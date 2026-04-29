@@ -25,7 +25,9 @@
       "Bash(sed -i 's|Text Lab Sidebar Components|Archive Sidebar Components|; s|Text Lab Main Content|Archive Main Content|; s|Text Lab Preview Container|Archive Preview Container|; s|/\\\\* Hide main site footer on Text Lab page \\\\*/|/* Hide main site footer on archive list pages */|' \"I:/Projects/aki-liu/assets/css/components.css\")",
       "Bash(sed -i 's|Text Lab List Page Layout|Archive List Page Layout|; s|/\\\\* Text Lab Responsive Overrides \\\\*/|/* Archive Responsive Overrides */|' \"I:/Projects/aki-liu/assets/css/layout.css\")",
       "Bash(hugo --quiet)",
-      "Bash(echo \"exit=$?\")"
+      "Bash(echo \"exit=$?\")",
+      "mcp__plugin_vercel_vercel__deploy_to_vercel",
+      "Bash(npm list *)"
     ]
   }
 }
