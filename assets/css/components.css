@@ -608,6 +608,7 @@
     z-index: -1;
     transform-origin: left;
     transform: scaleX(0);
+    will-change: transform;
     transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.35s; /* Pause after arrow, then shrink */
 }
 

@@ -4,37 +4,7 @@
    ========================================================================== */
 
 /* Switzer local font family (copy files into /static/fonts/switzer/) */
-@font-face {
-    font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Thin.otf") format("opentype");
-    font-weight: 100;
-    font-style: normal;
-    font-display: swap;
-}
 
-@font-face {
-    font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-ThinItalic.otf") format("opentype");
-    font-weight: 100;
-    font-style: italic;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Extralight.otf") format("opentype");
-    font-weight: 200;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-ExtralightItalic.otf") format("opentype");
-    font-weight: 200;
-    font-style: italic;
-    font-display: swap;
-}
 
 @font-face {
     font-family: "Switzer";
@@ -116,37 +86,7 @@
     font-display: swap;
 }
 
-@font-face {
-    font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Extrabold.otf") format("opentype");
-    font-weight: 800;
-    font-style: normal;
-    font-display: swap;
-}
 
-@font-face {
-    font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-ExtraboldItalic.otf") format("opentype");
-    font-weight: 800;
-    font-style: italic;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Black.otf") format("opentype");
-    font-weight: 900;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-BlackItalic.otf") format("opentype");
-    font-weight: 900;
-    font-style: italic;
-    font-display: swap;
-}
 
 /* 全局变量：字体、颜色、间距统一在这里配置 */
 :root {
@@ -260,13 +200,11 @@ body::after {
     z-index: 40;
     pointer-events: none;
     transform: translate3d(0, 0, 0);
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
     transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* 环境变量：当悬停导航栏项目时，下探遮罩深度，为 Description 让出干净的空间 */
-body:has(.nav-links a:hover)::after {
+body.nav-hovering::after {
     height: 300px;
 }
 
@@ -384,7 +322,7 @@ body:has(.nav-links a:hover)::after {
         height: 90px;
     }
 
-    body:has(.nav-links a:hover)::after {
+    body.nav-hovering::after {
         height: 90px;
     }
 
@@ -426,7 +364,7 @@ body:has(.nav-links a:hover)::after {
 
 @media (max-width: 480px) {
     body::after,
-    body:has(.nav-links a:hover)::after {
+    body.nav-hovering::after {
         height: 70px;
     }
 

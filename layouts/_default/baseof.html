@@ -29,7 +29,7 @@
                 <span>©{{ now.Year }}</span>
                 <span>ALL RIGHTS RESERVED</span>
                 <span class="footer-line-preserve-case">ENGINEER with THOUGHTS</span>
-                <img src="{{ "images/signature.png" | relURL }}" alt="AKI LIU" class="footer-signature">
+                <img src="{{ "images/signature.png" | relURL }}" alt="AKI LIU" class="footer-signature" loading="lazy">
                 <span>MADE WITH HUGO</span>
                 <span>SWITZER · NEWSREADER · JETBRAINS MONO</span>
                 <span>INSPIRED BY <a href="https://sspeier.com/" target="_blank" rel="noopener">SSPEIER®</a></span>
@@ -67,7 +67,7 @@
                 textNodes.forEach(textNode => {
                     const frag = document.createDocumentFragment();
                     [...textNode.textContent].forEach(char => {
-                        if (char === ' ' || char === ' ') {
+                        if (char === ' ' || char === '\u00a0') {
                             frag.appendChild(document.createTextNode(char));
                         } else {
                             const span = document.createElement('span');
@@ -108,10 +108,14 @@
                         timers = [];
                     }
 
+                    // Use double-rAF instead of void offsetWidth to avoid forced synchronous layout
                     function triggerWipe() {
                         link.classList.remove('link-wiping');
-                        void link.offsetWidth;
-                        link.classList.add('link-wiping');
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                link.classList.add('link-wiping');
+                            });
+                        });
                     }
 
                     function handleEnter() {
@@ -171,6 +175,17 @@
                         descDisplay.classList.remove('show');
                     });
                 });
+
+                // Replace :has() with class toggle for better style-recalc performance
+                const navLinksContainer = document.querySelector('.nav-links');
+                if (navLinksContainer) {
+                    navLinksContainer.addEventListener('mouseenter', () => {
+                        document.body.classList.add('nav-hovering');
+                    });
+                    navLinksContainer.addEventListener('mouseleave', () => {
+                        document.body.classList.remove('nav-hovering');
+                    });
+                }
 
                 // --- Search placeholder animation ---
                 const searchBar = document.querySelector('.archive-search');
