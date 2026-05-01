@@ -1,0 +1,52 @@
+{{- $src := .Get "src" -}}
+{{- if not $src -}}
+  {{- errorf "figure shortcode requires the 'src' parameter (called at %s)" .Position -}}
+{{- end -}}
+
+{{- $caption := .Get "caption" -}}
+{{- $title := .Get "title" -}}
+{{- $alt := .Get "alt" -}}
+{{- if and (not $alt) $caption -}}
+  {{- $alt = plainify ($caption | markdownify) -}}
+{{- end -}}
+{{- if not $alt -}}
+  {{- $alt = "" -}}
+{{- end -}}
+
+{{- $link := .Get "link" -}}
+{{- $target := .Get "target" -}}
+{{- $rel := .Get "rel" -}}
+{{- if and (eq $target "_blank") (eq $rel "") -}}
+  {{- $rel = "noopener" -}}
+{{- end -}}
+
+{{- $resource := .Page.Resources.GetMatch $src -}}
+{{- $imgURL := $src -}}
+{{- $imgWidth := 0 -}}
+{{- $imgHeight := 0 -}}
+
+{{- if $resource -}}
+  {{- $imgURL = $resource.RelPermalink -}}
+  {{- $imgWidth = $resource.Width -}}
+  {{- $imgHeight = $resource.Height -}}
+  {{- $subType := lower $resource.MediaType.SubType -}}
+  {{- if and (ne $subType "svg") (ne $subType "gif") -}}
+    {{- $webp := $resource.Process "webp q82" -}}
+    {{- $imgURL = $webp.RelPermalink -}}
+    {{- $imgWidth = $webp.Width -}}
+    {{- $imgHeight = $webp.Height -}}
+  {{- end -}}
+{{- end -}}
+
+<figure{{ with .Get "class" }} class="{{ . }}"{{ end }}>
+  {{- if $link -}}
+  <a href="{{ $link }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
+  {{- end -}}
+  <img src="{{ $imgURL | safeURL }}" alt="{{ $alt }}" loading="lazy" decoding="async"{{ with $title }} title="{{ . }}"{{ end }}{{ if gt $imgWidth 0 }} width="{{ $imgWidth }}"{{ end }}{{ if gt $imgHeight 0 }} height="{{ $imgHeight }}"{{ end }}>
+  {{- if $link -}}
+  </a>
+  {{- end -}}
+  {{- with $caption -}}
+  <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end -}}
+</figure>

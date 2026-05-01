@@ -1,0 +1,25 @@
+{{- $dest := .Destination -}}
+{{- $alt := .PlainText | default "" -}}
+{{- $title := .Title -}}
+{{- $isRemote := or (hasPrefix $dest "http://") (hasPrefix $dest "https://") -}}
+{{- $resource := "" -}}
+
+{{- if and .Page (not $isRemote) (not (hasPrefix $dest "/")) -}}
+  {{- $resource = .Page.Resources.GetMatch $dest -}}
+{{- end -}}
+
+{{- if $resource -}}
+  {{- $imgURL := $resource.RelPermalink -}}
+  {{- $imgWidth := $resource.Width -}}
+  {{- $imgHeight := $resource.Height -}}
+  {{- $subType := lower $resource.MediaType.SubType -}}
+  {{- if and (ne $subType "svg") (ne $subType "gif") -}}
+    {{- $webp := $resource.Process "webp q82" -}}
+    {{- $imgURL = $webp.RelPermalink -}}
+    {{- $imgWidth = $webp.Width -}}
+    {{- $imgHeight = $webp.Height -}}
+  {{- end -}}
+<img src="{{ $imgURL }}" alt="{{ $alt }}" loading="lazy" decoding="async" width="{{ $imgWidth }}" height="{{ $imgHeight }}"{{ with $title }} title="{{ . }}"{{ end }}>
+{{- else -}}
+<img src="{{ $dest | safeURL }}" alt="{{ $alt }}" loading="lazy" decoding="async"{{ with $title }} title="{{ . }}"{{ end }}>
+{{- end -}}

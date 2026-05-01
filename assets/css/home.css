@@ -255,22 +255,6 @@
     background: currentColor;
 }
 
-@keyframes link-wipe {
-    0%   { transform: scaleX(1);     transform-origin: right; }
-    49%  { transform: scaleX(0.001); transform-origin: right; }
-    50%  { transform: scaleX(0.001); transform-origin: left;  }
-    100% { transform: scaleX(1);     transform-origin: left;  }
-}
-
-.link-wiping::after {
-    animation: link-wipe 0.22s ease forwards;
-}
-
-.link-char {
-    display: inline-block;
-    vertical-align: bottom;
-}
-
 @media (max-width: 768px) {
     .data-list-heading {
         margin: 0 auto 1.25rem auto;

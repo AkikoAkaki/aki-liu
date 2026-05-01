@@ -41,6 +41,12 @@
         link.dataset.charsWrapped = 'true';
     }
 
+    function setStaggerDelays(chars) {
+        chars.forEach((char, i) => {
+            char.style.setProperty('--font-shift-delay', `${i * STAGGER}ms`);
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         // --- Link text animation ---
         const links = document.querySelectorAll(
@@ -49,8 +55,7 @@
 
         links.forEach(link => {
             let origFamily, origStyle, target;
-            let timers = [];
-            let debounceTimer = null;
+            let hoverFrame = null;
             let isInitialized = false;
 
             function init() {
@@ -67,9 +72,20 @@
                 isInitialized = true;
             }
 
-            function cancel() {
-                timers.forEach(clearTimeout);
-                timers = [];
+            function orderedCharsForEnter() {
+                const chars = [...link.querySelectorAll('.link-char')];
+                if (link.classList.contains('archive-year-item')) {
+                    chars.reverse();
+                }
+                return chars;
+            }
+
+            function orderedCharsForLeave() {
+                const chars = [...link.querySelectorAll('.link-char')].reverse();
+                if (link.classList.contains('archive-year-item')) {
+                    chars.reverse();
+                }
+                return chars;
             }
 
             function triggerWipe() {
@@ -83,44 +99,37 @@
 
             function handleEnter() {
                 init();
-                cancel();
-                let chars = [...link.querySelectorAll('.link-char')];
-                if (link.classList.contains('archive-year-item')) {
-                    chars.reverse();
-                }
-                chars.forEach((char, i) => {
-                    timers.push(setTimeout(() => {
-                        char.style.fontFamily = target.family;
-                        char.style.fontStyle  = target.style;
-                    }, i * STAGGER));
+                const chars = orderedCharsForEnter();
+                setStaggerDelays(chars);
+                chars.forEach(char => {
+                    char.style.fontFamily = target.family;
+                    char.style.fontStyle  = target.style;
                 });
                 triggerWipe();
             }
 
             function handleLeave() {
                 if (!isInitialized) return;
-                cancel();
-                let chars = [...link.querySelectorAll('.link-char')].reverse();
-                if (link.classList.contains('archive-year-item')) {
-                    chars.reverse();
-                }
-                chars.forEach((char, i) => {
-                    timers.push(setTimeout(() => {
-                        char.style.fontFamily = origFamily;
-                        char.style.fontStyle  = origStyle;
-                    }, i * STAGGER));
+                const chars = orderedCharsForLeave();
+                setStaggerDelays(chars);
+                chars.forEach(char => {
+                    char.style.fontFamily = origFamily;
+                    char.style.fontStyle  = origStyle;
                 });
                 triggerWipe();
             }
 
+            function schedule(action) {
+                if (hoverFrame) cancelAnimationFrame(hoverFrame);
+                hoverFrame = requestAnimationFrame(action);
+            }
+
             link.addEventListener('mouseenter', () => {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(handleEnter, 20);
+                schedule(handleEnter);
             });
 
             link.addEventListener('mouseleave', () => {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(handleLeave, 20);
+                schedule(handleLeave);
             });
         });
 
@@ -158,8 +167,7 @@
             const input = searchBar.querySelector('.search-input');
             const fakePlaceholder = searchBar.querySelector('.search-fake-placeholder');
             if (fakePlaceholder && input) {
-                let searchTimers = [];
-                let searchDebounce = null;
+                let searchFrame = null;
                 let isHidden = false;
                 let isPlaceholderWrapped = false;
 
@@ -180,33 +188,38 @@
                     isPlaceholderWrapped = true;
                 }
 
-                function cancelSearch() { searchTimers.forEach(clearTimeout); searchTimers = []; }
                 function getChars() { return [...fakePlaceholder.querySelectorAll('.link-char')]; }
+                function scheduleSearch(action) {
+                    if (searchFrame) cancelAnimationFrame(searchFrame);
+                    searchFrame = requestAnimationFrame(action);
+                }
 
                 function animateToMono() {
                     initPlaceholder();
-                    cancelSearch();
-                    getChars().forEach((char, i) => {
-                        searchTimers.push(setTimeout(() => { char.style.fontFamily = FONT_MONO; }, i * STAGGER));
+                    const chars = getChars();
+                    setStaggerDelays(chars);
+                    chars.forEach(char => {
+                        char.style.fontFamily = FONT_MONO;
                     });
                 }
 
                 function animateToSans() {
                     if (!isPlaceholderWrapped) return;
-                    cancelSearch();
-                    getChars().reverse().forEach((char, i) => {
-                        searchTimers.push(setTimeout(() => { char.style.fontFamily = ''; }, i * STAGGER));
+                    const chars = getChars().reverse();
+                    setStaggerDelays(chars);
+                    chars.forEach(char => {
+                        char.style.fontFamily = '';
                     });
                 }
 
                 searchBar.addEventListener('mouseenter', () => {
-                    clearTimeout(searchDebounce);
-                    searchDebounce = setTimeout(() => { if (!isHidden) animateToMono(); }, 20);
+                    if (isHidden) return;
+                    scheduleSearch(animateToMono);
                 });
 
                 searchBar.addEventListener('mouseleave', () => {
-                    clearTimeout(searchDebounce);
-                    searchDebounce = setTimeout(() => { if (!isHidden) animateToSans(); }, 20);
+                    if (isHidden) return;
+                    scheduleSearch(animateToSans);
                 });
 
                 searchBar.addEventListener('click', () => input.focus());
@@ -214,7 +227,7 @@
                 input.addEventListener('focus', () => {
                     if (!isHidden) {
                         isHidden = true;
-                        cancelSearch();
+                        if (searchFrame) cancelAnimationFrame(searchFrame);
                         fakePlaceholder.classList.add('is-hiding');
                     }
                 });
