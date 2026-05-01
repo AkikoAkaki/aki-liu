@@ -694,7 +694,7 @@
 #archive-preview-container .preview-empty {
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 0.75rem;
-    color: #999;
+    color: var(--color-secondary);
     text-transform: uppercase;
 }
 

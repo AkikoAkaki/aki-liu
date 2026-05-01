@@ -13,8 +13,7 @@
         {{- $pageEnabledRaw = .Params.math -}}
     {{- end -}}
 
-    {{- $truthy := slice "true" "1" "yes" "on" -}}
-    {{- $pageEnabled := in $truthy (lower (printf "%v" $pageEnabledRaw)) -}}
+    {{- $pageEnabled := partial "is-truthy.html" $pageEnabledRaw -}}
 
     {{- $hasMathDelimiters := false -}}
     {{- if and (not $hasOverride) .IsPage -}}

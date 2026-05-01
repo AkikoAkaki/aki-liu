@@ -1,7 +1,6 @@
 ---
 title: Ideas
-date: 2025-01-01
 url: /insights/
 ---
 
-较轻的写作。针对各种话题的观察、想法和笔记。介于完整文章和片段之间，记录一闪而过的判断、对工具与生活方式的反思，以及尚未成熟到值得长篇展开的念头。
+Essays grounded in personal observation and analysis. Employs direct, transparent prose rather than literary or artistic devices. A space for ideas to articulate themselves without stylistic mediation—clarity and intellectual rigor prioritized.

@@ -1,5 +1,6 @@
 {{ define "sidebar-left" }}
 {{- $tagSlice := partialCached "tag-sidebar-data.html" . .Path -}}
+{{- /* NOTE: mirrors identical query in "main" block — keep both in sync if filter changes. */ -}}
 {{ $regularPages := where .Pages "Kind" "page" }}
 {{ $years := slice }}
 {{ range $regularPages.GroupByPublishDate "2006" }}
@@ -68,6 +69,7 @@
         <span class="header-col-project">Project:</span>
     </div>
 
+    {{- /* NOTE: mirrors identical query in "sidebar-left" block — keep both in sync if filter changes. */ -}}
     {{ $regularPages := where .Pages "Kind" "page" }}
 
     {{ partial "archive-list-items.html" (dict "pages" $regularPages) }}

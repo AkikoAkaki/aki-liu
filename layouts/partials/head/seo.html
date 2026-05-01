@@ -60,8 +60,7 @@
     {{- end -}}
 {{- end -}}
 
-{{- $truthy := slice "true" "1" "yes" "on" -}}
-{{- $noindex := in $truthy (lower (printf "%v" ($page.Params.noindex | default false))) -}}
+{{- $noindex := partial "is-truthy.html" ($page.Params.noindex | default false) -}}
 {{- if or (eq $page.Kind "404") $noindex -}}
     <meta name="robots" content="noindex,nofollow">
 {{- else -}}

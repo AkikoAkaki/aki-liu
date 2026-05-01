@@ -24,15 +24,14 @@
     {{- $type = "video/ogg" -}}
   {{- end -}}
 {{- end -}}
-{{- $truthy := slice "true" "1" "yes" "on" "y" -}}
 {{- $autoplay := lower (default "" (.Get "autoplay")) -}}
 {{- $mutedParam := lower (default "" (.Get "muted")) -}}
 {{- $loop := lower (default "" (.Get "loop")) -}}
 {{- $playsinline := lower (default "" (.Get "playsinline")) -}}
-{{- $autoplayEnabled := in $truthy $autoplay -}}
-{{- $mutedEnabled := or (in $truthy $mutedParam) (and $autoplayEnabled (eq $mutedParam "")) -}}
-{{- $loopEnabled := in $truthy $loop -}}
-{{- $playsinlineEnabled := or (eq $playsinline "") (in $truthy $playsinline) -}}
+{{- $autoplayEnabled := partial "is-truthy.html" $autoplay -}}
+{{- $mutedEnabled := or (partial "is-truthy.html" $mutedParam) (and $autoplayEnabled (eq $mutedParam "")) -}}
+{{- $loopEnabled := partial "is-truthy.html" $loop -}}
+{{- $playsinlineEnabled := or (eq $playsinline "") (partial "is-truthy.html" $playsinline) -}}
 <figure class="local-video{{ with .Get "class" }} {{ . }}{{ end }}">
   <video class="local-video__media" controls preload="{{ $preload }}" {{ if $autoplayEnabled }}autoplay{{ end }} {{ if $mutedEnabled }}muted{{ end }} {{ if $loopEnabled }}loop{{ end }} {{ if $playsinlineEnabled }}playsinline{{ end }}{{ with $poster }} poster="{{ . }}"{{ end }}>
     <source src="{{ $url }}#t=0.001"{{ with $type }} type="{{ . }}"{{ end }}>

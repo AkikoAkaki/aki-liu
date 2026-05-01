@@ -26,7 +26,7 @@
         <main class="site-main">
             {{ block "main" . }}{{ end }}
             <footer class="site-footer">
-                <span>©2026</span>
+                <span>©{{ now.Year }}</span>
                 <span>ALL RIGHTS RESERVED</span>
                 <span class="footer-line-preserve-case">ENGINEER with THOUGHTS</span>
                 <img src="{{ "images/signature.png" | relURL }}" alt="AKI LIU" class="footer-signature">
@@ -39,30 +39,11 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const navLinks = document.querySelectorAll('.nav-links a');
-            const descDisplay = document.getElementById('nav-desc');
-
-            navLinks.forEach(link => {
-                link.addEventListener('mouseenter', () => {
-                    const desc = link.getAttribute('data-desc');
-                    if (desc) {
-                        descDisplay.textContent = desc;
-                        descDisplay.classList.add('show');
-                    }
-                });
-                link.addEventListener('mouseleave', () => {
-                    descDisplay.classList.remove('show');
-                });
-            });
-        });
-    </script>
-
-    <script>
         (function () {
             const FONT_SERIF = '"Newsreader", "Playfair Display", serif';
             const FONT_SANS  = '"Switzer", "Inter", sans-serif';
             const FONT_MONO  = '"JetBrains Mono", "Geist Mono", monospace';
+            const STAGGER = 35;
 
             const FONT_MAP = {
                 sans:  { family: FONT_SERIF, style: 'italic' },
@@ -101,9 +82,8 @@
                 link.dataset.charsWrapped = 'true';
             }
 
-            const STAGGER = 35;
-
             document.addEventListener('DOMContentLoaded', () => {
+                // --- Link text animation ---
                 const links = document.querySelectorAll(
                     '.bio-text a, .now-section a, .connect-section a:not(.connect-pill), .data-link, .archive-tag-item, .archive-year-item'
                 );
@@ -153,7 +133,7 @@
                         cancel();
                         let chars = [...link.querySelectorAll('.link-char')].reverse();
                         if (link.classList.contains('archive-year-item')) {
-                            chars.reverse(); // Reverse again to animate left to right on leave
+                            chars.reverse();
                         }
                         chars.forEach((char, i) => {
                             timers.push(setTimeout(() => {
@@ -174,88 +154,98 @@
                         debounceTimer = setTimeout(handleLeave, 20);
                     });
                 });
-            });
-        })();
-    </script>
 
-    <script>
-        (function () {
-            document.addEventListener('DOMContentLoaded', () => {
+                // --- Nav description hover ---
+                const navLinks = document.querySelectorAll('.nav-links a');
+                const descDisplay = document.getElementById('nav-desc');
+
+                navLinks.forEach(link => {
+                    link.addEventListener('mouseenter', () => {
+                        const desc = link.getAttribute('data-desc');
+                        if (desc) {
+                            descDisplay.textContent = desc;
+                            descDisplay.classList.add('show');
+                        }
+                    });
+                    link.addEventListener('mouseleave', () => {
+                        descDisplay.classList.remove('show');
+                    });
+                });
+
+                // --- Search placeholder animation ---
                 const searchBar = document.querySelector('.archive-search');
-                if (!searchBar) return;
+                if (searchBar) {
+                    const input = searchBar.querySelector('.search-input');
+                    const fakePlaceholder = searchBar.querySelector('.search-fake-placeholder');
+                    if (fakePlaceholder && input) {
+                        const text = fakePlaceholder.textContent;
+                        fakePlaceholder.innerHTML = '';
+                        [...text].forEach(char => {
+                            if (char === ' ') {
+                                fakePlaceholder.appendChild(document.createTextNode(char));
+                            } else {
+                                const span = document.createElement('span');
+                                span.className = 'link-char';
+                                span.textContent = char;
+                                fakePlaceholder.appendChild(span);
+                            }
+                        });
 
-                const input = searchBar.querySelector('.search-input');
-                const fakePlaceholder = searchBar.querySelector('.search-fake-placeholder');
-                if (!fakePlaceholder || !input) return;
+                        let searchTimers = [];
+                        let searchDebounce = null;
+                        let isHidden = false;
 
-                const text = fakePlaceholder.textContent;
-                fakePlaceholder.innerHTML = '';
-                [...text].forEach(char => {
-                    if (char === ' ') {
-                        fakePlaceholder.appendChild(document.createTextNode(char));
-                    } else {
-                        const span = document.createElement('span');
-                        span.className = 'link-char';
-                        span.textContent = char;
-                        fakePlaceholder.appendChild(span);
+                        function cancelSearch() { searchTimers.forEach(clearTimeout); searchTimers = []; }
+                        function getChars() { return [...fakePlaceholder.querySelectorAll('.link-char')]; }
+
+                        function animateToMono() {
+                            cancelSearch();
+                            getChars().forEach((char, i) => {
+                                searchTimers.push(setTimeout(() => { char.style.fontFamily = FONT_MONO; }, i * STAGGER));
+                            });
+                        }
+
+                        function animateToSans() {
+                            cancelSearch();
+                            getChars().reverse().forEach((char, i) => {
+                                searchTimers.push(setTimeout(() => { char.style.fontFamily = ''; }, i * STAGGER));
+                            });
+                        }
+
+                        searchBar.addEventListener('mouseenter', () => {
+                            clearTimeout(searchDebounce);
+                            searchDebounce = setTimeout(() => { if (!isHidden) animateToMono(); }, 20);
+                        });
+
+                        searchBar.addEventListener('mouseleave', () => {
+                            clearTimeout(searchDebounce);
+                            searchDebounce = setTimeout(() => { if (!isHidden) animateToSans(); }, 20);
+                        });
+
+                        searchBar.addEventListener('click', () => input.focus());
+
+                        input.addEventListener('focus', () => {
+                            if (!isHidden) {
+                                isHidden = true;
+                                cancelSearch();
+                                fakePlaceholder.classList.add('is-hiding');
+                            }
+                        });
+
+                        fakePlaceholder.addEventListener('animationend', () => {
+                            if (isHidden) fakePlaceholder.style.opacity = '0';
+                        });
+
+                        input.addEventListener('blur', () => {
+                            if (input.value === '') {
+                                isHidden = false;
+                                fakePlaceholder.classList.remove('is-hiding');
+                                fakePlaceholder.style.opacity = '';
+                                getChars().forEach(char => { char.style.fontFamily = ''; });
+                            }
+                        });
                     }
-                });
-
-                const FONT_MONO = '"JetBrains Mono", "Geist Mono", monospace';
-                const STAGGER = 35;
-                let timers = [];
-                let debounceTimer = null;
-                let isHidden = false;
-
-                function cancel() { timers.forEach(clearTimeout); timers = []; }
-                function getChars() { return [...fakePlaceholder.querySelectorAll('.link-char')]; }
-
-                function animateToMono() {
-                    cancel();
-                    getChars().forEach((char, i) => {
-                        timers.push(setTimeout(() => { char.style.fontFamily = FONT_MONO; }, i * STAGGER));
-                    });
                 }
-
-                function animateToSans() {
-                    cancel();
-                    getChars().reverse().forEach((char, i) => {
-                        timers.push(setTimeout(() => { char.style.fontFamily = ''; }, i * STAGGER));
-                    });
-                }
-
-                searchBar.addEventListener('mouseenter', () => {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => { if (!isHidden) animateToMono(); }, 20);
-                });
-
-                searchBar.addEventListener('mouseleave', () => {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => { if (!isHidden) animateToSans(); }, 20);
-                });
-
-                searchBar.addEventListener('click', () => input.focus());
-
-                input.addEventListener('focus', () => {
-                    if (!isHidden) {
-                        isHidden = true;
-                        cancel();
-                        fakePlaceholder.classList.add('is-hiding');
-                    }
-                });
-
-                fakePlaceholder.addEventListener('animationend', () => {
-                    if (isHidden) fakePlaceholder.style.opacity = '0';
-                });
-
-                input.addEventListener('blur', () => {
-                    if (input.value === '') {
-                        isHidden = false;
-                        fakePlaceholder.classList.remove('is-hiding');
-                        fakePlaceholder.style.opacity = '';
-                        getChars().forEach(char => { char.style.fontFamily = ''; });
-                    }
-                });
             });
         })();
     </script>

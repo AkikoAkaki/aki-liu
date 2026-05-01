@@ -376,7 +376,7 @@
     font-family: var(--font-mono); /* 展开后卡片名使用 Mono 字体 */
     font-size: 0.85rem;
     font-weight: 500; /* 字重轻一点 */
-    color: #000000; /* 展开后卡片名改为黑色 */
+    color: var(--color-heading); /* forced heading color, switches correctly in dark mode */
     text-transform: uppercase;
     letter-spacing: 0.01em; /* 缩小字母间距 */
     display: none; /* Hidden by default */
@@ -391,7 +391,7 @@
 }
 
 .now-card-expandable.is-expanded .nc-title-expanded {
-    color: #000000; /* 展开态强制黑色 */
+    color: var(--color-heading); /* forced heading color, switches correctly in dark mode */
     letter-spacing: 0; /* 展开态字距进一步收紧，避免感知不明显 */
 }
 
@@ -459,7 +459,7 @@
     font-size: 0.96rem; /* 再小一点点 */
     line-height: 1; /* 继续压缩行间距 */
     letter-spacing: -0.01em; /* 字母间距再收紧一点 */
-    color: #666666; /* 指定色值为 666666 */
+    color: var(--color-secondary);
     margin: 0 0 0.8rem 0; /* 去掉默认上边距并收紧段间距 */
     font-weight: 400;
 }
@@ -552,7 +552,7 @@
     margin: 0;
     font-family: var(--font-sans);
     font-size: 0.96rem; /* 和正文同样大小 */
-    color: #666666; /* 同样颜色 666666 */
+    color: var(--color-secondary);
     line-height: 1.38; /* 和正文同样行距 */
     letter-spacing: -0.01em; /* 和正文同样字距 */
     font-weight: 400; /* 完全非粗体 */

@@ -1,0 +1,5 @@
+{{- /* Canonical truthy check for boolean-like front-matter params.
+     Usage:  {{ partial "is-truthy.html" $value }}  → bool
+     Accepts: true/1/yes/on/y (case-insensitive). */ -}}
+{{- $v := lower (printf "%v" (. | default false)) -}}
+{{- return (in (slice "true" "1" "yes" "on" "y") $v) -}}

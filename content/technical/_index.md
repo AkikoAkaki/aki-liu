@@ -1,7 +1,6 @@
 ---
 title: Technical
-date: 2025-01-01
 url: /engineering/
 ---
 
-工程与理论的笔记和思考。涉及 AI 基础设施、机器学习系统、底层实现细节，以及在阅读论文、调试系统、构建工具时积累下来的零碎洞察。
+A documentation of technical learning and development practice. Notes on discoveries accumulated through engaging with research, debugging, problem-solving, and systems implementation. The insights and knowledge that emerge from hands-on technical work.
