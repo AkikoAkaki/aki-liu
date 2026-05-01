@@ -1,0 +1,5 @@
+{{- $text := .text | default "" -}}
+{{- range $from, $to := .replacements -}}
+    {{- $text = replace $text $from $to -}}
+{{- end -}}
+{{- return $text -}}

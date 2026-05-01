@@ -322,10 +322,6 @@
 .link-char {
     display: inline-block;
     vertical-align: bottom;
-    transition-property: font-family, font-style;
-    transition-duration: 0s, 0s;
-    transition-delay: var(--font-shift-delay, 0ms), var(--font-shift-delay, 0ms);
-    transition-timing-function: linear, linear;
 }
 
 @keyframes search-placeholder-hide {

@@ -41,10 +41,10 @@
         link.dataset.charsWrapped = 'true';
     }
 
-    function setStaggerDelays(chars) {
-        chars.forEach((char, i) => {
-            char.style.setProperty('--font-shift-delay', `${i * STAGGER}ms`);
-        });
+    function staggerFontChange(chars, applyChange) {
+        return chars.map((char, i) => setTimeout(() => {
+            applyChange(char);
+        }, i * STAGGER));
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -55,7 +55,8 @@
 
         links.forEach(link => {
             let origFamily, origStyle, target;
-            let hoverFrame = null;
+            let debounceTimer = null;
+            let timers = [];
             let isInitialized = false;
 
             function init() {
@@ -97,11 +98,16 @@
                 });
             }
 
+            function cancel() {
+                timers.forEach(clearTimeout);
+                timers = [];
+            }
+
             function handleEnter() {
                 init();
+                cancel();
                 const chars = orderedCharsForEnter();
-                setStaggerDelays(chars);
-                chars.forEach(char => {
+                timers = staggerFontChange(chars, char => {
                     char.style.fontFamily = target.family;
                     char.style.fontStyle  = target.style;
                 });
@@ -110,26 +116,23 @@
 
             function handleLeave() {
                 if (!isInitialized) return;
+                cancel();
                 const chars = orderedCharsForLeave();
-                setStaggerDelays(chars);
-                chars.forEach(char => {
+                timers = staggerFontChange(chars, char => {
                     char.style.fontFamily = origFamily;
                     char.style.fontStyle  = origStyle;
                 });
                 triggerWipe();
             }
 
-            function schedule(action) {
-                if (hoverFrame) cancelAnimationFrame(hoverFrame);
-                hoverFrame = requestAnimationFrame(action);
-            }
-
             link.addEventListener('mouseenter', () => {
-                schedule(handleEnter);
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(handleEnter, 20);
             });
 
             link.addEventListener('mouseleave', () => {
-                schedule(handleLeave);
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(handleLeave, 20);
             });
         });
 
@@ -167,7 +170,8 @@
             const input = searchBar.querySelector('.search-input');
             const fakePlaceholder = searchBar.querySelector('.search-fake-placeholder');
             if (fakePlaceholder && input) {
-                let searchFrame = null;
+                let searchTimers = [];
+                let searchDebounce = null;
                 let isHidden = false;
                 let isPlaceholderWrapped = false;
 
@@ -189,37 +193,38 @@
                 }
 
                 function getChars() { return [...fakePlaceholder.querySelectorAll('.link-char')]; }
-                function scheduleSearch(action) {
-                    if (searchFrame) cancelAnimationFrame(searchFrame);
-                    searchFrame = requestAnimationFrame(action);
+
+                function cancelSearch() {
+                    searchTimers.forEach(clearTimeout);
+                    searchTimers = [];
                 }
 
                 function animateToMono() {
                     initPlaceholder();
+                    cancelSearch();
                     const chars = getChars();
-                    setStaggerDelays(chars);
-                    chars.forEach(char => {
+                    searchTimers = staggerFontChange(chars, char => {
                         char.style.fontFamily = FONT_MONO;
                     });
                 }
 
                 function animateToSans() {
                     if (!isPlaceholderWrapped) return;
+                    cancelSearch();
                     const chars = getChars().reverse();
-                    setStaggerDelays(chars);
-                    chars.forEach(char => {
+                    searchTimers = staggerFontChange(chars, char => {
                         char.style.fontFamily = '';
                     });
                 }
 
                 searchBar.addEventListener('mouseenter', () => {
-                    if (isHidden) return;
-                    scheduleSearch(animateToMono);
+                    clearTimeout(searchDebounce);
+                    searchDebounce = setTimeout(() => { if (!isHidden) animateToMono(); }, 20);
                 });
 
                 searchBar.addEventListener('mouseleave', () => {
-                    if (isHidden) return;
-                    scheduleSearch(animateToSans);
+                    clearTimeout(searchDebounce);
+                    searchDebounce = setTimeout(() => { if (!isHidden) animateToSans(); }, 20);
                 });
 
                 searchBar.addEventListener('click', () => input.focus());
@@ -227,7 +232,7 @@
                 input.addEventListener('focus', () => {
                     if (!isHidden) {
                         isHidden = true;
-                        if (searchFrame) cancelAnimationFrame(searchFrame);
+                        cancelSearch();
                         fakePlaceholder.classList.add('is-hiding');
                     }
                 });
