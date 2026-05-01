@@ -4,32 +4,7 @@
 
 ---
 
-## 1. Switzer 字体格式：OTF → WOFF2
-
-### 不改会怎样
-浏览器每次加载页面都要下载并解码 OTF 格式字体，总计约 **645 KB**（10 个字重文件×约 35-48 KB 每个）。OTF 是桌面字体格式，浏览器对其解码效率低于 WOFF2。
-
-### 改了会怎样
-- 字体文件体积减少约 **50–70%**（预计降到 200–320 KB）
-- 首次加载时间缩短，尤其是在移动端/低速网络
-- 视觉效果**完全不变**，WOFF2 是 OTF 的无损压缩
-
-### 应该怎么改
-1. 使用字体转换工具（如 [Google Fonts Helper](https://google-webfonts-helper.herokuapp.com/)、FontSquirrel Webfont Generator 或命令行工具 `pyftsubset`/`woff2_compress`）将 10 个保留的 OTF 文件转换为 WOFF2
-2. 将生成的 `.woff2` 文件放入 `/static/fonts/switzer/`
-3. 在 `assets/css/base.css` 中将所有 `@font-face` 的 `src` 从：
-   ```css
-   src: url("/fonts/switzer/Switzer-Light.otf") format("opentype");
-   ```
-   改为：
-   ```css
-   src: url("/fonts/switzer/Switzer-Light.woff2") format("woff2");
-   ```
-4. 可保留 OTF 作为 fallback（format 列表中添加两项），但通常仅 WOFF2 已足够覆盖所有现代浏览器
-
----
-
-## 2. 导航描述栏的 blur 过渡效果
+## 1. 导航描述栏的 blur 过渡效果 (原第 2 项)
 
 ### 不改会怎样
 当前 `.nav-description-display` 使用 `filter: blur(4px)` 到 `filter: blur(0px)` 的过渡实现"焦外→焦内"淡入效果。`filter` 每帧都会触发全像素重新光栅化，GPU 开销较高（每次 hover 进入导航时都发生）。
@@ -61,7 +36,7 @@
 
 ---
 
-## 3. 列表页预览区 HTML 负载（`.Content` → `.Summary`）
+## 2. 列表页预览区 HTML 负载（`.Content` → `.Summary`） (原第 3 项)
 
 ### 当前情况
 `layouts/partials/archive-list-items.html` 第 31 行：
@@ -101,7 +76,7 @@
 
 ---
 
-## 4. signature.png 压缩
+## 3. signature.png 压缩 (原第 4 项)
 
 ### 不改会怎样
 `/static/images/signature.png` 文件大小 **368 KB**，但实际渲染最大宽度仅为 104px（移动端 56-80px）。`loading="lazy"` 已添加，可延迟加载，但文件体积仍然很大，回访用户缓存命中前都需下载。
@@ -117,25 +92,3 @@
 3. 替换 `/static/images/signature.png` 为压缩后的版本
 4. 如转为 WebP，同时修改 `baseof.html` 第 32 行的 `src` 后缀为 `.webp`
    （或使用 `<picture>` 标签提供 PNG fallback）
-
----
-
-## 5. signature.png 的 width/height 属性（防 CLS）
-
-### 不改会怎样
-缺少 `width` 和 `height` HTML 属性，浏览器在图片加载完成前无法预知其宽高比，可能导致页脚区域在图片加载瞬间发生布局偏移（CLS 指标变差）。由于已添加 `loading="lazy"`，该问题仅在用户滚动到底部时发生，影响相对较小。
-
-### 改了会怎样
-浏览器提前预留图片占位空间，完全消除布局偏移。视觉上完全无变化。
-
-### 应该怎么改
-首先用任意工具查看 `signature.png` 的实际像素尺寸（宽×高），然后在 `baseof.html` 第 32 行添加：
-```html
-<img src="{{ "images/signature.png" | relURL }}" 
-     alt="AKI LIU" 
-     class="footer-signature" 
-     loading="lazy"
-     width="实际宽度px"
-     height="实际高度px">
-```
-CSS 的 `clamp()` 会覆盖 HTML 属性做出正确的响应式渲染，但浏览器会用这两个属性计算正确的宽高比来预留空间。

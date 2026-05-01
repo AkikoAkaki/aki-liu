@@ -89,26 +89,30 @@
                 );
 
                 links.forEach(link => {
-                    const computed = getComputedStyle(link);
-                    const origFamily = computed.fontFamily;
-                    const origStyle  = computed.fontStyle;
-                    let target = FONT_MAP[detectType(origFamily)];
-                    
-                    if (link.classList.contains('hover-mono') || link.closest('.archive-filters-container')) {
-                        target = { family: FONT_MONO, style: 'normal' };
-                    }
-
-                    wrapChars(link);
-
+                    let origFamily, origStyle, target;
                     let timers = [];
                     let debounceTimer = null;
+                    let isInitialized = false;
+
+                    function init() {
+                        if (isInitialized) return;
+                        const computed = getComputedStyle(link);
+                        origFamily = computed.fontFamily;
+                        origStyle  = computed.fontStyle;
+                        target = FONT_MAP[detectType(origFamily)];
+                        
+                        if (link.classList.contains('hover-mono') || link.closest('.archive-filters-container')) {
+                            target = { family: FONT_MONO, style: 'normal' };
+                        }
+                        wrapChars(link);
+                        isInitialized = true;
+                    }
 
                     function cancel() {
                         timers.forEach(clearTimeout);
                         timers = [];
                     }
 
-                    // Use double-rAF instead of void offsetWidth to avoid forced synchronous layout
                     function triggerWipe() {
                         link.classList.remove('link-wiping');
                         requestAnimationFrame(() => {
@@ -119,6 +123,7 @@
                     }
 
                     function handleEnter() {
+                        init();
                         cancel();
                         let chars = [...link.querySelectorAll('.link-char')];
                         if (link.classList.contains('archive-year-item')) {
@@ -134,6 +139,7 @@
                     }
 
                     function handleLeave() {
+                        if (!isInitialized) return;
                         cancel();
                         let chars = [...link.querySelectorAll('.link-char')].reverse();
                         if (link.classList.contains('archive-year-item')) {
@@ -193,27 +199,33 @@
                     const input = searchBar.querySelector('.search-input');
                     const fakePlaceholder = searchBar.querySelector('.search-fake-placeholder');
                     if (fakePlaceholder && input) {
-                        const text = fakePlaceholder.textContent;
-                        fakePlaceholder.innerHTML = '';
-                        [...text].forEach(char => {
-                            if (char === ' ') {
-                                fakePlaceholder.appendChild(document.createTextNode(char));
-                            } else {
-                                const span = document.createElement('span');
-                                span.className = 'link-char';
-                                span.textContent = char;
-                                fakePlaceholder.appendChild(span);
-                            }
-                        });
-
                         let searchTimers = [];
                         let searchDebounce = null;
                         let isHidden = false;
+                        let isPlaceholderWrapped = false;
+
+                        function initPlaceholder() {
+                            if (isPlaceholderWrapped) return;
+                            const text = fakePlaceholder.textContent;
+                            fakePlaceholder.innerHTML = '';
+                            [...text].forEach(char => {
+                                if (char === ' ') {
+                                    fakePlaceholder.appendChild(document.createTextNode(char));
+                                } else {
+                                    const span = document.createElement('span');
+                                    span.className = 'link-char';
+                                    span.textContent = char;
+                                    fakePlaceholder.appendChild(span);
+                                }
+                            });
+                            isPlaceholderWrapped = true;
+                        }
 
                         function cancelSearch() { searchTimers.forEach(clearTimeout); searchTimers = []; }
                         function getChars() { return [...fakePlaceholder.querySelectorAll('.link-char')]; }
 
                         function animateToMono() {
+                            initPlaceholder();
                             cancelSearch();
                             getChars().forEach((char, i) => {
                                 searchTimers.push(setTimeout(() => { char.style.fontFamily = FONT_MONO; }, i * STAGGER));
@@ -221,6 +233,7 @@
                         }
 
                         function animateToSans() {
+                            if (!isPlaceholderWrapped) return;
                             cancelSearch();
                             getChars().reverse().forEach((char, i) => {
                                 searchTimers.push(setTimeout(() => { char.style.fontFamily = ''; }, i * STAGGER));
@@ -256,11 +269,14 @@
                                 isHidden = false;
                                 fakePlaceholder.classList.remove('is-hiding');
                                 fakePlaceholder.style.opacity = '';
-                                getChars().forEach(char => { char.style.fontFamily = ''; });
+                                if (isPlaceholderWrapped) {
+                                    getChars().forEach(char => { char.style.fontFamily = ''; });
+                                }
                             }
                         });
                     }
                 }
+
             });
         })();
     </script>
