@@ -7,11 +7,24 @@
 <!-- Here I load the comparison fonts you requested: Syncopate, JetBrains Mono, Playfair Display, Inter, and Newsreader/Geist Mono for easier switching -->
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
-{{- /* CSS pipeline: concatenate, minify, fingerprint */ -}}
+{{- /* CSS pipeline: global base bundle + route-level styles */ -}}
 {{- $base := resources.Get "css/base.css" -}}
 {{- $layout := resources.Get "css/layout.css" -}}
 {{- $components := resources.Get "css/components.css" -}}
-{{- $home := resources.Get "css/home.css" -}}
-{{- $post := resources.Get "css/post.css" -}}
-{{- $style := slice $base $layout $components $home $post | resources.Concat "css/bundle.css" | resources.Minify | fingerprint -}}
+{{- $style := slice $base $layout $components | resources.Concat "css/bundle.css" | resources.Minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+
+{{- if .IsHome -}}
+    {{- $home := resources.Get "css/home.css" -}}
+    {{- $homeStyle := $home | resources.Minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $homeStyle.RelPermalink }}" integrity="{{ $homeStyle.Data.Integrity }}">
+{{- end -}}
+
+{{- if .IsPage -}}
+    {{- $post := resources.Get "css/post.css" -}}
+    {{- $postStyle := $post | resources.Minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $postStyle.RelPermalink }}" integrity="{{ $postStyle.Data.Integrity }}">
+{{- end -}}
+
+{{- $mainJS := resources.Get "js/main.js" | js.Build (dict "targetPath" "js/main.js") | resources.Minify | fingerprint -}}
+<script defer src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}"></script>

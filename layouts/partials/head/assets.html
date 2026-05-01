@@ -1,4 +1,5 @@
-{{- partialCached "head/core-assets.html" .Site "head-core-assets" -}}
+{{- $coreAssetsKey := printf "%s|%s|%s|%t|%t" .Language.Lang .Kind .Section .IsHome .IsPage -}}
+{{- partialCached "head/core-assets.html" . $coreAssetsKey -}}
 
 {{- /* KaTeX (page-level gating is handled in this partial) */ -}}
 {{- $siteKaTeX := or .Site.Params.enablekatex .Site.Params.enableKaTeX -}}
