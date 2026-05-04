@@ -1,7 +1,7 @@
 {{ define "sidebar-left" }}
 {{- $tagSlice := partialCached "tag-sidebar-data.html" . .Path -}}
-{{- /* NOTE: mirrors identical query in "main" block — keep both in sync if filter changes. */ -}}
-{{ $regularPages := where .Pages "Kind" "page" }}
+{{- $regularPages := where .Pages "Kind" "page" -}}
+{{- .Store.Set "regularPages" $regularPages -}}
 {{ $years := slice }}
 {{ range $regularPages.GroupByPublishDate "2006" }}
     {{ $years = $years | append .Key }}
@@ -54,6 +54,7 @@
 {{ end }}
 
 {{ define "main" }}
+{{ $regularPages := .Store.Get "regularPages" }}
 <div class="archive-main-col">
     {{ if .Content }}
     <div class="archive-intro-section">
@@ -69,9 +70,6 @@
         <span class="header-col-project">Project:</span>
     </div>
 
-    {{- /* NOTE: mirrors identical query in "sidebar-left" block — keep both in sync if filter changes. */ -}}
-    {{ $regularPages := where .Pages "Kind" "page" }}
-
     {{ partial "archive-list-items.html" (dict "pages" $regularPages) }}
 </div>
 {{ end }}
@@ -86,156 +84,4 @@
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const items = document.querySelectorAll('.archive-item');
-    const previewContainer = document.getElementById('archive-preview-container');
-    if (!previewContainer) return;
-
-    previewContainer.innerHTML = '';
-
-    let currentHoverNode = null;
-    let leaveTimeout = null;
-    let renderToken = 0;
-
-    function injectContent(item) {
-        const previewData = item.querySelector('.item-preview-data');
-        if (!previewData) return false;
-        previewContainer.innerHTML = previewData.innerHTML;
-        previewContainer.dataset.href = previewData.dataset.href || '';
-        previewContainer.querySelectorAll('figure.local-video, video, audio, iframe').forEach(el => el.remove());
-        return true;
-    }
-
-    function computeBottomLimit() {
-        const rightCols = previewContainer.closest('.archive-right-cols');
-        const viewportBottom = window.innerHeight;
-        if (!rightCols) return viewportBottom - 8;
-        const rect = rightCols.getBoundingClientRect();
-        const styles = getComputedStyle(rightCols);
-        const paddingBottom = parseFloat(styles.paddingBottom) || 0;
-        const colsBottom = rect.bottom - paddingBottom;
-        // 取容器内边和视口下边的较小值：sticky 未生效时容器底可能超出视口
-        return Math.min(colsBottom, viewportBottom) - 8;
-    }
-
-    async function fitPreview(token) {
-        const summary = previewContainer.querySelector('.preview-summary');
-        if (!summary) return;
-        const href = previewContainer.dataset.href || '#';
-
-        if (document.fonts && document.fonts.ready) {
-            try { await document.fonts.ready; } catch (e) {}
-        }
-        if (token !== renderToken) return;
-
-        const imgs = Array.from(summary.querySelectorAll('img'));
-        await Promise.all(imgs.map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise(resolve => {
-                img.addEventListener('load', resolve, { once: true });
-                img.addEventListener('error', resolve, { once: true });
-            });
-        }));
-        if (token !== renderToken) return;
-
-        const liveSummary = previewContainer.querySelector('.preview-summary');
-        if (!liveSummary || liveSummary !== summary) return;
-
-        const bottomLimit = computeBottomLimit();
-        const children = Array.from(summary.children);
-        let firstOverflowIndex = -1;
-        for (let i = 0; i < children.length; i++) {
-            if (children[i].getBoundingClientRect().bottom > bottomLimit) {
-                firstOverflowIndex = i;
-                break;
-            }
-        }
-
-        if (firstOverflowIndex === -1) return;
-
-        for (let i = children.length - 1; i >= firstOverflowIndex; i--) {
-            children[i].remove();
-        }
-
-        const marker = document.createElement('a');
-        marker.className = 'preview-continuation';
-        marker.href = href;
-        marker.textContent = '(to be continued)';
-        summary.appendChild(marker);
-
-        while (summary.children.length > 1 && marker.getBoundingClientRect().bottom > bottomLimit) {
-            const prev = marker.previousElementSibling;
-            if (!prev) break;
-            prev.remove();
-        }
-    }
-
-    async function renderForItem(item) {
-        const token = ++renderToken;
-        if (!injectContent(item)) return;
-        await fitPreview(token);
-        if (token === renderToken) {
-            previewContainer.style.opacity = '1';
-        }
-    }
-
-    let resizeRaf = 0;
-    const resizeObserver = new ResizeObserver(() => {
-        if (!currentHoverNode) return;
-        if (resizeRaf) cancelAnimationFrame(resizeRaf);
-        resizeRaf = requestAnimationFrame(() => {
-            if (currentHoverNode) renderForItem(currentHoverNode);
-        });
-    });
-    const rightCols = document.querySelector('.archive-right-cols');
-    if (rightCols) resizeObserver.observe(rightCols);
-    window.addEventListener('resize', () => {
-        if (currentHoverNode) renderForItem(currentHoverNode);
-    });
-
-    let scrollRaf = 0;
-    window.addEventListener('scroll', () => {
-        if (!currentHoverNode) return;
-        if (scrollRaf) cancelAnimationFrame(scrollRaf);
-        scrollRaf = requestAnimationFrame(() => {
-            if (currentHoverNode) renderForItem(currentHoverNode);
-        });
-    }, { passive: true });
-
-    items.forEach(item => {
-        item.addEventListener('mouseenter', () => {
-            if (leaveTimeout) clearTimeout(leaveTimeout);
-
-            if (currentHoverNode === item) {
-                previewContainer.style.opacity = '1';
-                return;
-            }
-
-            currentHoverNode = item;
-            previewContainer.style.opacity = '0';
-            setTimeout(() => {
-                if (currentHoverNode === item) renderForItem(item);
-            }, 100);
-        });
-
-        item.addEventListener('mouseleave', () => {
-            if (currentHoverNode === item) {
-                leaveTimeout = setTimeout(() => {
-                    previewContainer.style.opacity = '0';
-                    currentHoverNode = null;
-                    renderToken++;
-                    setTimeout(() => {
-                        if (!currentHoverNode) {
-                            previewContainer.innerHTML = '';
-                            delete previewContainer.dataset.href;
-                        }
-                    }, 200);
-                }, 150);
-            }
-        });
-    });
-});
-</script>
 {{ end }}

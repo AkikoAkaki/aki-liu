@@ -1,6 +1,6 @@
 /* ==========================================================================
    Homepage Styles
-   首页专用样式：intro、work table、now/connect sections
+   棣栭〉涓撶敤鏍峰紡锛歩ntro銆亀ork table銆乶ow/connect sections
    ========================================================================== */
 
 /* Animation */
@@ -22,7 +22,7 @@
 .home-container {
     display: flex;
     flex-direction: column;
-    gap: 12rem; /* 极致留白：将块间距拉大到近 192px */
+    gap: 12rem; /* 鏋佽嚧鐣欑櫧锛氬皢鍧楅棿璺濇媺澶у埌杩?192px */
     padding-top: 4rem;
     padding-bottom: 8rem;
 }
@@ -54,14 +54,14 @@
     animation-delay: 0s;
     display: flex;
     flex-direction: column;
-    align-items: center; /* 整体居中 */
-    justify-content: center; /* 垂直方向向下压，保持页面中心位置 */
-    min-height: 75vh; /* 让首屏 Hero 区域占据约七成到八成的视口高度，将下方的列表顺势推至屏幕外 */
+    align-items: center; /* 鏁翠綋灞呬腑 */
+    justify-content: center; /* 鍨傜洿鏂瑰悜鍚戜笅鍘嬶紝淇濇寔椤甸潰涓績浣嶇疆 */
+    min-height: 75vh; /* 璁╅灞?Hero 鍖哄煙鍗犳嵁绾︿竷鎴愬埌鍏垚鐨勮鍙ｉ珮搴︼紝灏嗕笅鏂圭殑鍒楄〃椤哄娍鎺ㄨ嚦灞忓箷澶?*/
 }
 
 .author-name-svg-wrapper {
     width: 100%;
-    max-width: 1200px; /* 控制 SVG 的最大宽度，防止在大屏上过大 */
+    max-width: 1200px; /* 鎺у埗 SVG 鐨勬渶澶у搴︼紝闃叉鍦ㄥぇ灞忎笂杩囧ぇ */
     margin: 0 auto 3rem auto;
     display: flex;
     justify-content: center;
@@ -70,18 +70,18 @@
 }
 
 .hero-svg {
-    width: 85%; /* 占据容器的大部分宽度 */
+    width: 85%; /* 鍗犳嵁瀹瑰櫒鐨勫ぇ閮ㄥ垎瀹藉害 */
     height: auto;
     display: block;
 }
 
 .bio-text {
-    font-family: var(--font-sans); /* 正文改为 Switzer sans */
+    font-family: var(--font-sans); /* 姝ｆ枃鏀逛负 Switzer sans */
     font-size: clamp(1.1rem, 1.6vw, 1.4rem);
-    line-height: 1.35; /* 改紧凑 */
+    line-height: 1.35; /* 鏀圭揣鍑?*/
     margin: 0 auto 1.5rem auto;
     color: var(--color-heading);
-    max-width: 600px; /* 统一缩小宽度 */
+    max-width: 600px; /* 缁熶竴缂╁皬瀹藉害 */
     text-align: center;
     font-weight: 400;
 }
@@ -96,7 +96,7 @@
 }
 
 .intro .bio-text:first-of-type > em {
-    font-family: var(--font-serif); /* 仅首段 tag 使用 serif */
+    font-family: var(--font-serif); /* 浠呴娈?tag 浣跨敤 serif */
     font-style: italic;
     font-weight: 400;
 }
@@ -177,7 +177,7 @@
     font-size: clamp(1.1rem, 1.6vw, 1.4rem);
     font-weight: 400;
     text-align: center;
-    margin: 0 auto 2rem auto; /* 将之前的 4rem 减半至 2rem */
+    margin: 0 auto 2rem auto; /* 灏嗕箣鍓嶇殑 4rem 鍑忓崐鑷?2rem */
     color: var(--color-heading);
 }
 
@@ -213,7 +213,7 @@
     font: var(--type-data);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    font-weight: 700; /* 加粗项目名称 */
+    font-weight: 700; /* 鍔犵矖椤圭洰鍚嶇О */
 }
 
 .data-item-role {
@@ -227,7 +227,7 @@
 
 .data-col-desc {
     color: var(--color-heading);
-    text-align: left; /* 保留左对齐适应长描述 */
+    text-align: left; /* 淇濈暀宸﹀榻愰€傚簲闀挎弿杩?*/
     font-family: var(--font-sans);
     font-size: 0.95rem;
     line-height: 1.6;
@@ -303,7 +303,7 @@
     animation-delay: 0.2s;
     display: flex;
     flex-direction: column;
-    align-items: center; /* 确保标题与卡片居中 */
+    align-items: center; /* 纭繚鏍囬涓庡崱鐗囧眳涓?*/
 }
 
 /* ==========================================================================
@@ -315,14 +315,14 @@
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-    max-width: 680px; /* 缩小共享宽度 */
+    max-width: 680px; /* 缂╁皬鍏变韩瀹藉害 */
 }
 
 .now-card-expandable {
     background-color: var(--bg-color);
     border: 1px solid var(--border-color);
-    border-radius: 20px; /* 更圆润的边角，符合图一、图二风格 */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02), 0 6px 12px rgba(0,0,0,0.03), inset 0 1px 1px rgba(255,255,255,0.8), inset 0 -2px 0 rgba(0,0,0,0.03); /* 增强微拟物底部厚度感 */
+    border-radius: 20px; /* 鏇村渾娑︾殑杈硅锛岀鍚堝浘涓€銆佸浘浜岄鏍?*/
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02), 0 6px 12px rgba(0,0,0,0.03), inset 0 1px 1px rgba(255,255,255,0.8), inset 0 -2px 0 rgba(0,0,0,0.03); /* 澧炲己寰嫙鐗╁簳閮ㄥ帤搴︽劅 */
     overflow: hidden;
     transition: box-shadow 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
     width: 100%;
@@ -339,14 +339,14 @@
     align-items: center;
     background: none;
     border: none;
-    padding: 1.4rem 2rem; /* 减小留白，卡片更紧凑 */
+    padding: 1.4rem 2rem; /* 鍑忓皬鐣欑櫧锛屽崱鐗囨洿绱у噾 */
     cursor: pointer;
     color: var(--color-heading);
     transition: padding 0.3s ease;
 }
 
 .now-card-expandable.is-expanded .now-card-header {
-    padding-bottom: 1rem; /* 增大展开时 card name (Top-left label) 和主标题的间距 */
+    padding-bottom: 1rem; /* 澧炲ぇ灞曞紑鏃?card name (Top-left label) 鍜屼富鏍囬鐨勯棿璺?*/
 }
 
 .nc-title-collapsed {
@@ -357,12 +357,12 @@
 }
 
 .nc-title-expanded {
-    font-family: var(--font-mono); /* 展开后卡片名使用 Mono 字体 */
+    font-family: var(--font-mono); /* 灞曞紑鍚庡崱鐗囧悕浣跨敤 Mono 瀛椾綋 */
     font-size: 0.85rem;
-    font-weight: 500; /* 字重轻一点 */
+    font-weight: 500; /* 瀛楅噸杞讳竴鐐?*/
     color: var(--color-heading); /* forced heading color, switches correctly in dark mode */
     text-transform: uppercase;
-    letter-spacing: 0.01em; /* 缩小字母间距 */
+    letter-spacing: 0.01em; /* 缂╁皬瀛楁瘝闂磋窛 */
     display: none; /* Hidden by default */
 }
 
@@ -372,11 +372,7 @@
 
 .now-card-expandable.is-expanded .nc-title-expanded {
     display: block;
-}
-
-.now-card-expandable.is-expanded .nc-title-expanded {
-    color: var(--color-heading); /* forced heading color, switches correctly in dark mode */
-    letter-spacing: 0; /* 展开态字距进一步收紧，避免感知不明显 */
+    letter-spacing: 0;
 }
 
 /* Icons */
@@ -418,10 +414,10 @@
 .now-card-body {
     min-height: 0;
     overflow: hidden;
-    padding: 0 2rem; /* 配合 header padding */
+    padding: 0 2rem; /* 閰嶅悎 header padding */
     display: flex;
     flex-direction: column;
-    gap: 0.12rem; /* 进一步缩小主标题和正文内容之间的间距 */
+    gap: 0.12rem; /* 杩涗竴姝ョ缉灏忎富鏍囬鍜屾鏂囧唴瀹逛箣闂寸殑闂磋窛 */
 }
 
 .now-card-expandable.is-expanded .now-card-body {
@@ -430,27 +426,27 @@
 
 /* Internal text styling */
 .nc-tagline {
-    font-family: var(--font-sans); /* 强制统一为 Switzer */
-    font-size: 1.2rem; /* sans title 再小一点 */
-    line-height: 1.34; /* sans title 行高再紧一点 */
-    margin: 0 0 0.9rem 0; /* 拉开和正文的间距，接近 mono 与 sans 的距离 */
+    font-family: var(--font-sans); /* 寮哄埗缁熶竴涓?Switzer */
+    font-size: 1.2rem; /* sans title 鍐嶅皬涓€鐐?*/
+    line-height: 1.34; /* sans title 琛岄珮鍐嶇揣涓€鐐?*/
+    margin: 0 0 0.9rem 0; /* 鎷夊紑鍜屾鏂囩殑闂磋窛锛屾帴杩?mono 涓?sans 鐨勮窛绂?*/
     font-weight: 500;
     color: var(--color-heading);
 }
 
 .nc-paragraphs p {
-    font-family: var(--font-sans); /* 强制统一为 Switzer */
-    font-size: 0.96rem; /* 再小一点点 */
-    line-height: 1; /* 继续压缩行间距 */
-    letter-spacing: -0.01em; /* 字母间距再收紧一点 */
+    font-family: var(--font-sans); /* 寮哄埗缁熶竴涓?Switzer */
+    font-size: 0.96rem; /* 鍐嶅皬涓€鐐圭偣 */
+    line-height: 1; /* 缁х画鍘嬬缉琛岄棿璺?*/
+    letter-spacing: -0.01em; /* 瀛楁瘝闂磋窛鍐嶆敹绱т竴鐐?*/
     color: var(--color-secondary);
-    margin: 0 0 0.8rem 0; /* 去掉默认上边距并收紧段间距 */
+    margin: 0 0 0.8rem 0; /* 鍘绘帀榛樿涓婅竟璺濆苟鏀剁揣娈甸棿璺?*/
     font-weight: 400;
 }
 
 .now-card-expandable.is-expanded .nc-paragraphs p {
-    font-size: 0.94rem; /* 展开态再小一点，保证变化可见 */
-    line-height: 1.15; /* 修复过紧行高导致的观感异常 */
+    font-size: 0.94rem; /* 灞曞紑鎬佸啀灏忎竴鐐癸紝淇濊瘉鍙樺寲鍙 */
+    line-height: 1.15; /* 淇杩囩揣琛岄珮瀵艰嚧鐨勮鎰熷紓甯?*/
     letter-spacing: -0.012em;
     margin-bottom: 0.5rem;
 }
@@ -469,8 +465,8 @@
 .nc-pillars {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem; /* 减小每个列表项间距 */
-    margin-top: 0.5rem; /* 减小到上面文字的间距 */
+    gap: 1.25rem; /* 鍑忓皬姣忎釜鍒楄〃椤归棿璺?*/
+    margin-top: 0.5rem; /* 鍑忓皬鍒颁笂闈㈡枃瀛楃殑闂磋窛 */
     position: relative;
 }
 
@@ -495,11 +491,11 @@
 
 .nc-pillar-indicator {
     flex-shrink: 0;
-    padding-top: 0.52rem; /* 让序号下移，落在标题和描述之间 */
+    padding-top: 0.52rem; /* 璁╁簭鍙蜂笅绉伙紝钀藉湪鏍囬鍜屾弿杩颁箣闂?*/
 }
 
 .now-card-expandable.is-expanded .nc-pillar-indicator {
-    padding-top: 0.62rem; /* 展开态进一步下移，视觉上更接近标题与正文中线 */
+    padding-top: 0.62rem; /* 灞曞紑鎬佽繘涓€姝ヤ笅绉伙紝瑙嗚涓婃洿鎺ヨ繎鏍囬涓庢鏂囦腑绾?*/
 }
 
 .nc-pillar-num {
@@ -513,14 +509,14 @@
     justify-content: center;
     font: var(--type-data);
     color: var(--color-heading);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04), inset 0 1px 1px rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.03); /* 增强微拟物底部厚度感 */
-    outline: 6px solid var(--bg-color); /* 利用外框线产生上下断离效果 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04), inset 0 1px 1px rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.03); /* 澧炲己寰嫙鐗╁簳閮ㄥ帤搴︽劅 */
+    outline: 6px solid var(--bg-color); /* 鍒╃敤澶栨绾夸骇鐢熶笂涓嬫柇绂绘晥鏋?*/
 }
 
 .nc-pillar-content {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem; /* 大幅缩小主标题与正文距离 */
+    gap: 0.15rem; /* 澶у箙缂╁皬涓绘爣棰樹笌姝ｆ枃璺濈 */
     padding-top: 0.35rem; 
 }
 
@@ -528,18 +524,18 @@
     margin: 0;
     font-family: var(--font-sans);
     font-size: 1rem;
-    font-weight: 500; /* 去除粗黑体感 */
+    font-weight: 500; /* 鍘婚櫎绮楅粦浣撴劅 */
     color: var(--color-heading);
 }
 
 .nc-pillar-desc {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: 0.96rem; /* 和正文同样大小 */
+    font-size: 0.96rem; /* 鍜屾鏂囧悓鏍峰ぇ灏?*/
     color: var(--color-secondary);
-    line-height: 1.38; /* 和正文同样行距 */
-    letter-spacing: -0.01em; /* 和正文同样字距 */
-    font-weight: 400; /* 完全非粗体 */
+    line-height: 1.38; /* 鍜屾鏂囧悓鏍疯璺?*/
+    letter-spacing: -0.01em; /* 鍜屾鏂囧悓鏍峰瓧璺?*/
+    font-weight: 400; /* 瀹屽叏闈炵矖浣?*/
 }
 
 @media (max-width: 768px) {
@@ -577,7 +573,7 @@
     .now-card-expandable.is-expanded .nc-paragraphs p {
         font-size: 0.92rem;
         line-height: 1.45;
-        letter-spacing: 0;
+    letter-spacing: 0;
     }
 
     .nc-pillars {
@@ -609,7 +605,7 @@
     .nc-pillar-desc {
         font-size: 0.92rem;
         line-height: 1.45;
-        letter-spacing: 0;
+    letter-spacing: 0;
     }
 }
 
@@ -655,47 +651,47 @@
 .connect-pills {
     display: flex;
     flex-direction: column;
-    gap: 0; /* 移除单个名片间隙，合并为一个整体 */
+    gap: 0; /* 绉婚櫎鍗曚釜鍚嶇墖闂撮殭锛屽悎骞朵负涓€涓暣浣?*/
     width: 100%;
-    max-width: 680px; /* 缩小共享宽度 */
-    background-color: var(--color-bg-muted); /* 整体外层圆角包裹 */
+    max-width: 680px; /* 缂╁皬鍏变韩瀹藉害 */
+    background-color: var(--color-bg-muted); /* 鏁翠綋澶栧眰鍦嗚鍖呰９ */
     border-radius: 20px;
-    overflow: hidden; /* 防止内部条目边角溢出 */
+    overflow: hidden; /* 闃叉鍐呴儴鏉＄洰杈硅婧㈠嚭 */
 }
 
 .connect-pill {
-    background-color: transparent; /* 取消个体背景色 */
+    background-color: transparent; /* 鍙栨秷涓綋鑳屾櫙鑹?*/
     padding: 1.5rem 2rem;
     font: var(--type-data); 
     text-transform: uppercase;
     letter-spacing: 0.05em;
     display: grid;
-    grid-template-columns: 35% 1fr auto; /* 平台固定占比，信息主占位，动作右靠齐 */
+    grid-template-columns: 35% 1fr auto; /* 骞冲彴鍥哄畾鍗犳瘮锛屼俊鎭富鍗犱綅锛屽姩浣滃彸闈犻綈 */
     align-items: center;
     color: var(--color-heading);
     text-decoration: none;
-    border-bottom: 1px solid var(--color-divider); /* 内部轻微分界线 */
+    border-bottom: 1px solid var(--color-divider); /* 鍐呴儴杞诲井鍒嗙晫绾?*/
     transition: background 0.2s ease;
 }
 
 .connect-pill:last-child {
-    border-bottom: none; /* 最后一项去下边界 */
+    border-bottom: none; /* 鏈€鍚庝竴椤瑰幓涓嬭竟鐣?*/
 }
 
 .connect-pill:hover {
     background-color: var(--color-divider);
-    text-decoration: none; /* 强制覆盖 a 标签下划线 */
+    text-decoration: none; /* 寮哄埗瑕嗙洊 a 鏍囩涓嬪垝绾?*/
 }
 
-/* 卡片内部三列排版 */
+/* 鍗＄墖鍐呴儴涓夊垪鎺掔増 */
 .pill-platform {
     text-align: left;
     font-weight: 500;
 }
 
 .pill-value {
-    text-align: left; /* 改为左对齐 */
-    font-weight: 500; /* 去掉极度加粗，贴近参考网站统一风格 */
+    text-align: left; /* 鏀逛负宸﹀榻?*/
+    font-weight: 500; /* 鍘绘帀鏋佸害鍔犵矖锛岃创杩戝弬鑰冪綉绔欑粺涓€椋庢牸 */
 }
 
 .pill-action {
@@ -728,12 +724,12 @@
         padding: 1.1rem 1.25rem;
     }
 
-    /* 手机端隐藏中间长 ID 防止挤压，仅留"平台"与"动作" */
+    /* 鎵嬫満绔殣钘忎腑闂撮暱 ID 闃叉鎸ゅ帇锛屼粎鐣?骞冲彴"涓?鍔ㄤ綔" */
     .pill-value {
         display: none;
     }
 
-    /* 移动端取消 hover 位移效果，保持纯触摸语义 */
+    /* 绉诲姩绔彇娑?hover 浣嶇Щ鏁堟灉锛屼繚鎸佺函瑙︽懜璇箟 */
     .connect-pill:hover .pill-action {
         transform: none;
     }
@@ -745,3 +741,4 @@
         font-size: 11px;
     }
 }
+

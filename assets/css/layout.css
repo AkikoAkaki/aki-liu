@@ -1,9 +1,9 @@
 /* ==========================================================================
    Layout Styles
-   网格布局、容器、侧边栏、页脚
+   缃戞牸甯冨眬銆佸鍣ㄣ€佷晶杈规爮銆侀〉鑴?
    ========================================================================== */
 
-/* 主体布局：三列网格 */
+/* 涓讳綋甯冨眬锛氫笁鍒楃綉鏍?*/
 .site-container {
     display: grid;
     grid-template-columns: 1fr 650px 1fr;
@@ -14,14 +14,14 @@
     min-height: 100vh;
 }
 
-/* 解除首页 650px 封印：将其释放为全屏自适应，极限放大横向空间 */
+/* 瑙ｉ櫎棣栭〉 650px 灏佸嵃锛氬皢鍏堕噴鏀句负鍏ㄥ睆鑷€傚簲锛屾瀬闄愭斁澶фí鍚戠┖闂?*/
 .home-page .site-container {
     grid-template-columns: 1fr minmax(auto, 1440px) 1fr;
     padding-left: 4vw;
     padding-right: 4vw;
 }
 
-/* 侧边栏 */
+/* 渚ц竟鏍?*/
 .site-sidebar {
     grid-column: 1;
     justify-self: end;
@@ -33,7 +33,7 @@
     display: none;
 }
 
-/* 主内容列 */
+/* 涓诲唴瀹瑰垪 */
 .site-main {
     grid-column: 2;
     width: 100%;
@@ -46,13 +46,13 @@
     padding-top: 0.5rem;
 }
 
-/* 右侧边栏 */
+/* 鍙充晶杈规爮 */
 .site-sidebar-right {
     grid-column: 3;
     justify-self: start;
 }
 
-/* 页脚 */
+/* 椤佃剼 */
 .site-footer {
     margin-top: auto;
     padding-top: 8rem;
@@ -124,20 +124,20 @@
     padding-right: 0;
 }
 
-/* 内部的两列拆分 (View 和 Index) - 现在统一为占据整个右侧，并附着悬浮 */
+/* 鍐呴儴鐨勪袱鍒楁媶鍒?(View 鍜?Index) - 鐜板湪缁熶竴涓哄崰鎹暣涓彸渚э紝骞堕檮鐫€鎮诞 */
 .archive-right-cols {
     display: block;
     width: 100%;
     position: sticky;
-    top: 4rem; /* 预留一点上边距跟随视图往下滚 */
-    max-height: calc(100vh - 6rem); /* 限制最高不超过屏幕视口高度 */
-    overflow: hidden; /* 内容由 JS 按段落截断，硬裁掉残余溢出 */
-    padding-bottom: 2rem; /* 留出一点空隙别顶到底部 */
-    z-index: 60; /* = 覆盖在 body::after 渐变之上 */
-    scrollbar-width: none; /* 隐藏滚动条让排版干净 (Firefox) */
+    top: 4rem; /* 棰勭暀涓€鐐逛笂杈硅窛璺熼殢瑙嗗浘寰€涓嬫粴 */
+    max-height: calc(100vh - 6rem); /* 闄愬埗鏈€楂樹笉瓒呰繃灞忓箷瑙嗗彛楂樺害 */
+    overflow: hidden; /* 鍐呭鐢?JS 鎸夋钀芥埅鏂紝纭鎺夋畫浣欐孩鍑?*/
+    padding-bottom: 2rem; /* 鐣欏嚭涓€鐐圭┖闅欏埆椤跺埌搴曢儴 */
+    z-index: 60; /* = 瑕嗙洊鍦?body::after 娓愬彉涔嬩笂 */
+    scrollbar-width: none; /* 闅愯棌婊氬姩鏉¤鎺掔増骞插噣 (Firefox) */
 }
 
-/* 隐藏滚动条让排版干净 (Chrome/Safari) */
+/* 闅愯棌婊氬姩鏉¤鎺掔増骞插噣 (Chrome/Safari) */
 .archive-right-cols::-webkit-scrollbar {
     display: none;
 }
@@ -234,9 +234,9 @@
         min-height: 100svh;
     }
 
-    /* 覆盖桌面端 4vw 的左右内边距与三列网格：手机上需要单列 + 1.25rem 内边距，
-       由于 .home-page .site-container 的特异度(0,2,0)高于 .site-container(0,1,0)，
-       必须在此显式覆盖 grid-template-columns，否则桌面端 3 列定义会泄露到手机端 */
+    /* 瑕嗙洊妗岄潰绔?4vw 鐨勫乏鍙冲唴杈硅窛涓庝笁鍒楃綉鏍硷細鎵嬫満涓婇渶瑕佸崟鍒?+ 1.25rem 鍐呰竟璺濓紝
+       鐢变簬 .home-page .site-container 鐨勭壒寮傚害(0,2,0)楂樹簬 .site-container(0,1,0)锛?
+       蹇呴』鍦ㄦ鏄惧紡瑕嗙洊 grid-template-columns锛屽惁鍒欐闈㈢ 3 鍒楀畾涔変細娉勯湶鍒版墜鏈虹 */
     .home-page .site-container {
         grid-template-columns: 1fr;
         padding-left: 1.25rem;
@@ -292,11 +292,6 @@
     .kind-section .site-sidebar-right {
         display: block;
         margin-top: 0;
-    }
-    
-    .archive-right-cols {
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
     }
     
 

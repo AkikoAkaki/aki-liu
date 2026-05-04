@@ -1,20 +1,16 @@
-{{- /* Build sorted tag stats for the given page context with fewer allocations. */ -}}
-{{- $scratch := newScratch -}}
-{{- $scratch.Set "tags" (dict) -}}
-
+{{- /* Build sorted tag stats for the given page context. */ -}}
+{{- $tagCounts := dict -}}
 {{- range .Pages -}}
     {{- if eq .Kind "page" -}}
         {{- range .Params.tags -}}
             {{- $name := printf "%v" . -}}
-            {{- $tags := $scratch.Get "tags" -}}
-            {{- $currentCount := index $tags $name | default 0 -}}
-            {{- $scratch.SetInMap "tags" $name (add $currentCount 1) -}}
+            {{- $current := index $tagCounts $name | default 0 -}}
+            {{- $tagCounts = merge $tagCounts (dict $name (add $current 1)) -}}
         {{- end -}}
     {{- end -}}
 {{- end -}}
-
 {{- $tagSlice := slice -}}
-{{- range $name, $count := ($scratch.Get "tags") -}}
+{{- range $name, $count := $tagCounts -}}
     {{- $tagSlice = $tagSlice | append (dict "name" $name "count" $count) -}}
 {{- end -}}
 {{- return (sort $tagSlice "count" "desc") -}}

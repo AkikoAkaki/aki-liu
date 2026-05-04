@@ -74,7 +74,7 @@
         <div class="now-cards-container">
             {{- range $data.now.cards }}
             <div class="now-card-expandable is-collapsed">
-                <button class="now-card-header" onclick="const p = this.parentElement; p.classList.toggle('is-expanded'); p.classList.toggle('is-collapsed');">
+                <button class="now-card-header">
                     <span class="nc-title-collapsed">{{ .title }}</span>
                     <span class="nc-title-expanded">{{ .title }}</span>
                     <span class="nc-icon">
