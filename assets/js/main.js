@@ -111,7 +111,7 @@
                     char.style.fontFamily = target.family;
                     char.style.fontStyle  = target.style;
                 });
-                triggerWipe();
+                if (!link.classList.contains('data-link')) triggerWipe();
             }
 
             function handleLeave() {
@@ -122,7 +122,7 @@
                     char.style.fontFamily = origFamily;
                     char.style.fontStyle  = origStyle;
                 });
-                triggerWipe();
+                if (!link.classList.contains('data-link')) triggerWipe();
             }
 
             link.addEventListener('mouseenter', () => {
