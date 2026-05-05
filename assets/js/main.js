@@ -69,6 +69,9 @@
                 if (link.classList.contains('hover-mono') || link.closest('.archive-filters-container')) {
                     target = { family: FONT_MONO, style: 'normal' };
                 }
+                if (link.classList.contains('data-link') || link.closest('.bio-text')) {
+                    target = { family: FONT_MONO, style: 'normal' };
+                }
                 wrapChars(link);
                 isInitialized = true;
             }
@@ -111,7 +114,11 @@
                     char.style.fontFamily = target.family;
                     char.style.fontStyle  = target.style;
                 });
-                if (!link.classList.contains('data-link')) triggerWipe();
+                if (link.classList.contains('data-link') || link.closest('.bio-text')) {
+                    link.style.color = 'var(--color-secondary)';
+                } else {
+                    triggerWipe();
+                }
             }
 
             function handleLeave() {
@@ -122,7 +129,11 @@
                     char.style.fontFamily = origFamily;
                     char.style.fontStyle  = origStyle;
                 });
-                if (!link.classList.contains('data-link')) triggerWipe();
+                if (link.classList.contains('data-link') || link.closest('.bio-text')) {
+                    link.style.color = '';
+                } else {
+                    triggerWipe();
+                }
             }
 
             link.addEventListener('mouseenter', () => {

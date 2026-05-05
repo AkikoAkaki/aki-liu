@@ -191,7 +191,7 @@
 
 .data-row {
     display: grid;
-    grid-template-columns: 1.5fr 2fr 6.5fr;
+    grid-template-columns: 1.5fr minmax(0, 2fr) 6.5fr;
     gap: 2rem;
     padding: 1.5rem 0;
     align-items: baseline;
@@ -213,7 +213,8 @@
     font: var(--type-data);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    font-weight: 700; /* 鍔犵矖椤圭洰鍚嶇О */
+    font-weight: 700;
+    min-width: 0;
 }
 
 .data-item-role {
@@ -243,6 +244,11 @@
     position: relative;
     line-height: 1;
     padding-bottom: 2px;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 400;
+    text-transform: none;
+    white-space: nowrap;
 }
 
 .data-link::after {
