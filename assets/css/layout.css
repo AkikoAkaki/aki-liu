@@ -111,29 +111,38 @@
 
 .kind-section .site-container {
     grid-template-columns: 2fr 5fr 3fr; /* Left sidebar, Main list, Right sidebars combined */
+    grid-template-rows: auto minmax(0, 1fr);
     padding-top: 3.5rem; /* Reduced top spacing */
     padding-left: 3vw;
     padding-right: 3vw;
     max-width: 1800px;
     gap: 4vw;
+    align-content: start;
+    align-items: start;
 }
 
 .kind-section .site-sidebar,
 .kind-section .site-sidebar-right {
     display: block; /* Ensure they are visible even if empty in other pages */
+    grid-row: 1;
     justify-self: stretch;
     padding-right: 0;
+}
+
+.kind-section .site-main {
+    grid-row: 1;
 }
 
 .kind-section .site-sidebar-bottom {
     display: block;
     grid-column: 1;
-    grid-row: 1;
-    align-self: stretch;
+    grid-row: 2;
+    align-self: end;
     justify-self: stretch;
     position: relative;
     z-index: 100;
     padding-bottom: 0;
+    pointer-events: none;
 }
 
 /* 鍐呴儴鐨勪袱鍒楁媶鍒?(View 鍜?Index) - 鐜板湪缁熶竴涓哄崰鎹暣涓彸渚э紝骞堕檮鐫€鎮诞 */
@@ -303,6 +312,7 @@
     
     .kind-section .site-sidebar {
         display: block;
+        grid-row: auto;
         margin-top: 0;
     }
 
@@ -312,6 +322,7 @@
 
     .kind-section .site-sidebar-right {
         display: none;
+        grid-row: auto;
     }
 
     .kind-section .site-sidebar-bottom {
@@ -319,6 +330,7 @@
         position: static;
         margin-top: 2rem;
         padding-bottom: 1rem;
+        pointer-events: auto;
     }
 
     .archive-sidebar-bottom.is-fixed,

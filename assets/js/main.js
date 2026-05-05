@@ -269,8 +269,7 @@
         const archiveStats = document.querySelector('.archive-sidebar-bottom');
         const archiveBottomHost = document.querySelector('.kind-section .site-sidebar-bottom');
         const archiveCopyright = document.querySelector('.archive-copyright');
-        const archiveMain = document.querySelector('.archive-main-col');
-        if (archiveStats && archiveBottomHost && archiveCopyright && archiveMain) {
+        if (archiveStats && archiveBottomHost && archiveCopyright) {
             const desktopQuery = window.matchMedia('(min-width: 481px)');
             let statsRaf = 0;
 
@@ -297,30 +296,18 @@
                 archiveStats.style.top = '';
 
                 const hostRect = archiveBottomHost.getBoundingClientRect();
-                const mainRect = archiveMain.getBoundingClientRect();
                 const hostTop = window.scrollY + hostRect.top;
-                const mainBottom = window.scrollY + mainRect.bottom;
-                const statsHeight = archiveStats.offsetHeight;
                 const bottomOffset = parseFloat(getComputedStyle(archiveStats).bottom) || 0;
-                const fixedStatsBottom = window.scrollY + window.innerHeight - bottomOffset;
                 const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-                const finalFixedStatsBottom = maxScrollY + window.innerHeight - bottomOffset;
-                const finalStatsBottom = Math.min(mainBottom, finalFixedStatsBottom);
+                const finalStatsBottom = maxScrollY + window.innerHeight - bottomOffset;
                 const copyrightTop = finalStatsBottom - hostTop;
 
                 archiveCopyright.style.left = '0px';
                 archiveCopyright.style.top = `${copyrightTop}px`;
                 archiveCopyright.style.width = `${hostRect.width}px`;
 
-                if (fixedStatsBottom >= mainBottom) {
-                    archiveStats.classList.remove('is-fixed');
-                    archiveStats.classList.add('is-bottomed');
-                    archiveStats.style.left = '0px';
-                    archiveStats.style.top = `${Math.max(0, copyrightTop - statsHeight)}px`;
-                } else {
-                    archiveStats.style.left = `${hostRect.left}px`;
-                    archiveStats.style.top = '';
-                }
+                archiveStats.style.left = `${hostRect.left}px`;
+                archiveStats.style.top = '';
 
                 archiveStats.style.width = `${hostRect.width}px`;
             }
