@@ -29,7 +29,8 @@
 }
 
 .site-sidebar:empty,
-.site-sidebar-right:empty {
+.site-sidebar-right:empty,
+.site-sidebar-bottom:empty {
     display: none;
 }
 
@@ -122,6 +123,17 @@
     display: block; /* Ensure they are visible even if empty in other pages */
     justify-self: stretch;
     padding-right: 0;
+}
+
+.kind-section .site-sidebar-bottom {
+    display: block;
+    grid-column: 1;
+    grid-row: 1;
+    align-self: stretch;
+    justify-self: stretch;
+    position: relative;
+    z-index: 100;
+    padding-bottom: 0;
 }
 
 /* 鍐呴儴鐨勪袱鍒楁媶鍒?(View 鍜?Index) - 鐜板湪缁熶竴涓哄崰鎹暣涓彸渚э紝骞堕檮鐫€鎮诞 */
@@ -284,15 +296,38 @@
     /* Archive Responsive Overrides */
     .kind-section .site-container {
         grid-template-columns: 1fr;
+        grid-template-rows: auto;
         padding-top: 4rem;
         gap: 3rem;
     }
     
-    .kind-section .site-sidebar,
-    .kind-section .site-sidebar-right {
+    .kind-section .site-sidebar {
         display: block;
         margin-top: 0;
     }
-    
+
+    .kind-section .site-main {
+        grid-row: auto;
+    }
+
+    .kind-section .site-sidebar-bottom {
+        position: static;
+        margin-top: 2rem;
+        padding-bottom: 1rem;
+    }
+
+    .archive-sidebar-bottom.is-fixed,
+    .archive-sidebar-bottom.is-bottomed,
+    .archive-copyright {
+        position: static;
+    }
+
+    .archive-years-desktop {
+        display: none;
+    }
+
+    .archive-years-mobile {
+        display: flex;
+    }
 
 }

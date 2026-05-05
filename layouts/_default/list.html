@@ -6,6 +6,7 @@
 {{ range $regularPages.GroupByPublishDate "2006" }}
     {{ $years = $years | append .Key }}
 {{ end }}
+{{ .Store.Set "years" $years }}
 <div class="archive-left-col">
     <div class="archive-logo-container">
         <a href="{{ .Site.Home.RelPermalink }}">
@@ -34,12 +35,24 @@
                     </a>
                 {{ end }}
             </div>
-            <div class="archive-years-list">
+            <div class="archive-years-list archive-years-desktop">
                 {{ range $years }}
                     <a href="#" class="archive-year-item">{{ . }}</a>
                 {{ end }}
             </div>
         </div>
+    </div>
+</div>
+{{ end }}
+
+{{ define "sidebar-bottom" }}
+{{ $regularPages := .Store.Get "regularPages" }}
+{{ $years := .Store.Get "years" }}
+<div class="archive-bottom-section">
+    <div class="archive-years-list archive-years-mobile">
+        {{ range $years }}
+            <a href="#" class="archive-year-item">{{ . }}</a>
+        {{ end }}
     </div>
 
     <div class="archive-sidebar-bottom">

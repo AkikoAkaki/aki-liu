@@ -265,6 +265,81 @@
             }
         }
 
+        // --- Archive desktop bottom stats ---
+        const archiveStats = document.querySelector('.archive-sidebar-bottom');
+        const archiveBottomHost = document.querySelector('.kind-section .site-sidebar-bottom');
+        const archiveCopyright = document.querySelector('.archive-copyright');
+        const archiveMain = document.querySelector('.archive-main-col');
+        if (archiveStats && archiveBottomHost && archiveCopyright && archiveMain) {
+            const desktopQuery = window.matchMedia('(min-width: 481px)');
+            let statsRaf = 0;
+
+            function clearArchiveStatsPosition() {
+                archiveStats.classList.remove('is-fixed', 'is-bottomed');
+                archiveStats.style.left = '';
+                archiveStats.style.top = '';
+                archiveStats.style.width = '';
+                archiveCopyright.style.left = '';
+                archiveCopyright.style.top = '';
+                archiveCopyright.style.width = '';
+            }
+
+            function positionArchiveStats() {
+                statsRaf = 0;
+
+                if (!desktopQuery.matches) {
+                    clearArchiveStatsPosition();
+                    return;
+                }
+
+                archiveStats.classList.add('is-fixed');
+                archiveStats.classList.remove('is-bottomed');
+                archiveStats.style.top = '';
+
+                const hostRect = archiveBottomHost.getBoundingClientRect();
+                const mainRect = archiveMain.getBoundingClientRect();
+                const hostTop = window.scrollY + hostRect.top;
+                const mainBottom = window.scrollY + mainRect.bottom;
+                const statsHeight = archiveStats.offsetHeight;
+                const bottomOffset = parseFloat(getComputedStyle(archiveStats).bottom) || 0;
+                const fixedStatsBottom = window.scrollY + window.innerHeight - bottomOffset;
+                const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+                const finalFixedStatsBottom = maxScrollY + window.innerHeight - bottomOffset;
+                const finalStatsBottom = Math.min(mainBottom, finalFixedStatsBottom);
+                const copyrightTop = finalStatsBottom - hostTop;
+
+                archiveCopyright.style.left = '0px';
+                archiveCopyright.style.top = `${copyrightTop}px`;
+                archiveCopyright.style.width = `${hostRect.width}px`;
+
+                if (fixedStatsBottom >= mainBottom) {
+                    archiveStats.classList.remove('is-fixed');
+                    archiveStats.classList.add('is-bottomed');
+                    archiveStats.style.left = '0px';
+                    archiveStats.style.top = `${Math.max(0, copyrightTop - statsHeight)}px`;
+                } else {
+                    archiveStats.style.left = `${hostRect.left}px`;
+                    archiveStats.style.top = '';
+                }
+
+                archiveStats.style.width = `${hostRect.width}px`;
+            }
+
+            function scheduleArchiveStatsPosition() {
+                if (statsRaf) return;
+                statsRaf = requestAnimationFrame(positionArchiveStats);
+            }
+
+            scheduleArchiveStatsPosition();
+            window.addEventListener('scroll', scheduleArchiveStatsPosition, { passive: true });
+            window.addEventListener('resize', scheduleArchiveStatsPosition);
+            if (desktopQuery.addEventListener) {
+                desktopQuery.addEventListener('change', scheduleArchiveStatsPosition);
+            } else {
+                desktopQuery.addListener(scheduleArchiveStatsPosition);
+            }
+        }
+
         // --- Archive hover preview ---
         const archiveItems = document.querySelectorAll('.archive-item');
         if (archiveItems.length > 0) {
