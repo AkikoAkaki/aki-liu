@@ -376,6 +376,55 @@
     flex-grow: 1;
 }
 
+.archive-tag-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+    color: var(--color-heading);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    max-width: 130px;
+    transition: color 0.2s ease;
+}
+
+.archive-tag-item:hover {
+    color: var(--color-secondary);
+}
+
+.archive-tag-item .tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #ccc;
+    display: inline-block;
+    flex-shrink: 0;
+    margin-left: 5px;
+    transform: translateY(-0.35em);
+}
+
+/* Dynamic colors for tags mapped by name */
+.archive-tag-item[data-tag="essay"] .tag-dot, .item-dot[data-tag="essay"],
+.archive-tag-item[data-tag="productivity"] .tag-dot, .item-dot[data-tag="productivity"] { background-color: #007AFF; } /* Blue */
+
+.archive-tag-item[data-tag="critique"] .tag-dot, .item-dot[data-tag="critique"],
+.archive-tag-item[data-tag="mental-model"] .tag-dot, .item-dot[data-tag="mental-model"] { background-color: #AF52DE; } /* Purple */
+
+.archive-tag-item[data-tag="poetry"] .tag-dot, .item-dot[data-tag="poetry"] { background-color: #FF3B30; } /* Red */
+
+.archive-tag-item[data-tag="fiction"] .tag-dot, .item-dot[data-tag="fiction"],
+.archive-tag-item[data-tag="product"] .tag-dot, .item-dot[data-tag="product"] { background-color: #FFCC00; } /* Yellow */
+
+.archive-tag-item[data-tag="drama"] .tag-dot, .item-dot[data-tag="drama"] { background-color: #34C759; } /* Green */
+
+.archive-tag-item[data-tag="translation"] .tag-dot, .item-dot[data-tag="translation"] { background-color: #FF9500; } /* Orange */
+
+.archive-tag-item[data-tag="content-analysis"] .tag-dot, .item-dot[data-tag="content-analysis"] { background-color: #5856D6; }
+.archive-tag-item[data-tag="technical"] .tag-dot, .item-dot[data-tag="technical"] { background-color: #5856D6; }
+.archive-tag-item[data-tag="ai"] .tag-dot, .item-dot[data-tag="ai"] { background-color: #5AC8FA; }
+
+.archive-tag-item .tag-dot, .item-dot { background-color: #8E8E93; } /* Default gray */
+
 .archive-years-list {
     display: flex;
     flex-direction: column;

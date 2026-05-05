@@ -310,7 +310,12 @@
         grid-row: auto;
     }
 
+    .kind-section .site-sidebar-right {
+        display: none;
+    }
+
     .kind-section .site-sidebar-bottom {
+        grid-row: auto;
         position: static;
         margin-top: 2rem;
         padding-bottom: 1rem;
