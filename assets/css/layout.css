@@ -334,9 +334,17 @@
     }
 
     .archive-sidebar-bottom.is-fixed,
-    .archive-sidebar-bottom.is-bottomed,
-    .archive-copyright {
+    .archive-sidebar-bottom.is-bottomed {
         position: static;
+    }
+
+    .archive-bottom-section {
+        height: auto;
+    }
+
+    .archive-bottom-section .archive-copyright {
+        position: static;
+        margin-top: 0.5rem;
     }
 
     .archive-years-desktop {
