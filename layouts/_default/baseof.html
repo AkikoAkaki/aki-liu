@@ -18,6 +18,7 @@
             <a href="{{ with $ideasPage }}{{ .RelPermalink }}{{ else }}{{ "ideas/" | relLangURL }}{{ end }}" class="{{ if eq .Section "ideas" }}active{{ end }}" data-desc="Lighter writing, observations and notes on various topics">IDEAS</a>
             <a href="{{ with $textLabPage }}{{ .RelPermalink }}{{ else }}{{ "textlab/" | relLangURL }}{{ end }}" class="{{ if eq .Section "textlab" }}active{{ end }}" data-desc="Essays, poems, criticisms, fiction, more experimental and stylized writing">TEXT LAB</a>
             <a href="{{ with $technicalPage }}{{ .RelPermalink }}{{ else }}{{ "technical/" | relLangURL }}{{ end }}" class="{{ if eq .Section "technical" }}active{{ end }}" data-desc="Notes and thoughts on engineering and theory">TECHNICAL</a>
+            <a href="#search" class="nav-search" data-search-trigger data-desc="Search the entire site (⌘K)">SEARCH<kbd class="nav-kbd">⌘K</kbd></a>
         </div>
         <div id="nav-desc" class="nav-description-display"></div>
     </nav>
@@ -38,5 +39,6 @@
         <aside class="site-sidebar-bottom">{{ block "sidebar-bottom" . }}{{ end }}</aside>
         <aside class="site-sidebar-right">{{ block "sidebar-right" . }}{{ end }}</aside>
     </div>
+    <div id="search-root" aria-hidden="true"></div>
 </body>
 </html>

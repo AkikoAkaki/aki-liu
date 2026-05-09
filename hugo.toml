@@ -30,6 +30,17 @@ mainSections = ["ideas", "technical", "textlab"]
   tag = "tags"
   category = "categories"
 
+# Custom output: site-wide JSON index consumed by the client search module.
+[outputFormats]
+  [outputFormats.searchindex]
+    mediaType = "application/json"
+    baseName = "search-index"
+    isPlainText = true
+    notAlternative = true
+
+[outputs]
+  home = ["HTML", "RSS", "searchindex"]
+
 [params]
   # KaTeX global default (page-level overrides are supported in templates).
   enableKaTeX = true

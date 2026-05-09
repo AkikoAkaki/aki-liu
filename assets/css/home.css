@@ -22,8 +22,8 @@
 .home-container {
     display: flex;
     flex-direction: column;
-    gap: 12rem; /* 鏋佽嚧鐣欑櫧锛氬皢鍧楅棿璺濇媺澶у埌杩?192px */
-    padding-top: 4rem;
+    gap: 8rem;
+    padding-top: 2rem;
     padding-bottom: 8rem;
 }
 
@@ -56,7 +56,7 @@
     flex-direction: column;
     align-items: center; /* 鏁翠綋灞呬腑 */
     justify-content: center; /* 鍨傜洿鏂瑰悜鍚戜笅鍘嬶紝淇濇寔椤甸潰涓績浣嶇疆 */
-    min-height: 75vh; /* 璁╅灞?Hero 鍖哄煙鍗犳嵁绾︿竷鎴愬埌鍏垚鐨勮鍙ｉ珮搴︼紝灏嗕笅鏂圭殑鍒楄〃椤哄娍鎺ㄨ嚦灞忓箷澶?*/
+    min-height: 55vh;
 }
 
 .author-name-svg-wrapper {

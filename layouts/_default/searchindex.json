@@ -1,0 +1,32 @@
+{{- /* Per-language site search index. Hugo emits one file per language. */ -}}
+{{- $sections := slice "ideas" "technical" "textlab" "influences" -}}
+{{- $pages := where site.RegularPages "Section" "in" $sections -}}
+{{- $items := slice -}}
+{{- range $pages -}}
+    {{- $body := .Plain | strings.TrimSpace -}}
+    {{- if gt (len $body) 2400 -}}
+        {{- $body = substr $body 0 2400 -}}
+    {{- end -}}
+    {{- $summary := "" -}}
+    {{- with .Description -}}{{- $summary = . -}}{{- end -}}
+    {{- if eq $summary "" -}}
+        {{- $summary = .Summary | plainify | strings.TrimSpace -}}
+    {{- end -}}
+    {{- if gt (len $summary) 280 -}}
+        {{- $summary = (substr $summary 0 280) -}}
+    {{- end -}}
+    {{- $tags := default (slice) .Params.tags -}}
+    {{- $rec := dict
+        "id"      (printf "%s::%s" .RelPermalink .Language.Lang)
+        "title"   .Title
+        "section" .Section
+        "url"     .RelPermalink
+        "date"    (.Date.Format "2006-01-02")
+        "tags"    $tags
+        "lang"    .Language.Lang
+        "summary" $summary
+        "body"    $body
+    -}}
+    {{- $items = $items | append $rec -}}
+{{- end -}}
+{{- $items | jsonify -}}

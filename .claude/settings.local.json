@@ -27,7 +27,12 @@
       "Bash(hugo --quiet)",
       "Bash(echo \"exit=$?\")",
       "mcp__plugin_vercel_vercel__deploy_to_vercel",
-      "Bash(npm list *)"
+      "Bash(npm list *)",
+      "Bash(xargs head *)",
+      "Bash(curl -sS http://127.0.0.1:1313/js/main.min.b2de47fb87fe3ec1186c33ab64f822ceeb20d89671a4d9bd47d1597d400c30d2.js)",
+      "Bash(curl -sS http://127.0.0.1:1313/en/)",
+      "Bash(curl -sS http://127.0.0.1:1313/en/search-index.json)",
+      "Bash(python -c \"import json,sys; data=json.load\\(sys.stdin\\); print\\('count:', len\\(data\\)\\); print\\('langs:', set\\(d['lang'] for d in data\\)\\); print\\('sample:', data[0]['title'] if data else 'empty'\\)\")"
     ]
   }
 }

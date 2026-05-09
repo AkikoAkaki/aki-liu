@@ -164,6 +164,35 @@
     }
 }
 
+/* 显式主题覆盖（命令面板的 Toggle dark mode 写入 [data-theme] 与 localStorage） */
+:root[data-theme="dark"] {
+    --bg-color: #050505;
+    --bg-rgb: 5, 5, 5;
+    --text-color: #ffffff;
+    --text-meta: #666666;
+    --border-color: #1a1a1a;
+    --color-heading: #ffffff;
+    --color-secondary: #999999;
+    --color-muted: #888888;
+    --color-dim: #777777;
+    --color-bg-muted: #0d0d0d;
+    --color-divider: #1a1a1a;
+}
+
+:root[data-theme="light"] {
+    --bg-color: #ffffff;
+    --bg-rgb: 255, 255, 255;
+    --text-color: #3a3a3a;
+    --text-meta: #a3a3a3;
+    --border-color: #e8e8e8;
+    --color-heading: #050505;
+    --color-secondary: #6f6f6f;
+    --color-muted: #7d7d7d;
+    --color-dim: #8f8f8f;
+    --color-bg-muted: #f3f3f3;
+    --color-divider: #f0f0f0;
+}
+
 /* 基础重置 */
 html {
     scroll-behavior: smooth;

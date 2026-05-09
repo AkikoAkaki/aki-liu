@@ -11,7 +11,8 @@
 {{- $base := resources.Get "css/base.css" -}}
 {{- $layout := resources.Get "css/layout.css" -}}
 {{- $components := resources.Get "css/components.css" -}}
-{{- $style := slice $base $layout $components | resources.Concat "css/bundle.css" | resources.Minify | fingerprint -}}
+{{- $search := resources.Get "css/search.css" -}}
+{{- $style := slice $base $layout $components $search | resources.Concat "css/bundle.css" | resources.Minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
 
 {{- if .IsHome -}}
