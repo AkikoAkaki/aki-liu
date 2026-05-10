@@ -32,7 +32,8 @@
       "Bash(curl -sS http://127.0.0.1:1313/js/main.min.b2de47fb87fe3ec1186c33ab64f822ceeb20d89671a4d9bd47d1597d400c30d2.js)",
       "Bash(curl -sS http://127.0.0.1:1313/en/)",
       "Bash(curl -sS http://127.0.0.1:1313/en/search-index.json)",
-      "Bash(python -c \"import json,sys; data=json.load\\(sys.stdin\\); print\\('count:', len\\(data\\)\\); print\\('langs:', set\\(d['lang'] for d in data\\)\\); print\\('sample:', data[0]['title'] if data else 'empty'\\)\")"
+      "Bash(python -c \"import json,sys; data=json.load\\(sys.stdin\\); print\\('count:', len\\(data\\)\\); print\\('langs:', set\\(d['lang'] for d in data\\)\\); print\\('sample:', data[0]['title'] if data else 'empty'\\)\")",
+      "Bash(C:/Users/Kevin/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/brainstorming/scripts/start-server.sh *)"
     ]
   }
 }

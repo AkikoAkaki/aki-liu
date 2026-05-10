@@ -23,6 +23,7 @@
         <div id="nav-desc" class="nav-description-display"></div>
     </nav>
     <div class="site-container">
+        {{ block "post-header" . }}{{ end }}
         <aside class="site-sidebar">{{ block "sidebar-left" . }}{{ end }}</aside>
         <main class="site-main">
             {{ block "main" . }}{{ end }}

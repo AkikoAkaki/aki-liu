@@ -35,13 +35,10 @@
     inset: 0;
     z-index: 200;
     pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.18s ease-out;
 }
 
 body.search-open #search-root {
     pointer-events: auto;
-    opacity: 1;
 }
 
 body.search-open {
@@ -52,17 +49,31 @@ body.search-open {
 .search-overlay {
     position: absolute;
     inset: 0;
+    background: rgba(245, 245, 247, 0);
+    backdrop-filter: blur(0px) saturate(100%);
+    -webkit-backdrop-filter: blur(0px) saturate(100%);
+    transition: 
+        background 0.18s ease-out,
+        backdrop-filter 0.18s ease-out,
+        -webkit-backdrop-filter 0.18s ease-out;
+}
+
+body.search-open .search-overlay {
     background: rgba(245, 245, 247, 0.55);
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
 }
 
 @media (prefers-color-scheme: dark) {
-    .search-overlay { background: rgba(8, 8, 10, 0.55); }
+    .search-overlay { background: rgba(8, 8, 10, 0); }
+    body.search-open .search-overlay { background: rgba(8, 8, 10, 0.55); }
 }
 
-:root[data-theme="dark"] .search-overlay { background: rgba(8, 8, 10, 0.55); }
-:root[data-theme="light"] .search-overlay { background: rgba(245, 245, 247, 0.55); }
+:root[data-theme="dark"] .search-overlay { background: rgba(8, 8, 10, 0); }
+:root[data-theme="dark"] body.search-open .search-overlay { background: rgba(8, 8, 10, 0.55); }
+
+:root[data-theme="light"] .search-overlay { background: rgba(245, 245, 247, 0); }
+:root[data-theme="light"] body.search-open .search-overlay { background: rgba(245, 245, 247, 0.55); }
 
 /* ---------- Panel ---------- */
 .search-panel {
@@ -70,7 +81,7 @@ body.search-open {
     top: 12vh;
     left: 50%;
     transform: translate(-50%, -8px) scale(0.985);
-    width: min(720px, calc(100vw - 32px));
+    width: min(840px, calc(100vw - 40px));
     max-height: 76vh;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
@@ -210,13 +221,10 @@ body.search-open .search-panel {
     grid-template-columns: 18px 1fr auto;
     gap: 10px;
     align-items: center;
-    padding: 9px 10px;
+    padding: 9px 12px;
     border-radius: 6px;
-    border-left: 2px solid transparent;
     cursor: pointer;
-    transition:
-        background-color 0.12s ease-out,
-        border-color 0.12s ease-out;
+    transition: background-color 0.12s ease-out;
 }
 
 .search-result:hover {
@@ -225,7 +233,6 @@ body.search-open .search-panel {
 
 .search-result.is-selected {
     background: color-mix(in oklab, currentColor 7%, transparent);
-    border-left-color: var(--color-heading);
 }
 
 .sr-icon {

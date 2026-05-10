@@ -1,17 +1,37 @@
-{{ define "main" }}
-<article class="post-single">
-    <header class="post-header">
-        {{ $back := partial "back-link-data.html" (dict "page" . "section" .CurrentSection) }}
-        {{ partial "title-with-back.html" (dict
-            "href" $back.href
-            "label" $back.label
-            "title" .Title
-            "titleClass" "post-title"
-        ) }}
-        <div class="post-meta">
-            <time class="post-date">{{ .Date.Format "2006/01/02" }}</time>
+{{ define "post-header" }}
+    <header class="post-header-redesigned {{ if not .Params.info }}no-info{{ end }}">
+        <div class="post-header-grid">
+            <div class="meta-col title-col">
+                <span class="meta-label">Title:</span>
+                <h1 class="post-title-override meta-large">{{ .Title }}</h1>
+            </div>
+            <div class="meta-col info-col">
+                {{ with .Params.info }}
+                <span class="meta-label">Info:</span>
+                <div class="meta-value custom-info">
+                    {{ . | markdownify }}
+                </div>
+                {{ end }}
+                <div class="meta-metadata-stack">
+                    <div class="metadata-item">
+                        <span>{{ .Date.Format "January 02, 2006" }}</span>
+                    </div>
+                    {{ with .Params.tags }}
+                    <div class="metadata-item">
+                        <span>{{ delimit . " · " }}</span>
+                    </div>
+                    {{ end }}
+                    <div class="metadata-item">
+                        <span>{{ .WordCount }} words · {{ .ReadingTime }} min read</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
+{{ end }}
+
+{{ define "main" }}
+<article class="post-single">
 
     {{ if .TableOfContents }}
     <aside class="post-toc post-toc--inline">

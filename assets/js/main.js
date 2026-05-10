@@ -915,6 +915,11 @@
             if (isOpen) return;
             if (!panel) buildPanel();
             isOpen = true;
+            
+            // Force browser layout so the newly injected DOM elements
+            // register their initial CSS state (e.g., blur(0px)) before transitioning.
+            void root.offsetWidth;
+            
             document.body.classList.add('search-open');
             inputEl.value = '';
             render('');

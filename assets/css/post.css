@@ -13,30 +13,97 @@
     width: 100%;
 }
 
-.post-header {
-    margin-bottom: 0;
-}
-
-.post-title {
-    font-family: var(--font-sans);
-    font-weight: 400;
-    line-height: 1.3;
-    color: var(--color-heading);
-    margin: 0.7rem 0 0.75rem 0;
-    font-size: 1.05rem;
-}
-
-.post-meta {
-    display: flex;
-    align-items: baseline;
-    gap: 0;
+.site-container > .post-header-redesigned {
+    grid-column: 1 / -1;
     margin-bottom: 4rem;
 }
 
-.post-date {
-    font: var(--type-s);
+.site-container > .post-header-redesigned.no-info {
+    margin-bottom: 1.5rem;
+}
+
+.post-header-redesigned.no-info .post-header-grid {
+    row-gap: 0.5rem;
+}
+
+.site-container > .post-header-redesigned.no-info .meta-col.title-col {
+    margin-bottom: 0;
+}
+
+.post-header-redesigned.no-info .meta-metadata-stack {
+    padding-top: 0.25rem;
+}
+
+.post-header-grid {
+    display: grid;
+    grid-template-columns: 1fr 650px 1fr;
+    gap: 2rem;
+    align-items: start;
+    margin-bottom: 2rem;
+}
+
+.meta-col.title-col {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    margin-bottom: 2rem;
+    text-align: left;
+    padding-left: 4vw;
+}
+
+.meta-col.info-col {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding-left: 4vw;
+    max-width: 800px;
+}
+
+.meta-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.meta-label {
+    font-size: 0.65rem;
     color: var(--text-meta);
-    display: inline;
+    margin-bottom: 0.25rem;
+}
+
+.post-title-override.meta-large {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-heading);
+    margin: 0;
+    font-size: 3.8rem;
+    text-align: left;
+    width: 100%;
+}
+
+.meta-value.custom-info {
+    font-size: 0.95rem;
+    color: var(--text-color);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.meta-metadata-stack {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding-top: 0.5rem;
+    margin-left: 0.3rem;
+}
+
+.metadata-item {
+    display: flex;
+    font-size: 0.8rem;
+    color: var(--text-color);
+}
+
+.meta-sublabel {
+    display: none;
 }
 
 @media (max-width: 768px) {
