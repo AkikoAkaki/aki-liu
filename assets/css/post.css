@@ -126,37 +126,113 @@
    ========================================================================== */
 
 .post-toc {
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-radius: 12px;
+    border: 1px solid rgba(128, 128, 128, 0.15);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
     font-family: var(--font-sans);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     line-height: 1.6;
     color: var(--color-dim);
     position: sticky;
     top: 15.5rem;
     max-height: calc(100vh - 10rem);
     overflow-y: auto;
-    padding-right: 0.5rem;
-    width: 240px;
+    overflow-x: hidden;
+    padding: 1rem 0.5rem;
+    width: 260px;
+    opacity: 0.8;
+    
+    /* Phase 2: 3D Tilt */
+    --rotate-x: 0deg;
+    --rotate-y: 0deg;
+    transform: perspective(1000px) rotateX(var(--rotate-x)) rotateY(var(--rotate-y));
+    transform-style: preserve-3d;
+    transition: opacity 0.3s ease, transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+    .post-toc {
+        background-color: rgba(30, 30, 30, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    }
+}
+
+.post-toc:hover {
+    opacity: 1;
 }
 
 .post-toc nav {
     font: inherit;
+    position: relative; /* For absolute positioning of indicator */
+    transform-style: preserve-3d;
+}
+
+/* Dynamic Sliding Indicator */
+.toc-indicator {
+    position: absolute;
+    left: 0.25rem;
+    width: calc(100% - 0.5rem);
+    z-index: 0;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    opacity: 0;
+    transform: translateZ(5px); /* Lift indicator slightly off the glass */
+    
+    /* Phase 3: Liquid Morphing Variables */
+    --stretch: 1;
+    --stretch-origin: center;
+}
+
+.toc-indicator::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    
+    /* Iridescent/neon gradient background */
+    background: linear-gradient(135deg, rgba(120, 110, 255, 0.15), rgba(0, 200, 255, 0.1));
+    /* Soft ambient glow that bleeds through the glass */
+    box-shadow: 0 0 20px rgba(120, 110, 255, 0.15), inset 0 0 8px rgba(255, 255, 255, 0.4);
+    
+    /* Apply instant liquid stretching */
+    transform-origin: var(--stretch-origin);
+    transform: scaleY(var(--stretch));
+    will-change: transform;
+}
+
+@media (prefers-color-scheme: dark) {
+    .toc-indicator::before {
+        background: linear-gradient(135deg, rgba(160, 150, 255, 0.25), rgba(0, 255, 255, 0.15));
+        box-shadow: 0 0 24px rgba(160, 150, 255, 0.25), inset 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+}
+
+.toc-indicator.visible {
+    opacity: 1;
 }
 
 .post-toc > nav > ul {
     list-style: none;
     margin: 0;
     padding-left: 0;
+    position: relative;
+    z-index: 1;
+    transform-style: preserve-3d;
 }
 
 .post-toc ul {
     list-style: none;
     margin: 0;
+    transform-style: preserve-3d;
 }
 
 .post-toc ul ul {
-    padding-left: 1.2rem;
-    margin-top: 0.35rem;
+    padding-left: 1rem;
+    margin-top: 0.15rem;
 }
 
 /* Fix for deep nesting indentation when higher level headers are missing */
@@ -166,24 +242,67 @@
 }
 
 .post-toc li {
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.2rem;
+    transform-style: preserve-3d;
 }
 
 .post-toc a {
     color: inherit;
     text-decoration: none;
-    transition: color 0.25s ease;
+    transition: color 0.25s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     display: block;
-    padding: 0.05rem 0;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    position: relative;
+    z-index: 1;
+    transform-origin: center center;
+    transform: translateZ(10px); /* Base elevation over indicator */
 }
 
 .post-toc a:hover {
     color: var(--text-color);
+    transform: translateZ(25px) scale(1.02); /* Pop out heavily on hover */
+}
+
+@keyframes tocTextShine {
+    0% {
+        background-position: 200% 50%;
+    }
+    100% {
+        background-position: -200% 50%;
+    }
 }
 
 .post-toc a.is-active {
-    color: var(--text-color);
     font-weight: 500;
+    transform: scale(1.02);
+    /* Sweeping shine text effect */
+    background: linear-gradient(
+        120deg,
+        var(--text-color) 40%,
+        #8a82ff 50%,
+        var(--text-color) 60%
+    );
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: tocTextShine 4s linear infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+    .post-toc a.is-active {
+        background: linear-gradient(
+            120deg,
+            var(--text-color) 40%,
+            #b3aaff 50%,
+            var(--text-color) 60%
+        );
+        background-size: 200% auto;
+        color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
 }
 
 .post-toc--inline {
@@ -200,6 +319,13 @@
         top: auto;
         max-height: none;
         width: 100%;
+        opacity: 1;
+        background-color: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border: none;
+        box-shadow: none;
+        padding: 0;
     }
 }
 
@@ -211,6 +337,7 @@
         width: 100%;
         padding-right: 0;
         margin-top: 1.75rem;
+        opacity: 1;
     }
 
     .post-toc--inline {

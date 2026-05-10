@@ -1,24 +1,46 @@
 <script>
-(function () {
+document.addEventListener('DOMContentLoaded', function () {
     const tocs = document.querySelectorAll('.post-toc');
     if (!tocs.length) return;
+
+    // Phase 4: Init Stagger & Indicator
+    tocs.forEach(toc => {
+        const nav = toc.querySelector('nav');
+        if (nav && !nav.querySelector('.toc-indicator')) {
+            const indicator = document.createElement('div');
+            indicator.className = 'toc-indicator';
+            nav.insertBefore(indicator, nav.firstChild);
+        }
+        
+        // Assign index for Staggered Spring Reveal
+        const listItems = toc.querySelectorAll('li');
+        listItems.forEach((li, index) => {
+            li.style.setProperty('--item-index', index);
+        });
+    });
 
     const links = Array.from(document.querySelectorAll('.post-toc a'));
     const headings = links
         .map((link) => {
             const id = link.getAttribute('href').slice(1);
-            return document.getElementById(id);
+            try {
+                return document.getElementById(decodeURIComponent(id)) || document.getElementById(id);
+            } catch(e) {
+                return document.getElementById(id);
+            }
         })
         .filter(Boolean);
 
     const scrollToHeading = (link) => {
         const id = link.getAttribute('href').slice(1);
-        const target = document.getElementById(id);
-        if (target) {
-            const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
-            const offsetPosition = targetPosition - window.innerHeight * 0.25;
-            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }
+        try {
+            const target = document.getElementById(decodeURIComponent(id)) || document.getElementById(id);
+            if (target) {
+                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+                const offsetPosition = targetPosition - window.innerHeight * 0.25;
+                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+            }
+        } catch(e) {}
     };
 
     links.forEach((link) => {
@@ -40,23 +62,130 @@
         }
 
         links.forEach((link) => link.classList.remove('is-active'));
+        
+        // Hide all indicators initially
+        tocs.forEach(toc => {
+            const indicator = toc.querySelector('.toc-indicator');
+            if (indicator) indicator.classList.remove('visible');
+        });
+
         if (current) {
-            links
-                .filter((link) => link.getAttribute('href') === `#${current.id}`)
-                .forEach((link) => link.classList.add('is-active'));
+            const currentIdDecoded = decodeURIComponent(current.id);
+            const activeLinks = links.filter((link) => {
+                const href = link.getAttribute('href');
+                if (!href || !href.startsWith('#')) return false;
+                try {
+                    return decodeURIComponent(href.slice(1)) === currentIdDecoded;
+                } catch(e) {
+                    return href.slice(1) === current.id;
+                }
+            });
+            
+            activeLinks.forEach((link) => {
+                link.classList.add('is-active');
+                
+                // Find the closest toc container and indicator
+                const toc = link.closest('.post-toc');
+                if (toc) {
+                    const indicator = toc.querySelector('.toc-indicator');
+                    if (indicator) {
+                        // Calculate relative position within the nav
+                        const nav = link.closest('nav');
+                        // Use link's top position relative to nav
+                        const navRect = nav.getBoundingClientRect();
+                        const linkRect = link.getBoundingClientRect();
+                        
+                        const offsetTop = linkRect.top - navRect.top + nav.scrollTop;
+                        const height = linkRect.height;
+                        
+                        // Maintain Z-translation for 3D effect
+                        indicator.style.transform = `translateY(${offsetTop}px) translateZ(5px)`;
+                        indicator.style.height = `${height}px`;
+                        indicator.classList.add('visible');
+                    }
+                }
+            });
         }
     };
 
     let ticking = false;
-    window.addEventListener('scroll', () => {
+    const onScrollOrResize = () => {
         if (ticking) return;
         window.requestAnimationFrame(() => {
             highlightActiveHeading();
             ticking = false;
         });
         ticking = true;
-    });
+    };
 
-    highlightActiveHeading();
-})();
+    window.addEventListener('scroll', onScrollOrResize);
+    window.addEventListener('resize', onScrollOrResize);
+
+    // Initial highlight
+    setTimeout(highlightActiveHeading, 100);
+    window.addEventListener('load', () => setTimeout(highlightActiveHeading, 150));
+
+    // Phase 3: Liquid Morphing Engine
+    let lastScrollY = window.scrollY;
+    let velocity = 0;
+
+    const animateLiquid = () => {
+        const currentScrollY = window.scrollY;
+        const delta = currentScrollY - lastScrollY;
+        
+        // Momentum decay (friction)
+        velocity = velocity * 0.8 + delta * 0.2;
+        lastScrollY = currentScrollY;
+
+        // Calculate stretch multiplier (cap at 1.4 to prevent breaking layout)
+        const stretchAmount = 1 + Math.min(Math.abs(velocity) * 0.008, 0.4);
+        
+        // Stretch from the direction of movement
+        const stretchOrigin = velocity > 0 ? 'top' : 'bottom';
+
+        tocs.forEach(toc => {
+            const indicator = toc.querySelector('.toc-indicator');
+            if (indicator && indicator.classList.contains('visible')) {
+                // Only update variables if we have noticeable velocity or need to settle back to 1
+                if (Math.abs(velocity) > 0.1 || stretchAmount > 1.001) {
+                    indicator.style.setProperty('--stretch', stretchAmount.toFixed(3));
+                    indicator.style.setProperty('--stretch-origin', stretchOrigin);
+                } else {
+                    indicator.style.setProperty('--stretch', '1');
+                }
+            }
+        });
+
+        requestAnimationFrame(animateLiquid);
+    };
+    
+    // Start the 60fps liquid loop
+    requestAnimationFrame(animateLiquid);
+
+    // Phase 2: 3D Tilt Effect
+    tocs.forEach(toc => {
+        toc.addEventListener('mousemove', (e) => {
+            // Get dimensions and position of the TOC panel
+            const rect = toc.getBoundingClientRect();
+            // Calculate mouse position relative to the center of the panel
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            // Calculate rotation amounts (max 10 degrees)
+            const rotateX = ((y - centerY) / centerY) * -10;
+            const rotateY = ((x - centerX) / centerX) * 10;
+            
+            toc.style.setProperty('--rotate-x', `${rotateX}deg`);
+            toc.style.setProperty('--rotate-y', `${rotateY}deg`);
+        });
+        
+        toc.addEventListener('mouseleave', () => {
+            // Reset transforms when mouse leaves
+            toc.style.setProperty('--rotate-x', `0deg`);
+            toc.style.setProperty('--rotate-y', `0deg`);
+        });
+    });
+});
 </script>
