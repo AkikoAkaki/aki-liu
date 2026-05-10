@@ -495,6 +495,63 @@
             });
         });
 
+        // --- Floating Link Preview ---
+        const previewLinks = document.querySelectorAll('.work-item[data-preview]');
+        if (previewLinks.length > 0) {
+            let tooltip = document.createElement('div');
+            tooltip.className = 'link-preview-tooltip';
+            
+            let img = document.createElement('img');
+            img.className = 'link-preview-img';
+            tooltip.appendChild(img);
+            document.body.appendChild(tooltip);
+
+            let hoverTimeout;
+            let isHovering = false;
+            let currentX = 0, currentY = 0;
+            let rafId = null;
+
+            function updatePosition() {
+                if (isHovering) {
+                    tooltip.style.left = currentX + 'px';
+                    tooltip.style.top = currentY + 'px';
+                    rafId = requestAnimationFrame(updatePosition);
+                }
+            }
+
+            previewLinks.forEach(link => {
+                link.addEventListener('mouseenter', (e) => {
+                    clearTimeout(hoverTimeout);
+                    isHovering = true;
+                    
+                    let previewUrl = link.getAttribute('data-preview');
+                    if (previewUrl && !img.src.endsWith(previewUrl)) {
+                        img.src = previewUrl;
+                    }
+                    
+                    currentX = e.clientX;
+                    currentY = e.clientY;
+                    
+                    tooltip.classList.add('is-visible');
+                    if (!rafId) updatePosition();
+                });
+
+                link.addEventListener('mousemove', (e) => {
+                    currentX = e.clientX;
+                    currentY = e.clientY;
+                });
+
+                link.addEventListener('mouseleave', () => {
+                    isHovering = false;
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                    hoverTimeout = setTimeout(() => {
+                        tooltip.classList.remove('is-visible');
+                    }, 50);
+                });
+            });
+        }
+
         // --- Search + Command Palette ---
         initSearchPalette();
     });

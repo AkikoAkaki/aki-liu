@@ -105,13 +105,13 @@
     --font-display: "Hero", "Syncopate", "Helvetica Neue", Helvetica, Arial, sans-serif;
     
     /* 衬线体首选 Noto Serif SC (思源宋体) */
-    --font-serif: "Noto Serif SC", "Newsreader", "Playfair Display", "EB Garamond", "SimSun", serif;
+    --font-serif: "Newsreader", "Playfair Display", "EB Garamond", "Noto Serif SC", "SimSun", serif;
     
     /* 数据等宽首选 JetBrains Mono（备选 Geist Mono 也可以在此直接切换前置） */
     --font-mono: "JetBrains Mono", "Geist Mono", "Space Mono", "Consolas", monospace;
     
     /* 常规无衬线首选 Noto Sans SC (思源黑体) */
-    --font-sans: "Noto Sans SC", "Switzer", "Inter", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-sans: "Switzer", "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
     
     --font-ui: "Switzer", "Inter", "Microsoft YaHei", -apple-system, sans-serif;
 

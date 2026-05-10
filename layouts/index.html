@@ -41,29 +41,33 @@
 
     {{/* Work table section */}}
     <section class="work-table-section">
-        <h2 class="data-list-heading">Experiences</h2>
-        <div class="data-list">
+        <div class="work-grid">
             {{- range $col := $data.columns }}
-                {{- range $index, $item := $col.items }}
-                <div class="data-row">
-                    <div class="data-col data-col-category">
-                        {{- if eq $index 0 }}
-                        {{ $col.title }}
-                        {{- end }}
+            <div class="work-column {{ $col.cssClass }}">
+                <h3 class="work-col-title">{{ $col.title }}</h3>
+                <div class="work-items">
+                    {{- range $item := $col.items }}
+                    <div class="work-item"{{ if $item.preview }} data-preview="{{ $item.preview | relURL }}"{{ end }}>
+                        <div class="work-item-title-row">
+                            {{- if $item.link }}
+                            <a href="{{ $item.link | relLangURL }}" class="work-item-title">{{ $item.title }}</a>
+                            {{- else }}
+                            <span class="work-item-title">{{ $item.title }}</span>
+                            {{- end }}
+                        </div>
+                        <div class="work-item-details-row">
+                            {{- if $item.role }}
+                            <span class="work-item-role">{{ $item.role }}</span>
+                            {{- end }}
+                            <div class="work-item-leader"></div>
+                            {{- if $item.date }}
+                            <span class="work-item-date">{{ $item.date }}</span>
+                            {{- end }}
+                        </div>
                     </div>
-                    <div class="data-col data-col-title">
-                        {{- if $item.link }}
-                        <a href="{{ $item.link | relLangURL }}" class="data-link">{{ $item.title }}</a>
-                        {{- else }}
-                        {{ $item.title }}
-                        {{- end }}
-                        {{- if $item.role }}
-                        <div class="data-item-role">{{ $item.role }}</div>
-                        {{- end }}
-                    </div>
-                    <div class="data-col data-col-desc">{{ $item.desc | safeHTML }}</div>
+                    {{- end }}
                 </div>
-                {{- end }}
+            </div>
             {{- end }}
         </div>
     </section>
