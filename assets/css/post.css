@@ -35,32 +35,31 @@
 }
 
 .post-header-grid {
-    display: grid;
-    grid-template-columns: 1fr 650px 1fr;
-    gap: 2rem;
-    align-items: start;
-    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem; /* 增加标题与下方内容的间距 */
+    margin-bottom: 3.5rem;
+    text-align: center;
 }
 
 .meta-col.title-col {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    margin-bottom: 2rem;
-    text-align: left;
-    padding-left: 4vw;
+    margin-bottom: 0;
+    text-align: center;
+    padding-left: 0;
 }
 
 .meta-col.info-col {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    padding-left: 4vw;
-    max-width: 800px;
+    padding-left: 0;
+    max-width: 680px;
+    align-items: center;
 }
 
 .meta-col {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    align-items: center;
 }
 
 .meta-label {
@@ -72,34 +71,44 @@
 .post-title-override.meta-large {
     font-family: var(--font-serif);
     font-weight: 400;
-    line-height: 1.1;
+    line-height: 1.2;
     color: var(--color-heading);
     margin: 0;
-    font-size: 3.8rem;
-    text-align: left;
+    font-size: 4rem;
+    text-align: center;
     width: 100%;
 }
 
 .meta-value.custom-info {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: var(--text-color);
-    line-height: 1.6;
-    margin-bottom: 0.5rem;
+    line-height: 1.7;
+    margin-bottom: 0.8rem;
+    text-align: left; /* 改为左对齐 */
+    width: 100%;
 }
 
 .meta-metadata-stack {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    padding-top: 0.5rem;
-    margin-left: 0.3rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding-top: 0.25rem;
+    color: var(--text-meta);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
 }
 
 .metadata-item {
-    display: flex;
+    display: inline-block;
+}
+
+.metadata-separator {
     font-size: 0.8rem;
-    color: var(--text-color);
+    opacity: 0.5;
 }
 
 .meta-sublabel {
@@ -221,25 +230,29 @@
 .post-content {
     font: var(--type-l);
     color: var(--text-color);
+    max-width: 680px;
+    margin: 0 auto;
 }
 
 .post-content p {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
 }
 
 /* Blockquote */
 .post-content blockquote {
-    margin: 2.25rem 0 2.25rem -1.5rem;
-    padding-left: 1.5rem;
-    border-left: 3px solid var(--color-secondary);
+    margin: 2rem 0 2rem 2.5rem;
+    padding-left: 0;
+    border-left: none;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    line-height: 1.7;
     color: var(--text-color);
-    background: transparent;
 }
 
 @media (max-width: 768px) {
     .post-content blockquote {
-        margin-left: 0;
-        padding-left: 1rem;
+        margin: 2rem 0 2rem 1.25rem;
+        padding-left: 0;
     }
 }
 
@@ -289,7 +302,7 @@
 .post-content hr {
     border: none;
     border-top: 1px solid rgba(0, 0, 0, 0.08);
-    margin: 3rem 0 1.5rem;
+    margin: 2rem 0;
     width: 100%;
 }
 
@@ -448,7 +461,7 @@
 .post-content ul,
 .post-content ol {
     margin: 1.5rem 0;
-    padding-left: 1.2rem;
+    padding-left: 1.5rem;
     line-height: 2;
     color: var(--text-color);
     list-style-position: outside;
@@ -464,6 +477,7 @@
 
 .post-content li {
     margin-bottom: 0.4rem;
+    padding-left: 0.5rem;
     line-height: 2;
     color: var(--text-color);
 }

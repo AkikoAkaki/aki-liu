@@ -2,28 +2,24 @@
     <header class="post-header-redesigned {{ if not .Params.info }}no-info{{ end }}">
         <div class="post-header-grid">
             <div class="meta-col title-col">
-                <span class="meta-label">Title:</span>
                 <h1 class="post-title-override meta-large">{{ .Title }}</h1>
             </div>
             <div class="meta-col info-col">
                 {{ with .Params.info }}
-                <span class="meta-label">Info:</span>
                 <div class="meta-value custom-info">
                     {{ . | markdownify }}
                 </div>
                 {{ end }}
                 <div class="meta-metadata-stack">
-                    <div class="metadata-item">
-                        <span>{{ .Date.Format "January 02, 2006" }}</span>
-                    </div>
+                    <span class="metadata-item">{{ .Date.Format "Jan 02, 2006" }}</span>
                     {{ with .Params.tags }}
-                    <div class="metadata-item">
-                        <span>{{ delimit . " · " }}</span>
-                    </div>
+                    <span class="metadata-separator">·</span>
+                    <span class="metadata-item">{{ delimit . " / " }}</span>
                     {{ end }}
-                    <div class="metadata-item">
-                        <span>{{ .WordCount }} words · {{ .ReadingTime }} min read</span>
-                    </div>
+                    <span class="metadata-separator">·</span>
+                    <span class="metadata-item">{{ .WordCount }} words</span>
+                    <span class="metadata-separator">·</span>
+                    <span class="metadata-item">{{ .ReadingTime }} min read</span>
                 </div>
             </div>
         </div>
