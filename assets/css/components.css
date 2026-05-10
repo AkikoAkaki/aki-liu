@@ -586,6 +586,7 @@
     font-family: var(--font-sans);
     font-size: 0.95rem;
     color: var(--color-heading);
+    text-decoration: none;
     display: inline-block;
     max-width: 100%;
     position: relative;

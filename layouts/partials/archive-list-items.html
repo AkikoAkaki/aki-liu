@@ -7,9 +7,9 @@
                 <div class="item-hover-arrow">
                     {{ partialCached "icons/hover-arrow.html" "hover-arrow" }}
                 </div>
-                <div class="item-year">
+                <a href="{{ .RelPermalink }}" class="item-year">
                     {{ .Date.Format "2006.01.02" }}
-                </div>
+                </a>
                 <div class="item-title-wrapper">
                     <a href="{{ .RelPermalink }}" class="item-title">
                         {{- .Title -}}

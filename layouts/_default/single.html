@@ -34,7 +34,15 @@
     {{ if and .Params.tags (gt (len .Params.tags) 0) }}
         {{ $firstTag = index .Params.tags 0 | urlize }}
     {{ end }}
-    <aside class="post-toc post-toc--inline" data-tag="{{ $firstTag }}">
+    {{ $allTags := "" }}
+    {{ if .Params.tags }}
+        {{ $urlizedTags := slice }}
+        {{ range .Params.tags }}
+            {{ $urlizedTags = $urlizedTags | append (urlize .) }}
+        {{ end }}
+        {{ $allTags = delimit $urlizedTags "," }}
+    {{ end }}
+    <aside class="post-toc post-toc--inline" data-tag="{{ $firstTag }}" data-all-tags="{{ $allTags }}">
         {{ .TableOfContents }}
     </aside>
     {{ end }}
@@ -55,7 +63,15 @@
     {{ if and .Params.tags (gt (len .Params.tags) 0) }}
         {{ $firstTag = index .Params.tags 0 | urlize }}
     {{ end }}
-    <aside class="post-toc post-toc--sidebar" data-tag="{{ $firstTag }}">
+    {{ $allTags := "" }}
+    {{ if .Params.tags }}
+        {{ $urlizedTags := slice }}
+        {{ range .Params.tags }}
+            {{ $urlizedTags = $urlizedTags | append (urlize .) }}
+        {{ end }}
+        {{ $allTags = delimit $urlizedTags "," }}
+    {{ end }}
+    <aside class="post-toc post-toc--sidebar" data-tag="{{ $firstTag }}" data-all-tags="{{ $allTags }}">
         {{ .TableOfContents }}
     </aside>
     {{ end }}

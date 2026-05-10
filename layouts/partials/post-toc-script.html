@@ -106,6 +106,36 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Apply position with support for the liquid scaleY variable
                         indicator.style.transform = `translate(${offsetLeft}px, ${offsetTop}px) scaleY(var(--stretch, 1))`;
                         indicator.classList.add('visible');
+
+                        // Color cycling for multiple tags
+                        const allTags = toc.getAttribute('data-all-tags');
+                        if (allTags) {
+                            const tags = allTags.split(',').map(t => t.trim().toLowerCase());
+                            const tagColorMap = {
+                                'essay': '#007AFF',
+                                'productivity': '#007AFF',
+                                'critique': '#AF52DE',
+                                'mental-model': '#AF52DE',
+                                'poetry': '#FF3B30',
+                                'fiction': '#FFCC00',
+                                'product': '#FFCC00',
+                                'drama': '#34C759',
+                                'translation': '#FF9500',
+                                'content-analysis': '#5856D6',
+                                'technical': '#5856D6',
+                                'ai': '#5AC8FA'
+                            };
+                            
+                            // Find link index among all links in this specific TOC
+                            const tocLinks = Array.from(toc.querySelectorAll('a'));
+                            const linkIndex = tocLinks.indexOf(link);
+                            if (linkIndex !== -1) {
+                                const activeTag = tags[linkIndex % tags.length];
+                                // Check both raw tag and urlized version
+                                const tagColor = tagColorMap[activeTag] || '#8E8E93';
+                                indicator.style.setProperty('--active-dot-color', tagColor);
+                            }
+                        }
                     }
                 }
             });

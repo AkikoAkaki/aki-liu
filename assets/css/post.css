@@ -197,7 +197,7 @@
     background-color: var(--active-dot-color);
     z-index: 10;
     pointer-events: none;
-    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease, background-color 0.3s ease;
     opacity: 0;
     transform-origin: var(--stretch-origin, center);
 }
