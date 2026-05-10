@@ -89,18 +89,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (toc) {
                     const indicator = toc.querySelector('.toc-indicator');
                     if (indicator) {
-                        // Calculate relative position within the nav
+                        // Use Range to get exact text node bounding box inside the link
                         const nav = link.closest('nav');
-                        // Use link's top position relative to nav
                         const navRect = nav.getBoundingClientRect();
-                        const linkRect = link.getBoundingClientRect();
                         
-                        const offsetTop = linkRect.top - navRect.top + nav.scrollTop;
-                        const height = linkRect.height;
+                        const range = document.createRange();
+                        // Select the contents of the link to measure the text itself
+                        range.selectNodeContents(link);
+                        const textRect = range.getBoundingClientRect();
                         
-                        // Maintain Z-translation for 3D effect
-                        indicator.style.transform = `translateY(${offsetTop}px) translateZ(5px)`;
-                        indicator.style.height = `${height}px`;
+                        // Calculate X and Y relative to the nav container
+                        // Position dot 8px to the right of the text max width, and align with the top of the text + 4px down
+                        const offsetLeft = textRect.right - navRect.left + nav.scrollLeft + 8;
+                        const offsetTop = textRect.top - navRect.top + nav.scrollTop + 4;
+                        
+                        // Apply position with support for the liquid scaleY variable
+                        indicator.style.transform = `translate(${offsetLeft}px, ${offsetTop}px) scaleY(var(--stretch, 1))`;
                         indicator.classList.add('visible');
                     }
                 }

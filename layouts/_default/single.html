@@ -30,7 +30,11 @@
 <article class="post-single">
 
     {{ if .TableOfContents }}
-    <aside class="post-toc post-toc--inline">
+    {{ $firstTag := "" }}
+    {{ if and .Params.tags (gt (len .Params.tags) 0) }}
+        {{ $firstTag = index .Params.tags 0 | urlize }}
+    {{ end }}
+    <aside class="post-toc post-toc--inline" data-tag="{{ $firstTag }}">
         {{ .TableOfContents }}
     </aside>
     {{ end }}
@@ -47,7 +51,11 @@
 
 {{ define "sidebar-right" }}
     {{ if .TableOfContents }}
-    <aside class="post-toc post-toc--sidebar">
+    {{ $firstTag := "" }}
+    {{ if and .Params.tags (gt (len .Params.tags) 0) }}
+        {{ $firstTag = index .Params.tags 0 | urlize }}
+    {{ end }}
+    <aside class="post-toc post-toc--sidebar" data-tag="{{ $firstTag }}">
         {{ .TableOfContents }}
     </aside>
     {{ end }}

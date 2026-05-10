@@ -130,8 +130,8 @@
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
     border-radius: 12px;
-    border: 1px solid rgba(128, 128, 128, 0.15);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Soft white border instead of gray separator */
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
     font-family: var(--font-sans);
     font-size: 0.9rem;
     line-height: 1.6;
@@ -171,44 +171,35 @@
     transform-style: preserve-3d;
 }
 
-/* Dynamic Sliding Indicator */
+/* Dynamic color mapping for the active dot */
+.post-toc {
+    --active-dot-color: #8E8E93; /* default */
+}
+.post-toc[data-tag="essay"] { --active-dot-color: #007AFF; }
+.post-toc[data-tag="productivity"] { --active-dot-color: #007AFF; }
+.post-toc[data-tag="critique"] { --active-dot-color: #AF52DE; }
+.post-toc[data-tag="mental-model"] { --active-dot-color: #AF52DE; }
+.post-toc[data-tag="poetry"] { --active-dot-color: #FF3B30; }
+.post-toc[data-tag="fiction"] { --active-dot-color: #FFCC00; }
+.post-toc[data-tag="product"] { --active-dot-color: #FFCC00; }
+.post-toc[data-tag="drama"] { --active-dot-color: #34C759; }
+.post-toc[data-tag="translation"] { --active-dot-color: #FF9500; }
+.post-toc[data-tag="content-analysis"] { --active-dot-color: #5856D6; }
+.post-toc[data-tag="technical"] { --active-dot-color: #5856D6; }
+.post-toc[data-tag="ai"] { --active-dot-color: #5AC8FA; }
+
+/* The smooth sliding tag dot */
 .toc-indicator {
     position: absolute;
-    left: 0.25rem;
-    width: calc(100% - 0.5rem);
-    z-index: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--active-dot-color);
+    z-index: 10;
     pointer-events: none;
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), height 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
     opacity: 0;
-    transform: translateZ(5px); /* Lift indicator slightly off the glass */
-    
-    /* Phase 3: Liquid Morphing Variables */
-    --stretch: 1;
-    --stretch-origin: center;
-}
-
-.toc-indicator::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 6px;
-    
-    /* Iridescent/neon gradient background */
-    background: linear-gradient(135deg, rgba(120, 110, 255, 0.15), rgba(0, 200, 255, 0.1));
-    /* Soft ambient glow that bleeds through the glass */
-    box-shadow: 0 0 20px rgba(120, 110, 255, 0.15), inset 0 0 8px rgba(255, 255, 255, 0.4);
-    
-    /* Apply instant liquid stretching */
-    transform-origin: var(--stretch-origin);
-    transform: scaleY(var(--stretch));
-    will-change: transform;
-}
-
-@media (prefers-color-scheme: dark) {
-    .toc-indicator::before {
-        background: linear-gradient(135deg, rgba(160, 150, 255, 0.25), rgba(0, 255, 255, 0.15));
-        box-shadow: 0 0 24px rgba(160, 150, 255, 0.25), inset 0 0 10px rgba(255, 255, 255, 0.1);
-    }
+    transform-origin: var(--stretch-origin, center);
 }
 
 .toc-indicator.visible {
@@ -256,54 +247,19 @@
     position: relative;
     z-index: 1;
     transform-origin: center center;
-    transform: translateZ(10px); /* Base elevation over indicator */
 }
 
 .post-toc a:hover {
     color: var(--text-color);
-    transform: translateZ(25px) scale(1.02); /* Pop out heavily on hover */
-}
-
-@keyframes tocTextShine {
-    0% {
-        background-position: 200% 50%;
-    }
-    100% {
-        background-position: -200% 50%;
-    }
+    transform: translateX(4px) scale(1.02);
 }
 
 .post-toc a.is-active {
-    font-weight: 500;
+    color: var(--text-color);
     transform: scale(1.02);
-    /* Sweeping shine text effect */
-    background: linear-gradient(
-        120deg,
-        var(--text-color) 40%,
-        #8a82ff 50%,
-        var(--text-color) 60%
-    );
-    background-size: 200% auto;
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
-    animation: tocTextShine 4s linear infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-    .post-toc a.is-active {
-        background: linear-gradient(
-            120deg,
-            var(--text-color) 40%,
-            #b3aaff 50%,
-            var(--text-color) 60%
-        );
-        background-size: 200% auto;
-        color: transparent;
-        -webkit-background-clip: text;
-        background-clip: text;
-    }
-}
+
 
 .post-toc--inline {
     display: none;
@@ -311,6 +267,7 @@
 
 .post-toc--sidebar {
     display: block;
+    margin-top: 1.5rem; /* Aligns with the visual top of the article text */
 }
 
 @media (max-width: 1200px) {
