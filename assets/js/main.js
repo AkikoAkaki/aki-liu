@@ -1080,21 +1080,16 @@
 
                 // Quartic Ease Out for smoother non-linear curve
                 const eased = 1 - Math.pow(1 - progress, 4);
-                const radius = 48 * eased; // from square slowly to round
-                const shadow = 0.15 * eased;
-                const scaleX = 1 - (0.03 * eased); // shrink width only to avoid vertical pull
+                const radius = 40 * eased; // from square slowly to round
+                const scaleX = 1 - (0.044 * eased);
 
-                wrapper.style.transformOrigin = 'center bottom';
-                wrapper.style.transform = 'scale(' + scaleX + ', 1)';
-                wrapper.style.borderBottomLeftRadius = radius + 'px';
-                wrapper.style.borderBottomRightRadius = radius + 'px';
-                wrapper.style.boxShadow =
-                    '0 ' + (20 * eased) + 'px ' + (60 * eased) + 'px rgba(0,0,0,' + shadow + ')';
+                wrapper.style.setProperty('--footer-reveal-radius', radius + 'px');
+                wrapper.style.transform = 'scaleX(' + scaleX + ')';
+                wrapper.style.boxShadow = 'none';
             } else {
                 wrapper.style.transform = 'none';
-                wrapper.style.borderBottomLeftRadius = '0px';
-                wrapper.style.borderBottomRightRadius = '0px';
                 wrapper.style.boxShadow = 'none';
+                wrapper.style.setProperty('--footer-reveal-radius', '0px');
             }
             isAnimating = false;
         }

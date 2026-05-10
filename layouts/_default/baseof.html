@@ -12,6 +12,7 @@
     <link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
 </head>
 <body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} kind-{{ .Kind }}">
+    <div class="site-wrapper">
     <nav class="site-nav">
         <div class="nav-links">
             <a href="{{ $homePage.RelPermalink }}" class="{{ if .IsHome }}active{{ end }}" data-desc="Index of everything">HOME</a>
@@ -27,19 +28,55 @@
         <aside class="site-sidebar">{{ block "sidebar-left" . }}{{ end }}</aside>
         <main class="site-main">
             {{ block "main" . }}{{ end }}
-            <footer class="site-footer">
-                <span>©{{ now.Year }}</span>
-                <span>ALL RIGHTS RESERVED</span>
-                <span class="footer-line-preserve-case">ENGINEER with THOUGHTS</span>
-                <img src="{{ "images/signature.webp" | relURL }}" alt="AKI LIU" class="footer-signature" loading="lazy" width="208" height="118">
-                <span>MADE WITH HUGO</span>
-                <span>SWITZER · NEWSREADER · JETBRAINS MONO</span>
-                <span>INSPIRED BY <a href="https://sspeier.com/" target="_blank" rel="noopener">SSPEIER®</a></span>
-            </footer>
         </main>
         <aside class="site-sidebar-bottom">{{ block "sidebar-bottom" . }}{{ end }}</aside>
         <aside class="site-sidebar-right">{{ block "sidebar-right" . }}{{ end }}</aside>
     </div>
+    </div><!-- /.site-wrapper -->
+    
+    <footer class="site-footer reveal-footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-contact">
+                    <h2 class="footer-label">Contact</h2>
+                </div>
+                <div class="footer-links-container">
+                    <ul class="footer-links">
+                        <li>
+                            <span class="link-name">Email</span>
+                            <span class="link-line"></span>
+                            <a href="mailto:your@email.com" target="_blank" rel="noopener">your@email.com <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                        </li>
+                        <li>
+                            <span class="link-name">LinkedIn</span>
+                            <span class="link-line"></span>
+                            <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener">/in/yourprofile <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                        </li>
+                        <li>
+                            <span class="link-name">GitHub</span>
+                            <span class="link-line"></span>
+                            <a href="https://github.com/yourusername" target="_blank" rel="noopener">@yourusername <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                        </li>
+                        <li>
+                            <span class="link-name">X</span>
+                            <span class="link-line"></span>
+                            <a href="https://x.com/yourhandle" target="_blank" rel="noopener">@yourhandle <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-quote">
+                    "The starry heavens above me and the moral law within me."
+                </div>
+                <div class="footer-copyright-wrapper">
+                    <img src="{{ "images/signature.webp" | relURL }}" alt="AKI LIU" class="footer-signature" loading="lazy" width="208" height="118">
+                    <span class="footer-copyright">© {{ now.Year }} Aki Liu</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <div id="search-root" aria-hidden="true"></div>
 </body>
 </html>
