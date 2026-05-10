@@ -554,6 +554,9 @@
 
         // --- Search + Command Palette ---
         initSearchPalette();
+
+        // --- Footer Reveal ---
+        initFooterReveal();
     });
 
     function initSearchPalette() {
@@ -1041,5 +1044,68 @@
         document.querySelectorAll('[data-search-trigger] .nav-kbd').forEach(k => {
             k.textContent = isMac ? '⌘K' : 'Ctrl K';
         });
+    }
+
+    function initFooterReveal() {
+        const footer = document.querySelector('.site-footer');
+        const wrapper = document.querySelector('.site-wrapper');
+        if (!footer || !wrapper) return;
+
+        let footerHeight = 0;
+
+        function updateLayout() {
+            footerHeight = footer.offsetHeight;
+            wrapper.style.marginBottom = footerHeight + 'px';
+            onScroll();
+        }
+
+        const ro = new ResizeObserver(() => {
+            requestAnimationFrame(updateLayout);
+        });
+        ro.observe(footer);
+
+        let isAnimating = false;
+
+        function onScroll() {
+            const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+            let scrollBottom = maxScroll - window.scrollY;
+            if (scrollBottom < 0) scrollBottom = 0;
+
+            const revealDistance = Math.max(1, footerHeight);
+
+            if (scrollBottom <= footerHeight && footerHeight > 0) {
+                let progress = 1 - (scrollBottom / revealDistance);
+                if (progress < 0) progress = 0;
+                if (progress > 1) progress = 1;
+
+                // Quartic Ease Out for smoother non-linear curve
+                const eased = 1 - Math.pow(1 - progress, 4);
+                const radius = 48 * eased; // from square slowly to round
+                const shadow = 0.15 * eased;
+                const scaleX = 1 - (0.03 * eased); // shrink width only to avoid vertical pull
+
+                wrapper.style.transformOrigin = 'center bottom';
+                wrapper.style.transform = 'scale(' + scaleX + ', 1)';
+                wrapper.style.borderBottomLeftRadius = radius + 'px';
+                wrapper.style.borderBottomRightRadius = radius + 'px';
+                wrapper.style.boxShadow =
+                    '0 ' + (20 * eased) + 'px ' + (60 * eased) + 'px rgba(0,0,0,' + shadow + ')';
+            } else {
+                wrapper.style.transform = 'none';
+                wrapper.style.borderBottomLeftRadius = '0px';
+                wrapper.style.borderBottomRightRadius = '0px';
+                wrapper.style.boxShadow = 'none';
+            }
+            isAnimating = false;
+        }
+
+        window.addEventListener('scroll', () => {
+            if (!isAnimating) {
+                isAnimating = true;
+                requestAnimationFrame(onScroll);
+            }
+        }, { passive: true });
+
+        updateLayout();
     }
 })();
