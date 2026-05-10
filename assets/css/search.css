@@ -3,8 +3,8 @@
    Linear-leaning: hairline borders, micro state feedback, light skeuomorphism.
    ========================================================================== */
 
-/* ---------- Trigger (sits inside .nav-links) ---------- */
-.nav-search .nav-kbd {
+/* ---------- Trigger (sits inside .menu-panel) ---------- */
+.menu-link--search .menu-kbd {
     display: inline-flex;
     align-items: center;
     margin-left: 8px;
@@ -21,12 +21,12 @@
     transition: opacity 0.2s ease, border-color 0.2s ease;
 }
 
-.nav-search:hover .nav-kbd {
+.menu-link--search:hover .menu-kbd {
     opacity: 0.8;
 }
 
 @media (max-width: 768px) {
-    .nav-search .nav-kbd { display: none; }
+    .menu-link--search .menu-kbd { display: none; }
 }
 
 /* ---------- Root container (always present, hidden when closed) ---------- */

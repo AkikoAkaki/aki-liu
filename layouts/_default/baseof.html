@@ -13,16 +13,6 @@
 </head>
 <body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} kind-{{ .Kind }}">
     <div class="site-wrapper">
-    <nav class="site-nav">
-        <div class="nav-links">
-            <a href="{{ $homePage.RelPermalink }}" class="{{ if .IsHome }}active{{ end }}" data-desc="Index of everything">HOME</a>
-            <a href="{{ with $ideasPage }}{{ .RelPermalink }}{{ else }}{{ "ideas/" | relLangURL }}{{ end }}" class="{{ if eq .Section "ideas" }}active{{ end }}" data-desc="Lighter writing, observations and notes on various topics">IDEAS</a>
-            <a href="{{ with $textLabPage }}{{ .RelPermalink }}{{ else }}{{ "textlab/" | relLangURL }}{{ end }}" class="{{ if eq .Section "textlab" }}active{{ end }}" data-desc="Essays, poems, criticisms, fiction, more experimental and stylized writing">TEXT LAB</a>
-            <a href="{{ with $technicalPage }}{{ .RelPermalink }}{{ else }}{{ "technical/" | relLangURL }}{{ end }}" class="{{ if eq .Section "technical" }}active{{ end }}" data-desc="Notes and thoughts on engineering and theory">TECHNICAL</a>
-            <a href="#search" class="nav-search" data-search-trigger data-desc="Search the entire site (⌘K)">SEARCH<kbd class="nav-kbd">⌘K</kbd></a>
-        </div>
-        <div id="nav-desc" class="nav-description-display"></div>
-    </nav>
     <div class="site-container">
         {{ block "post-header" . }}{{ end }}
         <aside class="site-sidebar">{{ block "sidebar-left" . }}{{ end }}</aside>
@@ -78,5 +68,30 @@
     </footer>
 
     <div id="search-root" aria-hidden="true"></div>
+
+    <div class="menu-bar" id="menu-bar">
+        <button class="menu-trigger" id="menu-trigger" aria-expanded="false" aria-controls="menu-panel">
+            <span class="menu-trigger-label">Menu</span>
+            <span class="menu-trigger-icon" aria-hidden="true">
+                <svg class="menu-icon-open" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 9H19" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
+                    <path d="M5 15H19" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
+                </svg>
+                <svg class="menu-icon-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 7L7 17" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
+                    <path d="M7 7L17 17" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
+                </svg>
+            </span>
+        </button>
+        <nav class="menu-panel" id="menu-panel" aria-hidden="true">
+            <div class="menu-panel-inner">
+                <a href="{{ $homePage.RelPermalink }}" class="menu-link{{ if .IsHome }} is-active{{ end }}">Home</a>
+                <a href="{{ with $ideasPage }}{{ .RelPermalink }}{{ else }}{{ "ideas/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "ideas" }} is-active{{ end }}">Ideas</a>
+                <a href="{{ with $textLabPage }}{{ .RelPermalink }}{{ else }}{{ "textlab/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "textlab" }} is-active{{ end }}">Text Lab</a>
+                <a href="{{ with $technicalPage }}{{ .RelPermalink }}{{ else }}{{ "technical/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "technical" }} is-active{{ end }}">Technical</a>
+                <a href="#search" class="menu-link menu-link--search" data-search-trigger>Search<kbd class="menu-kbd">⌘K</kbd></a>
+            </div>
+        </nav>
+    </div>
 </body>
 </html>
