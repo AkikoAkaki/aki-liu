@@ -43,7 +43,9 @@
       "Bash(hugo --gc --minify --quiet)",
       "Bash(hugo --gc --minify)",
       "Bash(python -c \"import sys, json; data = json.load\\(sys.stdin\\); mb = [e for e in data if e.get\\('section'\\) == 'microblog']; print\\(f'Total: {len\\(data\\)}'\\); print\\(f'Microblog entries: {len\\(mb\\)}'\\); [print\\(f'  - {e[\\\\\"title\\\\\"][:60]} \\({e[\\\\\"url\\\\\"]}\\)'\\) for e in mb]\")",
-      "Bash(hugo serve *)"
+      "Bash(hugo serve *)",
+      "Bash(Get-ChildItem -Path \"I:\\\\Projects\\\\aki-liu\" -Recurse -Directory)",
+      "Bash(Select-Object -First 20)"
     ]
   }
 }

@@ -245,13 +245,20 @@
 }
 
 .archive-page-subtitle {
-    font-family: var(--font-mono, monospace);
-    font-size: 0.75rem;
-    font-weight: normal;
-    text-transform: uppercase;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 400;
     color: var(--color-secondary);
     margin-top: 0.2rem;
     margin-left: 0.1rem;
+}
+
+.archive-stat-label {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    color: var(--color-secondary);
 }
 
 .archive-filter-section {
@@ -500,10 +507,7 @@
     white-space: nowrap;
 }
 
-/* Hide main site footer on archive list pages */
-.kind-section .site-footer {
-    display: none;
-}
+/* Main site footer is now revealed on archive list pages as well */
 
 .totals-item {
     white-space: nowrap;
@@ -727,10 +731,10 @@
 }
 
 #archive-preview-container .preview-empty {
-    font-family: var(--font-mono, 'JetBrains Mono', monospace);
-    font-size: 0.75rem;
-    color: var(--color-secondary);
-    text-transform: uppercase;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 400;
+    text-transform: none;
 }
 
 #archive-preview-container .preview-title {

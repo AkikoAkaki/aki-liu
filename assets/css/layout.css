@@ -12,6 +12,7 @@
     padding: 7rem 2rem 2rem;
     gap: 2rem;
     min-height: 100vh;
+    align-content: start;
 }
 
 /* 瑙ｉ櫎棣栭�?650px 灏佸嵃锛氬皢鍏堕噴鏀句负鍏ㄥ睆鑷€傚簲锛屾瀬闄愭斁澶фí鍚戠┖�?*/
@@ -306,10 +307,9 @@
 
 /* Placeholder basic styles for archive layout elements */
 .archive-col-header {
-    font-family: var(--font-mono, monospace);
-    font-size: 0.75rem;
-    font-weight: normal;
-    text-transform: uppercase;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 400;
     margin-bottom: 1.5rem;
     color: var(--color-secondary);
 }
