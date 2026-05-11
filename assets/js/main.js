@@ -541,8 +541,13 @@
         const menuPanel   = document.getElementById('menu-panel');
         if (!menuBar || !menuTrigger) return;
 
+        let lastScrollY = window.scrollY || 0;
+        let scrollRafId = 0;
+        const hideThreshold = 24;
+
         function open() {
             menuBar.classList.add('is-open');
+            menuBar.classList.remove('is-scrolled-away');
             menuTrigger.setAttribute('aria-expanded', 'true');
             if (menuPanel) menuPanel.setAttribute('aria-hidden', 'false');
         }
@@ -551,6 +556,29 @@
             menuBar.classList.remove('is-open');
             menuTrigger.setAttribute('aria-expanded', 'false');
             if (menuPanel) menuPanel.setAttribute('aria-hidden', 'true');
+        }
+
+        function updateScrollState() {
+            scrollRafId = 0;
+
+            if (menuBar.classList.contains('is-open')) {
+                lastScrollY = window.scrollY || 0;
+                menuBar.classList.remove('is-scrolled-away');
+                return;
+            }
+
+            const currentScrollY = window.scrollY || 0;
+            const delta = currentScrollY - lastScrollY;
+
+            if (currentScrollY <= hideThreshold) {
+                menuBar.classList.remove('is-scrolled-away');
+            } else if (delta > 1) {
+                menuBar.classList.add('is-scrolled-away');
+            } else if (delta < -1) {
+                menuBar.classList.remove('is-scrolled-away');
+            }
+
+            lastScrollY = currentScrollY;
         }
 
         menuTrigger.addEventListener('click', (e) => {
@@ -569,6 +597,13 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') close();
         });
+
+        window.addEventListener('scroll', () => {
+            if (scrollRafId) return;
+            scrollRafId = requestAnimationFrame(updateScrollState);
+        }, { passive: true });
+
+        updateScrollState();
     }
 
 

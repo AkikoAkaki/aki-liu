@@ -5,20 +5,19 @@
 
 /* ---------- Trigger (sits inside .menu-panel) ---------- */
 .menu-link--search .menu-kbd {
-    display: inline-flex;
-    align-items: center;
     margin-left: 8px;
-    padding: 1px 5px 0;
     font-family: var(--font-mono);
-    font-size: 10px;
-    line-height: 1.4;
-    letter-spacing: 0.04em;
+    font-size: 13px;
+    line-height: 1;
+    letter-spacing: 0;
     color: currentColor;
-    opacity: 0.45;
-    border: 1px solid color-mix(in oklab, currentColor 28%, transparent);
-    border-radius: 4px;
+    opacity: 0.38;
     vertical-align: middle;
-    transition: opacity 0.2s ease, border-color 0.2s ease;
+    border: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    transition: opacity 0.2s ease;
 }
 
 .menu-link--search:hover .menu-kbd {

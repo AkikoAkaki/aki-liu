@@ -255,38 +255,43 @@ body::after {
     position: fixed;
     top: 70px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
     z-index: 3000;
 
     /* Collapsed pill dimensions — Larger editorial scale */
     width: 320px;
     height: 68px;
+    max-height: 68px;
     border-radius: 18px;
-    border: 1px solid var(--border-color);
-    background: rgba(var(--bg-rgb), 0.94);
-    backdrop-filter: blur(24px) saturate(140%);
-    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid rgba(var(--text-rgb), 0.1);
+    background: rgba(236, 236, 236, 0.14);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
     overflow: hidden;
-    box-shadow: 
-        0 4px 12px rgba(0, 0, 0, 0.05),
-        0 12px 32px rgba(0, 0, 0, 0.08);
+    will-change: transform;
 
     /* Non-linear morphing animation — expo.out curve */
     transition:
-        width  0.52s cubic-bezier(0.16, 1, 0.3, 1),
-        height 0.52s cubic-bezier(0.16, 1, 0.3, 1),
-        border-radius 0.52s cubic-bezier(0.16, 1, 0.3, 1);
+        transform 0.82s cubic-bezier(0.22, 1, 0.36, 1),
+        width 0.76s cubic-bezier(0.22, 1, 0.36, 1),
+        max-height 0.82s cubic-bezier(0.22, 1, 0.36, 1),
+        border-radius 0.76s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.menu-bar.is-scrolled-away {
+    transform: translate3d(-50%, calc(-100% - 110px), 0);
 }
 
 /* Expanded state */
 .menu-bar.is-open {
     width: 480px;
     height: auto;
+    max-height: 560px;
     border-radius: 16px;
-    overflow: visible; /* Let panel content breathe */
-    background: var(--bg-color); /* Fully opaque when open */
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    overflow: hidden;
+    background: rgba(236, 236, 236, 0.14);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
 }
 
 /* The trigger button — always fills the collapsed pill */
@@ -299,13 +304,13 @@ body::after {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px;
+    padding: 0 28px 0 24px;
     background: none;
     border: none;
     cursor: pointer;
     color: var(--text-color);
     font-family: var(--font-sans);
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 450;
     letter-spacing: 0.01em;
     z-index: 1;
@@ -320,8 +325,14 @@ body::after {
 .menu-trigger-icon {
     display: flex;
     align-items: center;
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
+}
+
+.menu-trigger-icon svg {
+    display: block;
+    width: 20px;
+    height: 20px;
 }
 
 .menu-icon-open,
@@ -340,12 +351,30 @@ body::after {
 
 /* Navigation panel — hidden until .is-open */
 .menu-panel {
-    display: none;
-    padding: 80px 32px 32px; /* Increased padding for larger scale */
+    display: block;
+    box-sizing: border-box;
+    max-height: 0;
+    padding: 80px 40px 20px; /* Increased padding for larger scale */
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate3d(0, -10px, 0);
+    will-change: max-height, opacity, transform;
+    transition:
+        max-height 0.82s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.28s ease,
+        transform 0.82s cubic-bezier(0.22, 1, 0.36, 1),
+        visibility 0s linear 0.82s;
 }
 
 .menu-bar.is-open .menu-panel {
-    display: block;
+    max-height: 520px;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0);
+    transition-delay: 0.1s, 0.14s, 0.1s, 0s;
 }
 
 .menu-panel-inner {
@@ -358,32 +387,49 @@ body::after {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 0;
+    padding: 12px 14px;
+    margin: 0 -14px;
+    border-radius: 10px;
     font-family: var(--font-sans);
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 400;
     letter-spacing: 0;
     color: var(--text-color);
     text-decoration: none;
-    opacity: 0.55;
-    border-bottom: 1px solid var(--border-color);
-    transition: opacity 0.2s ease;
-}
-
-.menu-link:last-child {
-    border-bottom: none;
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    transition:
+        opacity 0.34s ease,
+        transform 0.56s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.2s ease;
 }
 
 .menu-link:hover,
 .menu-link.is-active {
     opacity: 1;
+    background-color: rgba(var(--text-rgb), 0.06);
 }
+
+.menu-bar.is-open .menu-link {
+    opacity: 0.55;
+    transform: translate3d(0, 0, 0);
+}
+
+.menu-bar.is-open .menu-link:nth-child(1) { transition-delay: 0.18s; }
+.menu-bar.is-open .menu-link:nth-child(2) { transition-delay: 0.22s; }
+.menu-bar.is-open .menu-link:nth-child(3) { transition-delay: 0.26s; }
+.menu-bar.is-open .menu-link:nth-child(4) { transition-delay: 0.30s; }
+.menu-bar.is-open .menu-link:nth-child(5) { transition-delay: 0.34s; }
 
 .menu-kbd {
     font-family: var(--font-sans);
-    font-size: 13px;
-    opacity: 0.35;
+    margin-left: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    opacity: 0.38;
     letter-spacing: 0;
+    color: var(--text-color);
 }
 
 /* ==========================================================================
@@ -403,7 +449,8 @@ body::after {
 
     .menu-trigger {
         height: 56px;
-        font-size: 11px;
+        font-size: 18px;
+        padding: 0 24px 0 20px;
     }
 
     .menu-panel {
@@ -424,13 +471,14 @@ body::after {
 
     .menu-trigger {
         height: 38px;
-        font-size: 10px;
-        padding: 0 12px;
+        font-size: 18px;
+        padding: 0 20px 0 16px;
     }
 
     .menu-panel {
         padding-top: 46px;
-        padding-left: 16px;
-        padding-right: 16px;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 20px;
     }
 }
