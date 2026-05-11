@@ -73,11 +73,11 @@
         </button>
         <nav class="menu-panel" id="menu-panel" aria-hidden="true">
             <div class="menu-panel-inner">
-                <a href="{{ $homePage.RelPermalink }}" class="menu-link{{ if .IsHome }} is-active{{ end }}">Home</a>
-                <a href="{{ with $ideasPage }}{{ .RelPermalink }}{{ else }}{{ "ideas/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "ideas" }} is-active{{ end }}">Ideas</a>
-                <a href="{{ with $textLabPage }}{{ .RelPermalink }}{{ else }}{{ "textlab/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "textlab" }} is-active{{ end }}">Text Lab</a>
-                <a href="{{ with $technicalPage }}{{ .RelPermalink }}{{ else }}{{ "technical/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "technical" }} is-active{{ end }}">Technical</a>
-                <a href="#search" class="menu-link menu-link--search" data-search-trigger>Search<kbd class="menu-kbd">⌘K</kbd></a>
+                <a href="{{ $homePage.RelPermalink }}" class="menu-link{{ if .IsHome }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Home</span></span></a>
+                <a href="{{ with $ideasPage }}{{ .RelPermalink }}{{ else }}{{ "ideas/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "ideas" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Ideas</span></span></a>
+                <a href="{{ with $textLabPage }}{{ .RelPermalink }}{{ else }}{{ "textlab/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "textlab" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Text Lab</span></span></a>
+                <a href="{{ with $technicalPage }}{{ .RelPermalink }}{{ else }}{{ "technical/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "technical" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Technical</span></span></a>
+                <a href="#search" class="menu-link menu-link--search" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
             </div>
         </nav>
     </div>

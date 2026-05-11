@@ -173,22 +173,26 @@ body.search-open .search-panel {
     flex: none;
     font-family: var(--font-sans);
     font-size: 10px;
-    letter-spacing: 0.04em;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     color: var(--color-muted);
-    padding: 2px 6px;
-    border: 1px solid color-mix(in oklab, var(--color-divider) 90%, transparent);
-    border-radius: 4px;
+    padding: 3px 8px;
+    background: rgba(var(--text-rgb), 0.06);
+    border-radius: 5px;
     text-transform: uppercase;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
 }
 
 .search-mode-hint {
     flex: none;
     font-family: var(--font-sans);
     font-size: 10px;
-    letter-spacing: 0.06em;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     color: var(--color-muted);
     text-transform: uppercase;
-    padding-right: 4px;
+    padding-right: 8px;
+    opacity: 0.6;
 }
 
 /* ---------- Results list ---------- */
@@ -302,12 +306,14 @@ body.search-open .search-panel {
 
 .search-foot kbd {
     font: inherit;
-    color: var(--text-color);
-    padding: 1px 5px;
-    margin-right: 4px;
-    border: 1px solid color-mix(in oklab, var(--color-divider) 90%, transparent);
-    border-radius: 3px;
-    background: color-mix(in oklab, currentColor 4%, transparent);
+    font-weight: 500;
+    color: var(--color-heading);
+    padding: 2px 6px;
+    margin-right: 6px;
+    border: none;
+    border-radius: 4px;
+    background: rgba(var(--text-rgb), 0.08);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
 }
 
 .search-foot-spacer { flex: 1; }

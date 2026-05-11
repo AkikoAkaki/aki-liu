@@ -541,6 +541,7 @@
         const menuPanel   = document.getElementById('menu-panel');
         if (!menuBar || !menuTrigger) return;
 
+        const magneticLinks = menuPanel ? [...menuPanel.querySelectorAll('.menu-link')] : [];
         let lastScrollY = window.scrollY || 0;
         let scrollRafId = 0;
         const hideThreshold = 24;
@@ -568,6 +569,7 @@
         }
 
         function close() {
+            resetMagneticLinks();
             menuBar.style.setProperty('--menu-open-height', `${menuBar.getBoundingClientRect().height}px`);
             requestAnimationFrame(() => {
                 menuBar.classList.remove('is-open');
@@ -599,6 +601,185 @@
             lastScrollY = currentScrollY;
         }
 
+        function initMagneticLinks() {
+            const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!canHover || reduceMotion || !magneticLinks.length) return;
+
+            magneticLinks.forEach(link => {
+                const state = {
+                    active: false,
+                    settling: false,
+                    rect: null,
+                    rafId: 0,
+                    current: { x: 0, y: 0, contentX: 0, contentY: 0, cursorX: 0, cursorY: 0, fill: 0, opacity: 0 },
+                    target:  { x: 0, y: 0, contentX: 0, contentY: 0, cursorX: 0, cursorY: 0, fill: 0, opacity: 0 },
+                };
+
+                link._menuMagnetState = state;
+
+                function setVars() {
+                    link.style.setProperty('--menu-magnet-x', `${state.current.x.toFixed(3)}px`);
+                    link.style.setProperty('--menu-magnet-y', `${state.current.y.toFixed(3)}px`);
+                    link.style.setProperty('--menu-content-x', `${state.current.contentX.toFixed(3)}px`);
+                    link.style.setProperty('--menu-content-y', `${state.current.contentY.toFixed(3)}px`);
+                    link.style.setProperty('--menu-cursor-x', `${state.current.cursorX.toFixed(3)}px`);
+                    link.style.setProperty('--menu-cursor-y', `${state.current.cursorY.toFixed(3)}px`);
+                    link.style.setProperty('--menu-fill-scale', state.current.fill.toFixed(4));
+                    link.style.setProperty('--menu-fill-opacity', state.current.opacity.toFixed(4));
+                }
+
+                function resetVars() {
+                    [
+                        '--menu-magnet-x',
+                        '--menu-magnet-y',
+                        '--menu-content-x',
+                        '--menu-content-y',
+                        '--menu-cursor-x',
+                        '--menu-cursor-y',
+                        '--menu-fill-scale',
+                        '--menu-fill-opacity',
+                    ].forEach(prop => link.style.removeProperty(prop));
+                }
+
+                function updateTarget(event) {
+                    if (!state.rect) state.rect = link.getBoundingClientRect();
+                    const relX = Math.max(0, Math.min(state.rect.width, event.clientX - state.rect.left));
+                    const relY = Math.max(0, Math.min(state.rect.height, event.clientY - state.rect.top));
+                    const xRatio = (relX / state.rect.width) - 0.5;
+                    const yRatio = (relY / state.rect.height) - 0.5;
+
+                    state.target.x = xRatio * 8;
+                    state.target.y = yRatio * 5;
+                    state.target.contentX = xRatio * 15;
+                    state.target.contentY = yRatio * 9;
+                    state.target.cursorX = relX;
+                    state.target.cursorY = relY;
+                }
+
+                function approach(current, target, amount) {
+                    return current + ((target - current) * amount);
+                }
+
+                function animate() {
+                    state.current.x = approach(state.current.x, state.target.x, 0.18);
+                    state.current.y = approach(state.current.y, state.target.y, 0.18);
+                    state.current.contentX = approach(state.current.contentX, state.target.contentX, 0.22);
+                    state.current.contentY = approach(state.current.contentY, state.target.contentY, 0.22);
+                    state.current.cursorX = approach(state.current.cursorX, state.target.cursorX, 0.26);
+                    state.current.cursorY = approach(state.current.cursorY, state.target.cursorY, 0.26);
+                    state.current.fill = approach(state.current.fill, state.target.fill, state.active ? 0.34 : 0.2);
+                    state.current.opacity = approach(state.current.opacity, state.target.opacity, state.active ? 0.28 : 0.18);
+
+                    setVars();
+
+                    const stillMoving =
+                        Math.abs(state.current.x - state.target.x) > 0.01 ||
+                        Math.abs(state.current.y - state.target.y) > 0.01 ||
+                        Math.abs(state.current.contentX - state.target.contentX) > 0.01 ||
+                        Math.abs(state.current.contentY - state.target.contentY) > 0.01 ||
+                        Math.abs(state.current.cursorX - state.target.cursorX) > 0.01 ||
+                        Math.abs(state.current.cursorY - state.target.cursorY) > 0.01 ||
+                        Math.abs(state.current.fill - state.target.fill) > 0.005 ||
+                        Math.abs(state.current.opacity - state.target.opacity) > 0.005;
+
+                    if (stillMoving) {
+                        state.rafId = requestAnimationFrame(animate);
+                        return;
+                    }
+
+                    state.rafId = 0;
+                    if (!state.active) {
+                        state.settling = false;
+                        link.classList.remove('is-settling');
+                        resetVars();
+                    }
+                }
+
+                function startAnimation() {
+                    if (!state.rafId) {
+                        state.rafId = requestAnimationFrame(animate);
+                    }
+                }
+
+                link.addEventListener('pointerenter', event => {
+                    if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
+
+                    state.active = true;
+                    state.settling = false;
+                    state.rect = link.getBoundingClientRect();
+                    updateTarget(event);
+
+                    state.current.cursorX = state.target.cursorX;
+                    state.current.cursorY = state.target.cursorY;
+                    state.current.fill = 0;
+                    state.current.opacity = 0;
+                    state.target.fill = 1;
+                    state.target.opacity = 1;
+
+                    link.classList.add('is-magnetic');
+                    link.classList.remove('is-settling');
+                    document.body.classList.add('menu-cursor-hidden');
+                    setVars();
+                    startAnimation();
+                });
+
+                link.addEventListener('pointermove', event => {
+                    if (!state.active) return;
+                    updateTarget(event);
+                    startAnimation();
+                });
+
+                link.addEventListener('pointerleave', () => {
+                    state.active = false;
+                    state.settling = true;
+                    state.rect = null;
+                    state.target.x = 0;
+                    state.target.y = 0;
+                    state.target.contentX = 0;
+                    state.target.contentY = 0;
+                    state.target.fill = 0;
+                    state.target.opacity = 0;
+
+                    link.classList.remove('is-magnetic');
+                    link.classList.add('is-settling');
+                    document.body.classList.remove('menu-cursor-hidden');
+                    startAnimation();
+                });
+            });
+        }
+
+        function resetMagneticLinks() {
+            document.body.classList.remove('menu-cursor-hidden');
+            magneticLinks.forEach(link => {
+                const state = link._menuMagnetState;
+                if (state && state.rafId) {
+                    cancelAnimationFrame(state.rafId);
+                    state.rafId = 0;
+                }
+                if (state) {
+                    state.active = false;
+                    state.settling = false;
+                    state.rect = null;
+                    Object.keys(state.current).forEach(key => {
+                        state.current[key] = 0;
+                        state.target[key] = 0;
+                    });
+                }
+                link.classList.remove('is-magnetic', 'is-settling');
+                [
+                    '--menu-magnet-x',
+                    '--menu-magnet-y',
+                    '--menu-content-x',
+                    '--menu-content-y',
+                    '--menu-cursor-x',
+                    '--menu-cursor-y',
+                    '--menu-fill-scale',
+                    '--menu-fill-opacity',
+                ].forEach(prop => link.style.removeProperty(prop));
+            });
+        }
+
         menuTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
             menuBar.classList.contains('is-open') ? close() : open();
@@ -625,8 +806,14 @@
             if (menuBar.classList.contains('is-open')) {
                 syncOpenHeight();
             }
+            resetMagneticLinks();
         });
 
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) resetMagneticLinks();
+        });
+
+        initMagneticLinks();
         updateScrollState();
     }
 
@@ -1113,7 +1300,7 @@
         });
 
         // Display the platform-correct kbd hint inside the SEARCH nav entry.
-        document.querySelectorAll('[data-search-trigger] .nav-kbd').forEach(k => {
+        document.querySelectorAll('[data-search-trigger] .menu-kbd, [data-search-trigger] .nav-kbd').forEach(k => {
             k.textContent = isMac ? '⌘K' : 'Ctrl K';
         });
     }
