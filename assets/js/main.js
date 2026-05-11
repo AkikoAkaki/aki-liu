@@ -545,7 +545,22 @@
         let scrollRafId = 0;
         const hideThreshold = 24;
 
+        function getCollapsedHeight() {
+            const computed = window.getComputedStyle(menuBar);
+            return parseFloat(computed.height) || 68;
+        }
+
+        function syncOpenHeight() {
+            if (!menuPanel) return;
+
+            const collapsedHeight = getCollapsedHeight();
+            const panelHeight = menuPanel.scrollHeight;
+            const nextHeight = Math.max(collapsedHeight, panelHeight);
+            menuBar.style.setProperty('--menu-open-height', `${nextHeight}px`);
+        }
+
         function open() {
+            syncOpenHeight();
             menuBar.classList.add('is-open');
             menuBar.classList.remove('is-scrolled-away');
             menuTrigger.setAttribute('aria-expanded', 'true');
@@ -553,7 +568,10 @@
         }
 
         function close() {
-            menuBar.classList.remove('is-open');
+            menuBar.style.setProperty('--menu-open-height', `${menuBar.getBoundingClientRect().height}px`);
+            requestAnimationFrame(() => {
+                menuBar.classList.remove('is-open');
+            });
             menuTrigger.setAttribute('aria-expanded', 'false');
             if (menuPanel) menuPanel.setAttribute('aria-hidden', 'true');
         }
@@ -602,6 +620,12 @@
             if (scrollRafId) return;
             scrollRafId = requestAnimationFrame(updateScrollState);
         }, { passive: true });
+
+        window.addEventListener('resize', () => {
+            if (menuBar.classList.contains('is-open')) {
+                syncOpenHeight();
+            }
+        });
 
         updateScrollState();
     }

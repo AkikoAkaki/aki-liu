@@ -12,6 +12,7 @@
     <link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
 </head>
 <body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} kind-{{ .Kind }}">
+    {{- $connect := site.Data.homepage.connect -}}
     <div class="site-wrapper">
     <div class="site-container">
         {{ block "post-header" . }}{{ end }}
@@ -28,30 +29,17 @@
         <div class="footer-content">
             <div class="footer-grid">
                 <div class="footer-contact">
-                    <h2 class="footer-label">Contact</h2>
+                    <h2 class="footer-label">{{ default "Connect" $connect.title }}</h2>
                 </div>
                 <div class="footer-links-container">
                     <ul class="footer-links">
+                        {{- range $connect.items }}
                         <li>
-                            <span class="link-name">Email</span>
+                            <span class="link-name">{{ .platform }}</span>
                             <span class="link-line"></span>
-                            <a href="mailto:your@email.com" target="_blank" rel="noopener">your@email.com <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                            <a href="{{ .link }}" target="{{ if strings.HasPrefix .link "http" }}_blank{{ else }}_self{{ end }}" rel="noopener">{{ .value }} <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
                         </li>
-                        <li>
-                            <span class="link-name">LinkedIn</span>
-                            <span class="link-line"></span>
-                            <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener">/in/yourprofile <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                        </li>
-                        <li>
-                            <span class="link-name">GitHub</span>
-                            <span class="link-line"></span>
-                            <a href="https://github.com/yourusername" target="_blank" rel="noopener">@yourusername <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                        </li>
-                        <li>
-                            <span class="link-name">X</span>
-                            <span class="link-line"></span>
-                            <a href="https://x.com/yourhandle" target="_blank" rel="noopener">@yourhandle <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                        </li>
+                        {{- end }}
                     </ul>
                 </div>
             </div>

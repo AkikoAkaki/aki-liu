@@ -84,14 +84,13 @@ body.search-open .search-overlay {
     max-height: 76vh;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-    background: color-mix(in oklab, var(--bg-color) 92%, transparent);
-    border: 1px solid color-mix(in oklab, var(--color-divider) 80%, transparent);
-    border-radius: 12px;
+    background: rgba(236, 236, 236, 0.14);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border: 1px solid rgba(var(--text-rgb), 0.1);
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.04) inset,
-        0 24px 56px -20px rgba(0, 0, 0, 0.35),
-        0 2px 8px -2px rgba(0, 0, 0, 0.16);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
     opacity: 0;
     transition:
         opacity 0.18s ease-out,
@@ -106,28 +105,22 @@ body.search-open .search-panel {
 
 @media (prefers-color-scheme: dark) {
     .search-panel {
-        background: color-mix(in oklab, var(--bg-color) 86%, transparent);
-        box-shadow:
-            0 1px 0 rgba(255, 255, 255, 0.05) inset,
-            0 24px 56px -20px rgba(0, 0, 0, 0.7),
-            0 2px 8px -2px rgba(0, 0, 0, 0.4);
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
     }
 }
 
 :root[data-theme="dark"] .search-panel {
-    background: color-mix(in oklab, var(--bg-color) 86%, transparent);
-    box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.05) inset,
-        0 24px 56px -20px rgba(0, 0, 0, 0.7),
-        0 2px 8px -2px rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
 }
 
 :root[data-theme="light"] .search-panel {
-    background: color-mix(in oklab, var(--bg-color) 92%, transparent);
-    box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.04) inset,
-        0 24px 56px -20px rgba(0, 0, 0, 0.35),
-        0 2px 8px -2px rgba(0, 0, 0, 0.16);
+    background: rgba(236, 236, 236, 0.14);
+    border: 1px solid rgba(var(--text-rgb), 0.1);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
 }
 
 /* ---------- Left pane: input + results ---------- */
@@ -135,7 +128,7 @@ body.search-open .search-panel {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    border-right: 1px solid color-mix(in oklab, var(--color-divider) 80%, transparent);
+    border-right: 1px solid rgba(var(--text-rgb), 0.08);
 }
 
 .search-inputbar {
@@ -144,7 +137,7 @@ body.search-open .search-panel {
     gap: 10px;
     height: 52px;
     padding: 0 14px;
-    border-bottom: 1px solid color-mix(in oklab, var(--color-divider) 70%, transparent);
+    border-bottom: 1px solid rgba(var(--text-rgb), 0.08);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
@@ -178,7 +171,7 @@ body.search-open .search-panel {
 
 .search-esc {
     flex: none;
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: 10px;
     letter-spacing: 0.04em;
     color: var(--color-muted);
@@ -190,7 +183,7 @@ body.search-open .search-panel {
 
 .search-mode-hint {
     flex: none;
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: 10px;
     letter-spacing: 0.06em;
     color: var(--color-muted);
@@ -262,7 +255,7 @@ body.search-open .search-panel {
 }
 
 .sr-meta {
-    font: 400 11px/1.3 var(--font-mono);
+    font: 400 11px/1.3 var(--font-sans);
     color: var(--color-muted);
     letter-spacing: 0.03em;
     text-transform: uppercase;
@@ -272,7 +265,7 @@ body.search-open .search-panel {
 }
 
 .sr-trail {
-    font: 400 11px/1.3 var(--font-mono);
+    font: 400 11px/1.3 var(--font-sans);
     color: var(--color-muted);
     letter-spacing: 0.04em;
     opacity: 0;
@@ -290,7 +283,7 @@ body.search-open .search-panel {
 }
 
 .search-empty em {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
     font-size: 1em;
     color: var(--color-secondary);
 }
@@ -302,7 +295,7 @@ body.search-open .search-panel {
     gap: 14px;
     padding: 8px 14px;
     border-top: 1px solid color-mix(in oklab, var(--color-divider) 60%, transparent);
-    font: 400 11px/1.3 var(--font-mono);
+    font: 400 11px/1.3 var(--font-sans);
     color: var(--color-muted);
     letter-spacing: 0.04em;
 }
@@ -331,7 +324,7 @@ body.search-open .search-panel {
     min-width: 0;
     overflow-y: auto;
     padding: 18px 18px 22px;
-    background: color-mix(in oklab, var(--bg-color) 60%, transparent);
+    background: rgba(var(--text-rgb), 0.03);
 }
 
 .search-preview-empty {
@@ -340,13 +333,13 @@ body.search-open .search-panel {
     align-items: center;
     justify-content: center;
     text-align: center;
-    font: 400 italic 14px/1.5 var(--font-serif);
+    font: 400 italic 14px/1.5 var(--font-sans);
     color: var(--color-muted);
     padding: 20px;
 }
 
 .preview-meta {
-    font: 400 10px/1.3 var(--font-mono);
+    font: 400 10px/1.3 var(--font-sans);
     color: var(--color-muted);
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -362,13 +355,13 @@ body.search-open .search-panel {
 
 .preview-summary {
     margin: 0 0 12px;
-    font: 400 italic 14px/1.55 var(--font-serif);
+    font: 400 italic 14px/1.55 var(--font-sans);
     color: var(--color-secondary);
 }
 
 .preview-snippet {
     margin: 0 0 12px;
-    font: 400 13.5px/1.65 var(--font-serif);
+    font: 400 13.5px/1.65 var(--font-sans);
     color: var(--text-color);
 }
 
@@ -383,7 +376,7 @@ body.search-open .search-panel {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    font: 400 11px/1.3 var(--font-mono);
+    font: 400 11px/1.3 var(--font-sans);
     color: var(--color-muted);
     letter-spacing: 0.03em;
 }
@@ -421,7 +414,7 @@ body.search-open .search-panel {
     .search-result-mobile-snippet {
         display: block;
         margin-top: 4px;
-        font: 400 12.5px/1.5 var(--font-serif);
+        font: 400 12.5px/1.5 var(--font-sans);
         color: var(--color-secondary);
         white-space: normal;
         max-height: 3em;
