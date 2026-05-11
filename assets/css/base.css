@@ -503,6 +503,84 @@ body.menu-cursor-hidden * {
     cursor: none !important;
 }
 
+/* ==========================================================================
+   Shared magnetic hover: general links
+   ========================================================================== */
+
+.mb-tag-chip,
+.mb-card-tag,
+.bio-text a,
+.now-section a,
+.connect-section a:not(.connect-pill),
+.data-link {
+    position: relative;
+    overflow: hidden;
+    --menu-magnet-x: 0px;
+    --menu-magnet-y: 0px;
+    --menu-cursor-x: 50%;
+    --menu-cursor-y: 50%;
+    --menu-fill-scale: 0;
+    --menu-fill-opacity: 0;
+    transform: translate3d(var(--menu-magnet-x), var(--menu-magnet-y), 0);
+    will-change: transform;
+}
+
+.bio-text a,
+.now-section a,
+.connect-section a:not(.connect-pill),
+.data-link {
+    display: inline-block;
+    vertical-align: baseline;
+}
+
+.mb-tag-chip.is-magnetic,       .mb-tag-chip.is-settling,
+.mb-card-tag.is-magnetic,       .mb-card-tag.is-settling,
+.bio-text a.is-magnetic,        .bio-text a.is-settling,
+.now-section a.is-magnetic,     .now-section a.is-settling,
+.connect-section a.is-magnetic, .connect-section a.is-settling,
+.data-link.is-magnetic,         .data-link.is-settling {
+    transition: opacity 0.18s ease;
+}
+
+.mb-tag-chip::before,
+.mb-card-tag::before,
+.bio-text a::before,
+.now-section a::before,
+.connect-section a:not(.connect-pill)::before,
+.data-link::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: var(--menu-cursor-x);
+    top: var(--menu-cursor-y);
+    width: max(300%, 100px);
+    aspect-ratio: 1;
+    border-radius: 999px;
+    opacity: var(--menu-fill-opacity);
+    transform: translate3d(-50%, -50%, 0) scale(var(--menu-fill-scale));
+    transform-origin: center;
+    background: radial-gradient(circle at center,
+        rgba(var(--text-rgb), 0.15) 0%,
+        rgba(var(--text-rgb), 0.10) 48%,
+        rgba(var(--text-rgb), 0.05) 100%);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    pointer-events: none;
+    will-change: transform, opacity, left, top;
+}
+
+.mb-tag-chip.is-magnetic,
+.mb-card-tag.is-magnetic {
+    background-color: transparent;
+    border-color: rgba(var(--text-rgb), 0.18);
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.18s ease;
+}
+
+.mb-tag-chip.is-settling,
+.mb-card-tag.is-settling {
+    transition: background-color 0.25s ease, border-color 0.25s ease, opacity 0.18s ease;
+}
+
 .menu-bar.is-open .menu-link:nth-child(1) { transition-delay: 0.04s; }
 .menu-bar.is-open .menu-link:nth-child(2) { transition-delay: 0.08s; }
 .menu-bar.is-open .menu-link:nth-child(3) { transition-delay: 0.12s; }

@@ -7,47 +7,8 @@
         }
     } catch (_) { /* localStorage unavailable */ }
 
-    const FONT_SERIF = '"Newsreader", "Playfair Display", serif';
-    const FONT_SANS  = '"Switzer", "Inter", sans-serif';
-    const FONT_MONO  = '"JetBrains Mono", "Geist Mono", monospace';
+    const FONT_MONO = '"JetBrains Mono", "Geist Mono", monospace';
     const STAGGER = 35;
-
-    const FONT_MAP = {
-        sans:  { family: FONT_SERIF, style: 'italic' },
-        mono:  { family: FONT_SANS,  style: 'normal' },
-        serif: { family: FONT_MONO,  style: 'normal' },
-    };
-
-    function detectType(fontFamily) {
-        if (/JetBrains|Mono|Space Mono|Consolas/i.test(fontFamily)) return 'mono';
-        if (/Newsreader|Playfair|Garamond/i.test(fontFamily)) return 'serif';
-        return 'sans';
-    }
-
-    function wrapChars(link) {
-        if (link.dataset.charsWrapped) return;
-        const walker = document.createTreeWalker(link, NodeFilter.SHOW_TEXT);
-        const textNodes = [];
-        let node;
-        while ((node = walker.nextNode())) textNodes.push(node);
-
-        textNodes.forEach(textNode => {
-            const frag = document.createDocumentFragment();
-            [...textNode.textContent].forEach(char => {
-                if (char === ' ' || char === '\u00a0') {
-                    frag.appendChild(document.createTextNode(char));
-                } else {
-                    const span = document.createElement('span');
-                    span.className = 'link-char';
-                    span.textContent = char;
-                    frag.appendChild(span);
-                }
-            });
-            textNode.parentNode.replaceChild(frag, textNode);
-        });
-
-        link.dataset.charsWrapped = 'true';
-    }
 
     function staggerFontChange(chars, applyChange) {
         return chars.map((char, i) => setTimeout(() => {
@@ -56,104 +17,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // --- Link text animation ---
-        const links = document.querySelectorAll(
-            '.bio-text a, .now-section a, .connect-section a:not(.connect-pill), .data-link, .archive-tag-item, .archive-year-item'
-        );
-
-        links.forEach(link => {
-            let origFamily, origStyle, target;
-            let debounceTimer = null;
-            let timers = [];
-            let isInitialized = false;
-
-            function init() {
-                if (isInitialized) return;
-                const computed = getComputedStyle(link);
-                origFamily = computed.fontFamily;
-                origStyle  = computed.fontStyle;
-                target = FONT_MAP[detectType(origFamily)];
-
-                if (link.classList.contains('hover-mono') || link.closest('.archive-filters-container')) {
-                    target = { family: FONT_MONO, style: 'normal' };
-                }
-                if (link.classList.contains('data-link') || link.closest('.bio-text')) {
-                    target = { family: FONT_MONO, style: 'normal' };
-                }
-                wrapChars(link);
-                isInitialized = true;
-            }
-
-            function orderedCharsForEnter() {
-                const chars = [...link.querySelectorAll('.link-char')];
-                if (link.classList.contains('archive-year-item')) {
-                    chars.reverse();
-                }
-                return chars;
-            }
-
-            function orderedCharsForLeave() {
-                const chars = [...link.querySelectorAll('.link-char')].reverse();
-                if (link.classList.contains('archive-year-item')) {
-                    chars.reverse();
-                }
-                return chars;
-            }
-
-            function triggerWipe() {
-                link.classList.remove('link-wiping');
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        link.classList.add('link-wiping');
-                    });
-                });
-            }
-
-            function cancel() {
-                timers.forEach(clearTimeout);
-                timers = [];
-            }
-
-            function handleEnter() {
-                init();
-                cancel();
-                const chars = orderedCharsForEnter();
-                timers = staggerFontChange(chars, char => {
-                    char.style.fontFamily = target.family;
-                    char.style.fontStyle  = target.style;
-                });
-                if (link.classList.contains('data-link') || link.closest('.bio-text')) {
-                    link.style.color = 'var(--color-secondary)';
-                } else {
-                    triggerWipe();
-                }
-            }
-
-            function handleLeave() {
-                if (!isInitialized) return;
-                cancel();
-                const chars = orderedCharsForLeave();
-                timers = staggerFontChange(chars, char => {
-                    char.style.fontFamily = origFamily;
-                    char.style.fontStyle  = origStyle;
-                });
-                if (link.classList.contains('data-link') || link.closest('.bio-text')) {
-                    link.style.color = '';
-                } else {
-                    triggerWipe();
-                }
-            }
-
-            link.addEventListener('mouseenter', () => {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(handleEnter, 20);
-            });
-
-            link.addEventListener('mouseleave', () => {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(handleLeave, 20);
-            });
-        });
+        // --- Magnetic hover: links & tags ---
+        const generalMagnetEls = [...document.querySelectorAll(
+            '.bio-text a, .now-section a, .connect-section a:not(.connect-pill), .data-link, ' +
+            '.mb-tag-chip, .mb-card-tag'
+        )];
+        initMagneticHover(generalMagnetEls, { magnetX: 4, magnetY: 3 });
 
         // --- Expanding Menu ---
         initExpandingMenu();
@@ -535,6 +404,182 @@
         initFooterReveal();
     });
 
+    function initMagneticHover(elements, opts) {
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        if (!canHover || reduceMotion || !elements.length) return;
+
+        const mX = (opts && opts.magnetX  != null) ? opts.magnetX  : 4;
+        const mY = (opts && opts.magnetY  != null) ? opts.magnetY  : 3;
+        const cX = (opts && opts.contentX != null) ? opts.contentX : 0;
+        const cY = (opts && opts.contentY != null) ? opts.contentY : 0;
+
+        elements.forEach(el => {
+            const state = {
+                active: false,
+                settling: false,
+                rect: null,
+                rafId: 0,
+                current: { x: 0, y: 0, contentX: 0, contentY: 0, cursorX: 0, cursorY: 0, fill: 0, opacity: 0 },
+                target:  { x: 0, y: 0, contentX: 0, contentY: 0, cursorX: 0, cursorY: 0, fill: 0, opacity: 0 },
+            };
+
+            el._magnetState = state;
+
+            function setVars() {
+                el.style.setProperty('--menu-magnet-x', `${state.current.x.toFixed(3)}px`);
+                el.style.setProperty('--menu-magnet-y', `${state.current.y.toFixed(3)}px`);
+                el.style.setProperty('--menu-content-x', `${state.current.contentX.toFixed(3)}px`);
+                el.style.setProperty('--menu-content-y', `${state.current.contentY.toFixed(3)}px`);
+                el.style.setProperty('--menu-cursor-x', `${state.current.cursorX.toFixed(3)}px`);
+                el.style.setProperty('--menu-cursor-y', `${state.current.cursorY.toFixed(3)}px`);
+                el.style.setProperty('--menu-fill-scale', state.current.fill.toFixed(4));
+                el.style.setProperty('--menu-fill-opacity', state.current.opacity.toFixed(4));
+            }
+
+            function resetVars() {
+                [
+                    '--menu-magnet-x', '--menu-magnet-y',
+                    '--menu-content-x', '--menu-content-y',
+                    '--menu-cursor-x', '--menu-cursor-y',
+                    '--menu-fill-scale', '--menu-fill-opacity',
+                ].forEach(prop => el.style.removeProperty(prop));
+            }
+
+            function updateTarget(event) {
+                if (!state.rect) state.rect = el.getBoundingClientRect();
+                const relX = Math.max(0, Math.min(state.rect.width, event.clientX - state.rect.left));
+                const relY = Math.max(0, Math.min(state.rect.height, event.clientY - state.rect.top));
+                const xRatio = (relX / state.rect.width) - 0.5;
+                const yRatio = (relY / state.rect.height) - 0.5;
+
+                state.target.x = xRatio * mX;
+                state.target.y = yRatio * mY;
+                state.target.contentX = xRatio * cX;
+                state.target.contentY = yRatio * cY;
+                state.target.cursorX = relX;
+                state.target.cursorY = relY;
+            }
+
+            function approach(current, target, amount) {
+                return current + ((target - current) * amount);
+            }
+
+            function animate() {
+                state.current.x = approach(state.current.x, state.target.x, 0.18);
+                state.current.y = approach(state.current.y, state.target.y, 0.18);
+                state.current.contentX = approach(state.current.contentX, state.target.contentX, 0.22);
+                state.current.contentY = approach(state.current.contentY, state.target.contentY, 0.22);
+                state.current.cursorX = approach(state.current.cursorX, state.target.cursorX, 0.26);
+                state.current.cursorY = approach(state.current.cursorY, state.target.cursorY, 0.26);
+                state.current.fill = approach(state.current.fill, state.target.fill, state.active ? 0.34 : 0.2);
+                state.current.opacity = approach(state.current.opacity, state.target.opacity, state.active ? 0.28 : 0.18);
+
+                setVars();
+
+                const stillMoving =
+                    Math.abs(state.current.x - state.target.x) > 0.01 ||
+                    Math.abs(state.current.y - state.target.y) > 0.01 ||
+                    Math.abs(state.current.contentX - state.target.contentX) > 0.01 ||
+                    Math.abs(state.current.contentY - state.target.contentY) > 0.01 ||
+                    Math.abs(state.current.cursorX - state.target.cursorX) > 0.01 ||
+                    Math.abs(state.current.cursorY - state.target.cursorY) > 0.01 ||
+                    Math.abs(state.current.fill - state.target.fill) > 0.005 ||
+                    Math.abs(state.current.opacity - state.target.opacity) > 0.005;
+
+                if (stillMoving) {
+                    state.rafId = requestAnimationFrame(animate);
+                    return;
+                }
+
+                state.rafId = 0;
+                if (!state.active) {
+                    state.settling = false;
+                    el.classList.remove('is-settling');
+                    resetVars();
+                }
+            }
+
+            function startAnimation() {
+                if (!state.rafId) {
+                    state.rafId = requestAnimationFrame(animate);
+                }
+            }
+
+            el.addEventListener('pointerenter', event => {
+                if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
+
+                state.active = true;
+                state.settling = false;
+                state.rect = el.getBoundingClientRect();
+                updateTarget(event);
+
+                state.current.cursorX = state.target.cursorX;
+                state.current.cursorY = state.target.cursorY;
+                state.current.fill = 0;
+                state.current.opacity = 0;
+                state.target.fill = 1;
+                state.target.opacity = 1;
+
+                el.classList.add('is-magnetic');
+                el.classList.remove('is-settling');
+                document.body.classList.add('menu-cursor-hidden');
+                setVars();
+                startAnimation();
+            });
+
+            el.addEventListener('pointermove', event => {
+                if (!state.active) return;
+                updateTarget(event);
+                startAnimation();
+            });
+
+            el.addEventListener('pointerleave', () => {
+                state.active = false;
+                state.settling = true;
+                state.rect = null;
+                state.target.x = 0;
+                state.target.y = 0;
+                state.target.contentX = 0;
+                state.target.contentY = 0;
+                state.target.fill = 0;
+                state.target.opacity = 0;
+
+                el.classList.remove('is-magnetic');
+                el.classList.add('is-settling');
+                document.body.classList.remove('menu-cursor-hidden');
+                startAnimation();
+            });
+        });
+    }
+
+    function resetMagneticHover(elements) {
+        document.body.classList.remove('menu-cursor-hidden');
+        elements.forEach(el => {
+            const state = el._magnetState;
+            if (state && state.rafId) {
+                cancelAnimationFrame(state.rafId);
+                state.rafId = 0;
+            }
+            if (state) {
+                state.active = false;
+                state.settling = false;
+                state.rect = null;
+                Object.keys(state.current).forEach(key => {
+                    state.current[key] = 0;
+                    state.target[key] = 0;
+                });
+            }
+            el.classList.remove('is-magnetic', 'is-settling');
+            [
+                '--menu-magnet-x', '--menu-magnet-y',
+                '--menu-content-x', '--menu-content-y',
+                '--menu-cursor-x', '--menu-cursor-y',
+                '--menu-fill-scale', '--menu-fill-opacity',
+            ].forEach(prop => el.style.removeProperty(prop));
+        });
+    }
+
     function initExpandingMenu() {
         const menuBar     = document.getElementById('menu-bar');
         const menuTrigger = document.getElementById('menu-trigger');
@@ -619,181 +664,11 @@
         }
 
         function initMagneticLinks() {
-            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            if (!canHover || reduceMotion || !magneticLinks.length) return;
-
-            magneticLinks.forEach(link => {
-                const state = {
-                    active: false,
-                    settling: false,
-                    rect: null,
-                    rafId: 0,
-                    current: { x: 0, y: 0, contentX: 0, contentY: 0, cursorX: 0, cursorY: 0, fill: 0, opacity: 0 },
-                    target:  { x: 0, y: 0, contentX: 0, contentY: 0, cursorX: 0, cursorY: 0, fill: 0, opacity: 0 },
-                };
-
-                link._menuMagnetState = state;
-
-                function setVars() {
-                    link.style.setProperty('--menu-magnet-x', `${state.current.x.toFixed(3)}px`);
-                    link.style.setProperty('--menu-magnet-y', `${state.current.y.toFixed(3)}px`);
-                    link.style.setProperty('--menu-content-x', `${state.current.contentX.toFixed(3)}px`);
-                    link.style.setProperty('--menu-content-y', `${state.current.contentY.toFixed(3)}px`);
-                    link.style.setProperty('--menu-cursor-x', `${state.current.cursorX.toFixed(3)}px`);
-                    link.style.setProperty('--menu-cursor-y', `${state.current.cursorY.toFixed(3)}px`);
-                    link.style.setProperty('--menu-fill-scale', state.current.fill.toFixed(4));
-                    link.style.setProperty('--menu-fill-opacity', state.current.opacity.toFixed(4));
-                }
-
-                function resetVars() {
-                    [
-                        '--menu-magnet-x',
-                        '--menu-magnet-y',
-                        '--menu-content-x',
-                        '--menu-content-y',
-                        '--menu-cursor-x',
-                        '--menu-cursor-y',
-                        '--menu-fill-scale',
-                        '--menu-fill-opacity',
-                    ].forEach(prop => link.style.removeProperty(prop));
-                }
-
-                function updateTarget(event) {
-                    if (!state.rect) state.rect = link.getBoundingClientRect();
-                    const relX = Math.max(0, Math.min(state.rect.width, event.clientX - state.rect.left));
-                    const relY = Math.max(0, Math.min(state.rect.height, event.clientY - state.rect.top));
-                    const xRatio = (relX / state.rect.width) - 0.5;
-                    const yRatio = (relY / state.rect.height) - 0.5;
-
-                    state.target.x = xRatio * 8;
-                    state.target.y = yRatio * 5;
-                    state.target.contentX = xRatio * 15;
-                    state.target.contentY = yRatio * 9;
-                    state.target.cursorX = relX;
-                    state.target.cursorY = relY;
-                }
-
-                function approach(current, target, amount) {
-                    return current + ((target - current) * amount);
-                }
-
-                function animate() {
-                    state.current.x = approach(state.current.x, state.target.x, 0.18);
-                    state.current.y = approach(state.current.y, state.target.y, 0.18);
-                    state.current.contentX = approach(state.current.contentX, state.target.contentX, 0.22);
-                    state.current.contentY = approach(state.current.contentY, state.target.contentY, 0.22);
-                    state.current.cursorX = approach(state.current.cursorX, state.target.cursorX, 0.26);
-                    state.current.cursorY = approach(state.current.cursorY, state.target.cursorY, 0.26);
-                    state.current.fill = approach(state.current.fill, state.target.fill, state.active ? 0.34 : 0.2);
-                    state.current.opacity = approach(state.current.opacity, state.target.opacity, state.active ? 0.28 : 0.18);
-
-                    setVars();
-
-                    const stillMoving =
-                        Math.abs(state.current.x - state.target.x) > 0.01 ||
-                        Math.abs(state.current.y - state.target.y) > 0.01 ||
-                        Math.abs(state.current.contentX - state.target.contentX) > 0.01 ||
-                        Math.abs(state.current.contentY - state.target.contentY) > 0.01 ||
-                        Math.abs(state.current.cursorX - state.target.cursorX) > 0.01 ||
-                        Math.abs(state.current.cursorY - state.target.cursorY) > 0.01 ||
-                        Math.abs(state.current.fill - state.target.fill) > 0.005 ||
-                        Math.abs(state.current.opacity - state.target.opacity) > 0.005;
-
-                    if (stillMoving) {
-                        state.rafId = requestAnimationFrame(animate);
-                        return;
-                    }
-
-                    state.rafId = 0;
-                    if (!state.active) {
-                        state.settling = false;
-                        link.classList.remove('is-settling');
-                        resetVars();
-                    }
-                }
-
-                function startAnimation() {
-                    if (!state.rafId) {
-                        state.rafId = requestAnimationFrame(animate);
-                    }
-                }
-
-                link.addEventListener('pointerenter', event => {
-                    if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
-
-                    state.active = true;
-                    state.settling = false;
-                    state.rect = link.getBoundingClientRect();
-                    updateTarget(event);
-
-                    state.current.cursorX = state.target.cursorX;
-                    state.current.cursorY = state.target.cursorY;
-                    state.current.fill = 0;
-                    state.current.opacity = 0;
-                    state.target.fill = 1;
-                    state.target.opacity = 1;
-
-                    link.classList.add('is-magnetic');
-                    link.classList.remove('is-settling');
-                    document.body.classList.add('menu-cursor-hidden');
-                    setVars();
-                    startAnimation();
-                });
-
-                link.addEventListener('pointermove', event => {
-                    if (!state.active) return;
-                    updateTarget(event);
-                    startAnimation();
-                });
-
-                link.addEventListener('pointerleave', () => {
-                    state.active = false;
-                    state.settling = true;
-                    state.rect = null;
-                    state.target.x = 0;
-                    state.target.y = 0;
-                    state.target.contentX = 0;
-                    state.target.contentY = 0;
-                    state.target.fill = 0;
-                    state.target.opacity = 0;
-
-                    link.classList.remove('is-magnetic');
-                    link.classList.add('is-settling');
-                    document.body.classList.remove('menu-cursor-hidden');
-                    startAnimation();
-                });
-            });
+            initMagneticHover(magneticLinks, { magnetX: 8, magnetY: 5, contentX: 15, contentY: 9 });
         }
 
         function resetMagneticLinks() {
-            document.body.classList.remove('menu-cursor-hidden');
-            magneticLinks.forEach(link => {
-                const state = link._menuMagnetState;
-                if (state && state.rafId) {
-                    cancelAnimationFrame(state.rafId);
-                    state.rafId = 0;
-                }
-                if (state) {
-                    state.active = false;
-                    state.settling = false;
-                    state.rect = null;
-                    Object.keys(state.current).forEach(key => {
-                        state.current[key] = 0;
-                        state.target[key] = 0;
-                    });
-                }
-                link.classList.remove('is-magnetic', 'is-settling');
-                [
-                    '--menu-magnet-x',
-                    '--menu-magnet-y',
-                    '--menu-content-x',
-                    '--menu-content-y',
-                    '--menu-cursor-x',
-                    '--menu-cursor-y',
-                    '--menu-fill-scale',
-                    '--menu-fill-opacity',
-                ].forEach(prop => link.style.removeProperty(prop));
-            });
+            resetMagneticHover(magneticLinks);
         }
 
         menuTrigger.addEventListener('click', (e) => {

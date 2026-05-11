@@ -347,6 +347,15 @@
     margin-top: 2rem;
 }
 
+/* Microblog Specific Layout Override */
+.section-microblog .site-main {
+    grid-column: 2 / -1; /* Span both main and right sidebar columns */
+}
+
+.section-microblog .site-sidebar-right {
+    display: none;
+}
+
 /* ==========================================================================
    Responsive Layout
    ========================================================================== */

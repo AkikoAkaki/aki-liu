@@ -7,64 +7,12 @@
     {{ $years = $years | append .Key }}
 {{ end }}
 {{ .Store.Set "years" $years }}
-<div class="archive-left-col">
-    <div class="archive-logo-container">
-        <a href="{{ .Site.Home.RelPermalink }}">
-            <img src="{{ "Hero.svg" | relURL }}" alt="Aki Liu" class="archive-hero-svg">
-        </a>
-        <div class="archive-page-subtitle">{{ .Title }}</div>
-    </div>
-
-    <div class="archive-filter-section">
-        <h3 class="archive-col-header">Filter:</h3>
-
-        <div class="archive-search">
-            <span class="search-icon"><svg fill="currentColor" width="14" height="14" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg"><path d="M49.62,45.27,36.22,32a18.9,18.9,0,1,0-34.1-9.2A18.91,18.91,0,0,0,32,36.27l13.3,13.3a1.45,1.45,0,0,0,2.1,0l2.1-2.1A1.68,1.68,0,0,0,49.62,45.27Zm-28.7-11.5a12.9,12.9,0,1,1,12.9-12.9A12.87,12.87,0,0,1,20.92,33.77Z" fill-rule="evenodd"/></svg></span>
-            <div class="search-input-wrapper">
-                <span class="search-fake-placeholder" aria-hidden="true">Search...</span>
-                <input type="text" class="search-input" autocomplete="off" />
-            </div>
-        </div>
-
-        <div class="archive-filters-container">
-            <div class="archive-tags-list">
-                {{ range $tagSlice }}
-                    {{ $href := printf "/tags/%s/" (.name | urlize) | relLangURL }}
-                    <a href="{{ $href }}" class="archive-tag-item" data-tag="{{ .name | urlize }}">
-                        <span class="tag-name">{{ .name | title }}</span><span class="tag-dot"></span>
-                    </a>
-                {{ end }}
-
-                <div class="archive-stats-minimal" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); opacity: 0.6;">
-                    <div class="stat-item" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span class="archive-stat-label">Entries</span>
-                        <span>{{ len $regularPages }}</span>
-                    </div>
-                    <div class="stat-item" style="display: flex; justify-content: space-between;">
-                        <span class="archive-stat-label">Years</span>
-                        <span>{{ len $years }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="archive-years-list archive-years-desktop">
-                {{ range $years }}
-                    <a href="#" class="archive-year-item">{{ . }}</a>
-                {{ end }}
-            </div>
-        </div>
-    </div>
-</div>
+{{ partial "archive-sidebar-left.html" (dict "context" . "regularPages" $regularPages "years" $years "tagSlice" $tagSlice) }}
 {{ end }}
 
 {{ define "sidebar-bottom" }}
 {{ $years := .Store.Get "years" }}
-<div class="archive-bottom-section">
-    <div class="archive-years-list archive-years-mobile">
-        {{ range $years }}
-            <a href="#" class="archive-year-item">{{ . }}</a>
-        {{ end }}
-    </div>
-</div>
+{{ partial "archive-sidebar-bottom.html" (dict "years" $years) }}
 {{ end }}
 
 {{ define "main" }}

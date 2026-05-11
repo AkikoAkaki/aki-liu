@@ -1,0 +1,11 @@
+{{ $years := .years }}
+<div class="archive-bottom-section">
+    <div class="archive-years-list archive-years-mobile">
+        {{ range $years }}
+            <a href="#" class="archive-year-item">
+                <span class="filter-hover-arrow filter-hover-arrow--right">{{ partial "icons/hover-arrow.html" . }}</span>
+                <span class="filter-item-label">{{ . }}</span>
+            </a>
+        {{ end }}
+    </div>
+</div>

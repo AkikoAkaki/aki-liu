@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Article Page Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300;1,6..72,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #fff;
+    color: #3a3a3a;
+    font-family: 'Switzer', 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- shared nav ---- */
+  .nav {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 28px 0 20px;
+    position: sticky;
+    top: 0;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(8px);
+    z-index: 10;
+    border-bottom: none;
+  }
+  .nav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: #050505;
+    text-decoration: none;
+    opacity: 0.45;
+  }
+  .nav a.active { opacity: 1; }
+
+  /* ---- switcher ---- */
+  .switcher {
+    display: flex;
+    gap: 0;
+    justify-content: center;
+    padding: 24px 0 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+  .switcher button {
+    background: none;
+    border: 1px solid #e8e8e8;
+    padding: 7px 20px;
+    cursor: pointer;
+    color: #a3a3a3;
+    font-family: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+    transition: all 0.15s;
+  }
+  .switcher button:first-child { border-radius: 4px 0 0 4px; }
+  .switcher button:last-child { border-radius: 0 4px 4px 0; border-left: none; }
+  .switcher button.active {
+    background: #050505;
+    color: #fff;
+    border-color: #050505;
+  }
+  .switcher-label {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #a3a3a3;
+    letter-spacing: 0.1em;
+    margin-top: 10px;
+    margin-bottom: 32px;
+  }
+
+  /* ---- container ---- */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ============================
+     OPTION A — Centered Editorial
+     ============================ */
+  .opt-a {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 32px 80px;
+  }
+
+  .back-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: #a3a3a3;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 40px;
+    margin-top: 48px;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: #050505; }
+
+  .a-section-label {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #a3a3a3;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .a-dot { width: 6px; height: 6px; border-radius: 50%; background: #e06c75; display: inline-block; }
+
+  .a-title {
+    font-family: 'Newsreader', serif;
+    font-weight: 300;
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.18;
+    color: #050505;
+    text-align: center;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+  }
+
+  .a-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: #b0b0b0;
+    margin-bottom: 52px;
+  }
+  .a-meta-sep { opacity: 0.4; }
+
+  .a-divider {
+    border: none;
+    border-top: 1px solid #e8e8e8;
+    margin-bottom: 44px;
+  }
+
+  .a-body {
+    font-family: 'Newsreader', serif;
+    font-size: 17px;
+    line-height: 1.78;
+    color: #2a2a2a;
+  }
+  .a-body p { margin-bottom: 1.4em; }
+
+  /* Drop cap */
+  .a-body p:first-child::first-letter {
+    font-family: 'Newsreader', serif;
+    font-weight: 300;
+    font-size: 4.2em;
+    line-height: 0.82;
+    float: left;
+    margin-right: 0.08em;
+    margin-top: 0.06em;
+    color: #050505;
+  }
+
+  .a-body h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #a3a3a3;
+    margin-top: 3em;
+    margin-bottom: 1.2em;
+    font-weight: 400;
+  }
+
+  /* ============================
+     OPTION B — Left metadata strip
+     ============================ */
+  .opt-b {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px 80px;
+    gap: 0;
+  }
+
+  .b-sidebar {
+    padding-top: 48px;
+    padding-right: 40px;
+    padding-bottom: 40px;
+    border-right: 1px solid #efefef;
+    position: sticky;
+    top: 72px;
+    align-self: start;
+    max-height: calc(100vh - 80px);
+  }
+
+  .b-back {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: #b0b0b0;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 40px;
+    transition: color 0.15s;
+  }
+  .b-back:hover { color: #050505; }
+
+  .b-meta-group {
+    margin-bottom: 28px;
+  }
+  .b-meta-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #c8c8c8;
+    margin-bottom: 5px;
+  }
+  .b-meta-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: #505050;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .b-dot { width: 6px; height: 6px; border-radius: 50%; background: #e06c75; flex-shrink: 0; }
+
+  .b-main {
+    padding-top: 48px;
+    padding-left: 52px;
+  }
+
+  .b-title {
+    font-family: 'Newsreader', serif;
+    font-weight: 300;
+    font-size: clamp(26px, 3.2vw, 38px);
+    line-height: 1.2;
+    color: #050505;
+    letter-spacing: -0.01em;
+    margin-bottom: 36px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #efefef;
+  }
+
+  .b-body {
+    font-family: 'Newsreader', serif;
+    font-size: 17px;
+    line-height: 1.78;
+    color: #2a2a2a;
+  }
+  .b-body p { margin-bottom: 1.4em; }
+
+  .b-body p:first-child::first-letter {
+    font-family: 'Newsreader', serif;
+    font-weight: 300;
+    font-size: 4.2em;
+    line-height: 0.82;
+    float: left;
+    margin-right: 0.08em;
+    margin-top: 0.06em;
+    color: #050505;
+  }
+
+  .b-body h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #a3a3a3;
+    margin-top: 3em;
+    margin-bottom: 1.2em;
+    font-weight: 400;
+  }
+
+  /* chosen indicator */
+  .chosen-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #050505;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    padding: 14px;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: all 0.3s;
+    z-index: 100;
+  }
+  .chosen-bar.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#">HOME</a>
+  <a href="#">IDEAS</a>
+  <a href="#" class="active">TEXT LAB</a>
+  <a href="#">TECHNICAL</a>
+  <a href="#">SEARCH</a>
+</nav>
+
+<div class="switcher">
+  <button class="active" onclick="show('a', this)">A — Centered Editorial</button>
+  <button onclick="show('b', this)">B — Left Metadata Strip</button>
+</div>
+<div class="switcher-label">CLICK TO SWITCH BETWEEN LAYOUTS</div>
+
+<!-- OPTION A -->
+<div class="page active" id="page-a">
+  <div class="opt-a">
+    <a href="#" class="back-link">← TEXT LAB</a>
+
+    <div class="a-section-label">
+      <span class="a-dot"></span>
+      Essay
+    </div>
+
+    <h1 class="a-title">主体的弥散：控制社会及其技术协议的伦理——病理学分析</h1>
+
+    <div class="a-meta">
+      <span>2026.02.15</span>
+      <span class="a-meta-sep">·</span>
+      <span>3,200 WORDS</span>
+      <span class="a-meta-sep">·</span>
+      <span>12 MIN READ</span>
+    </div>
+
+    <hr class="a-divider">
+
+    <div class="a-body">
+      <p>看着眼前几乎没有任何修缮的昏暗灰色房间，你只能陷入这深深的绝望。这是一片文明遗忘的影像。黑暗在这里具有实质，它像墨水一样稠密，紧贴着你的皮肤。在黑暗的余味、锈迹和厚重的墙壁包裹下，只要你还有感官，你就会意识到你是唯一一处远远透进来的光方——一小块在极高处诱惑你的，方方正正的光橱。</p>
+
+      <p>这是一段关于传统监狱的描述。当我试图在脑际中筑出一个监狱图景的时候，我能想到电子游戏 Buckshot Roulette 的色调：空间中充斥着氧化后的红褪色和深褐石灰，没有清晰的晰点，这是一种十分现代化、疲惫完备的色调。</p>
+
+      <h2>一、控制论的转型</h2>
+
+      <p>现在继续说你的故事。这时候警察过来，告诉你需要换平房。你被带到一所白色的平房，这里看起来十分现代化、设施完备，光线明亮，车门被一张巨大的横向落地长窗代替。这种景象有点像勒·柯布西耶的拉伊别墅。</p>
+    </div>
+  </div>
+</div>
+
+<!-- OPTION B -->
+<div class="page" id="page-b">
+  <div class="opt-b">
+    <aside class="b-sidebar">
+      <a href="#" class="b-back">← TEXT LAB</a>
+
+      <div class="b-meta-group">
+        <div class="b-meta-label">Type</div>
+        <div class="b-meta-value"><span class="b-dot"></span> Essay</div>
+      </div>
+
+      <div class="b-meta-group">
+        <div class="b-meta-label">Date</div>
+        <div class="b-meta-value">2026.02.15</div>
+      </div>
+
+      <div class="b-meta-group">
+        <div class="b-meta-label">Length</div>
+        <div class="b-meta-value">3,200 words</div>
+      </div>
+
+      <div class="b-meta-group">
+        <div class="b-meta-label">Read time</div>
+        <div class="b-meta-value">12 min</div>
+      </div>
+    </aside>
+
+    <main class="b-main">
+      <h1 class="b-title">主体的弥散：控制社会及其技术协议的伦理——病理学分析</h1>
+
+      <div class="b-body">
+        <p>看着眼前几乎没有任何修缮的昏暗灰色房间，你只能陷入这深深的绝望。这是一片文明遗忘的影像。黑暗在这里具有实质，它像墨水一样稠密，紧贴着你的皮肤。在黑暗的余味、锈迹和厚重的墙壁包裹下，只要你还有感官，你就会意识到你是唯一一处远远透进来的光方——一小块在极高处诱惑你的，方方正正的光橱。</p>
+
+        <p>这是一段关于传统监狱的描述。当我试图在脑际中筑出一个监狱图景的时候，我能想到电子游戏 Buckshot Roulette 的色调：空间中充斥着氧化后的红褪色和深褐石灰，没有清晰的晰点，这是一种十分现代化、疲惫完备的色调。</p>
+
+        <h2>一、控制论的转型</h2>
+
+        <p>现在继续说你的故事。这时候警察过来，告诉你需要换平房。你被带到一所白色的平房，这里看起来十分现代化、设施完备，光线明亮，车门被一张巨大的横向落地长窗代替。这种景象有点像勒·柯布西耶的拉伊别墅。</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="chosen-bar" id="chosen-bar"></div>
+
+<script>
+  function show(which, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.switcher button').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + which).classList.add('active');
+    btn.classList.add('active');
+
+    const bar = document.getElementById('chosen-bar');
+    const label = which === 'a' ? 'A — Centered Editorial' : 'B — Left Metadata Strip';
+    bar.textContent = 'Viewing: ' + label + '  —  Tell Claude in the terminal';
+    bar.classList.add('show');
+    setTimeout(() => bar.classList.remove('show'), 2500);
+  }
+</script>
+</body>
+</html>

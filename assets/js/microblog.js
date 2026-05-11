@@ -226,6 +226,16 @@
         } else {
             url.searchParams.delete('cols');
         }
+        
+        // Update active state in sidebar
+        document.querySelectorAll('.archive-tag-item').forEach(el => {
+            if (slugs.includes(el.dataset.tag)) {
+                el.classList.add('active');
+            } else {
+                el.classList.remove('active');
+            }
+        });
+
         const next = url.pathname + (url.search ? url.search : '') + url.hash;
         if (next !== window.location.pathname + window.location.search + window.location.hash) {
             history.pushState({ cols: slugs }, '', next);
@@ -253,6 +263,19 @@
         });
     }
 
+    function bindSidebarTags() {
+        const sidebar = document.querySelector('.archive-tags-list');
+        if (!sidebar) return;
+        sidebar.addEventListener('click', e => {
+            const tagItem = e.target.closest('.archive-tag-item');
+            if (!tagItem) return;
+            e.preventDefault();
+            const labelEl = tagItem.querySelector('.tag-name');
+            const label = labelEl ? labelEl.textContent.trim() : tagItem.dataset.tag;
+            openTagColumn(label);
+        });
+    }
+
     function bindCardTagClicks() {
         deck.addEventListener('click', e => {
             const tag = e.target.closest('.mb-card-tag');
@@ -277,6 +300,7 @@
             restoreFromURL();
         });
         bindTagBar();
+        bindSidebarTags();
         bindCardTagClicks();
         bindPopstate();
     }

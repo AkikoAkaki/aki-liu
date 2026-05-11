@@ -29,7 +29,10 @@
 {{ define "main" }}
 <article class="post-single">
 
-    {{ if .TableOfContents }}
+    {{ $toc := .TableOfContents }}
+    {{ $hasTOC := gt (len (findRE "<li" $toc)) 0 }}
+
+    {{ if $hasTOC }}
     {{ $firstTag := "" }}
     {{ if and .Params.tags (gt (len .Params.tags) 0) }}
         {{ $firstTag = index .Params.tags 0 | urlize }}
@@ -52,13 +55,16 @@
     </div>
 </article>
 
-{{ if .TableOfContents }}
+{{ if $hasTOC }}
 {{ partial "post-toc-script.html" . }}
 {{ end }}
 {{ end }}
 
 {{ define "sidebar-right" }}
-    {{ if .TableOfContents }}
+    {{ $toc := .TableOfContents }}
+    {{ $hasTOC := gt (len (findRE "<li" $toc)) 0 }}
+
+    {{ if $hasTOC }}
     {{ $firstTag := "" }}
     {{ if and .Params.tags (gt (len .Params.tags) 0) }}
         {{ $firstTag = index .Params.tags 0 | urlize }}
