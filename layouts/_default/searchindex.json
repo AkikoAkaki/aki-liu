@@ -1,5 +1,5 @@
 {{- /* Per-language site search index. Hugo emits one file per language. */ -}}
-{{- $sections := slice "ideas" "technical" "textlab" "influences" -}}
+{{- $sections := slice "ideas" "technical" "textlab" "influences" "microblog" -}}
 {{- $pages := where site.RegularPages "Section" "in" $sections -}}
 {{- $items := slice -}}
 {{- range $pages -}}
@@ -16,9 +16,19 @@
         {{- $summary = (substr $summary 0 280) -}}
     {{- end -}}
     {{- $tags := default (slice) .Params.tags -}}
+    {{- /* For microblog entries, synthesize title from first line of body since posts have no explicit titles. */ -}}
+    {{- $title := .Title -}}
+    {{- if eq .Section "microblog" -}}
+        {{- $firstLine := $body | strings.TrimSpace -}}
+        {{- if gt (len $firstLine) 70 -}}
+            {{- $title = printf "%s…" (substr $firstLine 0 70) -}}
+        {{- else -}}
+            {{- $title = $firstLine -}}
+        {{- end -}}
+    {{- end -}}
     {{- $rec := dict
         "id"      (printf "%s::%s" .RelPermalink .Language.Lang)
-        "title"   .Title
+        "title"   $title
         "section" .Section
         "url"     .RelPermalink
         "date"    (.Date.Format "2006-01-02")

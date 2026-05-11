@@ -5,6 +5,7 @@
     {{- $ideasPage := .Site.GetPage "section" "ideas" -}}
     {{- $textLabPage := .Site.GetPage "section" "textlab" -}}
     {{- $technicalPage := .Site.GetPage "section" "technical" -}}
+    {{- $microblogPage := .Site.GetPage "section" "microblog" -}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {{ partial "head/seo.html" (dict "page" .) }}
@@ -27,6 +28,8 @@
     
     <footer class="site-footer reveal-footer">
         <div class="footer-content">
+            {{ block "footer-inner" . }}
+            {{- $connect := site.Data.homepage.connect -}}
             <div class="footer-grid">
                 <div class="footer-contact">
                     <h2 class="footer-label">{{ default "Connect" $connect.title }}</h2>
@@ -52,6 +55,7 @@
                     <span class="footer-copyright">© {{ now.Year }} Aki Liu</span>
                 </div>
             </div>
+            {{ end }}
         </div>
     </footer>
 
@@ -77,6 +81,7 @@
                 <a href="{{ with $ideasPage }}{{ .RelPermalink }}{{ else }}{{ "ideas/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "ideas" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Ideas</span></span></a>
                 <a href="{{ with $textLabPage }}{{ .RelPermalink }}{{ else }}{{ "textlab/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "textlab" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Text Lab</span></span></a>
                 <a href="{{ with $technicalPage }}{{ .RelPermalink }}{{ else }}{{ "technical/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "technical" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Technical</span></span></a>
+                <a href="{{ with $microblogPage }}{{ .RelPermalink }}{{ else }}{{ "microblog/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "microblog" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Microblog</span></span></a>
                 <a href="#search" class="menu-link menu-link--search" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
             </div>
         </nav>

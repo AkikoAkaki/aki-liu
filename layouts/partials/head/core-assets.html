@@ -27,5 +27,16 @@
     <link rel="stylesheet" href="{{ $postStyle.RelPermalink }}" integrity="{{ $postStyle.Data.Integrity }}">
 {{- end -}}
 
+{{- if eq .Section "microblog" -}}
+    {{- $microblog := resources.Get "css/microblog.css" -}}
+    {{- $microblogStyle := $microblog | resources.Minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $microblogStyle.RelPermalink }}" integrity="{{ $microblogStyle.Data.Integrity }}">
+{{- end -}}
+
 {{- $mainJS := resources.Get "js/main.js" | js.Build (dict "targetPath" "js/main.js") | resources.Minify | fingerprint -}}
 <script defer src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}"></script>
+
+{{- if and (eq .Section "microblog") (eq .Kind "section") -}}
+    {{- $microblogJS := resources.Get "js/microblog.js" | js.Build (dict "targetPath" "js/microblog.js") | resources.Minify | fingerprint -}}
+    <script defer src="{{ $microblogJS.RelPermalink }}" integrity="{{ $microblogJS.Data.Integrity }}"></script>
+{{- end -}}

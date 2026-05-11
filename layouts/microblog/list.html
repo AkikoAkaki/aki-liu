@@ -1,0 +1,68 @@
+{{ define "main" }}
+{{- $entries := where .Site.RegularPages "Section" "microblog" -}}
+{{- $entries = $entries.ByDate.Reverse -}}
+{{- $feedURL := printf "%sfeed.json" .RelPermalink -}}
+
+{{- $allTags := slice -}}
+{{- range $entries -}}
+    {{- with .Params.tags -}}
+        {{- range . -}}
+            {{- $allTags = $allTags | append . -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- $allTags = $allTags | uniq | sort -}}
+
+<section class="microblog-page" data-feed-url="{{ $feedURL }}">
+
+    <header class="microblog-page-header">
+        <h1 class="microblog-page-title">{{ .Title }}</h1>
+        <p class="microblog-page-subtitle">
+            <span class="mb-count" data-mb-total>{{ len $entries }}</span>
+            <span> fragments · since </span>
+            <span>{{ with index $entries (sub (len $entries) 1) }}{{ .Date.Format "2006" }}{{ else }}{{ now.Format "2006" }}{{ end }}</span>
+        </p>
+        {{ with .Content }}
+        <div class="microblog-page-intro">{{ . }}</div>
+        {{ end }}
+    </header>
+
+    {{- if $allTags }}
+    <nav class="microblog-tag-bar" aria-label="Tags">
+        <div class="mb-tag-bar-inner" data-mb-tag-bar>
+            {{- range $allTags }}
+            <button class="mb-tag-chip" type="button" data-mb-tag="{{ . | urlize }}" data-mb-tag-label="{{ . }}">#{{ . }}</button>
+            {{- end }}
+        </div>
+    </nav>
+    {{- end }}
+
+    <div class="microblog-deck" id="microblog-deck" role="region" aria-label="Microblog feed">
+        <div class="mb-column mb-column-main" data-mb-column-id="__all__" data-mb-tag="">
+            <div class="mb-column-header">
+                <span class="mb-column-title">all</span>
+                <span class="mb-column-count" data-mb-column-count>{{ len $entries }}</span>
+            </div>
+            <div class="mb-column-feed" data-mb-feed></div>
+            <div class="mb-column-sentinel" data-mb-sentinel aria-hidden="true"></div>
+        </div>
+    </div>
+
+    {{- /* noscript fallback: most recent 20 entries as plain text + permalinks */ -}}
+    <noscript>
+        <div class="microblog-noscript">
+            <p class="mb-noscript-hint">JavaScript is disabled. Showing the most recent {{ if gt (len $entries) 20 }}20{{ else }}{{ len $entries }}{{ end }} fragments.</p>
+            <ol class="mb-noscript-list">
+                {{- range first 20 $entries }}
+                <li>
+                    <a href="{{ .RelPermalink }}">
+                        <time>{{ .Date.Format "2006-01-02 · 15:04" }}</time>
+                        <span class="mb-noscript-text">{{ .Plain | plainify | truncate 200 }}</span>
+                    </a>
+                </li>
+                {{- end }}
+            </ol>
+        </div>
+    </noscript>
+</section>
+{{ end }}

@@ -1,0 +1,66 @@
+{{- /* Microblog feed: emitted as /microblog/feed.json. Consumed by assets/js/microblog.js. */ -}}
+{{- $entries := where .Site.RegularPages "Section" "microblog" -}}
+{{- $entries = $entries.ByDate.Reverse -}}
+
+{{- $allTags := slice -}}
+{{- range $entries -}}
+    {{- with .Params.tags -}}
+        {{- range . -}}
+            {{- $allTags = $allTags | append . -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- $allTags = $allTags | uniq | sort -}}
+
+{{- $items := slice -}}
+{{- range $entries -}}
+    {{- $page := . -}}
+
+    {{- /* Strip image-only paragraphs from rendered HTML so feed cards render text and images separately. */ -}}
+    {{- $html := $page.Content -}}
+    {{- $html = replaceRE `(?s)<p>\s*<img[^>]*>\s*</p>` "" $html -}}
+    {{- $html = replaceRE `(?s)<figure[^>]*>.*?</figure>` "" $html -}}
+    {{- $html = replaceRE `(?s)<p>\s*</p>` "" $html -}}
+    {{- $html = strings.TrimSpace $html -}}
+
+    {{- /* Gather images as a separate array, applying same WebP conversion as render-image hook. */ -}}
+    {{- $images := slice -}}
+    {{- range $page.Resources.ByType "image" -}}
+        {{- $img := . -}}
+        {{- $subType := lower $img.MediaType.SubType -}}
+        {{- if and (ne $subType "svg") (ne $subType "gif") -}}
+            {{- $img = $img.Process "webp q82" -}}
+        {{- end -}}
+        {{- $images = $images | append (dict
+            "src" $img.RelPermalink
+            "w"   $img.Width
+            "h"   $img.Height
+            "alt" ""
+        ) -}}
+    {{- end -}}
+
+    {{- $plain := $page.Plain | strings.TrimSpace -}}
+    {{- if gt (len $plain) 600 -}}
+        {{- $plain = printf "%s…" (substr $plain 0 600) -}}
+    {{- end -}}
+
+    {{- $rec := dict
+        "id"     $page.File.ContentBaseName
+        "slug"   (or $page.Params.slug $page.File.ContentBaseName)
+        "url"    $page.RelPermalink
+        "date"   ($page.Date.Format "2006-01-02T15:04:05Z07:00")
+        "tags"   (default (slice) $page.Params.tags)
+        "html"   $html
+        "plain"  $plain
+        "images" $images
+    -}}
+    {{- $items = $items | append $rec -}}
+{{- end -}}
+
+{{- $payload := dict
+    "generated" (now.Format "2006-01-02T15:04:05Z07:00")
+    "count"     (len $items)
+    "tags"      $allTags
+    "entries"   $items
+-}}
+{{- $payload | jsonify -}}

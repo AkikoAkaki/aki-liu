@@ -253,7 +253,7 @@
 .kind-section .site-container {
     grid-template-columns: 2fr 5fr 3fr; /* Left sidebar, Main list, Right sidebars combined */
     grid-template-rows: auto minmax(0, 1fr);
-    padding-top: 3.5rem; /* Reduced top spacing */
+    padding-top: 10rem; /* Increased top spacing to avoid menu overlap */
     padding-left: 3vw;
     padding-right: 3vw;
     max-width: 1800px;
@@ -447,7 +447,7 @@
     .kind-section .site-container {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
-        padding-top: 4rem;
+        padding-top: 6rem;
         gap: 3rem;
     }
     

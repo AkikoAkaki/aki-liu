@@ -541,6 +541,7 @@
         const menuPanel   = document.getElementById('menu-panel');
         if (!menuBar || !menuTrigger) return;
 
+        const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
         const magneticLinks = menuPanel ? [...menuPanel.querySelectorAll('.menu-link')] : [];
         let lastScrollY = window.scrollY || 0;
         let scrollRafId = 0;
@@ -601,8 +602,23 @@
             lastScrollY = currentScrollY;
         }
 
+        if (canHover) {
+            menuBar.addEventListener('pointerenter', (event) => {
+                if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
+                if (!menuBar.classList.contains('is-open')) {
+                    open();
+                }
+            });
+
+            menuBar.addEventListener('pointerleave', (event) => {
+                if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
+                if (menuBar.classList.contains('is-open')) {
+                    close();
+                }
+            });
+        }
+
         function initMagneticLinks() {
-            const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
             const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             if (!canHover || reduceMotion || !magneticLinks.length) return;
 
@@ -782,6 +798,7 @@
 
         menuTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
+            if (canHover && menuBar.matches(':hover')) return;
             menuBar.classList.contains('is-open') ? close() : open();
         });
 
@@ -990,6 +1007,7 @@
                 { id: 'go-ideas',      label: lang === 'en' ? 'Go to Ideas'     : '前往 Ideas',     hint: '/ideas',      icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/ideas/' : '/ideas/') },
                 { id: 'go-textlab',    label: lang === 'en' ? 'Go to Text Lab'  : '前往 Text Lab',  hint: '/textlab',    icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/textlab/' : '/textlab/') },
                 { id: 'go-technical',  label: lang === 'en' ? 'Go to Technical' : '前往 Technical', hint: '/technical',  icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/technical/' : '/technical/') },
+                { id: 'go-microblog',  label: lang === 'en' ? 'Go to Microblog' : '前往 Microblog',  hint: '/microblog',  icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/microblog/' : '/microblog/') },
                 { id: 'go-influences', label: lang === 'en' ? 'Go to Influences': '前往 Influences', hint: '/influences', icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/influences/' : '/influences/') },
                 { id: 'theme',         label: lang === 'en' ? 'Toggle dark mode' : '切换深色模式',  hint: '⇧⌘L',         icon: 'theme', action: toggleTheme },
                 { id: 'lang',          label: otherLang === 'en' ? 'Switch to English' : '切换到中文', hint: 'lang',     icon: 'lang',  action: () => switchLang(otherLang) },

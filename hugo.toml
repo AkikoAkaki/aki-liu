@@ -31,11 +31,20 @@ mainSections = ["ideas", "technical", "textlab"]
   tag = "tags"
   category = "categories"
 
+# Flatten microblog URLs: nested year/month dirs in content stay private.
+[permalinks]
+  microblog = "/microblog/:slug/"
+
 # Custom output: site-wide JSON index consumed by the client search module.
 [outputFormats]
   [outputFormats.searchindex]
     mediaType = "application/json"
     baseName = "search-index"
+    isPlainText = true
+    notAlternative = true
+  [outputFormats.microblog_feed]
+    mediaType = "application/json"
+    baseName = "feed"
     isPlainText = true
     notAlternative = true
 

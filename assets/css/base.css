@@ -142,6 +142,13 @@
     --color-bg-muted: #f3f3f3;
     --color-divider: #f0f0f0;
 
+    /* Shared panel shell for the open menu panel and Ctrl+K palette */
+    --panel-shell-bg: rgba(236, 236, 236, 0.14);
+    --panel-shell-border: rgba(var(--text-rgb), 0.1);
+    --panel-shell-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+    --panel-shell-backdrop: blur(32px) saturate(180%);
+    --panel-shell-radius: 16px;
+
     /* 间距基准 */
     --spacing-unit: 1rem;
 }
@@ -163,6 +170,10 @@
         --color-dim: #777777;
         --color-bg-muted: #0d0d0d;
         --color-divider: #1a1a1a;
+
+        --panel-shell-bg: rgba(255, 255, 255, 0.07);
+        --panel-shell-border: rgba(255, 255, 255, 0.08);
+        --panel-shell-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
     }
 }
 
@@ -180,6 +191,10 @@
     --color-dim: #777777;
     --color-bg-muted: #0d0d0d;
     --color-divider: #1a1a1a;
+
+    --panel-shell-bg: rgba(255, 255, 255, 0.07);
+    --panel-shell-border: rgba(255, 255, 255, 0.08);
+    --panel-shell-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
 }
 
 :root[data-theme="light"] {
@@ -195,6 +210,10 @@
     --color-dim: #8f8f8f;
     --color-bg-muted: #f3f3f3;
     --color-divider: #f0f0f0;
+
+    --panel-shell-bg: rgba(236, 236, 236, 0.14);
+    --panel-shell-border: rgba(var(--text-rgb), 0.1);
+    --panel-shell-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
 }
 
 /* 基础重置 */
@@ -288,11 +307,12 @@ body::after {
 .menu-bar.is-open {
     width: 480px;
     height: var(--menu-open-height, 560px);
-    border-radius: 16px;
+    border-radius: var(--panel-shell-radius);
     overflow: hidden;
-    background: rgba(236, 236, 236, 0.14);
-    backdrop-filter: blur(32px) saturate(180%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    background: var(--panel-shell-bg);
+    backdrop-filter: var(--panel-shell-backdrop);
+    -webkit-backdrop-filter: var(--panel-shell-backdrop);
+    box-shadow: var(--panel-shell-shadow);
 }
 
 /* The trigger button — always fills the collapsed pill */
@@ -488,12 +508,14 @@ body.menu-cursor-hidden * {
 .menu-bar.is-open .menu-link:nth-child(3) { transition-delay: 0.12s; }
 .menu-bar.is-open .menu-link:nth-child(4) { transition-delay: 0.16s; }
 .menu-bar.is-open .menu-link:nth-child(5) { transition-delay: 0.20s; }
+.menu-bar.is-open .menu-link:nth-child(6) { transition-delay: 0.24s; }
 
-.menu-bar:not(.is-open) .menu-link:nth-child(1) { transition-delay: 0.20s; }
-.menu-bar:not(.is-open) .menu-link:nth-child(2) { transition-delay: 0.16s; }
-.menu-bar:not(.is-open) .menu-link:nth-child(3) { transition-delay: 0.12s; }
-.menu-bar:not(.is-open) .menu-link:nth-child(4) { transition-delay: 0.08s; }
-.menu-bar:not(.is-open) .menu-link:nth-child(5) { transition-delay: 0.04s; }
+.menu-bar:not(.is-open) .menu-link:nth-child(1) { transition-delay: 0.24s; }
+.menu-bar:not(.is-open) .menu-link:nth-child(2) { transition-delay: 0.20s; }
+.menu-bar:not(.is-open) .menu-link:nth-child(3) { transition-delay: 0.16s; }
+.menu-bar:not(.is-open) .menu-link:nth-child(4) { transition-delay: 0.12s; }
+.menu-bar:not(.is-open) .menu-link:nth-child(5) { transition-delay: 0.08s; }
+.menu-bar:not(.is-open) .menu-link:nth-child(6) { transition-delay: 0.04s; }
 
 .menu-kbd {
     font-family: var(--font-sans);
@@ -517,6 +539,10 @@ body.menu-cursor-hidden * {
         top: 40px;
     }
 
+    .menu-bar.is-scrolled-away {
+        transform: translate3d(-50%, 0, 0);
+    }
+
     .menu-bar.is-open {
         width: min(92vw, 420px);
     }
@@ -537,6 +563,10 @@ body.menu-cursor-hidden * {
         width: 110px;
         height: 38px;
         top: 12px;
+    }
+
+    .menu-bar.is-scrolled-away {
+        transform: translate3d(-50%, 0, 0);
     }
 
     .menu-bar.is-open {

@@ -1,0 +1,97 @@
+{{ define "main" }}
+{{- $section := .Site.GetPage "section" "microblog" -}}
+{{- $images := slice -}}
+{{- with .Resources.ByType "image" -}}
+    {{- range .ByName -}}
+        {{- $images = $images | append . -}}
+    {{- end -}}
+{{- end -}}
+
+{{- /* Build prev/next within the microblog section */ -}}
+{{- $allEntries := where .Site.RegularPages "Section" "microblog" -}}
+{{- $currentIndex := -1 -}}
+{{- range $i, $p := $allEntries -}}
+    {{- if eq $p.RelPermalink $.RelPermalink -}}
+        {{- $currentIndex = $i -}}
+    {{- end -}}
+{{- end -}}
+{{- $newer := "" -}}{{- $older := "" -}}
+{{- if ge $currentIndex 0 -}}
+    {{- if gt $currentIndex 0 -}}
+        {{- $newer = index $allEntries (sub $currentIndex 1) -}}
+    {{- end -}}
+    {{- if lt $currentIndex (sub (len $allEntries) 1) -}}
+        {{- $older = index $allEntries (add $currentIndex 1) -}}
+    {{- end -}}
+{{- end -}}
+
+<article class="microblog-single">
+    <div class="microblog-single-back">
+        <a class="back-link" href="{{ with $section }}{{ .RelPermalink }}{{ else }}/microblog/{{ end }}">
+            {{ partialCached "icons/back-arrow.html" "back-arrow" }}
+            <span>microblog</span>
+        </a>
+    </div>
+
+    <header class="microblog-single-header">
+        <time class="microblog-single-date" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+            <span class="ms-date-ymd">{{ .Date.Format "2006-01-02" }}</span>
+            <span class="ms-date-sep">·</span>
+            <span class="ms-date-weekday">{{ .Date.Format "Monday" }}</span>
+            <span class="ms-date-sep">·</span>
+            <span class="ms-date-time">{{ .Date.Format "15:04" }}</span>
+        </time>
+    </header>
+
+    <div class="microblog-single-body">
+        {{ .Content }}
+    </div>
+
+    {{- if .Params.tags }}
+    <div class="microblog-single-tags">
+        {{- range .Params.tags }}
+        <a class="mb-tag-chip" href="{{ with $section }}{{ .RelPermalink }}{{ else }}/microblog/{{ end }}?cols={{ . | urlize }}">#{{ . }}</a>
+        {{- end }}
+    </div>
+    {{- end }}
+
+    {{- if or $newer $older }}
+    <nav class="microblog-single-nav" aria-label="Adjacent fragments">
+        <div class="ms-nav-row ms-nav-prev">
+            {{- if $newer }}
+            <a class="ms-nav-link" href="{{ $newer.RelPermalink }}">
+                <span class="ms-nav-arrow">{{ partialCached "icons/back-arrow.html" "back-arrow" }}</span>
+                <span class="ms-nav-text">
+                    <span class="ms-nav-meta">{{ $newer.Date.Format "2006-01-02 · 15:04" }} <em>newer</em></span>
+                    <span class="ms-nav-preview">{{ $newer.Plain | plainify | truncate 60 }}</span>
+                </span>
+            </a>
+            {{- else }}
+            <span class="ms-nav-link is-disabled" aria-hidden="true">
+                <span class="ms-nav-text">
+                    <span class="ms-nav-meta"><em>this is the latest</em></span>
+                </span>
+            </span>
+            {{- end }}
+        </div>
+        <div class="ms-nav-row ms-nav-next">
+            {{- if $older }}
+            <a class="ms-nav-link" href="{{ $older.RelPermalink }}">
+                <span class="ms-nav-text">
+                    <span class="ms-nav-meta"><em>older</em> {{ $older.Date.Format "2006-01-02 · 15:04" }}</span>
+                    <span class="ms-nav-preview">{{ $older.Plain | plainify | truncate 60 }}</span>
+                </span>
+                <span class="ms-nav-arrow">{{ partialCached "icons/forward-arrow.html" "forward-arrow" }}</span>
+            </a>
+            {{- else }}
+            <span class="ms-nav-link is-disabled" aria-hidden="true">
+                <span class="ms-nav-text">
+                    <span class="ms-nav-meta"><em>this is the oldest</em></span>
+                </span>
+            </span>
+            {{- end }}
+        </div>
+    </nav>
+    {{- end }}
+</article>
+{{ end }}

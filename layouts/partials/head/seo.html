@@ -1,6 +1,17 @@
 {{- $page := .page -}}
 {{- $siteTitle := $page.Site.Title -}}
-{{- $title := printf "%s | %s" $page.Title $siteTitle -}}
+{{- /* Microblog entries have no explicit title; synthesize from first line of plain text. */ -}}
+{{- $pageTitle := $page.Title -}}
+{{- if and (eq $page.Section "microblog") $page.IsPage -}}
+    {{- $first := $page.Plain | plainify | strings.TrimSpace -}}
+    {{- if gt (len $first) 60 -}}
+        {{- $first = printf "%s…" (substr $first 0 60) -}}
+    {{- end -}}
+    {{- if ne $first "" -}}
+        {{- $pageTitle = $first -}}
+    {{- end -}}
+{{- end -}}
+{{- $title := printf "%s | %s" $pageTitle $siteTitle -}}
 {{- if $page.IsHome -}}
     {{- $title = $siteTitle -}}
 {{- end -}}
@@ -127,7 +138,7 @@
     {{- $articleSchema := dict
         "@context" "https://schema.org"
         "@type" "BlogPosting"
-        "headline" $page.Title
+        "headline" $pageTitle
         "url" $canonical
         "mainEntityOfPage" $canonical
         "datePublished" ($page.Date.Format "2006-01-02T15:04:05Z07:00")

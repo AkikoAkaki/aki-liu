@@ -33,7 +33,17 @@
       "Bash(curl -sS http://127.0.0.1:1313/en/)",
       "Bash(curl -sS http://127.0.0.1:1313/en/search-index.json)",
       "Bash(python -c \"import json,sys; data=json.load\\(sys.stdin\\); print\\('count:', len\\(data\\)\\); print\\('langs:', set\\(d['lang'] for d in data\\)\\); print\\('sample:', data[0]['title'] if data else 'empty'\\)\")",
-      "Bash(C:/Users/Kevin/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/brainstorming/scripts/start-server.sh *)"
+      "Bash(C:/Users/Kevin/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/brainstorming/scripts/start-server.sh *)",
+      "Bash(Get-ChildItem -Path \"I:\\\\Projects\\\\aki-liu\" -Depth 1)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(hugo --quiet --gc)",
+      "Bash(node -c assets/js/main.js)",
+      "Bash(hugo server *)",
+      "Bash(timeout 4 powershell *)",
+      "Bash(hugo --gc --minify --quiet)",
+      "Bash(hugo --gc --minify)",
+      "Bash(python -c \"import sys, json; data = json.load\\(sys.stdin\\); mb = [e for e in data if e.get\\('section'\\) == 'microblog']; print\\(f'Total: {len\\(data\\)}'\\); print\\(f'Microblog entries: {len\\(mb\\)}'\\); [print\\(f'  - {e[\\\\\"title\\\\\"][:60]} \\({e[\\\\\"url\\\\\"]}\\)'\\) for e in mb]\")",
+      "Bash(hugo serve *)"
     ]
   }
 }

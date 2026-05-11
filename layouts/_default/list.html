@@ -46,7 +46,6 @@
 {{ end }}
 
 {{ define "sidebar-bottom" }}
-{{ $regularPages := .Store.Get "regularPages" }}
 {{ $years := .Store.Get "years" }}
 <div class="archive-bottom-section">
     <div class="archive-years-list archive-years-mobile">
@@ -54,15 +53,6 @@
             <a href="#" class="archive-year-item">{{ . }}</a>
         {{ end }}
     </div>
-
-    <div class="archive-sidebar-bottom">
-        <div class="totals-row">
-            <div class="totals-item">Entries: {{ len $regularPages }}</div>
-            <div class="totals-item">Years: {{ len $years }}</div>
-        </div>
-    </div>
-
-    <div class="archive-copyright">© Aki Liu</div>
 </div>
 {{ end }}
 
@@ -95,6 +85,39 @@
         <div id="archive-preview-container" class="preview-container">
             <!-- Content injected by JS -->
         </div>
+    </div>
+</div>
+{{ end }}
+
+{{ define "footer-inner" }}
+{{ $regularPages := .Store.Get "regularPages" }}
+{{ $years := .Store.Get "years" }}
+<div class="footer-grid">
+    <div class="footer-contact">
+        <h2 class="footer-label">Index</h2>
+    </div>
+    <div class="footer-links-container">
+        <ul class="footer-links">
+            <li>
+                <span class="link-name">Entries</span>
+                <span class="link-line"></span>
+                <span style="color: #ffffff; font-family: var(--font-mono, monospace); font-size: 0.95rem;">{{ len $regularPages }}</span>
+            </li>
+            <li>
+                <span class="link-name">Years</span>
+                <span class="link-line"></span>
+                <span style="color: #ffffff; font-family: var(--font-mono, monospace); font-size: 0.95rem;">{{ len $years }}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="footer-bottom">
+    <div class="footer-quote">
+        "The starry heavens above me and the moral law within me."
+    </div>
+    <div class="footer-copyright-wrapper">
+        <img src="{{ "images/signature.webp" | relURL }}" alt="AKI LIU" class="footer-signature" loading="lazy" width="208" height="118">
+        <span class="footer-copyright">© {{ now.Year }} Aki Liu</span>
     </div>
 </div>
 {{ end }}
