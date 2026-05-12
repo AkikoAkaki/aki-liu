@@ -338,15 +338,6 @@
     text-decoration: underline;
 }
 
-.archive-search {
-    font-family: var(--font-sans);
-    color: var(--color-secondary);
-    font-size: 0.95rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0.5rem;
-    margin-top: 2rem;
-}
-
 /* Microblog Specific Layout Override */
 .section-microblog .site-main {
     grid-column: 2 / -1; /* Span both main and right sidebar columns */

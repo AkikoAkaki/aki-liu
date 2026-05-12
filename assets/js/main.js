@@ -7,15 +7,6 @@
         }
     } catch (_) { /* localStorage unavailable */ }
 
-    const FONT_MONO = '"JetBrains Mono", "Geist Mono", monospace';
-    const STAGGER = 35;
-
-    function staggerFontChange(chars, applyChange) {
-        return chars.map((char, i) => setTimeout(() => {
-            applyChange(char);
-        }, i * STAGGER));
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
         // --- Magnetic hover: links & tags ---
         const generalMagnetEls = [...document.querySelectorAll(
@@ -27,96 +18,6 @@
         // --- Expanding Menu ---
         initExpandingMenu();
 
-
-        // --- Search placeholder animation ---
-        const searchBar = document.querySelector('.archive-search');
-        if (searchBar) {
-            const input = searchBar.querySelector('.search-input');
-            const fakePlaceholder = searchBar.querySelector('.search-fake-placeholder');
-            if (fakePlaceholder && input) {
-                let searchTimers = [];
-                let searchDebounce = null;
-                let isHidden = false;
-                let isPlaceholderWrapped = false;
-
-                function initPlaceholder() {
-                    if (isPlaceholderWrapped) return;
-                    const text = fakePlaceholder.textContent;
-                    fakePlaceholder.innerHTML = '';
-                    [...text].forEach(char => {
-                        if (char === ' ') {
-                            fakePlaceholder.appendChild(document.createTextNode(char));
-                        } else {
-                            const span = document.createElement('span');
-                            span.className = 'link-char';
-                            span.textContent = char;
-                            fakePlaceholder.appendChild(span);
-                        }
-                    });
-                    isPlaceholderWrapped = true;
-                }
-
-                function getChars() { return [...fakePlaceholder.querySelectorAll('.link-char')]; }
-
-                function cancelSearch() {
-                    searchTimers.forEach(clearTimeout);
-                    searchTimers = [];
-                }
-
-                function animateToMono() {
-                    initPlaceholder();
-                    cancelSearch();
-                    const chars = getChars();
-                    searchTimers = staggerFontChange(chars, char => {
-                        char.style.fontFamily = FONT_MONO;
-                    });
-                }
-
-                function animateToSans() {
-                    if (!isPlaceholderWrapped) return;
-                    cancelSearch();
-                    const chars = getChars().reverse();
-                    searchTimers = staggerFontChange(chars, char => {
-                        char.style.fontFamily = '';
-                    });
-                }
-
-                searchBar.addEventListener('mouseenter', () => {
-                    clearTimeout(searchDebounce);
-                    searchDebounce = setTimeout(() => { if (!isHidden) animateToMono(); }, 20);
-                });
-
-                searchBar.addEventListener('mouseleave', () => {
-                    clearTimeout(searchDebounce);
-                    searchDebounce = setTimeout(() => { if (!isHidden) animateToSans(); }, 20);
-                });
-
-                searchBar.addEventListener('click', () => input.focus());
-
-                input.addEventListener('focus', () => {
-                    if (!isHidden) {
-                        isHidden = true;
-                        cancelSearch();
-                        fakePlaceholder.classList.add('is-hiding');
-                    }
-                });
-
-                fakePlaceholder.addEventListener('animationend', () => {
-                    if (isHidden) fakePlaceholder.style.opacity = '0';
-                });
-
-                input.addEventListener('blur', () => {
-                    if (input.value === '') {
-                        isHidden = false;
-                        fakePlaceholder.classList.remove('is-hiding');
-                        fakePlaceholder.style.opacity = '';
-                        if (isPlaceholderWrapped) {
-                            getChars().forEach(char => { char.style.fontFamily = ''; });
-                        }
-                    }
-                });
-            }
-        }
 
         // --- Archive desktop bottom stats ---
         const archiveStats = document.querySelector('.archive-sidebar-bottom');
@@ -581,23 +482,27 @@
     }
 
     function initExpandingMenu() {
-        const menuBar     = document.getElementById('menu-bar');
+        const menuBar = document.getElementById('menu-bar');
         const menuTrigger = document.getElementById('menu-trigger');
-        const menuPanel   = document.getElementById('menu-panel');
+        const menuPanel = document.getElementById('menu-panel');
+        const searchPanel = document.getElementById('menu-search-panel');
         if (!menuBar || !menuTrigger) return;
 
         const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
         const magneticLinks = menuPanel ? [...menuPanel.querySelectorAll('.menu-link')] : [];
         let lastScrollY = window.scrollY || 0;
         let scrollRafId = 0;
+        let requestSearchClose = null;
         const hideThreshold = 24;
 
         function getCollapsedHeight() {
             const computed = window.getComputedStyle(menuBar);
-            return parseFloat(computed.height) || 68;
+            return parseFloat(computed.getPropertyValue('--menu-collapsed-height')) ||
+                parseFloat(computed.height) ||
+                68;
         }
 
-        function syncOpenHeight() {
+        function syncMenuHeight() {
             if (!menuPanel) return;
 
             const collapsedHeight = getCollapsedHeight();
@@ -606,28 +511,70 @@
             menuBar.style.setProperty('--menu-open-height', `${nextHeight}px`);
         }
 
-        function open() {
-            syncOpenHeight();
-            menuBar.classList.add('is-open');
-            menuBar.classList.remove('is-scrolled-away');
-            menuTrigger.setAttribute('aria-expanded', 'true');
-            if (menuPanel) menuPanel.setAttribute('aria-hidden', 'false');
+        function syncSearchHeight() {
+            if (!searchPanel) return;
+
+            const collapsedHeight = getCollapsedHeight();
+            const top = menuBar.getBoundingClientRect().top;
+            const availableHeight = Math.max(collapsedHeight, window.innerHeight - top - 24);
+            const preferredContentHeight = window.matchMedia('(max-width: 480px)').matches ? window.innerHeight : 560;
+            const naturalHeight = Math.max(searchPanel.scrollHeight, collapsedHeight + preferredContentHeight);
+            const nextHeight = Math.min(naturalHeight, availableHeight);
+            menuBar.style.setProperty('--menu-search-height', `${nextHeight}px`);
         }
 
-        function close() {
+        function openMenu() {
+            syncMenuHeight();
+            resetMagneticLinks();
+            menuBar.classList.add('is-open');
+            menuBar.classList.remove('is-search', 'is-scrolled-away');
+            menuTrigger.setAttribute('aria-expanded', 'true');
+            if (menuPanel) menuPanel.setAttribute('aria-hidden', 'false');
+            if (searchPanel) searchPanel.setAttribute('aria-hidden', 'true');
+        }
+
+        function closeMenu() {
             resetMagneticLinks();
             menuBar.style.setProperty('--menu-open-height', `${menuBar.getBoundingClientRect().height}px`);
+            menuBar.style.setProperty('--menu-search-height', `${menuBar.getBoundingClientRect().height}px`);
             requestAnimationFrame(() => {
-                menuBar.classList.remove('is-open');
+                menuBar.classList.remove('is-open', 'is-search');
             });
             menuTrigger.setAttribute('aria-expanded', 'false');
             if (menuPanel) menuPanel.setAttribute('aria-hidden', 'true');
+            if (searchPanel) searchPanel.setAttribute('aria-hidden', 'true');
+        }
+
+        function openSearch() {
+            syncSearchHeight();
+            resetMagneticLinks();
+            menuBar.classList.add('is-open', 'is-search');
+            menuBar.classList.remove('is-scrolled-away');
+            menuTrigger.setAttribute('aria-expanded', 'true');
+            if (menuPanel) menuPanel.setAttribute('aria-hidden', 'true');
+            if (searchPanel) searchPanel.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeSearch() {
+            if (!menuBar.classList.contains('is-search')) return;
+            menuBar.style.setProperty('--menu-search-height', `${menuBar.getBoundingClientRect().height}px`);
+            requestAnimationFrame(() => {
+                menuBar.classList.remove('is-search', 'is-open');
+            });
+            menuTrigger.setAttribute('aria-expanded', 'false');
+            if (menuPanel) menuPanel.setAttribute('aria-hidden', 'true');
+            if (searchPanel) searchPanel.setAttribute('aria-hidden', 'true');
+        }
+
+        function requestCloseSearch() {
+            if (typeof requestSearchClose === 'function') requestSearchClose();
+            else closeSearch();
         }
 
         function updateScrollState() {
             scrollRafId = 0;
 
-            if (menuBar.classList.contains('is-open')) {
+            if (menuBar.classList.contains('is-open') || menuBar.classList.contains('is-search')) {
                 lastScrollY = window.scrollY || 0;
                 menuBar.classList.remove('is-scrolled-away');
                 return;
@@ -650,15 +597,15 @@
         if (canHover) {
             menuBar.addEventListener('pointerenter', (event) => {
                 if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
-                if (!menuBar.classList.contains('is-open')) {
-                    open();
+                if (!menuBar.classList.contains('is-open') && !menuBar.classList.contains('is-search')) {
+                    openMenu();
                 }
             });
 
             menuBar.addEventListener('pointerleave', (event) => {
                 if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
-                if (menuBar.classList.contains('is-open')) {
-                    close();
+                if (menuBar.classList.contains('is-open') && !menuBar.classList.contains('is-search')) {
+                    closeMenu();
                 }
             });
         }
@@ -673,20 +620,26 @@
 
         menuTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (canHover && menuBar.matches(':hover')) return;
-            menuBar.classList.contains('is-open') ? close() : open();
-        });
-
-        // Close on click outside
-        document.addEventListener('click', (e) => {
-            if (menuBar.classList.contains('is-open') && !menuBar.contains(e.target)) {
-                close();
+            if (menuBar.classList.contains('is-search')) {
+                requestCloseSearch();
+            } else if (menuBar.classList.contains('is-open')) {
+                closeMenu();
+            } else {
+                openMenu();
             }
         });
 
-        // Close on Escape
+        document.addEventListener('click', (e) => {
+            if ((menuBar.classList.contains('is-open') || menuBar.classList.contains('is-search')) && !menuBar.contains(e.target)) {
+                if (menuBar.classList.contains('is-search')) requestCloseSearch();
+                else closeMenu();
+            }
+        });
+
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') close();
+            if (e.key === 'Escape' && menuBar.classList.contains('is-open') && !menuBar.classList.contains('is-search')) {
+                closeMenu();
+            }
         });
 
         window.addEventListener('scroll', () => {
@@ -695,8 +648,10 @@
         }, { passive: true });
 
         window.addEventListener('resize', () => {
-            if (menuBar.classList.contains('is-open')) {
-                syncOpenHeight();
+            if (menuBar.classList.contains('is-search')) {
+                syncSearchHeight();
+            } else if (menuBar.classList.contains('is-open')) {
+                syncMenuHeight();
             }
             resetMagneticLinks();
         });
@@ -707,13 +662,28 @@
 
         initMagneticLinks();
         updateScrollState();
+
+        window.__menuBarController = {
+            openMenu,
+            closeMenu,
+            openSearch,
+            closeSearch,
+            syncMenuHeight,
+            syncSearchHeight,
+            isMenuOpen: () => menuBar.classList.contains('is-open') && !menuBar.classList.contains('is-search'),
+            isSearchOpen: () => menuBar.classList.contains('is-search'),
+            setSearchCloseHandler(handler) {
+                requestSearchClose = handler;
+            },
+        };
     }
 
 
     function initSearchPalette() {
-        const root = document.getElementById('search-root');
+        const root = document.getElementById('menu-search-panel');
         const triggers = document.querySelectorAll('[data-search-trigger]');
         if (!root) return;
+        const menuController = window.__menuBarController;
 
         const lang = (document.documentElement.lang || 'zh').toLowerCase().startsWith('en') ? 'en' : 'zh';
         const indexUrl = lang === 'en' ? '/en/search-index.json' : '/search-index.json';
@@ -731,6 +701,10 @@
         let currentItems = [];
         let currentTokens = [];
         let lastQuery = '';
+
+        if (menuController) {
+            menuController.setSearchCloseHandler(close);
+        }
 
         // ---------- Index loading ----------
         function loadIndex() {
@@ -1012,6 +986,7 @@
                 return '';
             }).join('');
             listEl.innerHTML = html;
+            if (menuController) requestAnimationFrame(menuController.syncSearchHeight);
         }
 
         function renderPreview() {
@@ -1045,13 +1020,13 @@
                     <p class="preview-summary">${item.count} ${lang === 'en' ? (item.count === 1 ? 'post tagged' : 'posts tagged') : '篇相关文章'}</p>
                 `;
             }
+            if (menuController) requestAnimationFrame(menuController.syncSearchHeight);
         }
 
         // ---------- Panel construction ----------
         function buildPanel() {
             const modKey = isMac ? '⌘K' : 'Ctrl K';
             root.innerHTML = `
-                <div class="search-overlay" data-search-overlay></div>
                 <div class="search-panel" role="dialog" aria-modal="true" aria-label="Search">
                     <div class="search-pane-left">
                         <div class="search-inputbar">
@@ -1083,8 +1058,6 @@
             modeHintEl = root.querySelector('[data-mode-hint]');
 
             inputEl.addEventListener('input', e => render(e.target.value));
-
-            root.querySelector('[data-search-overlay]').addEventListener('click', close);
 
             listEl.addEventListener('mouseover', e => {
                 const li = e.target.closest('.search-result');
@@ -1127,15 +1100,14 @@
             if (isOpen) return;
             if (!panel) buildPanel();
             isOpen = true;
-            
-            // Force browser layout so the newly injected DOM elements
-            // register their initial CSS state (e.g., blur(0px)) before transitioning.
-            void root.offsetWidth;
-            
-            document.body.classList.add('search-open');
             inputEl.value = '';
             render('');
-            requestAnimationFrame(() => inputEl.focus());
+            if (menuController) menuController.openSearch();
+            void root.offsetWidth;
+            requestAnimationFrame(() => {
+                if (menuController) menuController.syncSearchHeight();
+                inputEl.focus();
+            });
             loadIndex().then(() => {
                 if (isOpen) render(inputEl.value);
             });
@@ -1144,7 +1116,7 @@
         function close() {
             if (!isOpen) return;
             isOpen = false;
-            document.body.classList.remove('search-open');
+            if (menuController) menuController.closeSearch();
             if (inputEl) inputEl.blur();
         }
 

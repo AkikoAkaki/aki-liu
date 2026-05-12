@@ -59,11 +59,12 @@
         </div>
     </footer>
 
-    <div id="search-root" aria-hidden="true"></div>
-
     <div class="menu-bar" id="menu-bar">
-        <button class="menu-trigger" id="menu-trigger" aria-expanded="false" aria-controls="menu-panel">
-            <span class="menu-trigger-label">Menu</span>
+        <button class="menu-trigger" id="menu-trigger" aria-expanded="false" aria-controls="menu-panel menu-search-panel">
+            <span class="menu-trigger-label">
+                <span class="menu-trigger-title menu-trigger-title--menu">Menu</span>
+                <span class="menu-trigger-title menu-trigger-title--search" aria-hidden="true">Search</span>
+            </span>
             <span class="menu-trigger-icon" aria-hidden="true">
                 <svg class="menu-icon-open" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 9H19" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
@@ -85,6 +86,7 @@
                 <a href="#search" class="menu-link menu-link--search" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
             </div>
         </nav>
+        <div class="menu-search-panel" id="menu-search-panel" aria-hidden="true"></div>
     </div>
 </body>
 </html>
