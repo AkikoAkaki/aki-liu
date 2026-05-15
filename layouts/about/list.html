@@ -1,0 +1,24 @@
+{{ define "main" }}
+<section class="about-page">
+    <header class="about-page-hero">
+        <p class="about-kicker">About</p>
+        <h1 class="about-title">{{ .Title }}</h1>
+        <div class="about-intro">
+            {{ .Content }}
+        </div>
+    </header>
+
+    {{- $children := .Pages.ByWeight -}}
+    {{- if gt (len $children) 0 -}}
+    <div class="about-subpages">
+        {{- range $children }}
+        <article class="about-card">
+            <h2 class="about-card-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+            <p class="about-card-summary">{{ .Summary | plainify | truncate 180 }}</p>
+            <a class="about-card-link" href="{{ .RelPermalink }}">Open page</a>
+        </article>
+        {{- end }}
+    </div>
+    {{- end -}}
+</section>
+{{ end }}

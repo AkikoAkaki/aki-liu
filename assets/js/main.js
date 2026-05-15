@@ -242,7 +242,7 @@
         });
 
         // --- Floating Link Preview ---
-        const previewLinks = document.querySelectorAll('.work-item[data-preview]');
+        const previewLinks = document.querySelectorAll('.work-item[data-preview], .footer-links a[data-preview]');
         if (previewLinks.length > 0) {
             let tooltip = document.createElement('div');
             tooltip.className = 'link-preview-tooltip';
@@ -850,17 +850,17 @@
         }
 
         function buildCommands(query) {
-            const otherLang = lang === 'zh' ? 'en' : 'zh';
+            const otherLang = 'zh';
             const list = [
-                { id: 'go-home',       label: lang === 'en' ? 'Go to Home'      : '回到首页',       hint: '/',           icon: 'home', action: () => navigate('/') },
-                { id: 'go-ideas',      label: lang === 'en' ? 'Go to Ideas'     : '前往 Ideas',     hint: '/ideas',      icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/ideas/' : '/ideas/') },
-                { id: 'go-textlab',    label: lang === 'en' ? 'Go to Text Lab'  : '前往 Text Lab',  hint: '/textlab',    icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/textlab/' : '/textlab/') },
-                { id: 'go-technical',  label: lang === 'en' ? 'Go to Technical' : '前往 Technical', hint: '/technical',  icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/technical/' : '/technical/') },
-                { id: 'go-microblog',  label: lang === 'en' ? 'Go to Microblog' : '前往 Microblog',  hint: '/microblog',  icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/microblog/' : '/microblog/') },
-                { id: 'go-influences', label: lang === 'en' ? 'Go to Influences': '前往 Influences', hint: '/influences', icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/influences/' : '/influences/') },
-                { id: 'theme',         label: lang === 'en' ? 'Toggle dark mode' : '切换深色模式',  hint: '⇧⌘L',         icon: 'theme', action: toggleTheme },
-                { id: 'lang',          label: otherLang === 'en' ? 'Switch to English' : '切换到中文', hint: 'lang',     icon: 'lang',  action: () => switchLang(otherLang) },
-                { id: 'tags',          label: lang === 'en' ? 'Browse tags' : '浏览标签',           hint: '#',           icon: 'tag',   action: () => { inputEl.value = '#'; render('#'); inputEl.focus(); } },
+                { id: 'go-home',       label: 'Go to Home',       hint: '/',           icon: 'home', action: () => navigate('/') },
+                { id: 'go-ideas',      label: 'Go to Writing / Ideas',    hint: '/ideas',      icon: 'arrow', action: () => navigate('/en/ideas/') },
+                { id: 'go-textlab',    label: 'Go to Writing / Text Lab', hint: '/textlab',    icon: 'arrow', action: () => navigate('/en/textlab/') },
+                { id: 'go-technical',  label: 'Go to Notes',              hint: '/technical',  icon: 'arrow', action: () => navigate('/en/technical/') },
+                { id: 'go-microblog',  label: 'Go to Microblog',  hint: '/microblog',  icon: 'arrow', action: () => navigate('/en/microblog/') },
+                { id: 'go-influences', label: 'Go to Influences', hint: '/influences', icon: 'arrow', action: () => navigate('/en/influences/') },
+                { id: 'theme',         label: 'Toggle dark mode',  hint: '⇧⌘L',         icon: 'theme', action: toggleTheme },
+                { id: 'lang',          label: 'Switch to Chinese', hint: 'lang',     icon: 'lang',  action: () => switchLang(otherLang) },
+                { id: 'tags',          label: 'Browse tags',           hint: '#',           icon: 'tag',   action: () => { inputEl.value = '#'; render('#'); inputEl.focus(); } },
             ];
             if (!query) return list;
             const q = query.toLowerCase();
@@ -940,9 +940,7 @@
 
         function renderList() {
             if (!currentItems.length) {
-                listEl.innerHTML = '<li class="search-empty">' +
-                    (lang === 'en' ? 'No matches. Try fewer words, or <em>type ></em> for commands.' : '暂无匹配。试试更少的关键词，或输入 <em>></em> 进入命令。') +
-                    '</li>';
+                listEl.innerHTML = '<li class="search-empty">No matches. Try fewer words, or <em>type ></em> for commands.</li>';
                 return;
             }
             const html = currentItems.map((item, idx) => {
@@ -968,7 +966,7 @@
                         ${ICONS[c.icon] || ICONS.arrow}
                         <div class="sr-body">
                             <div class="sr-title">${escapeHtml(c.label)}</div>
-                            <div class="sr-meta">${lang === 'en' ? 'COMMAND' : '命令'}</div>
+                            <div class="sr-meta">COMMAND</div>
                         </div>
                         <span class="sr-trail">${escapeHtml(c.hint || '')}</span>
                     </li>`;
@@ -978,7 +976,7 @@
                         ${ICONS.tag}
                         <div class="sr-body">
                             <div class="sr-title">#${escapeHtml(item.label)}</div>
-                            <div class="sr-meta">${item.count} ${lang === 'en' ? (item.count === 1 ? 'post' : 'posts') : '篇'}</div>
+                            <div class="sr-meta">${item.count} ${item.count === 1 ? 'post' : 'posts'}</div>
                         </div>
                         <span class="sr-trail">↩</span>
                     </li>`;
@@ -992,7 +990,7 @@
         function renderPreview() {
             const item = currentItems[selectedIdx];
             if (!item) {
-                previewEl.innerHTML = `<div class="search-preview-empty">${lang === 'en' ? 'Select an item to preview.' : '选中条目即可预览。'}</div>`;
+                previewEl.innerHTML = `<div class="search-preview-empty">Select an item to preview.</div>`;
                 return;
             }
             if (item.type === 'result') {
@@ -1009,15 +1007,15 @@
             } else if (item.type === 'command') {
                 const c = item.cmd;
                 previewEl.innerHTML = `
-                    <div class="preview-meta">${lang === 'en' ? 'COMMAND' : '命令'}</div>
+                    <div class="preview-meta">COMMAND</div>
                     <h3 class="preview-title">${escapeHtml(c.label)}</h3>
                     <p class="preview-summary">${escapeHtml(c.hint || '')}</p>
                 `;
             } else if (item.type === 'tag') {
                 previewEl.innerHTML = `
-                    <div class="preview-meta">${lang === 'en' ? 'TAG' : '标签'}</div>
+                    <div class="preview-meta">TAG</div>
                     <h3 class="preview-title">#${escapeHtml(item.label)}</h3>
-                    <p class="preview-summary">${item.count} ${lang === 'en' ? (item.count === 1 ? 'post tagged' : 'posts tagged') : '篇相关文章'}</p>
+                    <p class="preview-summary">${item.count} ${item.count === 1 ? 'post tagged' : 'posts tagged'}</p>
                 `;
             }
             if (menuController) requestAnimationFrame(menuController.syncSearchHeight);
@@ -1032,18 +1030,18 @@
                         <div class="search-inputbar">
                             ${ICONS.search}
                             <input class="search-input" type="text"
-                                   placeholder="${lang === 'en' ? 'Search posts, > for commands, # for tags' : '搜索文章, > 输入命令, # 浏览标签'}"
+                                   placeholder="Search posts, > for commands, # for tags"
                                    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                             <span class="search-mode-hint" data-mode-hint>START</span>
                             <kbd class="search-esc">esc</kbd>
                         </div>
                         <ul class="search-results" role="listbox"></ul>
                         <div class="search-foot">
-                            <span><kbd>↑↓</kbd>${lang === 'en' ? 'navigate' : '导航'}</span>
-                            <span><kbd>↩</kbd>${lang === 'en' ? 'open' : '打开'}</span>
-                            <span><kbd>esc</kbd>${lang === 'en' ? 'close' : '关闭'}</span>
+                            <span><kbd>↑↓</kbd>navigate</span>
+                            <span><kbd>↩</kbd>open</span>
+                            <span><kbd>esc</kbd>close</span>
                             <span class="search-foot-spacer"></span>
-                            <span><kbd>${modKey}</kbd>${lang === 'en' ? 'toggle' : '开合'}</span>
+                            <span><kbd>${modKey}</kbd>toggle</span>
                         </div>
                     </div>
                     <div class="search-pane-right">

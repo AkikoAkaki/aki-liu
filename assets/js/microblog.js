@@ -8,10 +8,14 @@
     const totalEl = root.querySelector('[data-mb-total]');
     const PAGE_SIZE = 30;
     const STAGGER_MS = 40;
+    const COMPRESSION_THRESHOLD = 0.96;
 
     let feedData = null;
     let feedPromise = null;
     let columnSeq = 1;
+    let compressionFrame = 0;
+    const COLUMN_REFLOW_MS = 300;
+    const layoutAnimations = new WeakMap();
 
     function loadFeed() {
         if (feedData) return Promise.resolve(feedData);
@@ -76,7 +80,12 @@
 
     function renderTagChips(tags) {
         if (!tags || !tags.length) return '';
-        const chips = tags.map(t => `<a class="mb-card-tag" href="?cols=${encodeURIComponent(String(t).toLowerCase().replace(/\s+/g, '-'))}" data-mb-tag="${escapeHtml(String(t).toLowerCase().replace(/\s+/g, '-'))}" data-mb-tag-label="${escapeHtml(t)}">#${escapeHtml(t)}</a>`).join('');
+        const chips = tags.map(t => {
+            const slug = String(t).toLowerCase().replace(/\s+/g, '-');
+            return `<a class="mb-card-tag" href="?cols=${encodeURIComponent(slug)}" data-mb-tag="${escapeHtml(slug)}" data-mb-tag-label="${escapeHtml(t)}">
+                <span class="item-dot" data-tag="${escapeHtml(slug)}"></span>${escapeHtml(t)}
+            </a>`;
+        }).join('');
         return `<div class="mb-card-tags">${chips}</div>`;
     }
 
@@ -86,17 +95,16 @@
         card.dataset.mbId = entry.id || entry.slug || '';
         card.innerHTML = `
             <header class="mb-card-header">
-                <time class="mb-card-date" datetime="${escapeHtml(entry.date)}">${formatDate(entry.date)}</time>
+                <div class="mb-card-meta">
+                    <time class="mb-card-date" datetime="${escapeHtml(entry.date)}">${formatDate(entry.date)}</time>
+                    ${renderTagChips(entry.tags)}
+                </div>
+                <a class="mb-card-permalink" href="${escapeHtml(entry.url)}" aria-label="Open fragment">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                </a>
             </header>
             <div class="mb-card-body">${entry.html || ''}</div>
             ${buildImageGrid(entry.images)}
-            ${renderTagChips(entry.tags)}
-            <footer class="mb-card-footer">
-                <a class="mb-card-permalink" href="${escapeHtml(entry.url)}" aria-label="Open fragment">
-                    <span>open</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
-                </a>
-            </footer>
         `;
         return card;
     }
@@ -171,12 +179,88 @@
         return column.classList.contains('mb-column-main') ? null : column;
     }
 
+    function updateColumnCompression() {
+        if (!deck) return;
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            deck.classList.remove('is-compressed');
+            return;
+        }
+
+        deck.classList.remove('is-compressed');
+        void deck.offsetWidth;
+
+        const columns = [...deck.querySelectorAll('.mb-column')];
+        const gap = parseFloat(getComputedStyle(deck).columnGap || getComputedStyle(deck).gap) || 0;
+        const totalColumnWidth = columns.reduce((sum, column) => sum + column.getBoundingClientRect().width, 0)
+            + Math.max(0, columns.length - 1) * gap;
+        const shouldCompress = columns.length > 1 && totalColumnWidth > deck.clientWidth * COMPRESSION_THRESHOLD;
+        deck.classList.toggle('is-compressed', shouldCompress);
+    }
+
+    function scheduleColumnCompression() {
+        if (compressionFrame) cancelAnimationFrame(compressionFrame);
+        compressionFrame = requestAnimationFrame(() => {
+            compressionFrame = 0;
+            updateColumnCompression();
+        });
+    }
+
+    function getActiveColumns() {
+        return [...deck.querySelectorAll('.mb-column:not(.mb-column-ghost)')];
+    }
+
+    function captureColumnRects(columns = getActiveColumns()) {
+        const rects = new Map();
+        columns.forEach(column => {
+            rects.set(column, column.getBoundingClientRect());
+        });
+        return rects;
+    }
+
+    function animateColumnReflow(beforeRects, columns = getActiveColumns()) {
+        columns.forEach(column => {
+            if (!beforeRects.has(column)) return;
+            if (column.classList.contains('is-entering') || column.classList.contains('is-leaving')) return;
+            if (typeof column.animate !== 'function') return;
+
+            const before = beforeRects.get(column);
+            const after = column.getBoundingClientRect();
+            const deltaX = before.left - after.left;
+            const deltaY = before.top - after.top;
+
+            if (Math.abs(deltaX) < 0.5 && Math.abs(deltaY) < 0.5) return;
+
+            const existing = layoutAnimations.get(column);
+            if (existing) existing.cancel();
+
+            const animation = column.animate(
+                [
+                    { transform: `translate3d(${deltaX}px, ${deltaY}px, 0)` },
+                    { transform: 'translate3d(0, 0, 0)' }
+                ],
+                {
+                    duration: COLUMN_REFLOW_MS,
+                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                    fill: 'both'
+                }
+            );
+
+            layoutAnimations.set(column, animation);
+            const clear = () => {
+                if (layoutAnimations.get(column) === animation) {
+                    layoutAnimations.delete(column);
+                }
+            };
+            animation.addEventListener('finish', clear, { once: true });
+            animation.addEventListener('cancel', clear, { once: true });
+        });
+    }
+
     function openTagColumn(tagLabel) {
         const slug = String(tagLabel || '').toLowerCase().replace(/\s+/g, '-');
         if (!slug) return;
         const existing = deck.querySelector(`.mb-column[data-mb-tag="${CSS.escape(slug)}"]`);
         if (existing) {
-            existing.scrollIntoView({ behavior: 'smooth', inline: 'end', block: 'nearest' });
             existing.classList.add('is-pulsing');
             setTimeout(() => existing.classList.remove('is-pulsing'), 600);
             return existing;
@@ -198,12 +282,15 @@
             <div class="mb-column-sentinel" data-mb-sentinel aria-hidden="true"></div>
         `;
         deck.appendChild(column);
-        requestAnimationFrame(() => {
-            column.classList.remove('is-entering');
-            column.classList.add('is-entered');
-            column.scrollIntoView({ behavior: 'smooth', inline: 'end', block: 'nearest' });
-        });
         hydrateColumn(column, slug);
+        void column.getBoundingClientRect();
+        scheduleColumnCompression();
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                column.classList.remove('is-entering');
+                column.classList.add('is-entered');
+            });
+        });
         column.querySelector('[data-mb-close]').addEventListener('click', () => closeTagColumn(column));
         syncURL();
         return column;
@@ -211,15 +298,22 @@
 
     function closeTagColumn(column) {
         if (!column || column.classList.contains('mb-column-main')) return;
+        const beforeRects = captureColumnRects();
         column.classList.add('is-leaving');
+
         setTimeout(() => {
             column.remove();
+            updateColumnCompression();
+            animateColumnReflow(beforeRects);
             syncURL();
-        }, 280);
+        }, COLUMN_REFLOW_MS);
     }
 
     function syncURL() {
-        const slugs = [...deck.querySelectorAll('.mb-column-tag')].map(c => c.dataset.mbTag).filter(Boolean);
+        const slugs = getActiveColumns()
+            .filter(c => c.classList.contains('mb-column-tag'))
+            .map(c => c.dataset.mbTag)
+            .filter(Boolean);
         const url = new URL(window.location.href);
         if (slugs.length) {
             url.searchParams.set('cols', slugs.join(','));
@@ -288,8 +382,13 @@
     function bindPopstate() {
         window.addEventListener('popstate', () => {
             deck.querySelectorAll('.mb-column-tag').forEach(c => c.remove());
+            scheduleColumnCompression();
             restoreFromURL();
         });
+    }
+
+    function bindResize() {
+        window.addEventListener('resize', scheduleColumnCompression);
     }
 
     function init() {
@@ -298,11 +397,13 @@
             if (totalEl) totalEl.textContent = data.entries.length;
             if (mainColumn) hydrateColumn(mainColumn, '');
             restoreFromURL();
+            scheduleColumnCompression();
         });
         bindTagBar();
         bindSidebarTags();
         bindCardTagClicks();
         bindPopstate();
+        bindResize();
     }
 
     if (document.readyState === 'loading') {

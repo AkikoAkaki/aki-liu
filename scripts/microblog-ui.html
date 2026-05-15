@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microblog</title>
+<script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #f0f2f5;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 16px 48px;
+}
+
+#app {
+  width: 100%;
+  max-width: 940px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
+}
+
+/* ── Titlebar ── */
+#titlebar {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+.dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+.dot-r { background: #ff5f57; }
+.dot-y { background: #febc2e; }
+.dot-g { background: #28c840; }
+#app-title {
+  margin: 0 auto;
+  transform: translateX(-24px);
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+
+/* ── Meta strip ── */
+#meta-strip {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 7px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11.5px;
+  color: #9ca3af;
+}
+#status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 5px rgba(34,197,94,.45);
+  flex-shrink: 0;
+}
+#slug-display { font-family: 'Menlo', 'Consolas', monospace; color: #c4c9d4; font-size: 11px; }
+#git-status { margin-left: auto; font-size: 10.5px; }
+
+/* ── Split pane ── */
+#split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+}
+
+#preview-pane { border-left: 1px solid #e5e7eb; }
+
+.pane-label {
+  padding: 6px 18px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #d1d5db;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  background: #fafafa;
+  border-bottom: 1px solid #f3f4f6;
+  flex-shrink: 0;
+}
+
+/* ── Editor ── */
+#editor {
+  flex: 1;
+  border: none;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  padding: 18px 20px;
+  font-family: 'Menlo', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #374151;
+  background: transparent;
+  min-height: 220px;
+  display: block;
+  width: 100%;
+}
+#editor::placeholder { color: #d1d5db; }
+
+/* ── Drop hint ── */
+#drop-hint {
+  padding: 7px 18px;
+  font-size: 10.5px;
+  color: #d1d5db;
+  border-top: 1px dashed #e5e7eb;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  transition: background .15s, color .15s, border-color .15s;
+}
+#drop-hint.active {
+  background: #eff6ff;
+  color: #3b82f6;
+  border-top-color: #bfdbfe;
+}
+
+/* ── Preview ── */
+#preview-body {
+  flex: 1;
+  padding: 18px 20px;
+  min-height: 220px;
+}
+#preview {
+  font-size: 14px;
+  line-height: 1.85;
+  color: #374151;
+  word-break: break-word;
+}
+#preview p { margin-bottom: 12px; }
+#preview p:last-child { margin-bottom: 0; }
+#preview strong { color: #111827; }
+#preview em { color: #6366f1; }
+#preview a { color: #3b82f6; text-decoration: none; border-bottom: 1px solid #bfdbfe; }
+#preview a:hover { color: #1d4ed8; border-bottom-color: #93c5fd; }
+#preview h1, #preview h2, #preview h3 { color: #111827; margin: 16px 0 8px; font-weight: 700; }
+#preview h1 { font-size: 18px; }
+#preview h2 { font-size: 16px; }
+#preview h3 { font-size: 14px; }
+#preview blockquote {
+  border-left: 3px solid #e5e7eb;
+  padding: 2px 0 2px 14px;
+  color: #6b7280;
+  margin: 10px 0;
+}
+#preview code {
+  background: #f3f4f6;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-family: 'Menlo', monospace;
+  color: #374151;
+}
+#preview pre {
+  background: #f3f4f6;
+  padding: 14px 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 10px 0;
+}
+#preview pre code { background: none; padding: 0; }
+#preview img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin: 8px 0;
+  display: block;
+}
+#preview hr { border: none; border-top: 1px solid #e5e7eb; margin: 16px 0; }
+#preview ul, #preview ol { padding-left: 20px; margin-bottom: 12px; }
+#preview li { margin-bottom: 4px; }
+
+#preview-placeholder {
+  color: #d1d5db;
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* preview spacer to match drop-hint height */
+#preview-spacer {
+  height: 35px;
+  flex-shrink: 0;
+  border-top: 1px solid transparent;
+}
+
+/* ── Bottom bar ── */
+#bottom-bar {
+  border-top: 1px solid #e5e7eb;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f9fafb;
+  flex-wrap: wrap;
+  min-height: 52px;
+}
+
+#tags-area {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 5px;
+  padding: 3px 8px 3px 9px;
+  font-size: 11.5px;
+  color: #3b82f6;
+  font-weight: 500;
+}
+.chip-x {
+  color: #93c5fd;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 1px;
+  margin-left: 1px;
+}
+.chip-x:hover { color: #2563eb; }
+
+#tag-input {
+  border: 1px dashed #d1d5db;
+  border-radius: 5px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  color: #6b7280;
+  background: transparent;
+  outline: none;
+  width: 108px;
+  font-family: inherit;
+}
+#tag-input:focus { border-color: #93c5fd; color: #374151; }
+#tag-input::placeholder { color: #d1d5db; }
+
+#publish-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 7px 22px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 1px 4px rgba(37,99,235,.3);
+  transition: background .15s, transform .1s, box-shadow .15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+#publish-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+  box-shadow: 0 2px 8px rgba(37,99,235,.4);
+}
+#publish-btn:active:not(:disabled) { transform: scale(.98); }
+#publish-btn:disabled { opacity: .65; cursor: not-allowed; }
+#publish-btn.success { background: #16a34a; box-shadow: 0 1px 4px rgba(22,163,74,.3); }
+#publish-btn.error   { background: #dc2626; box-shadow: 0 1px 4px rgba(220,38,38,.3); }
+
+/* ── Status message ── */
+#status-msg {
+  display: none;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-top: 8px;
+  width: 100%;
+}
+#status-msg.error {
+  display: block;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- Titlebar -->
+  <div id="titlebar">
+    <div class="dot dot-r"></div>
+    <div class="dot dot-y"></div>
+    <div class="dot dot-g"></div>
+    <div id="app-title">Microblog</div>
+  </div>
+
+  <!-- Meta strip -->
+  <div id="meta-strip">
+    <div id="status-dot"></div>
+    <span id="clock"></span>
+    <span style="color:#e5e7eb">|</span>
+    <span id="slug-display"></span>
+    <span id="git-status"></span>
+  </div>
+
+  <!-- Split pane -->
+  <div id="split">
+    <!-- Editor -->
+    <div class="pane" id="editor-pane">
+      <div class="pane-label">编辑</div>
+      <textarea id="editor" placeholder="写点什么……" spellcheck="false"></textarea>
+      <div id="drop-hint">⬆ 拖拽或粘贴图片</div>
+    </div>
+
+    <!-- Preview -->
+    <div class="pane" id="preview-pane">
+      <div class="pane-label">预览</div>
+      <div id="preview-body">
+        <div id="preview">
+          <span id="preview-placeholder">预览将在这里出现</span>
+        </div>
+      </div>
+      <div id="preview-spacer"></div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div id="bottom-bar">
+    <div id="tags-area">
+      <div id="chips"></div>
+      <input id="tag-input" list="tag-list" placeholder="+ 添加标签" autocomplete="off">
+      <datalist id="tag-list"></datalist>
+    </div>
+    <button id="publish-btn">发布 ↑</button>
+  </div>
+  <div id="status-msg"></div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let tags = [];
+let existingTags = [];
+
+// ── Markdown renderer with image proxy ─────────────────────────────────────
+function setupMarked() {
+  if (typeof marked === 'undefined') return;
+  const renderer = new marked.Renderer();
+  const origImage = renderer.image.bind(renderer);
+  renderer.image = function(href, title, text) {
+    // Route temp images through the server's /uploads/ endpoint
+    const src = /^https?:\/\//.test(href) ? href : `/uploads/${href}`;
+    return `<img src="${src}" alt="${text || ''}" title="${title || ''}">`;
+  };
+  marked.use({ renderer, breaks: true });
+}
+setupMarked();
+
+function renderMarkdown(md) {
+  if (typeof marked !== 'undefined') return marked.parse(md);
+  // Minimal fallback: just escape HTML and preserve line breaks
+  return '<p>' + md
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .split(/\n\n+/).join('</p><p>')
+    .replace(/\n/g, '<br>') + '</p>';
+}
+
+// ── Clock & slug ────────────────────────────────────────────────────────────
+const clockEl = document.getElementById('clock');
+const slugEl  = document.getElementById('slug-display');
+const days    = ['日','一','二','三','四','五','六'];
+
+function updateClock() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  clockEl.textContent = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} · 周${days[now.getDay()]} · ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  slugEl.textContent  = `slug: ${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── Load existing tags ──────────────────────────────────────────────────────
+fetch('/api/tags')
+  .then(r => r.json())
+  .then(data => {
+    existingTags = data.tags || [];
+    const dl = document.getElementById('tag-list');
+    dl.innerHTML = existingTags.map(t => `<option value="${t}">`).join('');
+  })
+  .catch(() => {});
+
+// ── Tag chip management ─────────────────────────────────────────────────────
+function addTag(raw) {
+  const tag = raw.trim().replace(/^#+/, '').trim();
+  if (!tag || tags.includes(tag)) return;
+  tags.push(tag);
+  renderChips();
+}
+
+function removeTag(tag) {
+  tags = tags.filter(t => t !== tag);
+  renderChips();
+}
+
+function renderChips() {
+  const area = document.getElementById('chips');
+  area.innerHTML = tags.map(t =>
+    `<span class="chip"># ${escHtml(t)}<button class="chip-x" data-tag="${escHtml(t)}" title="删除标签">×</button></span>`
+  ).join('');
+  area.querySelectorAll('.chip-x').forEach(btn => {
+    btn.addEventListener('click', () => removeTag(btn.dataset.tag));
+  });
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+const tagInput = document.getElementById('tag-input');
+tagInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    if (tagInput.value.trim()) {
+      addTag(tagInput.value);
+      tagInput.value = '';
+    }
+  }
+});
+tagInput.addEventListener('blur', () => {
+  if (tagInput.value.trim()) {
+    addTag(tagInput.value);
+    tagInput.value = '';
+  }
+});
+
+// ── Editor auto-resize & preview sync ──────────────────────────────────────
+const editor      = document.getElementById('editor');
+const preview     = document.getElementById('preview');
+const placeholder = document.getElementById('preview-placeholder');
+
+editor.addEventListener('input', () => {
+  // Auto-resize textarea
+  editor.style.height = 'auto';
+  editor.style.height = editor.scrollHeight + 'px';
+
+  // Update preview
+  const md = editor.value;
+  if (md.trim()) {
+    placeholder.style.display = 'none';
+    preview.innerHTML = renderMarkdown(md);
+  } else {
+    preview.innerHTML = '';
+    placeholder.style.display = '';
+  }
+});
+
+// ── Image drag & drop ───────────────────────────────────────────────────────
+const dropHint = document.getElementById('drop-hint');
+
+editor.addEventListener('dragover', e => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
+  dropHint.classList.add('active');
+});
+editor.addEventListener('dragleave', () => dropHint.classList.remove('active'));
+editor.addEventListener('drop', e => {
+  e.preventDefault();
+  dropHint.classList.remove('active');
+  const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+  files.forEach(uploadImage);
+});
+
+// ── Image paste ─────────────────────────────────────────────────────────────
+editor.addEventListener('paste', e => {
+  const imageItems = [...e.clipboardData.items].filter(i => i.type.startsWith('image/'));
+  if (imageItems.length === 0) return;
+  e.preventDefault();
+  imageItems.forEach(item => {
+    const file = item.getAsFile();
+    if (file) uploadImage(file);
+  });
+});
+
+async function uploadImage(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const base64 = reader.result.split(',')[1];
+        const res = await fetch('/api/upload-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, data: base64 }),
+        });
+        const { filename, error } = await res.json();
+        if (error) throw new Error(error);
+
+        const insertion = `![](${filename})`;
+        const start = editor.selectionStart;
+        const end   = editor.selectionEnd;
+        const before = editor.value.slice(0, start);
+        const after  = editor.value.slice(end);
+        const sep = before && !before.endsWith('\n') ? '\n' : '';
+        editor.value = before + sep + insertion + '\n' + after;
+        editor.selectionStart = editor.selectionEnd = start + sep.length + insertion.length + 1;
+        editor.dispatchEvent(new Event('input'));
+      } catch (err) {
+        showError('图片上传失败：' + err.message);
+      }
+      resolve();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── Publish ─────────────────────────────────────────────────────────────────
+const publishBtn = document.getElementById('publish-btn');
+const statusMsg  = document.getElementById('status-msg');
+
+function showError(msg) {
+  statusMsg.textContent = msg;
+  statusMsg.className = 'error';
+}
+function clearStatus() {
+  statusMsg.className = '';
+  statusMsg.textContent = '';
+}
+
+publishBtn.addEventListener('click', async () => {
+  const content = editor.value.trim();
+  if (!content) {
+    editor.focus();
+    return;
+  }
+
+  clearStatus();
+  publishBtn.disabled = true;
+  publishBtn.textContent = '发布中…';
+  publishBtn.className = '';
+
+  try {
+    const res = await fetch('/api/publish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content, tags }),
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      publishBtn.textContent = '✓ 已发布';
+      publishBtn.classList.add('success');
+      setTimeout(() => {
+        editor.value = '';
+        editor.style.height = 'auto';
+        editor.dispatchEvent(new Event('input'));
+        tags = [];
+        renderChips();
+        publishBtn.disabled = false;
+        publishBtn.textContent = '发布 ↑';
+        publishBtn.className = '';
+      }, 2500);
+    } else {
+      publishBtn.textContent = '✗ 失败';
+      publishBtn.classList.add('error');
+      showError('发布失败：' + data.error);
+      setTimeout(() => {
+        publishBtn.disabled = false;
+        publishBtn.textContent = '发布 ↑';
+        publishBtn.className = '';
+      }, 3000);
+    }
+  } catch (e) {
+    publishBtn.textContent = '✗ 失败';
+    publishBtn.classList.add('error');
+    showError('网络错误：' + e.message);
+    setTimeout(() => {
+      publishBtn.disabled = false;
+      publishBtn.textContent = '发布 ↑';
+      publishBtn.className = '';
+    }, 3000);
+  }
+});
+
+// Allow Ctrl+Enter to publish
+editor.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') publishBtn.click();
+});
+</script>
+</body>
+</html>

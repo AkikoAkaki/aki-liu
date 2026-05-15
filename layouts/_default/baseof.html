@@ -40,7 +40,7 @@
                         <li>
                             <span class="link-name">{{ .platform }}</span>
                             <span class="link-line"></span>
-                            <a href="{{ .link }}" target="{{ if strings.HasPrefix .link "http" }}_blank{{ else }}_self{{ end }}" rel="noopener">{{ .value }} <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                            <a href="{{ .link }}"{{ with .preview }} data-preview="{{ . | relURL }}"{{ end }} target="{{ if strings.HasPrefix .link "http" }}_blank{{ else }}_self{{ end }}" rel="noopener">{{ .value }} <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
                         </li>
                         {{- end }}
                     </ul>
@@ -79,9 +79,15 @@
         <nav class="menu-panel" id="menu-panel" aria-hidden="true">
             <div class="menu-panel-inner">
                 <a href="{{ $homePage.RelPermalink }}" class="menu-link{{ if .IsHome }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Home</span></span></a>
-                <a href="{{ with $ideasPage }}{{ .RelPermalink }}{{ else }}{{ "ideas/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "ideas" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Ideas</span></span></a>
-                <a href="{{ with $textLabPage }}{{ .RelPermalink }}{{ else }}{{ "textlab/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "textlab" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Text Lab</span></span></a>
-                <a href="{{ with $technicalPage }}{{ .RelPermalink }}{{ else }}{{ "technical/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "technical" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Technical</span></span></a>
+                <a href="{{ with .Site.GetPage "section" "about" }}{{ .RelPermalink }}{{ else }}{{ "about/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "about" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">About</span></span></a>
+                <div class="menu-group{{ if or (eq .Section "ideas") (eq .Section "textlab") }} is-active{{ end }}" role="group" aria-label="Writing">
+                    <div class="menu-group-label">Writing</div>
+                    <div class="menu-submenu">
+                        <a href="{{ with $ideasPage }}{{ .RelPermalink }}{{ else }}{{ "ideas/" | relLangURL }}{{ end }}" class="menu-link menu-link--sub{{ if eq .Section "ideas" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Ideas</span></span></a>
+                        <a href="{{ with $textLabPage }}{{ .RelPermalink }}{{ else }}{{ "textlab/" | relLangURL }}{{ end }}" class="menu-link menu-link--sub{{ if eq .Section "textlab" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Text Lab</span></span></a>
+                    </div>
+                </div>
+                <a href="{{ with $technicalPage }}{{ .RelPermalink }}{{ else }}{{ "technical/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "technical" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Notes</span></span></a>
                 <a href="{{ with $microblogPage }}{{ .RelPermalink }}{{ else }}{{ "microblog/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "microblog" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Microblog</span></span></a>
                 <a href="#search" class="menu-link menu-link--search" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
             </div>

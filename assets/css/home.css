@@ -174,17 +174,22 @@
 
 .work-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    grid-template-columns: 1.1fr 0.9fr; /* Push the center gap slightly to the right */
+    column-gap: clamp(3rem, 5vw, 5rem);
+    row-gap: 3rem;
     width: 100%;
-    max-width: 1150px;
+    max-width: 920px; /* Slightly wider to let columns breathe */
     margin: 0 auto;
 }
 
 .work-column {
     display: flex;
     flex-direction: column;
-    gap: 3.5rem;
+    gap: 4.75rem;
+}
+
+.work-grid .work-column:first-child {
+    padding-left: 4.5rem; /* Tuck in the left edge */
 }
 
 .work-col-title a {
@@ -224,6 +229,164 @@
     opacity: 0.5;
 }
 
+/* Navigation Panel (Right Column) */
+.nav-panel-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+}
+
+.nav-panel {
+    background-color: var(--footer-reveal-bg); /* Match footer reveal pale gray */
+    border: none;
+    border-radius: 28px;
+    padding: 8px; /* Frame thickness */
+    width: 100%;
+    max-width: 280px;
+    box-shadow: none;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-panel-content {
+    background-color: var(--bg-color);
+    border-radius: 20px;
+    padding: 1.5rem;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+}
+
+.nav-panel-header {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--color-heading);
+    margin: 0 0 1.5rem 0;
+    padding-left: 0.8rem;
+}
+
+.nav-panel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    padding-left: 0;
+}
+
+/* Removed .nav-panel-list::before (main line moved to group) */
+
+.nav-panel-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+}
+
+/* Track 1 main vertical line - connects to the NEXT group */
+.nav-panel-group:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 18px; /* Center of this group's main item */
+    bottom: -18px; /* Extend down to the center of the next group's main item */
+    width: 2px;
+    background-color: var(--footer-reveal-bg);
+    z-index: 0;
+}
+
+.nav-panel-item,
+.nav-panel-subitem {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.8rem; /* slightly more padding to compensate for removed gaps */
+    border-radius: 8px;
+    text-decoration: none !important;
+    color: var(--color-heading);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.3;
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.nav-panel-item {
+    padding-left: 44px; /* space for line and dot */
+}
+
+/* Main item dot (Track 1) */
+.nav-panel-item::before {
+    content: '';
+    position: absolute;
+    left: 17px; /* 20px center - 3px radius */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background-color: var(--footer-reveal-bg);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px var(--bg-color); /* Cut the line */
+    z-index: 1;
+}
+
+.nav-panel-item:hover,
+.nav-panel-subitem:hover {
+    background-color: var(--color-bg-muted);
+}
+
+.nav-panel-sublinks {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+    position: relative;
+}
+
+/* Removed Track 2 vertical line and container-level curve */
+
+.nav-panel-subitem {
+    padding-left: 60px; /* Indent subitems further */
+}
+
+/* Individual branch curve for each subitem */
+.nav-panel-subitem::before {
+    content: '';
+    position: absolute;
+    left: 20px; /* Track 1 center */
+    top: -20px; /* Reach up to blend with the main line */
+    bottom: 50%; /* End at the center of this subitem */
+    width: 21px; /* Reach Track 2 center */
+    border-left: 2px solid var(--footer-reveal-bg);
+    border-bottom: 2px solid var(--footer-reveal-bg);
+    border-bottom-left-radius: 12px;
+    box-sizing: border-box;
+    z-index: 0;
+}
+
+/* Subitem dot (Track 2) */
+.nav-panel-subitem::after {
+    content: '';
+    position: absolute;
+    left: 37px; /* 40px center - 3px radius */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background-color: var(--footer-reveal-bg);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px var(--bg-color);
+    z-index: 1;
+    display: block !important;
+}
+
+
+
 .work-col-title {
     font-family: var(--font-serif);
     font-size: 1rem;
@@ -248,6 +411,8 @@
 
 .work-item-title-row {
     display: flex;
+    align-items: center;
+    width: 100%;
 }
 
 .work-item-title {
@@ -301,7 +466,7 @@
     }
 
     .work-column {
-        gap: 3rem;
+        gap: 3.5rem;
     }
 }
 

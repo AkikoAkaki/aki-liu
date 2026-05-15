@@ -38,13 +38,26 @@ grid:
       link: /projects/
       items:
         - title: LLM Quant Profiler
-          role: Creator
           date: "2024"
           link: "https://github.com/AkikoAkaki/llm-quant-profiler"
         - title: MoodStream
-          role: Creator
           date: "2023"
           link: "https://github.com/AkikoAkaki/moodstream"
+  right:
+    - id: writing
+      title: Writing
+      link: /writing/
+      sublinks:
+        - label: Ideas
+          link: /ideas/
+        - label: Text Lab
+          link: /textlab/
+    - id: notes
+      title: Notes
+      link: /notes/
+    - id: microblog
+      title: Microblog
+      link: /microblog/
     - id: about
       title: About
       link: /about/
@@ -53,26 +66,6 @@ grid:
           link: /about/courses/
         - label: Resume
           link: /about/resume/
-        - label: Tools
-          link: /about/tools/
-        - label: Reading
-          link: /about/reading/
-  right:
-    - id: writing
-      title: Writing
-      link: /writing/
-      sections: [textlab, ideas]
-      limit: 3
-    - id: notes
-      title: Notes
-      link: /notes/
-      sections: [technical]
-      limit: 3
-    - id: microblog
-      title: Microblog
-      link: /microblog/
-      sections: [microblog]
-      limit: 3
 
 # -----------------------------------------------------------------------------
 # Now
