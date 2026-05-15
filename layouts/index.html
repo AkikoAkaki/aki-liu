@@ -39,36 +39,90 @@
         {{- end }}
     </section>
 
-    {{/* Work table section */}}
+    {{/* Work grid section */}}
     <section class="work-table-section">
         <div class="work-grid">
-            {{- range $col := $data.columns }}
-            <div class="work-column {{ $col.cssClass }}">
-                <h3 class="work-col-title">{{ $col.title }}</h3>
-                <div class="work-items">
-                    {{- range $item := $col.items }}
-                    <div class="work-item"{{ if $item.preview }} data-preview="{{ $item.preview | relURL }}"{{ end }}>
-                        <div class="work-item-title-row">
-                            {{- if $item.link }}
-                            <a href="{{ $item.link | relLangURL }}" class="work-item-title">{{ $item.title }}</a>
-                            {{- else }}
-                            <span class="work-item-title">{{ $item.title }}</span>
-                            {{- end }}
+            {{/* Left column: Experience, Project, About */}}
+            <div class="work-column">
+                {{- range $cell := $data.grid.left }}
+                <div class="work-cell">
+                    <h3 class="work-col-title">
+                        <a href="{{ $cell.link | relLangURL }}">{{ $cell.title }}</a><span class="work-col-title-arrow">→</span>
+                    </h3>
+                    {{- if $cell.sublinks }}
+                    <div class="work-sublinks">
+                        {{- range $cell.sublinks }}
+                        <a href="{{ .link | relLangURL }}" class="work-sublink">{{ .label }}</a>
+                        {{- end }}
+                    </div>
+                    {{- else }}
+                    <div class="work-items">
+                        {{- range $cell.items }}
+                        <div class="work-item"{{ if .preview }} data-preview="{{ .preview | relURL }}"{{ end }}>
+                            <div class="work-item-title-row">
+                                {{- if .link }}
+                                <a href="{{ .link | relLangURL }}" class="work-item-title">{{ .title }}</a>
+                                {{- else }}
+                                <span class="work-item-title">{{ .title }}</span>
+                                {{- end }}
+                            </div>
+                            <div class="work-item-details-row">
+                                {{- if .role }}
+                                <span class="work-item-role">{{ .role }}</span>
+                                {{- end }}
+                                <div class="work-item-leader"></div>
+                                {{- if .date }}
+                                <span class="work-item-date">{{ .date }}</span>
+                                {{- end }}
+                            </div>
                         </div>
-                        <div class="work-item-details-row">
-                            {{- if $item.role }}
-                            <span class="work-item-role">{{ $item.role }}</span>
-                            {{- end }}
-                            <div class="work-item-leader"></div>
-                            {{- if $item.date }}
-                            <span class="work-item-date">{{ $item.date }}</span>
-                            {{- end }}
-                        </div>
+                        {{- end }}
                     </div>
                     {{- end }}
                 </div>
+                {{- end }}
             </div>
-            {{- end }}
+
+            {{/* Right column: Writing, Notes, Microblog (auto-latest from Hugo) */}}
+            <div class="work-column">
+                {{- range $cell := $data.grid.right }}
+                <div class="work-cell">
+                    <h3 class="work-col-title">
+                        <a href="{{ $cell.link | relLangURL }}">{{ $cell.title }}</a><span class="work-col-title-arrow">→</span>
+                    </h3>
+                    <div class="work-items">
+                        {{- $pages := where site.RegularPages "Section" "in" $cell.sections }}
+                        {{- $pages = sort $pages "Date" "desc" }}
+                        {{- $pages = first $cell.limit $pages }}
+                        {{- if eq $cell.id "microblog" }}
+                            {{- range $pages }}
+                            <div class="work-item">
+                                <div class="work-item-title-row">
+                                    <a href="{{ .RelPermalink }}" class="work-item-title">{{ .Title }}</a>
+                                </div>
+                                <div class="work-item-details-row">
+                                    <span class="work-item-role">{{ .Date.Format "Jan 2, 2006" }}</span>
+                                </div>
+                            </div>
+                            {{- end }}
+                        {{- else }}
+                            {{- range $pages }}
+                            <div class="work-item">
+                                <div class="work-item-title-row">
+                                    <a href="{{ .RelPermalink }}" class="work-item-title">{{ .Title }}</a>
+                                </div>
+                                <div class="work-item-details-row">
+                                    <span class="work-item-role">{{ .Section | title }}</span>
+                                    <div class="work-item-leader"></div>
+                                    <span class="work-item-date">{{ .Date.Format "2006" }}</span>
+                                </div>
+                            </div>
+                            {{- end }}
+                        {{- end }}
+                    </div>
+                </div>
+                {{- end }}
+            </div>
         </div>
     </section>
 
