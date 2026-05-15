@@ -12,50 +12,67 @@ intro:
     - "Alongside this, I write essays, fragments, and criticism on sensation, space, and the textures of contemporary existence. Some of it ends up in <a href='/textlab/'>Text Lab</a>."
 
 # -----------------------------------------------------------------------------
-# Work Table
+# Work Grid (2 columns x 3 rows)
 # -----------------------------------------------------------------------------
-columns:
-  - id: experience
-    title: Experience
-    cssClass: col-experience
-    items:
-      - title: Artisk
-        role: Full-stack AI Engineer Intern
-        date: "2024 ~ Present"
-        link: "https://gemini.artisk.ai/about"
-        preview: "https://images.unsplash.com/photo-1707343843437-caacff5cfa74?q=80&w=600&auto=format&fit=crop"
-      - title: Dentist Journey
-        role: QA & Test Intern
-        date: "2023 ~ 2024"
-        link: "https://dentistjourney.com"
-      - title: Bear Lab @URochester
-        role: Research Assistant
-        date: "2023 ~ 2024"
-        link: "https://rochester-bear-lab.github.io/"
-  - id: projects
-    title: Project
-    cssClass: col-projects
-    items:
-      - title: LLM Quant Profiler
-        role: Creator
-        date: "2024"
-        link: "https://github.com/AkikoAkaki/llm-quant-profiler"
-      - title: MoodStream
-        role: Creator
-        date: "2023"
-        link: "https://github.com/AkikoAkaki/moodstream"
-  - id: writing
-    title: Writing
-    cssClass: col-writing
-    items:
-      - title: American Dream
-        role: Essay
-        date: "2023"
-        link: "/textlab/american-dream/"
-      - title: GPU Programming Guide
-        role: Notes
-        date: "2024"
-        link: "/textlab/gpu-programming-guide/"
+grid:
+  left:
+    - id: experience
+      title: Experience
+      link: /experience/
+      items:
+        - title: Artisk
+          role: Full-stack AI Engineer Intern
+          date: "2024 ~ Present"
+          link: "https://gemini.artisk.ai/about"
+          preview: "https://images.unsplash.com/photo-1707343843437-caacff5cfa74?q=80&w=600&auto=format&fit=crop"
+        - title: Dentist Journey
+          role: QA & Test Intern
+          date: "2023 ~ 2024"
+          link: "https://dentistjourney.com"
+        - title: Bear Lab @URochester
+          role: Research Assistant
+          date: "2023 ~ 2024"
+          link: "https://rochester-bear-lab.github.io/"
+    - id: projects
+      title: Project
+      link: /projects/
+      items:
+        - title: LLM Quant Profiler
+          role: Creator
+          date: "2024"
+          link: "https://github.com/AkikoAkaki/llm-quant-profiler"
+        - title: MoodStream
+          role: Creator
+          date: "2023"
+          link: "https://github.com/AkikoAkaki/moodstream"
+    - id: about
+      title: About
+      link: /about/
+      sublinks:
+        - label: Courses
+          link: /about/courses/
+        - label: Resume
+          link: /about/resume/
+        - label: Tools
+          link: /about/tools/
+        - label: Reading
+          link: /about/reading/
+  right:
+    - id: writing
+      title: Writing
+      link: /writing/
+      sections: [textlab, ideas]
+      limit: 3
+    - id: notes
+      title: Notes
+      link: /notes/
+      sections: [technical]
+      limit: 3
+    - id: microblog
+      title: Microblog
+      link: /microblog/
+      sections: [microblog]
+      limit: 3
 
 # -----------------------------------------------------------------------------
 # Now
@@ -126,3 +143,11 @@ connect:
       value: "@__akikoakaki__"
       action: "Follow"
       link: "https://instagram.com/__akikoakaki__"
+    - platform: "Threads"
+      value: "@__akikoakaki__"
+      action: "Follow"
+      link: "https://www.threads.com/@__akikoakaki__"
+    - platform: "LinkedIn"
+      value: "@Aki Liu"
+      action: "Connect"
+      link: "https://www.linkedin.com/in/aki-liu-10ba4b363/"
