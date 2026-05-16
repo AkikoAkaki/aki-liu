@@ -32,12 +32,14 @@
     <section class="microblog-page" data-feed-url="{{ $feedURL }}">
         <div class="microblog-deck" id="microblog-deck" role="region" aria-label="Microblog feed">
             <div class="mb-column mb-column-main" data-mb-column-id="__all__" data-mb-tag="">
-                <div class="mb-column-header">
-                    <span class="mb-column-title">all</span>
-                    <span class="mb-column-count" data-mb-column-count>{{ len $entries }}</span>
+                <div class="mb-column-content">
+                    <div class="mb-column-header">
+                        <span class="mb-column-title">All</span>
+                        <span class="mb-column-meta"><span class="mb-column-count" data-mb-column-count>{{ len $entries }}</span> <span data-mb-column-unit>{{ if eq (len $entries) 1 }}Entry{{ else }}Entries{{ end }}</span></span>
+                    </div>
+                    <div class="mb-column-feed" data-mb-feed></div>
+                    <div class="mb-column-sentinel" data-mb-sentinel aria-hidden="true"></div>
                 </div>
-                <div class="mb-column-feed" data-mb-feed></div>
-                <div class="mb-column-sentinel" data-mb-sentinel aria-hidden="true"></div>
             </div>
         </div>
 

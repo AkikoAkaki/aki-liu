@@ -66,7 +66,7 @@ function sendJSON(res, data, status = 200) {
 }
 
 function gitRun(args, cwd) {
-  const result = spawnSync('git', args, { cwd, encoding: 'utf8', shell: true });
+  const result = spawnSync('git', args, { cwd, encoding: 'utf8', shell: false });
   if (result.status !== 0) {
     throw new Error((result.stderr || result.stdout || 'git 命令失败').trim());
   }

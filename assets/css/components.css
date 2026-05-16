@@ -434,14 +434,14 @@
 }
 
 .archive-tag-item .tag-dot {
-    width: 6px;
-    height: 6px;
+    width: 7.5px;
+    height: 7.5px;
     border-radius: 50%;
     background-color: #ccc;
     display: inline-block;
     flex-shrink: 0;
-    margin-left: 5px;
-    transform: translateY(-0.35em);
+    margin-left: 6px;
+    transform: translateY(-0.3em);
 }
 
 /* Dynamic colors for tags mapped by name */
@@ -806,8 +806,8 @@
 }
 
 .item-dot {
-    width: 6px;
-    height: 6px;
+    width: 7.5px;
+    height: 7.5px;
     border-radius: 50%;
     display: inline-block;
 }

@@ -78,15 +78,15 @@
         return `<div class="mb-card-images ${cls}" data-mb-image-count="${n}">${cells}</div>`;
     }
 
-    function renderTagChips(tags) {
+    function renderTagDots(tags) {
         if (!tags || !tags.length) return '';
-        const chips = tags.map(t => {
+        const dots = tags.map(t => {
             const slug = String(t).toLowerCase().replace(/\s+/g, '-');
-            return `<a class="mb-card-tag" href="?cols=${encodeURIComponent(slug)}" data-mb-tag="${escapeHtml(slug)}" data-mb-tag-label="${escapeHtml(t)}">
-                <span class="item-dot" data-tag="${escapeHtml(slug)}"></span>${escapeHtml(t)}
+            return `<a class="mb-card-tag-dot" href="?cols=${encodeURIComponent(slug)}" data-mb-tag="${escapeHtml(slug)}" data-mb-tag-label="${escapeHtml(t)}" title="${escapeHtml(t)}">
+                <span class="item-dot" data-tag="${escapeHtml(slug)}"></span>
             </a>`;
         }).join('');
-        return `<div class="mb-card-tags">${chips}</div>`;
+        return `<div class="mb-card-tag-dots">${dots}</div>`;
     }
 
     function renderCard(entry) {
@@ -96,12 +96,11 @@
         card.innerHTML = `
             <header class="mb-card-header">
                 <div class="mb-card-meta">
-                    <time class="mb-card-date" datetime="${escapeHtml(entry.date)}">${formatDate(entry.date)}</time>
-                    ${renderTagChips(entry.tags)}
+                    <div class="mb-card-date-wrapper">
+                        <time class="mb-card-date" datetime="${escapeHtml(entry.date)}">${formatDate(entry.date)}</time>
+                        ${renderTagDots(entry.tags)}
+                    </div>
                 </div>
-                <a class="mb-card-permalink" href="${escapeHtml(entry.url)}" aria-label="Open fragment">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-                </a>
             </header>
             <div class="mb-card-body">${entry.html || ''}</div>
             ${buildImageGrid(entry.images)}
@@ -139,6 +138,9 @@
         const entries = entriesForTag(tag);
         const countEl = column.querySelector('[data-mb-column-count]');
         if (countEl) countEl.textContent = entries.length;
+        const unitEl = column.querySelector('[data-mb-column-unit]');
+        if (unitEl) unitEl.textContent = entries.length === 1 ? 'Entry' : 'Entries';
+        
         const feedEl = column.querySelector('[data-mb-feed]');
         if (feedEl) feedEl.innerHTML = '';
         column.dataset.mbNextIdx = '0';
@@ -271,15 +273,17 @@
         column.dataset.mbColumnId = `tag-${columnSeq++}`;
         column.dataset.mbTag = slug;
         column.innerHTML = `
-            <div class="mb-column-header">
-                <span class="mb-column-title">#${escapeHtml(tagLabel)}</span>
-                <span class="mb-column-count" data-mb-column-count>0</span>
-                <button class="mb-column-close" type="button" data-mb-close aria-label="Close column">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M17 7L7 17"/><path d="M7 7l10 10"/></svg>
-                </button>
+            <div class="mb-column-content">
+                <div class="mb-column-header">
+                    <span class="mb-column-title">${escapeHtml(tagLabel)}</span>
+                    <span class="mb-column-meta"><span class="mb-column-count" data-mb-column-count>0</span> <span data-mb-column-unit>Entries</span></span>
+                    <button class="mb-column-close" type="button" data-mb-close aria-label="Close column">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M17 7L7 17"/><path d="M7 7l10 10"/></svg>
+                    </button>
+                </div>
+                <div class="mb-column-feed" data-mb-feed></div>
+                <div class="mb-column-sentinel" data-mb-sentinel aria-hidden="true"></div>
             </div>
-            <div class="mb-column-feed" data-mb-feed></div>
-            <div class="mb-column-sentinel" data-mb-sentinel aria-hidden="true"></div>
         `;
         deck.appendChild(column);
         hydrateColumn(column, slug);

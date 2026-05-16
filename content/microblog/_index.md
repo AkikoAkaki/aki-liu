@@ -7,4 +7,4 @@ outputs:
   - microblog_feed
 ---
 
-A stream of short fragments. Click any `#tag` to open a parallel column.
+A stream of short fragments. Click any #tag to open a parallel column.
