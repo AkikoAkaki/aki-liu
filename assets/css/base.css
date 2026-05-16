@@ -403,6 +403,15 @@ body::after {
     border-radius: 10px;
 }
 
+.menu-trigger:hover .menu-trigger-icon {
+    transform: scale(1.15);
+    color: var(--color-heading);
+}
+
+.menu-trigger:active .menu-trigger-icon {
+    transform: scale(0.92);
+}
+
 .menu-trigger-icon {
     display: flex;
     align-items: center;

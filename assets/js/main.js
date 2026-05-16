@@ -20,7 +20,7 @@
         // --- Magnetic hover: links & tags ---
         const generalMagnetEls = [...document.querySelectorAll(
             '.bio-text a, .now-section a, .connect-section a:not(.connect-pill), .data-link, ' +
-            '.mb-tag-chip, .mb-card-tag'
+            '.mb-tag-chip, .mb-card-tag, .menu-trigger'
         )];
         initMagneticHover(generalMagnetEls, { magnetX: 4, magnetY: 3 });
 
@@ -544,6 +544,8 @@
                 }
             }
 
+            const hideCursor = opts && opts.hideCursor === true;
+
             el.addEventListener('pointerenter', event => {
                 if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
 
@@ -561,7 +563,7 @@
 
                 el.classList.add('is-magnetic');
                 el.classList.remove('is-settling');
-                document.body.classList.add('menu-cursor-hidden');
+                if (hideCursor) document.body.classList.add('menu-cursor-hidden');
                 setVars();
                 startAnimation();
             });
@@ -585,7 +587,7 @@
 
                 el.classList.remove('is-magnetic');
                 el.classList.add('is-settling');
-                document.body.classList.remove('menu-cursor-hidden');
+                if (hideCursor) document.body.classList.remove('menu-cursor-hidden');
                 startAnimation();
             });
         });
@@ -662,6 +664,8 @@
             if (menuPanel) menuPanel.setAttribute('aria-hidden', 'true');
         }
 
+        window.addEventListener('site:close-all', close);
+
         function updateScrollState() {
             scrollRafId = 0;
 
@@ -702,7 +706,7 @@
         }
 
         function initMagneticLinks() {
-            initMagneticHover(magneticLinks, { magnetX: 8, magnetY: 5, contentX: 15, contentY: 9 });
+            initMagneticHover(magneticLinks, { magnetX: 8, magnetY: 5, contentX: 15, contentY: 9, hideCursor: true });
         }
 
         function resetMagneticLinks() {
@@ -749,7 +753,7 @@
 
 
     function initSearchPalette() {
-        const root = document.getElementById('search-root');
+        const root = document.getElementById('menu-search-panel');
         const triggers = document.querySelectorAll('[data-search-trigger]');
         if (!root) return;
 
@@ -1166,6 +1170,9 @@
             if (!panel) buildPanel();
             isOpen = true;
             
+            const menuBar = document.getElementById('menu-bar');
+            if (menuBar) menuBar.classList.add('is-search');
+            
             // Force browser layout so the newly injected DOM elements
             // register their initial CSS state (e.g., blur(0px)) before transitioning.
             void root.offsetWidth;
@@ -1182,9 +1189,15 @@
         function close() {
             if (!isOpen) return;
             isOpen = false;
+            
+            const menuBar = document.getElementById('menu-bar');
+            if (menuBar) menuBar.classList.remove('is-search');
+
             document.body.classList.remove('search-open');
             if (inputEl) inputEl.blur();
         }
+
+        window.addEventListener('site:close-all', close);
 
         function toggle() { isOpen ? close() : open(); }
 
@@ -1193,6 +1206,7 @@
             const mod = e.metaKey || e.ctrlKey;
             if (mod && (e.key === 'k' || e.key === 'K')) {
                 e.preventDefault();
+                e.stopPropagation();
                 toggle();
                 return;
             }
@@ -1223,12 +1237,35 @@
         });
 
         // ---------- Triggers ----------
+        document.addEventListener('click', (e) => {
+            if (!isOpen) return;
+            const menuBar = document.getElementById('menu-bar');
+            // If click is outside menu bar, close search
+            if (menuBar && !menuBar.contains(e.target)) {
+                close();
+            }
+        });
+
         triggers.forEach(t => {
             t.addEventListener('click', e => {
                 e.preventDefault();
-                open();
+                e.stopPropagation();
+                toggle();
             });
         });
+
+        // Also handle the main menu-trigger as a close button when search is open
+        const menuTrigger = document.getElementById('menu-trigger');
+        if (menuTrigger) {
+            menuTrigger.addEventListener('click', (e) => {
+                const isMenuOpen = document.getElementById('menu-bar').classList.contains('is-open');
+                if (isOpen || isMenuOpen) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.dispatchEvent(new CustomEvent('site:close-all'));
+                }
+            }, true); // Use capture to intercept before initExpandingMenu
+        }
 
         // Display the platform-correct kbd hint inside the SEARCH nav entry.
         document.querySelectorAll('[data-search-trigger] .menu-kbd, [data-search-trigger] .nav-kbd').forEach(k => {
