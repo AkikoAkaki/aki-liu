@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Product on Aki's Blog</title><link>/tags/product/</link><description>Recent content in Product on Aki's Blog</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Tue, 20 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="/tags/product/index.xml" rel="self" type="application/rss+xml"/><item><title>Flomo：做笔记的幻觉</title><link>/ideas/flomo/</link><pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate><guid>/ideas/flomo/</guid><description>&lt;aside&gt;
+&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Flomo 将自己包装为卡片笔记法（Zettelkasten）的实现，但其产品架构实际上优先考虑低延迟的捕获，而非图谱连接性。它缺乏可访问的反向链接和可视化原语来实现知识复利，本质上是一个线性的、仅追加的日志，而非网络。虽然作为捕获缓冲区有一定用处，但其专有的 HTML 导出格式与基于 Markdown 的标准知识工具栈之间存在极高的互操作摩擦。&lt;/p&gt;</description></item><item><title>为什么微信无法整合真正的个人 AI</title><link>/ideas/wechat/</link><pubDate>Sat, 27 Dec 2025 00:00:00 +0000</pubDate><guid>/ideas/wechat/</guid><description>&lt;p&gt;端侧 AI（On-device AI）描绘了一个令人向往的未来：将大语言模型（LLM）的能力带到终端，将我们杂乱的数字足迹转化为结构化的外部记忆。&lt;/p&gt;</description></item><item><title>寻找完美的快速记录工具</title><link>/ideas/quick-capture/</link><pubDate>Mon, 22 Dec 2025 00:00:00 +0000</pubDate><guid>/ideas/quick-capture/</guid><description>&lt;h3 id="tldr我的选型总结"&gt;TL;DR：我的选型总结&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Simplenote&lt;/strong&gt;：不支持图片；功能过于基础。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Google Keep&lt;/strong&gt;：数据无法导出；不支持 Markdown；对长文本不友好。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Notion&lt;/strong&gt;：需要联网；启动速度慢；不适合快速记录。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Obsidian&lt;/strong&gt;：作为知识库很棒，但作为收件箱太重了。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Upnote&lt;/strong&gt;：富文本导向；非 Markdown 原生；免费版限制过于严苛。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Notesnook&lt;/strong&gt;：非 Markdown 原生；无法将文本复制为 Markdown 格式。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Apple Notes&lt;/strong&gt;：不支持 Windows 平台。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Anytype&lt;/strong&gt;：最终胜出————本地优先、开源、Markdown、美观、加密。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;我对「记录工具」的执念已经持续了很长时间。由于我频繁有文本处理的需求，我一直在寻找那个完美的便携式快速记录工具。&lt;/p&gt;</description></item></channel></rss>

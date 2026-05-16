@@ -195,27 +195,19 @@
             function injectContent(item) {
                 const previewData = item.querySelector('.item-preview-data');
                 if (!previewData) return false;
+                previewContainer.classList.remove('is-truncated');
                 previewContainer.innerHTML = previewData.innerHTML;
                 previewContainer.dataset.href = previewData.dataset.href || '';
                 previewContainer.querySelectorAll('figure.local-video, video, audio, iframe').forEach(el => el.remove());
                 return true;
             }
 
-            function computeBottomLimit() {
-                const rightCols = previewContainer.closest('.archive-right-cols');
-                const viewportBottom = window.innerHeight;
-                if (!rightCols) return viewportBottom - 8;
-                const rect = rightCols.getBoundingClientRect();
-                const styles = getComputedStyle(rightCols);
-                const paddingBottom = parseFloat(styles.paddingBottom) || 0;
-                const colsBottom = rect.bottom - paddingBottom;
-                return Math.min(colsBottom, viewportBottom) - 8;
-            }
-
             async function fitPreview(token) {
                 const summary = previewContainer.querySelector('.preview-summary');
-                if (!summary) return;
-                const href = previewContainer.dataset.href || '#';
+                if (!summary) {
+                    previewContainer.classList.remove('is-truncated');
+                    return;
+                }
 
                 if (document.fonts && document.fonts.ready) {
                     try { await document.fonts.ready; } catch (e) {}
@@ -235,33 +227,10 @@
                 const liveSummary = previewContainer.querySelector('.preview-summary');
                 if (!liveSummary || liveSummary !== summary) return;
 
-                const bottomLimit = computeBottomLimit();
-                const children = Array.from(summary.children);
-                let firstOverflowIndex = -1;
-                for (let i = 0; i < children.length; i++) {
-                    if (children[i].getBoundingClientRect().bottom > bottomLimit) {
-                        firstOverflowIndex = i;
-                        break;
-                    }
-                }
-
-                if (firstOverflowIndex === -1) return;
-
-                for (let i = children.length - 1; i >= firstOverflowIndex; i--) {
-                    children[i].remove();
-                }
-
-                const marker = document.createElement('a');
-                marker.className = 'preview-continuation';
-                marker.href = href;
-                marker.textContent = '(to be continued)';
-                summary.appendChild(marker);
-
-                while (summary.children.length > 1 && marker.getBoundingClientRect().bottom > bottomLimit) {
-                    const prev = marker.previousElementSibling;
-                    if (!prev) break;
-                    prev.remove();
-                }
+                previewContainer.classList.toggle(
+                    'is-truncated',
+                    previewContainer.scrollHeight > previewContainer.clientHeight + 1
+                );
             }
 
             async function renderForItem(item) {
@@ -287,15 +256,6 @@
                 if (currentHoverNode) renderForItem(currentHoverNode);
             });
 
-            let scrollRaf = 0;
-            window.addEventListener('scroll', () => {
-                if (!currentHoverNode) return;
-                if (scrollRaf) cancelAnimationFrame(scrollRaf);
-                scrollRaf = requestAnimationFrame(() => {
-                    if (currentHoverNode) renderForItem(currentHoverNode);
-                });
-            }, { passive: true });
-
             archiveItems.forEach(item => {
                 item.addEventListener('mouseenter', () => {
                     if (leaveTimeout) clearTimeout(leaveTimeout);
@@ -320,6 +280,7 @@
                             renderToken++;
                             setTimeout(() => {
                                 if (!currentHoverNode) {
+                                    previewContainer.classList.remove('is-truncated');
                                     previewContainer.innerHTML = '';
                                     delete previewContainer.dataset.href;
                                 }

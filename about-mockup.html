@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Page — Design Mockups</title>
+<style>
+/* Load site fonts */
+@font-face { font-family:"Switzer"; src:url("static/fonts/switzer/Switzer-Light.woff2") format("woff2"); font-weight:300; font-style:normal; }
+@font-face { font-family:"Switzer"; src:url("static/fonts/switzer/Switzer-Regular.woff2") format("woff2"); font-weight:400; font-style:normal; }
+@font-face { font-family:"Switzer"; src:url("static/fonts/switzer/Switzer-Medium.woff2") format("woff2"); font-weight:500; font-style:normal; }
+@font-face { font-family:"Switzer"; src:url("static/fonts/switzer/Switzer-Semibold.woff2") format("woff2"); font-weight:600; font-style:normal; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #fafafa;
+  --ink: #050505;
+  --muted: #7d7d7d;
+  --border: #e2e2e2;
+  --sans: "Switzer", "Inter", -apple-system, sans-serif;
+  --serif: "Newsreader", "Playfair Display", Georgia, serif;
+  --mono: "JetBrains Mono", "Fira Code", monospace;
+}
+
+body {
+  background: #f0f0f0;
+  font-family: var(--sans);
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6rem;
+}
+
+/* ---- Selector nav ---- */
+.selector-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: rgba(250,250,250,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  z-index: 100;
+  padding: 0 2rem;
+  height: 48px;
+}
+.selector-nav span {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding-right: 2rem;
+}
+.selector-nav a {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0 1.5rem;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--border);
+  transition: color 0.15s, background 0.15s;
+}
+.selector-nav a:first-of-type { border-left: 1px solid var(--border); }
+.selector-nav a:hover, .selector-nav a.active { color: var(--ink); background: rgba(5,5,5,0.04); }
+
+.frame-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  padding-top: 6rem;
+}
+
+/* ---- Fake browser chrome ---- */
+.browser {
+  background: var(--bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 40px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+  overflow: hidden;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+.browser-chrome {
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 7px;
+}
+.dot { width:11px; height:11px; border-radius:50%; }
+.dot-r { background:#fe5f57; }
+.dot-y { background:#febc2e; }
+.dot-g { background:#28c840; }
+.url-bar {
+  margin-left: 12px;
+  background: #e8e8e8;
+  border-radius: 6px;
+  padding: 3px 12px;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: #888;
+  flex: 1;
+  max-width: 300px;
+}
+
+/* ---- Fake site nav ---- */
+.site-nav {
+  padding: 1.2rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.site-nav-logo {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+.site-nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+.site-nav-links a {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.site-nav-links a.active { color: var(--ink); }
+
+/* ========================================================
+   DESIGN A — Editorial Two-Column (QP Magazine inspired)
+   ======================================================== */
+.design-a .page-body {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 0;
+  padding: 0;
+  min-height: 640px;
+}
+.design-a .main-col {
+  padding: 3.5rem 3rem 4rem 2.5rem;
+  border-right: 1px solid var(--border);
+}
+.design-a .sidebar-col {
+  padding: 3.5rem 2rem 4rem;
+}
+.design-a .section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2rem;
+}
+.design-a .big-tagline {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--ink);
+  margin-bottom: 2.5rem;
+  max-width: 480px;
+}
+.design-a .body-text {
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.85;
+  color: #2c2c2c;
+  max-width: 500px;
+}
+.design-a .body-text p { margin-bottom: 1.25rem; }
+.design-a .body-text p:last-child { margin-bottom: 0; }
+
+.design-a .sidebar-section { margin-bottom: 2.8rem; }
+.design-a .sidebar-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+.design-a .sidebar-item {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  color: var(--ink);
+  line-height: 1.6;
+  text-decoration: none;
+  display: block;
+  padding: 0.3rem 0;
+}
+.design-a .sidebar-item a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.design-a .sidebar-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 0.15rem;
+}
+.design-a .page-index {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  margin-top: 3.5rem;
+}
+.design-a .page-index-item {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--ink);
+}
+.design-a .page-index-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  min-width: 22px;
+}
+.design-a .page-index-title {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.design-a .exp-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.55rem 0;
+}
+.design-a .exp-place {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+}
+.design-a .exp-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* ========================================================
+   DESIGN B — Display Impact (Signal-A inspired)
+   ======================================================== */
+.design-b .page-body {
+  min-height: 720px;
+}
+.design-b .display-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+}
+.design-b .display-hero-left,
+.design-b .display-hero-right {
+  padding: 3.5rem 2.5rem 3rem;
+}
+.design-b .display-hero-left {
+  border-right: 1px solid var(--border);
+}
+.design-b .display-headline {
+  font-family: var(--serif);
+  font-size: clamp(3rem, 6.5vw, 5.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.design-b .display-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 1rem 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.design-b .display-meta-item {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.design-b .content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.design-b .content-left {
+  padding: 2.5rem 2.5rem 3rem;
+  border-right: 1px solid var(--border);
+}
+.design-b .content-right {
+  padding: 2.5rem 2.5rem 3rem;
+}
+.design-b .content-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+.design-b .body-text {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.85;
+  color: #2c2c2c;
+}
+.design-b .body-text p { margin-bottom: 1.2rem; }
+.design-b .exp-table { width: 100%; border-collapse: collapse; }
+.design-b .exp-table tr {
+  border-top: 1px solid var(--border);
+}
+.design-b .exp-table td {
+  padding: 0.8rem 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  vertical-align: top;
+}
+.design-b .exp-table td:last-child {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+}
+.design-b .pages-row {
+  display: flex;
+  border-top: 1px solid var(--border);
+}
+.design-b .page-link {
+  flex: 1;
+  padding: 1.5rem 2.5rem;
+  border-right: 1px solid var(--border);
+  text-decoration: none;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+.design-b .page-link:last-child { border-right: none; }
+.design-b .page-link-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.design-b .page-link-title {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+}
+.design-b .page-link-arrow {
+  margin-left: auto;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ========================================================
+   DESIGN C — Dense Editorial Grid (hybrid structured)
+   ======================================================== */
+.design-c .page-body {
+  min-height: 700px;
+  padding: 0 2.5rem;
+}
+.design-c .c-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 3rem 0 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+.design-c .c-page-title {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.design-c .c-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.design-c .c-intro-block {
+  padding: 2.5rem 0;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+.design-c .c-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 0.2rem;
+}
+.design-c .c-tagline {
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+}
+.design-c .c-body {
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.85;
+  color: #2c2c2c;
+}
+.design-c .c-body p { margin-bottom: 1rem; }
+.design-c .c-section {
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+.design-c .c-exp-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.design-c .c-exp-row:first-child { padding-top: 0; }
+.design-c .c-exp-row:last-child { border-bottom: none; }
+.design-c .c-exp-main {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.design-c .c-exp-role {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+}
+.design-c .c-exp-year {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.design-c .c-pages {
+  padding: 1.8rem 0 2.5rem;
+  display: flex;
+  gap: 0;
+}
+.design-c .c-page-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  padding: 0.8rem 2rem 0.8rem 0;
+  margin-right: 2rem;
+  border-right: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--ink);
+}
+.design-c .c-page-item:last-child { border-right: none; }
+.design-c .c-page-num { font-family:var(--mono); font-size:11px; color:var(--muted); }
+.design-c .c-page-name { font-family:var(--sans); font-size:13px; font-weight:500; text-transform:uppercase; letter-spacing:0.07em; }
+.design-c .c-now-block {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-top: 0.5rem;
+}
+.design-c .c-now-item {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: #2c2c2c;
+  line-height: 1.7;
+  padding: 0.25rem 0;
+}
+.design-c .c-now-item::before {
+  content: "→ ";
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+/* Description notes */
+.design-note {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-top: -4rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+.design-note-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+.design-note-desc {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+</style>
+</head>
+<body>
+
+<div class="selector-nav">
+  <span>About Page — Mockups</span>
+  <a href="#a" class="active">A · Editorial Column</a>
+  <a href="#b">B · Display Impact</a>
+  <a href="#c">C · Structured Grid</a>
+</div>
+
+<!-- ============================================================
+     DESIGN A — Editorial Two-Column
+     ============================================================ -->
+<div class="frame-label" id="a">DESIGN A — EDITORIAL TWO-COLUMN &nbsp;·&nbsp; QP Magazine 风格</div>
+
+<div class="browser">
+  <div class="browser-chrome">
+    <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+    <div class="url-bar">aki.liu / about</div>
+  </div>
+  <div class="site-nav">
+    <span class="site-nav-logo">Aki Liu</span>
+    <ul class="site-nav-links">
+      <li><a href="#">Writing</a></li>
+      <li><a href="#">Microblog</a></li>
+      <li><a href="#" class="active">About</a></li>
+    </ul>
+  </div>
+  <div class="design-a">
+    <div class="page-body">
+      <!-- Main column -->
+      <div class="main-col">
+        <div class="section-label">About</div>
+        <p class="big-tagline">Building AI infrastructure and ML systems. Writing on the side.</p>
+        <div class="body-text">
+          <p>I'm Aki Liu. I work on AI infrastructure and ML systems — the unglamorous layer that makes models actually useful in production. Right now I'm focused on [current project / area].</p>
+          <p>Outside of that, I write. Not for an audience — for the thinking that comes after. These notes and essays live here.</p>
+          <p>I grew up in [city]. Currently based in [city]. You can reach me at aki.f.liu2004@gmail.com.</p>
+        </div>
+
+        <!-- Sub-page index -->
+        <div class="page-index">
+          <a class="page-index-item" href="#">
+            <span class="page-index-num">01</span>
+            <span class="page-index-title">Courses</span>
+          </a>
+          <a class="page-index-item" href="#">
+            <span class="page-index-num">02</span>
+            <span class="page-index-title">Resume</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar-col">
+        <div class="sidebar-section">
+          <div class="sidebar-label">Currently</div>
+          <div class="sidebar-item">Working on AI infra</div>
+          <div class="sidebar-item">Reading: <em>[book]</em></div>
+          <div class="sidebar-item">Location: Shanghai</div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Experience</div>
+          <div class="exp-row">
+            <div>
+              <div class="exp-place">Company A</div>
+              <div class="sidebar-tag">ML Engineer</div>
+            </div>
+            <div class="exp-meta">2024—</div>
+          </div>
+          <div class="exp-row">
+            <div>
+              <div class="exp-place">University Name</div>
+              <div class="sidebar-tag">CS, minor Math</div>
+            </div>
+            <div class="exp-meta">2022—26</div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Contact</div>
+          <a class="sidebar-item" href="#">Email</a>
+          <a class="sidebar-item" href="#">GitHub</a>
+          <a class="sidebar-item" href="#">Twitter / X</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="design-note" style="margin-top:1.5rem">
+  <div class="design-note-title">A 的特点</div>
+  <div class="design-note-desc">两栏 editorial 布局。左侧：小标签 + 大 tagline（衬线体）+ 正文 + 子页入口。右侧：结构化信息块（Currently / Experience / Contact）。风格极简，靠排版密度撑场，可扩展性强，右侧随时加新 section。</div>
+</div>
+
+<!-- ============================================================
+     DESIGN B — Display Impact
+     ============================================================ -->
+<div class="frame-label" id="b">DESIGN B — DISPLAY IMPACT &nbsp;·&nbsp; Signal-A 风格</div>
+
+<div class="browser">
+  <div class="browser-chrome">
+    <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+    <div class="url-bar">aki.liu / about</div>
+  </div>
+  <div class="site-nav">
+    <span class="site-nav-logo">Aki Liu</span>
+    <ul class="site-nav-links">
+      <li><a href="#">Writing</a></li>
+      <li><a href="#">Microblog</a></li>
+      <li><a href="#" class="active">About</a></li>
+    </ul>
+  </div>
+  <div class="design-b">
+    <div class="page-body">
+      <!-- Display hero: two massive text blocks -->
+      <div class="display-hero">
+        <div class="display-hero-left">
+          <div class="display-headline">Building<br>AI<br>Systems.</div>
+        </div>
+        <div class="display-hero-right">
+          <div class="display-headline">Writing<br>On The<br>Side.</div>
+        </div>
+      </div>
+
+      <!-- Meta bar -->
+      <div class="display-meta">
+        <span class="display-meta-item">Aki Liu</span>
+        <span class="display-meta-item">Shanghai / San Francisco</span>
+        <span class="display-meta-item">2004—</span>
+        <span class="display-meta-item">aki.f.liu2004@gmail.com</span>
+      </div>
+
+      <!-- Content split: intro + experience -->
+      <div class="content-grid">
+        <div class="content-left">
+          <div class="content-label">About</div>
+          <div class="body-text">
+            <p>I work on AI infrastructure and ML systems — the unglamorous layer that makes models useful in production.</p>
+            <p>Outside of that, I write and read. Notes and essays live on this site.</p>
+            <p>Currently focused on [specific area]. Always open to interesting problems.</p>
+          </div>
+        </div>
+        <div class="content-right">
+          <div class="content-label">Experience &amp; Education</div>
+          <table class="exp-table">
+            <tr>
+              <td>Company A<br><span style="font-size:11px;color:#999">ML Engineer</span></td>
+              <td>2024—</td>
+            </tr>
+            <tr>
+              <td>University Name<br><span style="font-size:11px;color:#999">Computer Science</span></td>
+              <td>2022—26</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pages footer -->
+      <div class="pages-row">
+        <a class="page-link" href="#">
+          <span class="page-link-num">01</span>
+          <span class="page-link-title">Courses</span>
+          <span class="page-link-arrow">→</span>
+        </a>
+        <a class="page-link" href="#">
+          <span class="page-link-num">02</span>
+          <span class="page-link-title">Resume</span>
+          <span class="page-link-arrow">→</span>
+        </a>
+        <a class="page-link" href="#" style="border-right:none">
+          <span class="page-link-num">GitHub</span>
+          <span class="page-link-title" style="font-size:11px;opacity:0.7">↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="design-note" style="margin-top:1.5rem">
+  <div class="design-note-title">B 的特点</div>
+  <div class="design-note-desc">顶部两块巨型衬线字，占满视口，极度强势。下方切换为两栏 editorial 内容区。底部 footer 行放子页入口。冲击力最强，但需要真实有力量的 tagline 内容填充顶部。</div>
+</div>
+
+<!-- ============================================================
+     DESIGN C — Structured Dense Grid
+     ============================================================ -->
+<div class="frame-label" id="c">DESIGN C — STRUCTURED DENSE GRID &nbsp;·&nbsp; 混合风格</div>
+
+<div class="browser">
+  <div class="browser-chrome">
+    <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+    <div class="url-bar">aki.liu / about</div>
+  </div>
+  <div class="site-nav">
+    <span class="site-nav-logo">Aki Liu</span>
+    <ul class="site-nav-links">
+      <li><a href="#">Writing</a></li>
+      <li><a href="#">Microblog</a></li>
+      <li><a href="#" class="active">About</a></li>
+    </ul>
+  </div>
+  <div class="design-c">
+    <div class="page-body">
+      <!-- Header -->
+      <div class="c-header">
+        <span class="c-page-title">About</span>
+        <span class="c-date">aki.f.liu2004@gmail.com</span>
+      </div>
+
+      <!-- Intro block -->
+      <div class="c-intro-block">
+        <div class="c-label">Introduction</div>
+        <div>
+          <div class="c-tagline">Building AI infrastructure and ML systems. Writing on the side.</div>
+          <div class="c-body">
+            <p>I work on the unglamorous layer that makes models useful in production — training pipelines, inference optimization, distributed systems. Currently focused on [specific area].</p>
+            <p>Outside of that, I write. Notes and essays on things I'm thinking through. They live on this site.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Currently section -->
+      <div class="c-section">
+        <div class="c-label">Currently</div>
+        <div class="c-now-block">
+          <div class="c-now-item">Working on [project/area]</div>
+          <div class="c-now-item">Reading: [book name]</div>
+          <div class="c-now-item">Based in Shanghai</div>
+          <div class="c-now-item">Open to research collaborations</div>
+        </div>
+      </div>
+
+      <!-- Experience section -->
+      <div class="c-section">
+        <div class="c-label">Experience</div>
+        <div style="width:100%">
+          <div class="c-exp-row">
+            <div>
+              <div class="c-exp-main">Company A</div>
+              <div class="c-exp-role">ML Engineer</div>
+            </div>
+            <div class="c-exp-year">2024—</div>
+          </div>
+          <div class="c-exp-row">
+            <div>
+              <div class="c-exp-main">University Name</div>
+              <div class="c-exp-role">Computer Science · minor Mathematics</div>
+            </div>
+            <div class="c-exp-year">2022—26</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pages -->
+      <div class="c-pages">
+        <a class="c-page-item" href="#">
+          <span class="c-page-num">01</span>
+          <span class="c-page-name">Courses</span>
+        </a>
+        <a class="c-page-item" href="#">
+          <span class="c-page-num">02</span>
+          <span class="c-page-name">Resume</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="design-note" style="margin-top:1.5rem; margin-bottom:4rem">
+  <div class="design-note-title">C 的特点</div>
+  <div class="design-note-desc">全页用细横线分隔 section，每行左侧是 mono 标签，右侧是内容。高度结构化、可扩展 — 加新 section 只需加一行网格块。风格介于 A 和 B 之间，density 高，信息密度最大。</div>
+</div>
+
+</body>
+</html>

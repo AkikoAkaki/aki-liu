@@ -53,7 +53,11 @@
       "Bash(git commit *)",
       "Skill(superpowers:writing-plans)",
       "Skill(superpowers:executing-plans)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:1313/)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:1313/)",
+      "PowerShell(& \"C:\\\\Users\\\\Kevin\\\\.claude\\\\plugins\\\\cache\\\\claude-plugins-official\\\\superpowers\\\\5.1.0\\\\scripts\\\\start-server.sh\" --project-dir \"I:\\\\Projects\\\\aki-liu\")",
+      "Skill(frontend-design:frontend-design)",
+      "WebFetch(domain:api.anthropic.com)",
+      "Bash(python -c ' *)"
     ]
   }
 }

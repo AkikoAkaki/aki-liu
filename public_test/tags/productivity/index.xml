@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Productivity on Aki's Blog</title><link>/tags/productivity/</link><description>Recent content in Productivity on Aki's Blog</description><generator>Hugo</generator><language>zh-CN</language><lastBuildDate>Tue, 20 Jan 2026 00:00:00 +0000</lastBuildDate><atom:link href="/tags/productivity/index.xml" rel="self" type="application/rss+xml"/><item><title>Flomo：做笔记的幻觉</title><link>/ideas/flomo/</link><pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate><guid>/ideas/flomo/</guid><description>&lt;aside&gt;
+&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Flomo 将自己包装为卡片笔记法（Zettelkasten）的实现，但其产品架构实际上优先考虑低延迟的捕获，而非图谱连接性。它缺乏可访问的反向链接和可视化原语来实现知识复利，本质上是一个线性的、仅追加的日志，而非网络。虽然作为捕获缓冲区有一定用处，但其专有的 HTML 导出格式与基于 Markdown 的标准知识工具栈之间存在极高的互操作摩擦。&lt;/p&gt;</description></item><item><title>为什么微信是最好的待办清单</title><link>/ideas/wechat-remainder/</link><pubDate>Fri, 16 Jan 2026 00:00:00 +0000</pubDate><guid>/ideas/wechat-remainder/</guid><description>&lt;aside&gt;
+&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;最好的待办清单是你真的会去打开的那一个。真正的执行力来源于社交绑定和零阻力的触达，而非复杂的排序系统。&lt;/p&gt;
+&lt;/aside&gt;
+&lt;p&gt;我常常思考：待办清单的角色到底应该是什么？&lt;/p&gt;</description></item><item><title>为什么我放弃了“完美”的 Hugo 博客，转投 Notion</title><link>/ideas/hugo-to-notion/</link><pubDate>Wed, 14 Jan 2026 00:00:00 +0000</pubDate><guid>/ideas/hugo-to-notion/</guid><description>&lt;aside&gt;
+&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;停止优化容器了，开始产出内容。这篇文章记录了从过度设计的 Hugo 博客迁移到零摩擦 Notion 方案的过程，揭示了为何“设计工程”可能成为一个阻止你真正实践“公开学习”的陷阱。&lt;/p&gt;</description></item><item><title>假工作的陷阱</title><link>/ideas/fake-work/</link><pubDate>Sat, 27 Dec 2025 00:00:00 +0000</pubDate><guid>/ideas/fake-work/</guid><description>&lt;aside&gt;
+&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;忙碌往往是一种“淤塞”，掩盖了方向的缺失。应该&lt;/p&gt;
+&lt;/aside&gt;
+&lt;p&gt;忙碌和工作之间，有着本质的区别。&lt;/p&gt;
+&lt;p&gt;我最近注意到了自己的一个模式。当我的大脑感到疲惫时，我不会停下来，而是开始漫无目的地点击。我查邮件、整理文件、阅读我根本不关心的新闻。我看起来像在工作，甚至可能自己也觉得在工作。但实际上并不是。我只是在用假工作来逃避一个事实：我不知道接下来该做什么。&lt;/p&gt;</description></item><item><title>寻找完美的快速记录工具</title><link>/ideas/quick-capture/</link><pubDate>Mon, 22 Dec 2025 00:00:00 +0000</pubDate><guid>/ideas/quick-capture/</guid><description>&lt;h3 id="tldr我的选型总结"&gt;TL;DR：我的选型总结&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Simplenote&lt;/strong&gt;：不支持图片；功能过于基础。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Google Keep&lt;/strong&gt;：数据无法导出；不支持 Markdown；对长文本不友好。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Notion&lt;/strong&gt;：需要联网；启动速度慢；不适合快速记录。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Obsidian&lt;/strong&gt;：作为知识库很棒，但作为收件箱太重了。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Upnote&lt;/strong&gt;：富文本导向；非 Markdown 原生；免费版限制过于严苛。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Notesnook&lt;/strong&gt;：非 Markdown 原生；无法将文本复制为 Markdown 格式。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Apple Notes&lt;/strong&gt;：不支持 Windows 平台。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Anytype&lt;/strong&gt;：最终胜出————本地优先、开源、Markdown、美观、加密。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;我对「记录工具」的执念已经持续了很长时间。由于我频繁有文本处理的需求，我一直在寻找那个完美的便携式快速记录工具。&lt;/p&gt;</description></item></channel></rss>

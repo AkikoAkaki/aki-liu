@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Page — Mockups v2</title>
+<style>
+@font-face { font-family:"Switzer"; src:url("static/fonts/switzer/Switzer-Light.woff2") format("woff2"); font-weight:300; }
+@font-face { font-family:"Switzer"; src:url("static/fonts/switzer/Switzer-Regular.woff2") format("woff2"); font-weight:400; }
+@font-face { font-family:"Switzer"; src:url("static/fonts/switzer/Switzer-Medium.woff2") format("woff2"); font-weight:500; }
+@font-face { font-family:"Switzer"; src:url("static/fonts/switzer/Switzer-Semibold.woff2") format("woff2"); font-weight:600; }
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --bg: #fafafa;
+  --ink: #050505;
+  --ink2: #2c2c2c;
+  --muted: #999;
+  --muted2: #777;
+  --border: #e4e4e4;
+  --border-light: #f0f0f0;
+  --sans: "Switzer","Inter",-apple-system,sans-serif;
+  --serif: "Newsreader","Playfair Display",Georgia,serif;
+}
+body {
+  background: #ebebeb;
+  font-family: var(--sans);
+  padding: 4rem 2rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+}
+
+/* nav */
+.nav-bar {
+  position:fixed; top:0; left:0; right:0;
+  background:rgba(235,235,235,0.95);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid #ddd;
+  display:flex; align-items:center; gap:0;
+  z-index:100; padding:0 2rem; height:44px;
+}
+.nav-bar-title {
+  font-size:12px; font-weight:500; color:#555;
+  padding-right:2rem; border-right:1px solid #ddd;
+}
+.nav-bar a {
+  font-size:12px; font-weight:500; color:#888;
+  text-decoration:none; padding:0 1.2rem;
+  height:44px; display:flex; align-items:center;
+  border-right:1px solid #ddd;
+  transition:color .15s, background .15s;
+}
+.nav-bar a:hover { color:#111; background:rgba(0,0,0,.04); }
+
+.frame-label {
+  font-size:11px; font-weight:500; letter-spacing:.08em;
+  text-transform:uppercase; color:#888;
+  margin-bottom:.75rem;
+  padding-top:4.5rem;
+}
+
+/* browser shell */
+.browser {
+  background:var(--bg);
+  border-radius:12px;
+  box-shadow:0 2px 48px rgba(0,0,0,.10), 0 1px 3px rgba(0,0,0,.06);
+  overflow:hidden;
+  max-width:1160px;
+  margin:0 auto;
+  width:100%;
+}
+.chrome {
+  background:#f3f3f3;
+  border-bottom:1px solid #e0e0e0;
+  height:34px; display:flex; align-items:center; padding:0 12px; gap:6px;
+}
+.dot { width:10px; height:10px; border-radius:50%; }
+.r{background:#fe5f57;} .y{background:#febc2e;} .g{background:#28c840;}
+.chrome-url {
+  margin-left:10px; background:#e8e8e8; border-radius:5px;
+  padding:2px 12px; font-size:11px; color:#888; flex:1; max-width:260px;
+}
+
+/* site nav shared */
+.snav {
+  padding:1.1rem 2.5rem;
+  display:flex; justify-content:space-between; align-items:center;
+  border-bottom:1px solid var(--border);
+}
+.snav-logo { font-size:13px; font-weight:600; letter-spacing:.01em; color:var(--ink); }
+.snav-links { display:flex; gap:2rem; list-style:none; }
+.snav-links a { font-size:12px; color:var(--muted); text-decoration:none; }
+.snav-links a.on { color:var(--ink); }
+
+/* note card */
+.note {
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:1rem 1.4rem;
+  max-width:1160px; margin:1rem auto 0; width:100%;
+}
+.note strong { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--ink); display:block; margin-bottom:.3rem; }
+.note p { font-size:13px; color:#666; line-height:1.6; }
+
+
+/* ========================================================
+   DESIGN B2 — Oversized Editorial
+   Headline fills width, content flows beneath without cuts
+   ======================================================== */
+.b2 { }
+
+.b2-hero {
+  padding: 3.5rem 2.5rem 3rem;
+  border-bottom: 1px solid var(--border);
+}
+.b2-kicker {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.6rem;
+}
+.b2-headline {
+  font-family: var(--serif);
+  font-size: clamp(3.2rem, 7vw, 5.8rem);
+  font-weight: 400;
+  line-height: .98;
+  letter-spacing: -.015em;
+  color: var(--ink);
+  text-transform: uppercase;
+  max-width: 780px;
+}
+
+.b2-body {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 0;
+}
+.b2-main {
+  padding: 2.8rem 3rem 3rem 2.5rem;
+  border-right: 1px solid var(--border);
+}
+.b2-intro {
+  font-family: var(--sans);
+  font-size: 15.5px;
+  font-weight: 300;
+  line-height: 1.82;
+  color: var(--ink2);
+  max-width: 520px;
+  margin-bottom: 3rem;
+}
+.b2-intro p { margin-bottom: 1.1rem; }
+.b2-intro p:last-child { margin-bottom: 0; }
+
+.b2-pages {
+  display: flex;
+  gap: 2.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--border);
+}
+.b2-page-link {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  text-decoration: none;
+  color: var(--ink);
+}
+.b2-page-num {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.b2-page-name {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.b2-page-arrow {
+  font-size: 13px;
+  color: var(--muted2);
+  margin-left: .2rem;
+}
+
+.b2-aside {
+  padding: 2.8rem 2.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.2rem;
+}
+.b2-aside-section { }
+.b2-aside-label {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: .9rem;
+}
+.b2-aside-item {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.65;
+  text-decoration: none;
+  display: block;
+}
+.b2-aside-sub {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  color: var(--muted);
+  display: block;
+  margin-top: .1rem;
+  margin-bottom: .3rem;
+}
+.b2-aside-link {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink);
+  text-decoration: none;
+  display: block;
+  line-height: 1.7;
+}
+.b2-aside-link:hover { opacity:.6; }
+.b2-aside-divider {
+  height: 1px;
+  background: var(--border);
+}
+
+/* ========================================================
+   DESIGN A2 — Magazine Flow
+   Full-width serif intro, then natural two-col
+   ======================================================== */
+.a2 { }
+
+.a2-intro-section {
+  padding: 3.2rem 2.5rem 2.8rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  border-bottom: 1px solid var(--border);
+  align-items: end;
+}
+.a2-intro-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.4rem;
+}
+.a2-tagline {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--ink);
+  font-style: italic;
+}
+.a2-intro-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: .5rem;
+}
+.a2-intro-para {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--ink2);
+}
+.a2-intro-para p { margin-bottom: .85rem; }
+.a2-intro-para p:last-child { margin-bottom: 0; }
+
+.a2-mid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+}
+.a2-mid-left {
+  padding: 2.4rem 3rem 2.4rem 2.5rem;
+  border-right: 1px solid var(--border);
+}
+.a2-mid-right {
+  padding: 2.4rem 2.5rem;
+}
+.a2-section-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.4rem;
+}
+.a2-exp-item {
+  padding: .65rem 0;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.a2-exp-item:first-of-type { padding-top: 0; }
+.a2-exp-item:last-child { border-bottom: none; padding-bottom: 0; }
+.a2-exp-name { font-size: 13.5px; color: var(--ink); }
+.a2-exp-role { font-size: 12px; color: var(--muted2); margin-top: .1rem; }
+.a2-exp-year { font-size: 12px; color: var(--muted); }
+
+.a2-now-item {
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.7;
+  padding: .45rem 0;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  gap: .6rem;
+  align-items: baseline;
+}
+.a2-now-item:first-of-type { padding-top: 0; }
+.a2-now-item:last-child { border-bottom: none; padding-bottom: 0; }
+.a2-now-bullet { color: var(--muted); font-size: 12px; flex-shrink: 0; }
+
+.a2-footer {
+  padding: 1.6rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.a2-pages { display: flex; gap: 2rem; }
+.a2-page-link {
+  display: flex;
+  align-items: baseline;
+  gap: .6rem;
+  text-decoration: none;
+  color: var(--ink);
+}
+.a2-page-num { font-size: 11px; color: var(--muted); }
+.a2-page-name { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .07em; }
+.a2-contacts { display: flex; gap: 1.5rem; }
+.a2-contact-link { font-size: 12px; color: var(--muted2); text-decoration: none; }
+.a2-contact-link:hover { color: var(--ink); }
+
+/* ========================================================
+   DESIGN E — Full-Width Statement + Newspaper Body
+   One unified column, opens with huge statement
+   ======================================================== */
+.e { }
+
+.e-statement {
+  padding: 4rem 2.5rem 3.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.e-statement-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 3rem;
+}
+.e-name {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.e-meta {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+  text-align: right;
+  line-height: 1.6;
+}
+.e-big {
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 6vw, 5.2rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  max-width: 800px;
+}
+.e-big em {
+  font-style: italic;
+  color: var(--muted2);
+}
+
+.e-columns {
+  padding: 3rem 2.5rem 3rem;
+  display: grid;
+  grid-template-columns: 55% 1fr;
+  gap: 5rem;
+  border-bottom: 1px solid var(--border);
+}
+.e-body {
+  font-family: var(--sans);
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--ink2);
+}
+.e-body p { margin-bottom: 1.1rem; }
+.e-body p:last-child { margin-bottom: 0; }
+
+.e-sidebar { }
+.e-sidebar-block { margin-bottom: 2rem; }
+.e-sidebar-block:last-child { margin-bottom: 0; }
+.e-sidebar-label {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: .8rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.e-sidebar-text {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+.e-sidebar-text span { display:block; }
+.e-sidebar-small { font-size:11.5px; color:var(--muted); margin-top:.1rem; }
+.e-sidebar-link {
+  font-size: 13px;
+  color: var(--ink);
+  text-decoration: none;
+  display: block;
+  line-height: 1.75;
+}
+
+.e-bottom {
+  padding: 1.5rem 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+.e-page-link {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  text-decoration: none;
+  color: var(--ink);
+}
+.e-page-num { font-size: 11px; color: var(--muted); }
+.e-page-name { font-size: 12px; font-weight:500; text-transform: uppercase; letter-spacing: .07em; }
+.e-sep { font-size:13px; color:var(--border); }
+.e-contact-link {
+  font-size: 12px;
+  color: var(--muted2);
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <span class="nav-bar-title">About Page v2</span>
+  <a href="#b2">B2 · Oversized Editorial</a>
+  <a href="#a2">A2 · Magazine Flow</a>
+  <a href="#e">E · Full-Width Statement</a>
+</div>
+
+
+<!-- ============================================================
+     B2 — Oversized Editorial
+     ============================================================ -->
+<div class="frame-label" id="b2">B2 — OVERSIZED EDITORIAL &nbsp;·&nbsp; 大标题流入内容，无割裂</div>
+<div class="browser">
+  <div class="chrome"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><div class="chrome-url">aki.liu / about</div></div>
+  <div class="snav">
+    <span class="snav-logo">Aki Liu</span>
+    <ul class="snav-links"><li><a href="#">Writing</a></li><li><a href="#">Microblog</a></li><li><a href="#" class="on">About</a></li></ul>
+  </div>
+  <div class="b2">
+    <div class="b2-hero">
+      <div class="b2-kicker">About</div>
+      <div class="b2-headline">Building AI<br>Systems.</div>
+    </div>
+    <div class="b2-body">
+      <div class="b2-main">
+        <div class="b2-intro">
+          <p>I work on AI infrastructure and ML systems — the unglamorous layer that makes models useful in production. Training pipelines, inference optimization, distributed systems.</p>
+          <p>Outside of that, I write. Notes and essays on things I'm thinking through. They live on this site.</p>
+          <p>Currently focused on [specific area]. Open to research collaborations and interesting problems.</p>
+        </div>
+        <div class="b2-pages">
+          <a class="b2-page-link" href="#">
+            <span class="b2-page-num">01</span>
+            <span class="b2-page-name">Courses</span>
+            <span class="b2-page-arrow">→</span>
+          </a>
+          <a class="b2-page-link" href="#">
+            <span class="b2-page-num">02</span>
+            <span class="b2-page-name">Resume</span>
+            <span class="b2-page-arrow">→</span>
+          </a>
+        </div>
+      </div>
+      <div class="b2-aside">
+        <div class="b2-aside-section">
+          <div class="b2-aside-label">Currently</div>
+          <span class="b2-aside-item">Working on [project]</span>
+          <span class="b2-aside-sub">AI Infrastructure</span>
+          <span class="b2-aside-item">Reading <em>[book]</em></span>
+          <span class="b2-aside-sub">Based in Shanghai</span>
+        </div>
+        <div class="b2-aside-divider"></div>
+        <div class="b2-aside-section">
+          <div class="b2-aside-label">Experience</div>
+          <span class="b2-aside-item">Company A</span>
+          <span class="b2-aside-sub">ML Engineer · 2024—</span>
+          <span class="b2-aside-item">University Name</span>
+          <span class="b2-aside-sub">CS · 2022—26</span>
+        </div>
+        <div class="b2-aside-divider"></div>
+        <div class="b2-aside-section">
+          <div class="b2-aside-label">Contact</div>
+          <a class="b2-aside-link" href="#">Email</a>
+          <a class="b2-aside-link" href="#">GitHub</a>
+          <a class="b2-aside-link" href="#">Twitter</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="note">
+  <strong>B2 的感觉</strong>
+  <p>顶部大标题用衬线体，粗大有力，占满左侧。右侧 aside 用 Switzer 普通字重。主内容区的正文用超轻字重 (300) 让大标题更突出。整体没有重复的横线切割，靠一根细线连接上下区域。</p>
+</div>
+
+
+<!-- ============================================================
+     A2 — Magazine Flow
+     ============================================================ -->
+<div class="frame-label" id="a2">A2 — MAGAZINE FLOW &nbsp;·&nbsp; 全宽斜体 tagline + 自然双栏</div>
+<div class="browser">
+  <div class="chrome"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><div class="chrome-url">aki.liu / about</div></div>
+  <div class="snav">
+    <span class="snav-logo">Aki Liu</span>
+    <ul class="snav-links"><li><a href="#">Writing</a></li><li><a href="#">Microblog</a></li><li><a href="#" class="on">About</a></li></ul>
+  </div>
+  <div class="a2">
+    <div class="a2-intro-section">
+      <div>
+        <div class="a2-intro-label">About</div>
+        <div class="a2-tagline">Building AI infrastructure<br>and ML systems.<br>Writing on the side.</div>
+      </div>
+      <div class="a2-intro-right">
+        <div class="a2-intro-para">
+          <p>I work on the unglamorous layer that makes models useful — training pipelines, inference systems, distributed compute.</p>
+          <p>Outside of that, I write. Notes and essays live here. You can reach me at aki.f.liu2004@gmail.com.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="a2-mid">
+      <div class="a2-mid-left">
+        <div class="a2-section-label">Experience & Education</div>
+        <div class="a2-exp-item">
+          <div>
+            <div class="a2-exp-name">Company A</div>
+            <div class="a2-exp-role">ML Engineer</div>
+          </div>
+          <div class="a2-exp-year">2024—</div>
+        </div>
+        <div class="a2-exp-item">
+          <div>
+            <div class="a2-exp-name">University Name</div>
+            <div class="a2-exp-role">Computer Science · Mathematics</div>
+          </div>
+          <div class="a2-exp-year">2022—26</div>
+        </div>
+      </div>
+      <div class="a2-mid-right">
+        <div class="a2-section-label">Currently</div>
+        <div class="a2-now-item"><span class="a2-now-bullet">—</span> Working on [project/area]</div>
+        <div class="a2-now-item"><span class="a2-now-bullet">—</span> Reading: <em>[book]</em></div>
+        <div class="a2-now-item"><span class="a2-now-bullet">—</span> Based in Shanghai</div>
+        <div class="a2-now-item"><span class="a2-now-bullet">—</span> Open to collaborations</div>
+      </div>
+    </div>
+
+    <div class="a2-footer">
+      <div class="a2-pages">
+        <a class="a2-page-link" href="#"><span class="a2-page-num">01</span><span class="a2-page-name">Courses</span></a>
+        <a class="a2-page-link" href="#"><span class="a2-page-num">02</span><span class="a2-page-name">Resume</span></a>
+      </div>
+      <div class="a2-contacts">
+        <a class="a2-contact-link" href="#">Email</a>
+        <a class="a2-contact-link" href="#">GitHub</a>
+        <a class="a2-contact-link" href="#">Twitter</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="note">
+  <strong>A2 的感觉</strong>
+  <p>顶部：左侧 label + 大斜体 tagline（衬线），右侧平行放正文。中间：左 Experience，右 Currently，靠同一根细线分隔，不像之前 B 那样切成独立方块。底部：子页入口 + 联系方式对称分布。</p>
+</div>
+
+
+<!-- ============================================================
+     E — Full-Width Statement
+     ============================================================ -->
+<div class="frame-label" id="e">E — FULL-WIDTH STATEMENT &nbsp;·&nbsp; 最接近 Signal-A 的处理方式</div>
+<div class="browser">
+  <div class="chrome"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><div class="chrome-url">aki.liu / about</div></div>
+  <div class="snav">
+    <span class="snav-logo">Aki Liu</span>
+    <ul class="snav-links"><li><a href="#">Writing</a></li><li><a href="#">Microblog</a></li><li><a href="#" class="on">About</a></li></ul>
+  </div>
+  <div class="e">
+    <div class="e-statement">
+      <div class="e-statement-top">
+        <span class="e-name">About · Aki Liu</span>
+        <div class="e-meta">Shanghai<br>2004—</div>
+      </div>
+      <div class="e-big">Building AI systems.<br><em>Writing on the side.</em></div>
+    </div>
+
+    <div class="e-columns">
+      <div class="e-body">
+        <p>I work on AI infrastructure and ML systems — the unglamorous layer that makes models actually useful in production. Training pipelines, inference optimization, distributed systems built to run at scale without drama.</p>
+        <p>Outside of that, I write. Not for an audience, but for the thinking that comes after. Notes and essays live here.</p>
+        <p>Currently focused on [specific area]. I'm at [university] studying CS and Mathematics. Open to research collaborations and interesting problems — reach me at aki.f.liu2004@gmail.com.</p>
+      </div>
+      <div class="e-sidebar">
+        <div class="e-sidebar-block">
+          <div class="e-sidebar-label">Currently</div>
+          <div class="e-sidebar-text">
+            <span>Working on [project]</span>
+            <span class="e-sidebar-small">AI Infrastructure</span>
+            <span style="margin-top:.6rem">Reading <em>[book]</em></span>
+          </div>
+        </div>
+        <div class="e-sidebar-block">
+          <div class="e-sidebar-label">Experience</div>
+          <div class="e-sidebar-text">
+            <span>Company A</span>
+            <span class="e-sidebar-small">ML Engineer · 2024—</span>
+            <span style="margin-top:.5rem">University Name</span>
+            <span class="e-sidebar-small">CS · 2022—26</span>
+          </div>
+        </div>
+        <div class="e-sidebar-block">
+          <div class="e-sidebar-label">Links</div>
+          <a class="e-sidebar-link" href="#">Email</a>
+          <a class="e-sidebar-link" href="#">GitHub</a>
+          <a class="e-sidebar-link" href="#">Twitter</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="e-bottom">
+      <a class="e-page-link" href="#"><span class="e-page-num">01</span><span class="e-page-name">Courses</span></a>
+      <span class="e-sep">·</span>
+      <a class="e-page-link" href="#"><span class="e-page-num">02</span><span class="e-page-name">Resume</span></a>
+      <span class="e-sep">·</span>
+      <a class="e-contact-link" href="#">aki.f.liu2004@gmail.com</a>
+    </div>
+  </div>
+</div>
+<div class="note" style="margin-bottom:5rem">
+  <strong>E 的感觉</strong>
+  <p>顶部：姓名 + 年份对称分布（无装饰），然后一个超大衬线 statement，第二行用斜体变色制造对比。下方：宽正文列 + 窄信息列，标签极轻极小。底部：一排文字链。整体最接近 Signal-A 的克制感。</p>
+</div>
+
+</body>
+</html>
