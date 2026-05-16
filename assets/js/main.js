@@ -7,6 +7,15 @@
         }
     } catch (_) { /* localStorage unavailable */ }
 
+    const FONT_MONO = '"JetBrains Mono", "Geist Mono", monospace';
+    const STAGGER = 35;
+
+    function staggerFontChange(chars, applyChange) {
+        return chars.map((char, i) => setTimeout(() => {
+            applyChange(char);
+        }, i * STAGGER));
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         // --- Magnetic hover: links & tags ---
         const generalMagnetEls = [...document.querySelectorAll(
@@ -18,6 +27,96 @@
         // --- Expanding Menu ---
         initExpandingMenu();
 
+
+        // --- Search placeholder animation ---
+        const searchBar = document.querySelector('.archive-search');
+        if (searchBar) {
+            const input = searchBar.querySelector('.search-input');
+            const fakePlaceholder = searchBar.querySelector('.search-fake-placeholder');
+            if (fakePlaceholder && input) {
+                let searchTimers = [];
+                let searchDebounce = null;
+                let isHidden = false;
+                let isPlaceholderWrapped = false;
+
+                function initPlaceholder() {
+                    if (isPlaceholderWrapped) return;
+                    const text = fakePlaceholder.textContent;
+                    fakePlaceholder.innerHTML = '';
+                    [...text].forEach(char => {
+                        if (char === ' ') {
+                            fakePlaceholder.appendChild(document.createTextNode(char));
+                        } else {
+                            const span = document.createElement('span');
+                            span.className = 'link-char';
+                            span.textContent = char;
+                            fakePlaceholder.appendChild(span);
+                        }
+                    });
+                    isPlaceholderWrapped = true;
+                }
+
+                function getChars() { return [...fakePlaceholder.querySelectorAll('.link-char')]; }
+
+                function cancelSearch() {
+                    searchTimers.forEach(clearTimeout);
+                    searchTimers = [];
+                }
+
+                function animateToMono() {
+                    initPlaceholder();
+                    cancelSearch();
+                    const chars = getChars();
+                    searchTimers = staggerFontChange(chars, char => {
+                        char.style.fontFamily = FONT_MONO;
+                    });
+                }
+
+                function animateToSans() {
+                    if (!isPlaceholderWrapped) return;
+                    cancelSearch();
+                    const chars = getChars().reverse();
+                    searchTimers = staggerFontChange(chars, char => {
+                        char.style.fontFamily = '';
+                    });
+                }
+
+                searchBar.addEventListener('mouseenter', () => {
+                    clearTimeout(searchDebounce);
+                    searchDebounce = setTimeout(() => { if (!isHidden) animateToMono(); }, 20);
+                });
+
+                searchBar.addEventListener('mouseleave', () => {
+                    clearTimeout(searchDebounce);
+                    searchDebounce = setTimeout(() => { if (!isHidden) animateToSans(); }, 20);
+                });
+
+                searchBar.addEventListener('click', () => input.focus());
+
+                input.addEventListener('focus', () => {
+                    if (!isHidden) {
+                        isHidden = true;
+                        cancelSearch();
+                        fakePlaceholder.classList.add('is-hiding');
+                    }
+                });
+
+                fakePlaceholder.addEventListener('animationend', () => {
+                    if (isHidden) fakePlaceholder.style.opacity = '0';
+                });
+
+                input.addEventListener('blur', () => {
+                    if (input.value === '') {
+                        isHidden = false;
+                        fakePlaceholder.classList.remove('is-hiding');
+                        fakePlaceholder.style.opacity = '';
+                        if (isPlaceholderWrapped) {
+                            getChars().forEach(char => { char.style.fontFamily = ''; });
+                        }
+                    }
+                });
+            }
+        }
 
         // --- Archive desktop bottom stats ---
         const archiveStats = document.querySelector('.archive-sidebar-bottom');
@@ -242,7 +341,7 @@
         });
 
         // --- Floating Link Preview ---
-        const previewLinks = document.querySelectorAll('.work-item[data-preview], .footer-links a[data-preview]');
+        const previewLinks = document.querySelectorAll('.work-item[data-preview]');
         if (previewLinks.length > 0) {
             let tooltip = document.createElement('div');
             tooltip.className = 'link-preview-tooltip';
@@ -301,9 +400,47 @@
         // --- Search + Command Palette ---
         initSearchPalette();
 
+        // --- Slot machine links ---
+        initSlotLinks();
+
         // --- Footer Reveal ---
         initFooterReveal();
     });
+
+    function initSlotLinks() {
+        const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!canHover || reduceMotion) return;
+
+        const links = document.querySelectorAll(
+            '.bio-text a, .now-section a, .connect-section a:not(.connect-pill)'
+        );
+
+        links.forEach(link => {
+            if (link.dataset.slotInit) return;
+            link.dataset.slotInit = '1';
+
+            // Preserve accessibility: store text as aria-label on the link
+            const label = link.textContent.trim();
+            if (label) link.setAttribute('aria-label', label);
+
+            const originalHTML = link.innerHTML;
+
+            const s1 = document.createElement('span');
+            s1.className = 'link-slot-text';
+            s1.innerHTML = originalHTML;
+
+            const s2 = document.createElement('span');
+            s2.className = 'link-slot-text link-slot-text--hover';
+            s2.innerHTML = originalHTML;
+            s2.setAttribute('aria-hidden', 'true');
+
+            link.innerHTML = '';
+            link.appendChild(s1);
+            link.appendChild(s2);
+            link.classList.add('link-slot');
+        });
+    }
 
     function initMagneticHover(elements, opts) {
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -482,27 +619,23 @@
     }
 
     function initExpandingMenu() {
-        const menuBar = document.getElementById('menu-bar');
+        const menuBar     = document.getElementById('menu-bar');
         const menuTrigger = document.getElementById('menu-trigger');
-        const menuPanel = document.getElementById('menu-panel');
-        const searchPanel = document.getElementById('menu-search-panel');
+        const menuPanel   = document.getElementById('menu-panel');
         if (!menuBar || !menuTrigger) return;
 
         const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
         const magneticLinks = menuPanel ? [...menuPanel.querySelectorAll('.menu-link')] : [];
         let lastScrollY = window.scrollY || 0;
         let scrollRafId = 0;
-        let requestSearchClose = null;
         const hideThreshold = 24;
 
         function getCollapsedHeight() {
             const computed = window.getComputedStyle(menuBar);
-            return parseFloat(computed.getPropertyValue('--menu-collapsed-height')) ||
-                parseFloat(computed.height) ||
-                68;
+            return parseFloat(computed.height) || 68;
         }
 
-        function syncMenuHeight() {
+        function syncOpenHeight() {
             if (!menuPanel) return;
 
             const collapsedHeight = getCollapsedHeight();
@@ -511,70 +644,28 @@
             menuBar.style.setProperty('--menu-open-height', `${nextHeight}px`);
         }
 
-        function syncSearchHeight() {
-            if (!searchPanel) return;
-
-            const collapsedHeight = getCollapsedHeight();
-            const top = menuBar.getBoundingClientRect().top;
-            const availableHeight = Math.max(collapsedHeight, window.innerHeight - top - 24);
-            const preferredContentHeight = window.matchMedia('(max-width: 480px)').matches ? window.innerHeight : 560;
-            const naturalHeight = Math.max(searchPanel.scrollHeight, collapsedHeight + preferredContentHeight);
-            const nextHeight = Math.min(naturalHeight, availableHeight);
-            menuBar.style.setProperty('--menu-search-height', `${nextHeight}px`);
-        }
-
-        function openMenu() {
-            syncMenuHeight();
-            resetMagneticLinks();
+        function open() {
+            syncOpenHeight();
             menuBar.classList.add('is-open');
-            menuBar.classList.remove('is-search', 'is-scrolled-away');
-            menuTrigger.setAttribute('aria-expanded', 'true');
-            if (menuPanel) menuPanel.setAttribute('aria-hidden', 'false');
-            if (searchPanel) searchPanel.setAttribute('aria-hidden', 'true');
-        }
-
-        function closeMenu() {
-            resetMagneticLinks();
-            menuBar.style.setProperty('--menu-open-height', `${menuBar.getBoundingClientRect().height}px`);
-            menuBar.style.setProperty('--menu-search-height', `${menuBar.getBoundingClientRect().height}px`);
-            requestAnimationFrame(() => {
-                menuBar.classList.remove('is-open', 'is-search');
-            });
-            menuTrigger.setAttribute('aria-expanded', 'false');
-            if (menuPanel) menuPanel.setAttribute('aria-hidden', 'true');
-            if (searchPanel) searchPanel.setAttribute('aria-hidden', 'true');
-        }
-
-        function openSearch() {
-            syncSearchHeight();
-            resetMagneticLinks();
-            menuBar.classList.add('is-open', 'is-search');
             menuBar.classList.remove('is-scrolled-away');
             menuTrigger.setAttribute('aria-expanded', 'true');
-            if (menuPanel) menuPanel.setAttribute('aria-hidden', 'true');
-            if (searchPanel) searchPanel.setAttribute('aria-hidden', 'false');
+            if (menuPanel) menuPanel.setAttribute('aria-hidden', 'false');
         }
 
-        function closeSearch() {
-            if (!menuBar.classList.contains('is-search')) return;
-            menuBar.style.setProperty('--menu-search-height', `${menuBar.getBoundingClientRect().height}px`);
+        function close() {
+            resetMagneticLinks();
+            menuBar.style.setProperty('--menu-open-height', `${menuBar.getBoundingClientRect().height}px`);
             requestAnimationFrame(() => {
-                menuBar.classList.remove('is-search', 'is-open');
+                menuBar.classList.remove('is-open');
             });
             menuTrigger.setAttribute('aria-expanded', 'false');
             if (menuPanel) menuPanel.setAttribute('aria-hidden', 'true');
-            if (searchPanel) searchPanel.setAttribute('aria-hidden', 'true');
-        }
-
-        function requestCloseSearch() {
-            if (typeof requestSearchClose === 'function') requestSearchClose();
-            else closeSearch();
         }
 
         function updateScrollState() {
             scrollRafId = 0;
 
-            if (menuBar.classList.contains('is-open') || menuBar.classList.contains('is-search')) {
+            if (menuBar.classList.contains('is-open')) {
                 lastScrollY = window.scrollY || 0;
                 menuBar.classList.remove('is-scrolled-away');
                 return;
@@ -597,15 +688,15 @@
         if (canHover) {
             menuBar.addEventListener('pointerenter', (event) => {
                 if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
-                if (!menuBar.classList.contains('is-open') && !menuBar.classList.contains('is-search')) {
-                    openMenu();
+                if (!menuBar.classList.contains('is-open')) {
+                    open();
                 }
             });
 
             menuBar.addEventListener('pointerleave', (event) => {
                 if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
-                if (menuBar.classList.contains('is-open') && !menuBar.classList.contains('is-search')) {
-                    closeMenu();
+                if (menuBar.classList.contains('is-open')) {
+                    close();
                 }
             });
         }
@@ -620,26 +711,20 @@
 
         menuTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (menuBar.classList.contains('is-search')) {
-                requestCloseSearch();
-            } else if (menuBar.classList.contains('is-open')) {
-                closeMenu();
-            } else {
-                openMenu();
-            }
+            if (canHover && menuBar.matches(':hover')) return;
+            menuBar.classList.contains('is-open') ? close() : open();
         });
 
+        // Close on click outside
         document.addEventListener('click', (e) => {
-            if ((menuBar.classList.contains('is-open') || menuBar.classList.contains('is-search')) && !menuBar.contains(e.target)) {
-                if (menuBar.classList.contains('is-search')) requestCloseSearch();
-                else closeMenu();
+            if (menuBar.classList.contains('is-open') && !menuBar.contains(e.target)) {
+                close();
             }
         });
 
+        // Close on Escape
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && menuBar.classList.contains('is-open') && !menuBar.classList.contains('is-search')) {
-                closeMenu();
-            }
+            if (e.key === 'Escape') close();
         });
 
         window.addEventListener('scroll', () => {
@@ -648,10 +733,8 @@
         }, { passive: true });
 
         window.addEventListener('resize', () => {
-            if (menuBar.classList.contains('is-search')) {
-                syncSearchHeight();
-            } else if (menuBar.classList.contains('is-open')) {
-                syncMenuHeight();
+            if (menuBar.classList.contains('is-open')) {
+                syncOpenHeight();
             }
             resetMagneticLinks();
         });
@@ -662,28 +745,13 @@
 
         initMagneticLinks();
         updateScrollState();
-
-        window.__menuBarController = {
-            openMenu,
-            closeMenu,
-            openSearch,
-            closeSearch,
-            syncMenuHeight,
-            syncSearchHeight,
-            isMenuOpen: () => menuBar.classList.contains('is-open') && !menuBar.classList.contains('is-search'),
-            isSearchOpen: () => menuBar.classList.contains('is-search'),
-            setSearchCloseHandler(handler) {
-                requestSearchClose = handler;
-            },
-        };
     }
 
 
     function initSearchPalette() {
-        const root = document.getElementById('menu-search-panel');
+        const root = document.getElementById('search-root');
         const triggers = document.querySelectorAll('[data-search-trigger]');
         if (!root) return;
-        const menuController = window.__menuBarController;
 
         const lang = (document.documentElement.lang || 'zh').toLowerCase().startsWith('en') ? 'en' : 'zh';
         const indexUrl = lang === 'en' ? '/en/search-index.json' : '/search-index.json';
@@ -701,10 +769,6 @@
         let currentItems = [];
         let currentTokens = [];
         let lastQuery = '';
-
-        if (menuController) {
-            menuController.setSearchCloseHandler(close);
-        }
 
         // ---------- Index loading ----------
         function loadIndex() {
@@ -850,17 +914,17 @@
         }
 
         function buildCommands(query) {
-            const otherLang = 'zh';
+            const otherLang = lang === 'zh' ? 'en' : 'zh';
             const list = [
-                { id: 'go-home',       label: 'Go to Home',       hint: '/',           icon: 'home', action: () => navigate('/') },
-                { id: 'go-ideas',      label: 'Go to Writing / Ideas',    hint: '/ideas',      icon: 'arrow', action: () => navigate('/en/ideas/') },
-                { id: 'go-textlab',    label: 'Go to Writing / Text Lab', hint: '/textlab',    icon: 'arrow', action: () => navigate('/en/textlab/') },
-                { id: 'go-technical',  label: 'Go to Notes',              hint: '/technical',  icon: 'arrow', action: () => navigate('/en/technical/') },
-                { id: 'go-microblog',  label: 'Go to Microblog',  hint: '/microblog',  icon: 'arrow', action: () => navigate('/en/microblog/') },
-                { id: 'go-influences', label: 'Go to Influences', hint: '/influences', icon: 'arrow', action: () => navigate('/en/influences/') },
-                { id: 'theme',         label: 'Toggle dark mode',  hint: '⇧⌘L',         icon: 'theme', action: toggleTheme },
-                { id: 'lang',          label: 'Switch to Chinese', hint: 'lang',     icon: 'lang',  action: () => switchLang(otherLang) },
-                { id: 'tags',          label: 'Browse tags',           hint: '#',           icon: 'tag',   action: () => { inputEl.value = '#'; render('#'); inputEl.focus(); } },
+                { id: 'go-home',       label: lang === 'en' ? 'Go to Home'      : '回到首页',       hint: '/',           icon: 'home', action: () => navigate('/') },
+                { id: 'go-ideas',      label: lang === 'en' ? 'Go to Ideas'     : '前往 Ideas',     hint: '/ideas',      icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/ideas/' : '/ideas/') },
+                { id: 'go-textlab',    label: lang === 'en' ? 'Go to Text Lab'  : '前往 Text Lab',  hint: '/textlab',    icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/textlab/' : '/textlab/') },
+                { id: 'go-technical',  label: lang === 'en' ? 'Go to Technical' : '前往 Technical', hint: '/technical',  icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/technical/' : '/technical/') },
+                { id: 'go-microblog',  label: lang === 'en' ? 'Go to Microblog' : '前往 Microblog',  hint: '/microblog',  icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/microblog/' : '/microblog/') },
+                { id: 'go-influences', label: lang === 'en' ? 'Go to Influences': '前往 Influences', hint: '/influences', icon: 'arrow', action: () => navigate(lang === 'en' ? '/en/influences/' : '/influences/') },
+                { id: 'theme',         label: lang === 'en' ? 'Toggle dark mode' : '切换深色模式',  hint: '⇧⌘L',         icon: 'theme', action: toggleTheme },
+                { id: 'lang',          label: otherLang === 'en' ? 'Switch to English' : '切换到中文', hint: 'lang',     icon: 'lang',  action: () => switchLang(otherLang) },
+                { id: 'tags',          label: lang === 'en' ? 'Browse tags' : '浏览标签',           hint: '#',           icon: 'tag',   action: () => { inputEl.value = '#'; render('#'); inputEl.focus(); } },
             ];
             if (!query) return list;
             const q = query.toLowerCase();
@@ -940,7 +1004,9 @@
 
         function renderList() {
             if (!currentItems.length) {
-                listEl.innerHTML = '<li class="search-empty">No matches. Try fewer words, or <em>type ></em> for commands.</li>';
+                listEl.innerHTML = '<li class="search-empty">' +
+                    (lang === 'en' ? 'No matches. Try fewer words, or <em>type ></em> for commands.' : '暂无匹配。试试更少的关键词，或输入 <em>></em> 进入命令。') +
+                    '</li>';
                 return;
             }
             const html = currentItems.map((item, idx) => {
@@ -966,7 +1032,7 @@
                         ${ICONS[c.icon] || ICONS.arrow}
                         <div class="sr-body">
                             <div class="sr-title">${escapeHtml(c.label)}</div>
-                            <div class="sr-meta">COMMAND</div>
+                            <div class="sr-meta">${lang === 'en' ? 'COMMAND' : '命令'}</div>
                         </div>
                         <span class="sr-trail">${escapeHtml(c.hint || '')}</span>
                     </li>`;
@@ -976,7 +1042,7 @@
                         ${ICONS.tag}
                         <div class="sr-body">
                             <div class="sr-title">#${escapeHtml(item.label)}</div>
-                            <div class="sr-meta">${item.count} ${item.count === 1 ? 'post' : 'posts'}</div>
+                            <div class="sr-meta">${item.count} ${lang === 'en' ? (item.count === 1 ? 'post' : 'posts') : '篇'}</div>
                         </div>
                         <span class="sr-trail">↩</span>
                     </li>`;
@@ -984,13 +1050,12 @@
                 return '';
             }).join('');
             listEl.innerHTML = html;
-            if (menuController) requestAnimationFrame(menuController.syncSearchHeight);
         }
 
         function renderPreview() {
             const item = currentItems[selectedIdx];
             if (!item) {
-                previewEl.innerHTML = `<div class="search-preview-empty">Select an item to preview.</div>`;
+                previewEl.innerHTML = `<div class="search-preview-empty">${lang === 'en' ? 'Select an item to preview.' : '选中条目即可预览。'}</div>`;
                 return;
             }
             if (item.type === 'result') {
@@ -1007,41 +1072,41 @@
             } else if (item.type === 'command') {
                 const c = item.cmd;
                 previewEl.innerHTML = `
-                    <div class="preview-meta">COMMAND</div>
+                    <div class="preview-meta">${lang === 'en' ? 'COMMAND' : '命令'}</div>
                     <h3 class="preview-title">${escapeHtml(c.label)}</h3>
                     <p class="preview-summary">${escapeHtml(c.hint || '')}</p>
                 `;
             } else if (item.type === 'tag') {
                 previewEl.innerHTML = `
-                    <div class="preview-meta">TAG</div>
+                    <div class="preview-meta">${lang === 'en' ? 'TAG' : '标签'}</div>
                     <h3 class="preview-title">#${escapeHtml(item.label)}</h3>
-                    <p class="preview-summary">${item.count} ${item.count === 1 ? 'post tagged' : 'posts tagged'}</p>
+                    <p class="preview-summary">${item.count} ${lang === 'en' ? (item.count === 1 ? 'post tagged' : 'posts tagged') : '篇相关文章'}</p>
                 `;
             }
-            if (menuController) requestAnimationFrame(menuController.syncSearchHeight);
         }
 
         // ---------- Panel construction ----------
         function buildPanel() {
             const modKey = isMac ? '⌘K' : 'Ctrl K';
             root.innerHTML = `
+                <div class="search-overlay" data-search-overlay></div>
                 <div class="search-panel" role="dialog" aria-modal="true" aria-label="Search">
                     <div class="search-pane-left">
                         <div class="search-inputbar">
                             ${ICONS.search}
                             <input class="search-input" type="text"
-                                   placeholder="Search posts, > for commands, # for tags"
+                                   placeholder="${lang === 'en' ? 'Search posts, > for commands, # for tags' : '搜索文章, > 输入命令, # 浏览标签'}"
                                    autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                             <span class="search-mode-hint" data-mode-hint>START</span>
                             <kbd class="search-esc">esc</kbd>
                         </div>
                         <ul class="search-results" role="listbox"></ul>
                         <div class="search-foot">
-                            <span><kbd>↑↓</kbd>navigate</span>
-                            <span><kbd>↩</kbd>open</span>
-                            <span><kbd>esc</kbd>close</span>
+                            <span><kbd>↑↓</kbd>${lang === 'en' ? 'navigate' : '导航'}</span>
+                            <span><kbd>↩</kbd>${lang === 'en' ? 'open' : '打开'}</span>
+                            <span><kbd>esc</kbd>${lang === 'en' ? 'close' : '关闭'}</span>
                             <span class="search-foot-spacer"></span>
-                            <span><kbd>${modKey}</kbd>toggle</span>
+                            <span><kbd>${modKey}</kbd>${lang === 'en' ? 'toggle' : '开合'}</span>
                         </div>
                     </div>
                     <div class="search-pane-right">
@@ -1056,6 +1121,8 @@
             modeHintEl = root.querySelector('[data-mode-hint]');
 
             inputEl.addEventListener('input', e => render(e.target.value));
+
+            root.querySelector('[data-search-overlay]').addEventListener('click', close);
 
             listEl.addEventListener('mouseover', e => {
                 const li = e.target.closest('.search-result');
@@ -1098,14 +1165,15 @@
             if (isOpen) return;
             if (!panel) buildPanel();
             isOpen = true;
+            
+            // Force browser layout so the newly injected DOM elements
+            // register their initial CSS state (e.g., blur(0px)) before transitioning.
+            void root.offsetWidth;
+            
+            document.body.classList.add('search-open');
             inputEl.value = '';
             render('');
-            if (menuController) menuController.openSearch();
-            void root.offsetWidth;
-            requestAnimationFrame(() => {
-                if (menuController) menuController.syncSearchHeight();
-                inputEl.focus();
-            });
+            requestAnimationFrame(() => inputEl.focus());
             loadIndex().then(() => {
                 if (isOpen) render(inputEl.value);
             });
@@ -1114,7 +1182,7 @@
         function close() {
             if (!isOpen) return;
             isOpen = false;
-            if (menuController) menuController.closeSearch();
+            document.body.classList.remove('search-open');
             if (inputEl) inputEl.blur();
         }
 

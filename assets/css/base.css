@@ -625,15 +625,11 @@ body.menu-cursor-hidden * {
 }
 
 /* ==========================================================================
-   Shared magnetic hover: general links
+   Shared magnetic hover: tag chips & cards
    ========================================================================== */
 
 .mb-tag-chip,
-.mb-card-tag,
-.bio-text a,
-.now-section a,
-.connect-section a:not(.connect-pill),
-.data-link {
+.mb-card-tag {
     position: relative;
     overflow: hidden;
     --menu-magnet-x: 0px;
@@ -646,29 +642,13 @@ body.menu-cursor-hidden * {
     will-change: transform;
 }
 
-.bio-text a,
-.now-section a,
-.connect-section a:not(.connect-pill),
-.data-link {
-    display: inline-block;
-    vertical-align: baseline;
-}
-
 .mb-tag-chip.is-magnetic,       .mb-tag-chip.is-settling,
-.mb-card-tag.is-magnetic,       .mb-card-tag.is-settling,
-.bio-text a.is-magnetic,        .bio-text a.is-settling,
-.now-section a.is-magnetic,     .now-section a.is-settling,
-.connect-section a.is-magnetic, .connect-section a.is-settling,
-.data-link.is-magnetic,         .data-link.is-settling {
+.mb-card-tag.is-magnetic,       .mb-card-tag.is-settling {
     transition: opacity 0.18s ease;
 }
 
 .mb-tag-chip::before,
-.mb-card-tag::before,
-.bio-text a::before,
-.now-section a::before,
-.connect-section a:not(.connect-pill)::before,
-.data-link::before {
+.mb-card-tag::before {
     content: "";
     position: absolute;
     z-index: -1;

@@ -115,6 +115,49 @@
                     </div>
                 </div>
             </div>
+            <script>
+            (function(){
+                function updateNavGap(){
+                    if (!window.matchMedia('(min-width: 901px)').matches) return;
+                    const navContent = document.querySelector('.nav-panel-content');
+                    const leftCol = document.querySelector('.work-column:not(.nav-panel-column)');
+                    if (!navContent || !leftCol) return;
+
+                    const header = navContent.querySelector('.nav-panel-header');
+                    const groups = navContent.querySelectorAll('.nav-panel-group');
+
+                    const list = navContent.querySelector('.nav-panel-list');
+                    if (!list) return;
+                    let groupsH = 0;
+                    groups.forEach(g => { groupsH += g.getBoundingClientRect().height; });
+
+                    const listH = list.getBoundingClientRect().height;
+                    const free = Math.max(0, listH - groupsH);
+
+                    let slots = 0;
+                    if (groups.length > 0) slots += groups.length - 1;
+                    groups.forEach(g => {
+                        const sub = g.querySelectorAll('.nav-panel-subitem').length;
+                        if (sub > 1) slots += sub - 1;
+                    });
+
+                    const gap = slots > 0 ? Math.max(6, Math.round(free / slots)) : 12;
+                    navContent.style.setProperty('--nav-flow-gap', gap + 'px');
+                }
+
+                let raf = 0;
+                function schedule(){ if (raf) return; raf = requestAnimationFrame(()=>{ raf=0; updateNavGap(); }); }
+
+                window.addEventListener('resize', schedule);
+                document.addEventListener('DOMContentLoaded', ()=>{
+                    schedule();
+                    const leftCol = document.querySelector('.work-column:not(.nav-panel-column)');
+                    const navContent = document.querySelector('.nav-panel-content');
+                    if (leftCol && window.ResizeObserver) new ResizeObserver(schedule).observe(leftCol);
+                    if (navContent && window.ResizeObserver) new ResizeObserver(schedule).observe(navContent);
+                });
+            })();
+            </script>
         </div>
     </section>
 

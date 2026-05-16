@@ -45,7 +45,15 @@
       "Bash(python -c \"import sys, json; data = json.load\\(sys.stdin\\); mb = [e for e in data if e.get\\('section'\\) == 'microblog']; print\\(f'Total: {len\\(data\\)}'\\); print\\(f'Microblog entries: {len\\(mb\\)}'\\); [print\\(f'  - {e[\\\\\"title\\\\\"][:60]} \\({e[\\\\\"url\\\\\"]}\\)'\\) for e in mb]\")",
       "Bash(hugo serve *)",
       "Bash(Get-ChildItem -Path \"I:\\\\Projects\\\\aki-liu\" -Recurse -Directory)",
-      "Bash(Select-Object -First 20)"
+      "Bash(Select-Object -First 20)",
+      "Bash(bash *)",
+      "PowerShell(node --version)",
+      "Skill(superpowers:brainstorming)",
+      "Bash(C:\\\\Users\\\\Kevin\\\\.claude\\\\plugins\\\\cache\\\\claude-plugins-official\\\\superpowers\\\\5.1.0\\\\scripts\\\\start-server.sh *)",
+      "Bash(git commit *)",
+      "Skill(superpowers:writing-plans)",
+      "Skill(superpowers:executing-plans)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:1313/)"
     ]
   }
 }

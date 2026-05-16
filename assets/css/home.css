@@ -101,25 +101,71 @@
     font-weight: 400;
 }
 
+/* Slot machine link effect — JS adds .link-slot class and wraps content */
 .bio-text a,
 .now-section a,
 .connect-section a:not(.connect-pill) {
     text-decoration: none;
-    position: relative;
-    padding-bottom: 2px;
     color: inherit;
 }
 
-.bio-text a::after,
-.now-section a::after,
-.connect-section a:not(.connect-pill)::after {
+/* Slot container: discovery on parent hover, activation on self hover */
+.link-slot {
+    display: inline-flex;
+    position: relative;
+    /* Adjusted clip-path bottom to allow the underline (2px) to show */
+    clip-path: inset(-2px 0 -2px 0);
+    -webkit-clip-path: inset(-2px 0 -2px 0);
+    vertical-align: baseline;
+}
+
+/* Each text copy */
+.link-slot-text {
+    display: block;
+    transition: transform 0.48s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+/* Hover duplicate */
+.link-slot-text--hover {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    transform: translateY(100%);
+}
+
+/* 1. Discovery Phase: Trigger slot roll when the PARENT is hovered */
+.intro:hover .link-slot-text:not(.link-slot-text--hover),
+.now-card-expandable:hover .link-slot-text:not(.link-slot-text--hover),
+.footer-links:hover .link-slot-text:not(.link-slot-text--hover) {
+    transform: translateY(-100%);
+}
+
+.intro:hover .link-slot-text--hover,
+.now-card-expandable:hover .link-slot-text--hover,
+.footer-links:hover .link-slot-text--hover {
+    transform: translateY(0);
+}
+
+/* 2. Activation Phase: Underline grows on SELF hover */
+.link-slot::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -1px;
     left: 0;
     width: 100%;
-    height: 1px;
+    height: 1.2px;
     background: currentColor;
+    transform-origin: left center;
+    transform: scaleX(0);
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.link-slot:hover::after {
+    transform: scaleX(1);
+    opacity: 1;
 }
 
 @media (max-width: 768px) {
@@ -180,6 +226,13 @@
     width: 100%;
     max-width: 920px; /* Slightly wider to let columns breathe */
     margin: 0 auto;
+    transform: translateX(2rem); /* Shift grid right to balance whitespace */
+}
+
+@media (max-width: 900px) {
+    .work-grid {
+        transform: none;
+    }
 }
 
 .work-column {
@@ -245,7 +298,9 @@
     width: 100%;
     max-width: 280px;
     box-shadow: none;
-    height: 100%;
+    margin-top: -1.25rem;
+    margin-bottom: -1.25rem;
+    height: calc(100% + 2.5rem);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -275,8 +330,10 @@
 .nav-panel-list {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: var(--nav-flow-gap, 0px);
     position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
     padding-left: 0;
 }
 
@@ -285,7 +342,7 @@
 .nav-panel-group {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: var(--nav-flow-gap, 0px);
     position: relative;
 }
 
@@ -295,7 +352,7 @@
     position: absolute;
     left: 20px;
     top: 18px; /* Center of this group's main item */
-    bottom: -18px; /* Extend down to the center of the next group's main item */
+    bottom: calc(-18px - var(--nav-flow-gap, 0px)); /* Extend through the dynamic gap to the next group's main item */
     width: 2px;
     background-color: var(--footer-reveal-bg);
     z-index: 0;
@@ -344,6 +401,7 @@
 .nav-panel-sublinks {
     display: flex;
     flex-direction: column;
+    gap: var(--nav-flow-gap, 0px);
     padding-left: 0;
     position: relative;
 }
@@ -359,7 +417,7 @@
     content: '';
     position: absolute;
     left: 20px; /* Track 1 center */
-    top: -20px; /* Reach up to blend with the main line */
+    top: calc(-18px - var(--nav-flow-gap, 2px)); /* Reach up to blend with the main line, accounting for dynamic gap */
     bottom: 50%; /* End at the center of this subitem */
     width: 21px; /* Reach Track 2 center */
     border-left: 2px solid var(--footer-reveal-bg);
