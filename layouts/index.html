@@ -268,8 +268,12 @@
         '  vec2 md=uv-u_mouse;',
         '  float mdist=length(md);',
         '  float falloff=exp(-mdist*3.5)*u_hover;',
+
         '  vec2 drag=u_vel*falloff*2.2;',
         '  p+=drag;',
+
+        '  float localT=t+falloff*1.4;',
+        '  p+=vec2(fbm(p+vec2(0.0,localT)*0.4)-0.5,fbm(p+vec2(3.1,localT)*0.4)-0.5)*falloff*0.4;',
 
         '  vec2 q=vec2(fbm(p+vec2(0.0,t)),fbm(p+vec2(5.2,t+1.3)));',
         '  vec2 r=vec2(fbm(p+4.0*q+vec2(1.7,t*0.9)),fbm(p+4.0*q+vec2(9.2,t*0.6)));',
