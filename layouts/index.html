@@ -239,6 +239,7 @@
         'uniform float u_time;',
         'uniform vec2  u_res;',
         'uniform vec2  u_mouse;',
+        'uniform float u_hover;',
 
         'vec2 hash(vec2 p){',
         '  p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));',
@@ -263,12 +264,17 @@
         '  float t=u_time*0.12;',
         '  vec2 p=uv*2.8;',
 
+        '  vec2 md=uv-u_mouse;',
+        '  float mdist=length(md);',
+        '  vec2 push=normalize(md+0.0001)*exp(-mdist*3.5)*0.55*u_hover;',
+        '  p+=push*2.8;',
+
         '  vec2 q=vec2(fbm(p+vec2(0.0,t)),fbm(p+vec2(5.2,t+1.3)));',
         '  vec2 r=vec2(fbm(p+4.0*q+vec2(1.7,t*0.9)),fbm(p+4.0*q+vec2(9.2,t*0.6)));',
         '  float f=fbm(p+4.0*r);',
 
-        '  float md=length(uv-u_mouse);',
-        '  f+=0.25*exp(-md*2.5);',
+        '  float bright=exp(-mdist*4.0)*0.18*u_hover;',
+        '  f+=bright;',
 
         '  float g=0.75+f*0.2;',
         '  g=clamp(g,0.0,1.0);',
@@ -303,9 +309,11 @@
     var uTime  = gl.getUniformLocation(prog, 'u_time');
     var uRes   = gl.getUniformLocation(prog, 'u_res');
     var uMouse = gl.getUniformLocation(prog, 'u_mouse');
+    var uHover = gl.getUniformLocation(prog, 'u_hover');
 
     var mx = 0.5, my = 0.5, tmx = 0.5, tmy = 0.5;
     var tx = 0, ty = 0, cx = 0, cy = 0;
+    var hover = 0, targetHover = 0;
 
     window.addEventListener('mousemove', function (e) {
         var rx = (e.clientX / window.innerWidth  - 0.5) * 2;
@@ -313,9 +321,13 @@
         tx = -rx * 14; ty = -ry * 8;
 
         var r = canvas.getBoundingClientRect();
-        tmx = (e.clientX - r.left) / r.width;
-        tmy = 1.0 - (e.clientY - r.top)  / r.height;
+        var relX = (e.clientX - r.left) / r.width;
+        var relY = 1.0 - (e.clientY - r.top) / r.height;
+        tmx = relX; tmy = relY;
+        targetHover = (relX > 0 && relX < 1 && relY > 0 && relY < 1) ? 1 : 0;
     });
+
+    document.addEventListener('mouseleave', function () { targetHover = 0; });
 
     function resize() {
         var wr = wrapper.getBoundingClientRect();
@@ -341,11 +353,14 @@
             cx += (tx - cx) * 0.1; cy += (ty - cy) * 0.1;
             wrapper.style.transform = 'translate('+cx.toFixed(2)+'px,'+cy.toFixed(2)+'px)';
         }
-        mx += (tmx - mx) * 0.05; my += (tmy - my) * 0.05;
+        mx    += (tmx - mx)       * 0.05;
+        my    += (tmy - my)       * 0.05;
+        hover += (targetHover - hover) * 0.08;
 
         gl.uniform1f(uTime,  (performance.now() - start) / 1000);
         gl.uniform2f(uRes,   canvas.width, canvas.height);
         gl.uniform2f(uMouse, mx, my);
+        gl.uniform1f(uHover, hover);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         requestAnimationFrame(loop);
