@@ -220,19 +220,34 @@
     var hero = document.querySelector('.author-name-svg-wrapper');
     if (!hero) return;
 
+    var glow = document.createElement('div');
+    glow.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;';
+    document.body.insertBefore(glow, document.body.firstChild);
+
     var tx = 0, ty = 0, cx = 0, cy = 0;
+    var gx = window.innerWidth / 2, gy = window.innerHeight / 2;
+    var gmx = gx, gmy = gy;
 
     window.addEventListener('mousemove', function (e) {
         var rx = (e.clientX / window.innerWidth  - 0.5) * 2;
         var ry = (e.clientY / window.innerHeight - 0.5) * 2;
-        tx = -rx * 4;
-        ty = -ry * 2.5;
+        tx = -rx * 14;
+        ty = -ry * 8;
+        gmx = e.clientX;
+        gmy = e.clientY;
     });
 
     (function loop() {
-        cx += (tx - cx) * 0.06;
-        cy += (ty - cy) * 0.06;
+        cx += (tx - cx) * 0.1;
+        cy += (ty - cy) * 0.1;
         hero.style.transform = 'translate(' + cx.toFixed(2) + 'px,' + cy.toFixed(2) + 'px)';
+
+        gx += (gmx - gx) * 0.04;
+        gy += (gmy - gy) * 0.04;
+        var px = (gx / window.innerWidth  * 100).toFixed(1) + '%';
+        var py = (gy / window.innerHeight * 100).toFixed(1) + '%';
+        glow.style.background = 'radial-gradient(80vmax circle at ' + px + ' ' + py + ', rgba(180,170,255,0.18) 0%, transparent 70%)';
+
         requestAnimationFrame(loop);
     })();
 })();
