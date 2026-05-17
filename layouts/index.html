@@ -217,14 +217,14 @@
 (function () {
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var wrapper = document.querySelector('.author-name-svg-wrapper');
-    if (!wrapper) return;
+    var intro   = document.querySelector('.intro');
+    if (!wrapper || !intro) return;
 
-    wrapper.style.position = 'relative';
-
-    /* ── WebGL fluid canvas ── */
+    /* Canvas lives in .intro (no clip-path), positioned over the wrapper center */
+    intro.style.position = 'relative';
     var canvas = document.createElement('canvas');
-    canvas.style.cssText = 'position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:55%;height:130%;pointer-events:none;z-index:-1;';
-    wrapper.appendChild(canvas);
+    canvas.style.cssText = 'position:absolute;pointer-events:none;z-index:0;';
+    intro.insertBefore(canvas, intro.firstChild);
 
     var gl = canvas.getContext('webgl');
     if (!gl) return;
@@ -270,12 +270,12 @@
         '  float md=length(uv-u_mouse);',
         '  f+=0.25*exp(-md*2.5);',
 
-        '  float g=0.88+f*0.1;',
+        '  float g=0.75+f*0.2;',
         '  g=clamp(g,0.0,1.0);',
 
-        '  float ex=smoothstep(0.0,0.12,uv.x)*smoothstep(1.0,0.88,uv.x);',
-        '  float ey=smoothstep(0.0,0.12,uv.y)*smoothstep(1.0,0.88,uv.y);',
-        '  float alpha=ex*ey*0.75;',
+        '  float ex=smoothstep(0.0,0.15,uv.x)*smoothstep(1.0,0.85,uv.x);',
+        '  float ey=smoothstep(0.0,0.15,uv.y)*smoothstep(1.0,0.85,uv.y);',
+        '  float alpha=ex*ey*0.85;',
 
         '  gl_FragColor=vec4(g,g,g,alpha);',
         '}'
@@ -318,13 +318,22 @@
     });
 
     function resize() {
-        var r = canvas.getBoundingClientRect();
-        canvas.width  = r.width  * devicePixelRatio;
-        canvas.height = r.height * devicePixelRatio;
+        var wr = wrapper.getBoundingClientRect();
+        var ir = intro.getBoundingClientRect();
+        var cw = wr.width  * 0.55;
+        var ch = wr.height * 1.3;
+        var cl = (wr.left - ir.left) + (wr.width - cw) / 2;
+        var ct = (wr.top  - ir.top)  + (wr.height - ch) / 2;
+        canvas.style.left   = cl + 'px';
+        canvas.style.top    = ct + 'px';
+        canvas.style.width  = cw + 'px';
+        canvas.style.height = ch + 'px';
+        canvas.width  = cw * devicePixelRatio;
+        canvas.height = ch * devicePixelRatio;
         gl.viewport(0, 0, canvas.width, canvas.height);
     }
     window.addEventListener('resize', resize);
-    resize();
+    requestAnimationFrame(function(){ requestAnimationFrame(resize); });
 
     var start = performance.now();
     (function loop() {
