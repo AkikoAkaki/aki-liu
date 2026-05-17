@@ -212,4 +212,38 @@
     </section>
 
 </div>
+
+<script>
+(function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.04;mix-blend-mode:multiply;';
+    document.body.insertBefore(canvas, document.body.firstChild);
+
+    var ctx = canvas.getContext('2d');
+    var w, h, img;
+
+    function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+    }
+
+    function grain() {
+        img = ctx.createImageData(w, h);
+        var d = img.data;
+        for (var i = 0; i < d.length; i += 4) {
+            var v = (Math.random() * 255) | 0;
+            d[i] = d[i+1] = d[i+2] = v;
+            d[i+3] = 255;
+        }
+        ctx.putImageData(img, 0, 0);
+        requestAnimationFrame(grain);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    grain();
+})();
+</script>
 {{ end }}
