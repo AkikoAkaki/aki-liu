@@ -328,8 +328,6 @@
         var r = canvas.getBoundingClientRect();
         var relX = (e.clientX - r.left) / r.width;
         var relY = 1.0 - (e.clientY - r.top) / r.height;
-        vx = (relX - tmx) * 6;
-        vy = (relY - tmy) * 6;
         tmx = relX; tmy = relY;
         targetHover = (relX > 0 && relX < 1 && relY > 0 && relY < 1) ? 1 : 0;
     });
@@ -360,10 +358,13 @@
             cx += (tx - cx) * 0.1; cy += (ty - cy) * 0.1;
             wrapper.style.transform = 'translate('+cx.toFixed(2)+'px,'+cy.toFixed(2)+'px)';
         }
+        var prevMx = mx, prevMy = my;
         mx    += (tmx - mx)       * 0.05;
         my    += (tmy - my)       * 0.05;
-        vx    *= 0.82;
-        vy    *= 0.82;
+        var fvx = (mx - prevMx) * 7;
+        var fvy = (my - prevMy) * 7;
+        vx += (fvx - vx) * 0.25;
+        vy += (fvy - vy) * 0.25;
         hover += (targetHover - hover) * 0.08;
 
         gl.uniform1f(uTime,  (performance.now() - start) / 1000);
