@@ -18,10 +18,15 @@
 @keyframes hero-reveal {
     from {
         clip-path: inset(0 100% 0 0);
+        filter: blur(12px);
         opacity: 1;
+    }
+    40% {
+        filter: blur(4px);
     }
     to {
         clip-path: inset(0 0% 0 0);
+        filter: blur(0px);
         opacity: 1;
     }
 }
@@ -76,7 +81,7 @@
     justify-content: center;
     opacity: 1;
     clip-path: inset(0 100% 0 0);
-    animation: hero-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: hero-reveal 1.6s cubic-bezier(0.25, 0.1, 0.1, 1) forwards;
 }
 
 .hero-svg {
@@ -98,10 +103,10 @@
     font-weight: 400;
 }
 
-.intro .bio-text:nth-of-type(1) { animation-delay: 0.75s; }
-.intro .bio-text:nth-of-type(2) { animation-delay: 0.9s; }
-.intro .bio-text:nth-of-type(3) { animation-delay: 1.05s; }
-.intro .bio-text:nth-of-type(4) { animation-delay: 1.2s; }
+.intro .bio-text:nth-of-type(1) { animation-delay: 1.2s; }
+.intro .bio-text:nth-of-type(2) { animation-delay: 1.38s; }
+.intro .bio-text:nth-of-type(3) { animation-delay: 1.56s; }
+.intro .bio-text:nth-of-type(4) { animation-delay: 1.74s; }
 
 .bio-text em {
     font-family: inherit;
