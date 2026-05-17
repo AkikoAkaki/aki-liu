@@ -5,12 +5,12 @@ weight: 1
 draft: false
 ---
 
-A concise record of the courses I am currently taking:
+A running record of courses I have taken at the University of Rochester.
 
-- CSC 254: Programming Language Design & Implementation
-- CSC 282: Design & Analysis of Efficient Algorithms
-- CSC 280: Computer Models & Limitations
-- MATH 282: Intro to Complex Analysis
-- CSC 299W: Social Implications of Computing
+## Spring 2026
 
-If needed, I can expand this page into notes, reading links, and assignment logs for each course.
+- **CSC 254** · Programming Language Design & Implementation
+- **CSC 282** · Design & Analysis of Efficient Algorithms
+- **CSC 280** · Computer Models & Limitations
+- **MATH 282** · Intro to Complex Analysis
+- **CSC 299W** · Social Implications of Computing

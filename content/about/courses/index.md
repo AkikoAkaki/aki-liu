@@ -5,12 +5,12 @@ weight: 1
 draft: false
 ---
 
-当前在读的课程，先做一个简版记录：
+这里记录我在罗切斯特大学修过的所有课程。
 
-- CSC 254: Programming Language Design & Implementation
-- CSC 282: Design & Analysis of Efficient Algorithms
-- CSC 280: Computer Models & Limitations
-- MATH 282: Intro to Complex Analysis
-- CSC 299W: Social Implications of Computing
+## Spring 2026
 
-如果后面需要，我可以继续把每门课拆成更细的笔记、阅读和作业记录。
+- **CSC 254** · Programming Language Design & Implementation
+- **CSC 282** · Design & Analysis of Efficient Algorithms
+- **CSC 280** · Computer Models & Limitations
+- **MATH 282** · Intro to Complex Analysis
+- **CSC 299W** · Social Implications of Computing
