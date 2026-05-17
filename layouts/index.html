@@ -217,8 +217,31 @@
 (function () {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    var hero = document.querySelector('.author-name-svg-wrapper');
+    if (!hero) return;
+
+    var tx = 0, ty = 0, cx = 0, cy = 0;
+
+    window.addEventListener('mousemove', function (e) {
+        var rx = (e.clientX / window.innerWidth  - 0.5) * 2;
+        var ry = (e.clientY / window.innerHeight - 0.5) * 2;
+        tx = -rx * 4;
+        ty = -ry * 2.5;
+    });
+
+    (function loop() {
+        cx += (tx - cx) * 0.06;
+        cy += (ty - cy) * 0.06;
+        hero.style.transform = 'translate(' + cx.toFixed(2) + 'px,' + cy.toFixed(2) + 'px)';
+        requestAnimationFrame(loop);
+    })();
+})();
+
+(function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     var canvas = document.createElement('canvas');
-    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.04;mix-blend-mode:multiply;';
+    canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;opacity:0.08;';
     document.body.insertBefore(canvas, document.body.firstChild);
 
     var ctx = canvas.getContext('2d');
