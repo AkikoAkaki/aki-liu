@@ -239,6 +239,7 @@
         'uniform float u_time;',
         'uniform vec2  u_res;',
         'uniform vec2  u_mouse;',
+        'uniform vec2  u_vel;',
         'uniform float u_hover;',
 
         'vec2 hash(vec2 p){',
@@ -266,15 +267,13 @@
 
         '  vec2 md=uv-u_mouse;',
         '  float mdist=length(md);',
-        '  vec2 push=normalize(md+0.0001)*exp(-mdist*3.5)*0.55*u_hover;',
-        '  p+=push*2.8;',
+        '  float falloff=exp(-mdist*3.5)*u_hover;',
+        '  vec2 drag=u_vel*falloff*2.2;',
+        '  p+=drag;',
 
         '  vec2 q=vec2(fbm(p+vec2(0.0,t)),fbm(p+vec2(5.2,t+1.3)));',
         '  vec2 r=vec2(fbm(p+4.0*q+vec2(1.7,t*0.9)),fbm(p+4.0*q+vec2(9.2,t*0.6)));',
         '  float f=fbm(p+4.0*r);',
-
-        '  float bright=exp(-mdist*4.0)*0.18*u_hover;',
-        '  f+=bright;',
 
         '  float g=0.75+f*0.2;',
         '  g=clamp(g,0.0,1.0);',
@@ -309,9 +308,11 @@
     var uTime  = gl.getUniformLocation(prog, 'u_time');
     var uRes   = gl.getUniformLocation(prog, 'u_res');
     var uMouse = gl.getUniformLocation(prog, 'u_mouse');
+    var uVel   = gl.getUniformLocation(prog, 'u_vel');
     var uHover = gl.getUniformLocation(prog, 'u_hover');
 
     var mx = 0.5, my = 0.5, tmx = 0.5, tmy = 0.5;
+    var vx = 0, vy = 0;
     var tx = 0, ty = 0, cx = 0, cy = 0;
     var hover = 0, targetHover = 0;
 
@@ -323,6 +324,8 @@
         var r = canvas.getBoundingClientRect();
         var relX = (e.clientX - r.left) / r.width;
         var relY = 1.0 - (e.clientY - r.top) / r.height;
+        vx = (relX - tmx) * 6;
+        vy = (relY - tmy) * 6;
         tmx = relX; tmy = relY;
         targetHover = (relX > 0 && relX < 1 && relY > 0 && relY < 1) ? 1 : 0;
     });
@@ -355,11 +358,14 @@
         }
         mx    += (tmx - mx)       * 0.05;
         my    += (tmy - my)       * 0.05;
+        vx    *= 0.82;
+        vy    *= 0.82;
         hover += (targetHover - hover) * 0.08;
 
         gl.uniform1f(uTime,  (performance.now() - start) / 1000);
         gl.uniform2f(uRes,   canvas.width, canvas.height);
         gl.uniform2f(uMouse, mx, my);
+        gl.uniform2f(uVel,   vx, vy);
         gl.uniform1f(uHover, hover);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
