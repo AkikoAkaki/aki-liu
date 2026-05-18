@@ -1,18 +1,22 @@
 {{- /* Static head assets cached across pages in one build. */ -}}
+{{- /* Inline theme bootstrap: must run before first paint to avoid a
+       light-to-dark snap when the visitor's stored preference is dark. */ -}}
+<script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(_){}}())</script>
 {{- /* Fonts */ -}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Preload core brand font to avoid FOUT/FOIT -->
 <link rel="preload" href="/fonts/switzer/Switzer-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <!-- Here I load the comparison fonts you requested: Syncopate, JetBrains Mono, Playfair Display, Inter, and Newsreader/Geist Mono for easier switching -->
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=optional" rel="stylesheet" media="print" onload="this.media='all'">
 
 {{- /* CSS pipeline: global base bundle + route-level styles */ -}}
 {{- $base := resources.Get "css/base.css" -}}
 {{- $layout := resources.Get "css/layout.css" -}}
 {{- $components := resources.Get "css/components.css" -}}
+{{- $motion := resources.Get "css/motion.css" -}}
 {{- $search := resources.Get "css/search.css" -}}
-{{- $style := slice $base $layout $components $search | resources.Concat "css/bundle.css" | resources.Minify | fingerprint -}}
+{{- $style := slice $base $layout $components $motion $search | resources.Concat "css/bundle.css" | resources.Minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
 
 {{- if .IsHome -}}

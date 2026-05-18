@@ -17,10 +17,19 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        // --- Scroll reveal (About + future fancy pages) ---
+        initScrollReveal();
+
+        // --- About image sequence ---
+        initAboutImageSequence();
+
+        // --- About flight + drag (Coordinates/Registration → pinboard) ---
+        initAboutFlightAndDrag();
+
         // --- Magnetic hover: links & tags ---
         const generalMagnetEls = [...document.querySelectorAll(
             '.bio-text a, .now-section a, .connect-section a:not(.connect-pill), .data-link, ' +
-            '.mb-tag-chip, .mb-card-tag, .menu-trigger'
+            '.mb-tag-chip, .mb-card-tag, .menu-trigger, .af-now-prose a'
         )];
         initMagneticHover(generalMagnetEls, { magnetX: 4, magnetY: 3 });
 
@@ -368,13 +377,343 @@
         initFooterReveal();
     });
 
+    function initScrollReveal() {
+        const targets = document.querySelectorAll('.reveal-on-scroll, .reveal-pin');
+        if (!targets.length) return;
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion || !('IntersectionObserver' in window)) {
+            targets.forEach(el => el.classList.add('is-revealed'));
+            return;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-revealed');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+
+        targets.forEach(el => observer.observe(el));
+    }
+
+    function initAboutImageSequence() {
+        const root = document.querySelector('[data-about-sequence]');
+        const track = document.querySelector('[data-about-sequence-track]');
+        if (!root || !track) return;
+
+        const sourceItems = [...track.querySelectorAll('.af-sequence-item')];
+        if (!sourceItems.length) return;
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const sourceCount = sourceItems.length;
+        const anchorSourceIndex = Math.max(0, sourceItems.findIndex(item => item.classList.contains('is-anchor')));
+        const repeatCount = 5;
+        const middleSet = Math.floor(repeatCount / 2);
+
+        track.innerHTML = '';
+        for (let set = 0; set < repeatCount; set += 1) {
+            sourceItems.forEach((item, index) => {
+                const clone = item.cloneNode(true);
+                clone.dataset.sequenceIndex = String(index);
+                track.appendChild(clone);
+            });
+        }
+
+        const items = [...track.querySelectorAll('.af-sequence-item')];
+        let active = false;
+        let current = middleSet * sourceCount + anchorSourceIndex;
+        let closeTimer = 0;
+        let resetTimer = 0;
+        let wheelLock = 0;
+
+        function setTransition(enabled) {
+            track.style.transition = enabled && !reduceMotion ? '' : 'none';
+        }
+
+        function centerCurrent(animate) {
+            const target = items[current];
+            if (!target) return;
+
+            setTransition(animate);
+            const itemCenter = target.offsetTop + (target.offsetHeight / 2);
+            track.style.setProperty('--sequence-y', `${-itemCenter}px`);
+
+            if (!animate) {
+                requestAnimationFrame(() => setTransition(true));
+            }
+        }
+
+        function render(animate = true) {
+            items.forEach((item, index) => {
+                item.classList.toggle('is-current', index === current);
+            });
+            centerCurrent(animate);
+        }
+
+        function resetToMiddleIfNeeded() {
+            if (current >= sourceCount && current < sourceCount * (repeatCount - 1)) return;
+
+            const sequenceIndex = Number(items[current]?.dataset.sequenceIndex || 0);
+            current = middleSet * sourceCount + sequenceIndex;
+            render(false);
+        }
+
+        function open() {
+            clearTimeout(closeTimer);
+            if (active) return;
+
+            active = true;
+            root.classList.add('is-sequence-open');
+            document.body.classList.add('about-sequence-open');
+            render(false);
+            requestAnimationFrame(() => render(!reduceMotion));
+        }
+
+        function close() {
+            closeTimer = setTimeout(() => {
+                active = false;
+                root.classList.remove('is-sequence-open');
+                document.body.classList.remove('about-sequence-open');
+            }, 120);
+        }
+
+        function step(direction) {
+            current += direction;
+            if (current < 0) current = items.length - 1;
+            if (current >= items.length) current = 0;
+
+            render(!reduceMotion);
+            clearTimeout(resetTimer);
+            resetTimer = setTimeout(resetToMiddleIfNeeded, reduceMotion ? 0 : 560);
+        }
+
+        root.addEventListener('mouseenter', open);
+        root.addEventListener('pointerenter', open);
+        root.addEventListener('mouseover', open);
+        root.addEventListener('mousemove', open);
+        root.addEventListener('click', open);
+        root.addEventListener('mouseleave', close);
+        root.addEventListener('pointerleave', close);
+
+        root.addEventListener('wheel', event => {
+            if (!active) return;
+
+            event.preventDefault();
+            const now = performance.now();
+            if (!reduceMotion && now < wheelLock) return;
+
+            step(event.deltaY > 0 ? 1 : -1);
+            wheelLock = now + 260;
+        }, { passive: false });
+
+        document.addEventListener('mousemove', event => {
+            if (!active) return;
+
+            const rect = root.getBoundingClientRect();
+            const isInside = event.clientX >= rect.left &&
+                event.clientX <= rect.right &&
+                event.clientY >= rect.top &&
+                event.clientY <= rect.bottom;
+
+            if (isInside) {
+                clearTimeout(closeTimer);
+            } else {
+                close();
+            }
+        }, { passive: true });
+
+        window.addEventListener('resize', () => {
+            if (active) render(false);
+        });
+    }
+
+    function initAboutFlightAndDrag() {
+        const canvas = document.getElementById('about-pinboard-canvas');
+        const summary = document.getElementById('about-summary');
+        if (!canvas || !summary) return;
+
+        if (!window.matchMedia('(min-width: 881px)').matches) return;
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        const FLIERS = [
+            { name: 'coordinates', srcRot: -0.8 },
+            { name: 'registration', srcRot: 0.8 },
+        ];
+
+        const fliers = FLIERS
+            .map(cfg => {
+                const el = document.querySelector(`[data-flier="${cfg.name}"]`);
+                const slot = document.querySelector(`[data-slot-for="${cfg.name}"]`);
+                const target = document.querySelector(`[data-target-for="${cfg.name}"]`);
+                if (!el || !slot || !target) return null;
+                return { ...cfg, el, slot, target };
+            })
+            .filter(Boolean);
+
+        if (!fliers.length) return;
+
+        // Freeze slot size so layout above doesn't reflow until landing completes
+        fliers.forEach(f => {
+            const r = f.el.getBoundingClientRect();
+            f.slot.style.minHeight = r.height + 'px';
+            f.width = r.width;
+        });
+
+        let landed = false;
+        let topZ = 10;
+        const FLIGHT_MS = 950;
+        const FLIGHT_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+
+        function startFlight() {
+            if (landed) return;
+            landed = true;
+
+            const remaining = fliers.length;
+            let finished = 0;
+
+            fliers.forEach((f, i) => {
+                const stagger = i * 90;
+                const src = f.el.getBoundingClientRect();
+                const landTop = Number(f.target.dataset.landTop);
+                const landLeft = Number(f.target.dataset.landLeft);
+                const landRot = Number(f.target.dataset.landRot);
+
+                // Re-parent into the canvas and set the final absolute position
+                canvas.appendChild(f.el);
+                f.el.classList.add('is-landed');
+                f.el.style.transition = 'none';
+                f.el.style.position = 'absolute';
+                f.el.style.top = `${landTop}px`;
+                f.el.style.left = `${landLeft}px`;
+                f.el.style.width = `${f.width}px`;
+
+                // Compute the inverse translate so the card visually stays at its source position
+                const dst = f.el.getBoundingClientRect();
+                const dx = src.left - dst.left;
+                const dy = src.top - dst.top;
+                f.el.style.transform = `translate(${dx}px, ${dy}px) rotate(${f.srcRot}deg)`;
+
+                // Force a reflow so the transition picks up the next change
+                // eslint-disable-next-line no-unused-expressions
+                f.el.offsetWidth;
+
+                setTimeout(() => {
+                    f.el.style.transition = `transform ${FLIGHT_MS}ms ${FLIGHT_EASE}`;
+                    f.el.style.transform = `rotate(${landRot}deg)`;
+                }, stagger + (reduceMotion ? 0 : 16));
+
+                function onEnd(e) {
+                    if (e.propertyName !== 'transform') return;
+                    f.el.removeEventListener('transitionend', onEnd);
+                    f.el.style.transition = '';
+                    makeDraggable(f.el);
+                    finished += 1;
+                    if (finished === remaining) {
+                        summary.classList.add('is-flown');
+                    }
+                }
+                f.el.addEventListener('transitionend', onEnd);
+            });
+
+            canvas.classList.add('is-loaded');
+        }
+
+        const io = new IntersectionObserver(entries => {
+            for (const entry of entries) {
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.15) {
+                    startFlight();
+                    io.disconnect();
+                    break;
+                }
+            }
+        }, { threshold: [0, 0.15, 0.3] });
+        io.observe(canvas);
+
+        // === Drag ===
+        function makeDraggable(el) {
+            if (el.dataset.dragReady === '1') return;
+            el.dataset.dragReady = '1';
+
+            // Block native link drag (especially on the courses anchor)
+            el.setAttribute('draggable', 'false');
+            el.addEventListener('dragstart', e => e.preventDefault());
+
+            let startX = 0, startY = 0;
+            let originLeft = 0, originTop = 0;
+            let pointerId = -1;
+            let moved = false;
+
+            el.addEventListener('pointerdown', e => {
+                if (e.button !== undefined && e.button !== 0) return;
+                // Lift to the top of the stack immediately
+                topZ += 1;
+                el.style.zIndex = String(topZ);
+
+                const r = el.getBoundingClientRect();
+                const cr = canvas.getBoundingClientRect();
+                originLeft = r.left - cr.left;
+                originTop = r.top - cr.top;
+                startX = e.clientX;
+                startY = e.clientY;
+                pointerId = e.pointerId;
+                moved = false;
+                el.dataset.dragging = 'true';
+                try { el.setPointerCapture(e.pointerId); } catch (_) {}
+                if (!el.style.width) el.style.width = r.width + 'px';
+                e.preventDefault();
+            });
+
+            el.addEventListener('pointermove', e => {
+                if (el.dataset.dragging !== 'true') return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                if (!moved && Math.hypot(dx, dy) > 4) moved = true;
+                const cr = canvas.getBoundingClientRect();
+                const w = el.offsetWidth, h = el.offsetHeight;
+                // Generous bounds: allow card to extend beyond canvas by up to half its size.
+                // This frees up the empty right-side area for dragging.
+                const overX = w * 0.6;
+                const overY = h * 0.6;
+                const nl = Math.max(-overX, Math.min(cr.width - w + overX, originLeft + dx));
+                const nt = Math.max(-overY, Math.min(cr.height - h + overY, originTop + dy));
+                el.style.left = `${nl}px`;
+                el.style.top = `${nt}px`;
+            });
+
+            const end = e => {
+                if (el.dataset.dragging !== 'true') return;
+                el.dataset.dragging = 'false';
+                try { el.releasePointerCapture(pointerId); } catch (_) {}
+                if (moved) {
+                    el.dataset.suppressClick = '1';
+                    setTimeout(() => { delete el.dataset.suppressClick; }, 0);
+                }
+            };
+            el.addEventListener('pointerup', end);
+            el.addEventListener('pointercancel', end);
+
+            el.addEventListener('click', e => {
+                if (el.dataset.suppressClick === '1') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }, true);
+        }
+
+        canvas.querySelectorAll('[data-card-id]').forEach(makeDraggable);
+    }
+
     function initSlotLinks() {
         const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (!canHover || reduceMotion) return;
 
         const links = document.querySelectorAll(
-            '.bio-text a, .now-section a, .connect-section a:not(.connect-pill)'
+            '.bio-text a, .now-section a, .connect-section a:not(.connect-pill), .af-now-prose a'
         );
 
         links.forEach(link => {
@@ -1261,7 +1600,11 @@
 
             const revealDistance = Math.max(1, footerHeight);
 
-            if (scrollBottom <= footerHeight && footerHeight > 0) {
+            // Only reveal when the user has actually scrolled toward the bottom.
+            // Without the scrollY guard, short pages (and microblog before its feed
+            // fetches) hit this branch on first paint and snap from scaleX(1) to
+            // scaleX(0.956) the moment JS runs, which reads as a flicker.
+            if (scrollBottom <= footerHeight && footerHeight > 0 && window.scrollY > 0) {
                 let progress = 1 - (scrollBottom / revealDistance);
                 if (progress < 0) progress = 0;
                 if (progress > 1) progress = 1;

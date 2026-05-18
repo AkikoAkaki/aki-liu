@@ -94,6 +94,37 @@ body.post-short {
     font-size: 4rem;
     text-align: center;
     width: 100%;
+    clip-path: inset(-0.25em 100% -0.25em 0);
+    animation: motion-sweep var(--motion-sweep-fast) var(--motion-ease-sweep) forwards;
+}
+
+@keyframes post-meta-rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 0.8; transform: translateY(0); }
+}
+
+.meta-value.custom-info,
+.meta-metadata-stack {
+    opacity: 0;
+    animation: post-meta-rise var(--motion-rise-fast) var(--motion-ease-rise) forwards;
+    animation-delay: 0.3s;
+}
+
+.post-content {
+    opacity: 0;
+    animation: motion-rise var(--motion-rise-fast) var(--motion-ease-rise) forwards;
+    animation-delay: 0.45s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .post-title-override.meta-large,
+    .meta-value.custom-info,
+    .meta-metadata-stack,
+    .post-content {
+        opacity: 1;
+        clip-path: none;
+        animation: none;
+    }
 }
 
 .meta-value.custom-info {

@@ -132,7 +132,7 @@
       <div></div>
     </div>
 
-    <div class="af-summary af-summary--objects">
+    <div class="af-summary af-summary--objects" id="about-summary">
       <div class="af-now-block af-now-block--primary reveal-on-scroll">
         <div class="af-now-kicker">Right Now</div>
         <div class="af-now-prose">
@@ -148,58 +148,62 @@
         </div>
       </div>
 
-      <div class="af-origin-label reveal-on-scroll" style="--reveal-delay: 80ms">
-        <div class="af-object-head">
-          <span></span>
-          <span>Coordinates</span>
-        </div>
-        <div class="af-origin-name">Aki Liu <span>/ 刘丰恺</span></div>
-        <div class="af-timeline">
-          <div class="af-timeline-item">
-            <span class="af-timeline-year">2004</span>
-            <span class="af-timeline-dot"></span>
-            <div>
-              <strong>Born in Shanghai, China</strong>
-            </div>
+      <div class="af-flier-slot" data-slot-for="coordinates">
+        <div class="af-origin-label reveal-on-scroll" data-flier="coordinates" data-card-id="coordinates" style="--reveal-delay: 80ms">
+          <div class="af-object-head">
+            <span></span>
+            <span>Coordinates</span>
           </div>
-          <div class="af-timeline-item">
-            <span class="af-timeline-year">2010s</span>
-            <span class="af-timeline-dot"></span>
-            <div>
-              <strong>Grew up in Shanghai</strong>
+          <div class="af-origin-name">Aki Liu <span>/ 刘丰恺</span></div>
+          <div class="af-timeline">
+            <div class="af-timeline-item">
+              <span class="af-timeline-year">2004</span>
+              <span class="af-timeline-dot"></span>
+              <div>
+                <strong>Born in Shanghai, China</strong>
+              </div>
             </div>
-          </div>
-          <div class="af-timeline-item">
-            <span class="af-timeline-year">Now</span>
-            <span class="af-timeline-dot"></span>
-            <div>
-              <strong>Studying in Rochester, NY, United States</strong>
+            <div class="af-timeline-item">
+              <span class="af-timeline-year">2010s</span>
+              <span class="af-timeline-dot"></span>
+              <div>
+                <strong>Grew up in Shanghai</strong>
+              </div>
+            </div>
+            <div class="af-timeline-item">
+              <span class="af-timeline-year">Now</span>
+              <span class="af-timeline-dot"></span>
+              <div>
+                <strong>Studying in Rochester, NY, United States</strong>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="af-enrollment-slip reveal-on-scroll" style="--reveal-delay: 160ms">
-        <div class="af-slip-logo-panel">
-          <img class="af-slip-logo" src="/images/University%20of%20Rochester%20logo.png" alt="University of Rochester logo">
-        </div>
-        <div class="af-slip-content">
-          <div class="af-slip-topline">
-            <span>Registration</span>
-            <span>Active</span>
+      <div class="af-flier-slot" data-slot-for="registration">
+        <div class="af-enrollment-slip reveal-on-scroll" data-flier="registration" data-card-id="registration" style="--reveal-delay: 160ms">
+          <div class="af-slip-logo-panel">
+            <img class="af-slip-logo" src="/images/University%20of%20Rochester%20logo.png" alt="University of Rochester logo">
           </div>
-          <div class="af-slip-title">University of Rochester</div>
-          <div class="af-slip-grid">
-            <span>Student</span>
-            <strong>Aki Liu</strong>
-            <span>Degree</span>
-            <strong>Dual degree</strong>
-            <span>Major</span>
-            <strong>B.S. in Computer Science, B.S. in Applied Mathematics</strong>
-            <span>Previous</span>
-            <strong>East Asian Studies + Digital Media Studies</strong>
+          <div class="af-slip-content">
+            <div class="af-slip-topline">
+              <span>Registration</span>
+              <span>Active</span>
+            </div>
+            <div class="af-slip-title">University of Rochester</div>
+            <div class="af-slip-grid">
+              <span>Student</span>
+              <strong>Aki Liu</strong>
+              <span>Degree</span>
+              <strong>Dual degree</strong>
+              <span>Major</span>
+              <strong>B.S. in Computer Science, B.S. in Applied Mathematics</strong>
+              <span>Previous</span>
+              <strong>East Asian Studies + Digital Media Studies</strong>
+            </div>
+            <div class="af-slip-note">Meliora, "Ever Better"</div>
           </div>
-          <div class="af-slip-note">Meliora, "Ever Better"</div>
         </div>
       </div>
 
@@ -257,28 +261,28 @@
 
         </div>
 
-        <div class="af-pinboard-canvas">
-          <div class="af-polaroid reveal-pin" style="width:270px;height:318px;top:0;left:205px; --pin-rot:-3.2deg; --reveal-delay: 0ms">
+        <div class="af-pinboard-canvas" id="about-pinboard-canvas">
+          <div class="af-polaroid reveal-pin" data-card-id="polaroid-portrait" style="width:270px;height:318px;top:0;left:205px; --pin-rot:-3.2deg; --reveal-delay: 0ms">
             <div class="ab-photo" style="width:100%;height:100%">
-              <div class="ab-photo-silhouette"></div>
+              <img src="/images/avatar.png" alt="Aki Liu" style="width:100%;height:100%;object-fit:cover;display:block;">
             </div>
             <div class="af-polaroid-caption"><span>A · Portrait</span><span>2025</span></div>
           </div>
 
-          <div class="af-polaroid reveal-pin" style="width:290px;height:214px;top:286px;left:46px; --pin-rot:4deg; --reveal-delay: 240ms">
+          <div class="af-polaroid reveal-pin" data-card-id="polaroid-desk" style="width:290px;height:214px;top:286px;left:46px; --pin-rot:4deg; --reveal-delay: 240ms">
             <div class="ab-photo" style="width:100%;height:100%">
               <div class="ab-photo-silhouette"></div>
             </div>
             <div class="af-polaroid-caption"><span>B · Desk</span><span>ROC</span></div>
           </div>
 
-          <div class="af-notebook reveal-pin" style="width:260px;top:34px;left:0; --pin-rot:-1.5deg; --reveal-delay: 80ms">
-            <em>The starry heavens above me<br>and the moral law within me.</em>
-            <div style="height:18px"></div>
-            <span class="af-notebook-attr">— Kant, &amp; in margin: ?</span>
+          <div class="af-notebook reveal-pin" data-card-id="notebook" style="width:300px;top:34px;left:0; --pin-rot:-1.5deg; --reveal-delay: 80ms">
+            <em>The meaning of speech, then, requires that before any word is spoken, there must be a sort of immense hecatomb, a preliminary flood plunging all of creation into a total sea.</em>
+            <div style="height:14px"></div>
+            <span class="af-notebook-attr">Maurice Blanchot, "Literature and the Right to Death"</span>
           </div>
 
-          <div class="af-book reveal-pin" style="top:342px;left:342px; --pin-rot:-6deg; --reveal-delay: 320ms">
+          <div class="af-book reveal-pin" data-card-id="book" style="top:342px;left:342px; --pin-rot:-6deg; --reveal-delay: 320ms">
             <div>
               <div class="af-book-author">Žižek</div>
               <div class="af-book-title">Enjoy Your<br>Symptom!</div>
@@ -286,7 +290,7 @@
             <div class="af-book-author">RTLDG · 2008</div>
           </div>
 
-          <div class="af-cv-card reveal-pin" style="top:314px;left:462px; --pin-rot:5deg; --reveal-delay: 160ms">
+          <div class="af-cv-card reveal-pin" data-card-id="cv" style="top:314px;left:462px; --pin-rot:5deg; --reveal-delay: 160ms">
             <div class="af-cv-card-head">Aki Liu — CV</div>
             <div class="af-cv-line"></div>
             <div class="af-cv-line af-cv-line--short"></div>
@@ -298,7 +302,7 @@
             <div class="af-cv-card-pdf">PDF ↓</div>
           </div>
 
-          <a class="af-courses-card reveal-pin" href="/about/courses/" style="top:148px;left:352px; --pin-rot:-3deg; --reveal-delay: 400ms">
+          <a class="af-courses-card reveal-pin" data-card-id="courses" href="/about/courses/" style="top:148px;left:352px; --pin-rot:-3deg; --reveal-delay: 400ms">
             <div class="af-courses-card-punch"></div>
             <div class="af-courses-card-header">
               <span>Spring 2026</span>
@@ -328,6 +332,9 @@
             </div>
             <div class="af-courses-card-footer">All courses →</div>
           </a>
+
+          <div class="af-flier-target" data-target-for="coordinates" data-land-top="40" data-land-left="320" data-land-rot="-5" aria-hidden="true"></div>
+          <div class="af-flier-target" data-target-for="registration" data-land-top="480" data-land-left="20" data-land-rot="3" aria-hidden="true"></div>
         </div>
       </div>
     </section>

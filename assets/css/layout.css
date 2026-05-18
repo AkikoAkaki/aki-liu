@@ -82,7 +82,7 @@
     border-bottom-left-radius: var(--footer-reveal-radius);
     border-bottom-right-radius: var(--footer-reveal-radius);
     box-shadow: none;
-    overflow: visible;
+    overflow: clip;
     transform-origin: center bottom;
     /* margin-bottom, radius, and horizontal scale are controlled via JS */
     will-change: border-radius, transform;
