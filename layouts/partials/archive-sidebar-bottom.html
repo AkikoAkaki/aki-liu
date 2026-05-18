@@ -2,8 +2,11 @@
 <div class="archive-bottom-section">
     <div class="archive-years-list archive-years-mobile">
         {{ range $years }}
-            <a href="#" class="archive-year-item">
+            <a href="#" class="archive-year-item" data-year="{{ . }}">
                 <span class="filter-hover-arrow filter-hover-arrow--right">{{ partial "icons/hover-arrow.html" . }}</span>
+                <span class="filter-active-close filter-active-close--right" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"><path d="M7 7l10 10"/><path d="M17 7L7 17"/></svg>
+                </span>
                 <span class="filter-item-label">{{ . }}</span>
             </a>
         {{ end }}

@@ -19,14 +19,20 @@
                     {{ $href := printf "/tags/%s/" (.name | urlize) | relLangURL }}
                     <a href="{{ $href }}" class="archive-tag-item" data-tag="{{ .name | urlize }}">
                         <span class="filter-hover-arrow filter-hover-arrow--left">{{ partial "icons/hover-arrow.html" . }}</span>
+                        <span class="filter-active-close filter-active-close--left" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"><path d="M7 7l10 10"/><path d="M17 7L7 17"/></svg>
+                        </span>
                         <span class="filter-item-label"><span class="tag-name">{{ .name | title }}</span><span class="tag-dot"></span></span>
                     </a>
                 {{ end }}
             </div>
             <div class="archive-years-list archive-years-desktop">
                 {{ range $years }}
-                    <a href="#" class="archive-year-item">
+                    <a href="#" class="archive-year-item" data-year="{{ . }}">
                         <span class="filter-hover-arrow filter-hover-arrow--right">{{ partial "icons/hover-arrow.html" . }}</span>
+                        <span class="filter-active-close filter-active-close--right" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"><path d="M7 7l10 10"/><path d="M17 7L7 17"/></svg>
+                        </span>
                         <span class="filter-item-label">{{ . }}</span>
                     </a>
                 {{ end }}
@@ -34,11 +40,11 @@
             <div class="archive-stats-minimal">
                 <div class="stat-item stat-item--entries">
                     <span class="archive-stat-label">Entries:</span>
-                    <span>{{ len $regularPages }}</span>
+                    <span data-archive-stat="entries">{{ len $regularPages }}</span>
                 </div>
                 <div class="stat-item stat-item--years">
                     <span class="archive-stat-label">Years:</span>
-                    <span>{{ len $years }}</span>
+                    <span data-archive-stat="years">{{ len $years }}</span>
                 </div>
             </div>
         </div>

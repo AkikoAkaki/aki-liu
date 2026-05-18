@@ -1,0 +1,790 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About Hover Image Strip Preview</title>
+<style>
+@font-face { font-family: "Switzer"; src: url("../static/fonts/switzer/Switzer-Regular.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Switzer"; src: url("../static/fonts/switzer/Switzer-Semibold.woff2") format("woff2"); font-weight: 600; }
+@font-face { font-family: "Switzer"; src: url("../static/fonts/switzer/Switzer-Bold.woff2") format("woff2"); font-weight: 700; }
+
+:root {
+  --bg: #fafafa;
+  --ink: #030303;
+  --muted: #777;
+  --line: rgba(0, 0, 0, 0.08);
+  --sans: "Switzer", Arial, sans-serif;
+  --editorial: "Didot", "Bodoni 72", "Bodoni MT", Georgia, serif;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 72px 56px 120px;
+}
+
+.display-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: end;
+}
+
+h1 {
+  margin: 0;
+  font-family: var(--editorial);
+  font-weight: 400;
+  font-size: clamp(54px, 7.6vw, 104px);
+  line-height: 0.92;
+  letter-spacing: -0.015em;
+}
+
+.right { text-align: right; white-space: nowrap; }
+
+.center-band {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  gap: 56px;
+  padding-top: 76px;
+  min-height: 390px;
+}
+
+.hover-trigger {
+  width: 380px;
+  height: 260px;
+  position: relative;
+  cursor: ns-resize;
+  z-index: 20;
+  overflow: visible;
+}
+
+.base-photo,
+.strip-photo {
+  position: relative;
+  overflow: hidden;
+  background: #c9c7c1;
+}
+
+.base-photo {
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.045);
+  transition: opacity 180ms ease;
+}
+
+.base-photo::before,
+.strip-photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(rgba(0, 0, 0, 0.12) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 1px 2px;
+  mix-blend-mode: multiply;
+  opacity: 0.56;
+  z-index: 2;
+}
+
+.base-photo::after,
+.strip-photo::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  background:
+    radial-gradient(ellipse 42% 18% at 52% 20%, rgba(32, 32, 30, 0.56), transparent 70%),
+    radial-gradient(ellipse 44% 54% at 52% 72%, rgba(28, 27, 25, 0.52), transparent 73%);
+  filter: blur(6px);
+  opacity: 0.78;
+}
+
+.base-label {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  font: 700 9px/1 var(--sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.hover-hint {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 20px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font: 700 10px/1 var(--sans);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.34);
+}
+
+.hover-trigger.is-open .base-photo {
+  opacity: 0;
+}
+
+.sequence-layer {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 220ms ease;
+  z-index: 30;
+}
+
+.hover-trigger.is-open .sequence-layer {
+  opacity: 1;
+}
+
+.sequence-track {
+  --seq-y: 0px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: grid;
+  gap: 28px;
+  transform: translateY(var(--seq-y));
+  transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.sequence-item {
+  width: 100%;
+  margin: 0;
+  position: relative;
+  opacity: 0.46;
+  transform: scale(0.992);
+  transition: opacity 420ms ease, transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sequence-item.is-current {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.sequence-photo {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #d6d4cf;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.045);
+}
+
+.sequence-photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(rgba(0, 0, 0, 0.12) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 1px 2px;
+  mix-blend-mode: multiply;
+  opacity: 0.56;
+  z-index: 2;
+}
+
+.sequence-photo::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  background:
+    radial-gradient(ellipse 42% 18% at 52% 20%, rgba(32, 32, 30, 0.48), transparent 70%),
+    radial-gradient(ellipse 44% 54% at 52% 72%, rgba(28, 27, 25, 0.44), transparent 73%);
+  filter: blur(6px);
+  opacity: 0.7;
+}
+
+.sequence-item[data-ratio="wide"] .sequence-photo { aspect-ratio: 1.4615; }
+.sequence-item[data-ratio="portrait"] .sequence-photo { aspect-ratio: 0.76; }
+.sequence-item[data-ratio="square"] .sequence-photo { aspect-ratio: 1; }
+.sequence-item[data-ratio="cinema"] .sequence-photo { aspect-ratio: 1.92; }
+.sequence-item[data-ratio="tall"] .sequence-photo { aspect-ratio: 0.62; }
+
+.sequence-item:nth-child(1) .sequence-photo { background: linear-gradient(180deg, #d7d4cf, #bebab5); }
+.sequence-item:nth-child(2) .sequence-photo { background: linear-gradient(120deg, #dcd9d2, #bab9b3); }
+.sequence-item:nth-child(3) .sequence-photo { background: linear-gradient(180deg, #cfcfc9, #e0ddd6); }
+.sequence-item:nth-child(4) .sequence-photo { background: #c9c7c1; }
+.sequence-item:nth-child(5) .sequence-photo { background: linear-gradient(90deg, #d8d4cc, #b7b8b3); }
+.sequence-item:nth-child(6) .sequence-photo { background: radial-gradient(circle at 52% 28%, #bebdb6, #dedbd3); }
+.sequence-item:nth-child(7) .sequence-photo { background: linear-gradient(135deg, #e1ded8, #bebcb7); }
+
+.sequence-label {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  font: 700 9px/1 var(--sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.sequence-caption {
+  position: absolute;
+  top: 50%;
+  width: 148px;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 260ms ease, transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  color: rgba(0, 0, 0, 0.56);
+}
+
+.sequence-caption--left {
+  right: calc(100% + 28px);
+  text-align: right;
+  transform: translate(8px, -50%);
+}
+
+.sequence-caption--right {
+  left: calc(100% + 28px);
+  text-align: left;
+  transform: translate(-8px, -50%);
+}
+
+.sequence-item.is-current .sequence-caption {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+.sequence-caption-kicker {
+  display: block;
+  margin-bottom: 8px;
+  font: 800 9px/1 var(--sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.sequence-caption-text {
+  display: block;
+  font: 600 12px/1.35 var(--sans);
+  letter-spacing: 0.02em;
+}
+
+.sequence-caption-note {
+  display: block;
+  margin-top: 8px;
+  font: 500 10px/1.35 var(--sans);
+  letter-spacing: 0.04em;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.image-strip-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0;
+  display: none;
+  transition: opacity 260ms ease;
+}
+
+.image-strip-layer.is-active {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.image-strip-scrim {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+}
+
+.image-strip-window {
+    position: absolute;
+    left: var(--strip-left, 50%);
+    top: var(--strip-top, 50%);
+    width: var(--strip-width, 380px);
+    height: 100vh;
+    transform: translate(-50%, -50%);
+  overflow: hidden;
+  cursor: ns-resize;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 12vh,
+    black 88vh,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 12vh,
+    black 88vh,
+    transparent 100%
+  );
+}
+
+.image-strip-track {
+  --strip-y: 0px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  display: grid;
+  gap: 28px;
+  transform: translateY(calc(-50% + var(--strip-y)));
+  transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.strip-item {
+  width: 100%;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  opacity: 0.42;
+  transform: scale(0.985);
+  transition:
+    opacity 420ms ease,
+    transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.strip-item.is-current {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.strip-item.is-anchor.is-current {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.strip-photo {
+  width: 100%;
+  height: auto;
+}
+
+.strip-item[data-ratio="wide"] .strip-photo { aspect-ratio: 1.58; }
+.strip-item[data-ratio="portrait"] .strip-photo { aspect-ratio: 0.76; }
+.strip-item[data-ratio="square"] .strip-photo { aspect-ratio: 1; }
+.strip-item[data-ratio="cinema"] .strip-photo { aspect-ratio: 1.92; }
+.strip-item[data-ratio="tall"] .strip-photo { aspect-ratio: 0.62; }
+
+.strip-item:nth-child(1) .strip-photo { background: linear-gradient(180deg, #d7d4cf, #bebab5); }
+.strip-item:nth-child(2) .strip-photo { background: linear-gradient(120deg, #dcd9d2, #bab9b3); }
+.strip-item:nth-child(3) .strip-photo { background: linear-gradient(180deg, #cfcfc9, #e0ddd6); }
+.strip-item:nth-child(4) .strip-photo { background: linear-gradient(90deg, #d8d4cc, #b7b8b3); }
+.strip-item:nth-child(5) .strip-photo { background: radial-gradient(circle at 52% 28%, #bebdb6, #dedbd3); }
+.strip-item:nth-child(6) .strip-photo { background: linear-gradient(135deg, #e1ded8, #bebcb7); }
+
+.strip-caption {
+  display: none;
+}
+
+.strip-index {
+  position: absolute;
+  left: calc(var(--strip-left, 50%) + var(--strip-width, 380px) / 2 + 22px);
+  top: var(--strip-top, 50%);
+  transform: translateY(-50%);
+  font: 700 10px/1 var(--sans);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.42);
+  writing-mode: vertical-rl;
+}
+
+.summary {
+  padding-top: 86px;
+  display: grid;
+  grid-template-columns: minmax(300px, 380px) minmax(300px, 580px);
+  gap: 64px;
+  justify-content: center;
+}
+
+.kicker {
+  margin-bottom: 18px;
+  font: 800 13px/1 var(--sans);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+p {
+  max-width: 420px;
+  margin: 0 0 14px;
+  font: 400 15px/1.58 var(--sans);
+}
+
+.slip {
+  min-height: 210px;
+  border: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.035);
+}
+
+.slip-logo {
+  display: grid;
+  place-items: center;
+  border-right: 1px solid var(--line);
+  color: #244a8f;
+  font-family: Georgia, serif;
+  font-size: 34px;
+  line-height: 0.9;
+  text-align: center;
+}
+
+.slip-body { padding: 28px; }
+.slip-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  font: 700 11px/1 var(--sans);
+}
+.slip-title {
+  margin-bottom: 30px;
+  font: 700 18px/1 var(--sans);
+}
+.slip-grid {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 14px 22px;
+  color: var(--muted);
+  font: 700 12px/1.25 var(--sans);
+}
+
+@media (max-width: 760px) {
+  .page { padding: 48px 24px 80px; }
+  .display-row { grid-template-columns: 1fr; }
+  .right { text-align: left; }
+  .center-band {
+    grid-template-columns: 1fr;
+    padding-top: 52px;
+    min-height: 320px;
+  }
+  .hover-trigger {
+    width: min(100%, 380px);
+    height: 240px;
+    justify-self: center;
+  }
+  .sequence-caption {
+    display: none;
+  }
+  .image-strip-window { width: min(380px, 82vw); }
+  .strip-index {
+    right: 16px;
+    top: auto;
+    bottom: 20px;
+    transform: none;
+    writing-mode: horizontal-tb;
+  }
+  .summary { grid-template-columns: 1fr; gap: 40px; }
+  .slip { grid-template-columns: 1fr; }
+  .slip-logo { min-height: 150px; border-right: 0; border-bottom: 1px solid var(--line); }
+}
+</style>
+</head>
+<body>
+  <main class="page">
+    <div class="display-row">
+      <h1>ABOUT<br>ME,</h1>
+      <h1 class="right">AKI&nbsp;(Fengkai)<br>LIU.</h1>
+    </div>
+
+    <div class="center-band">
+      <div></div>
+      <div class="hover-trigger" data-strip-trigger>
+        <div class="base-photo">
+          <div class="base-label">
+            <span>LIU - STUDIO</span>
+            <span>2025</span>
+          </div>
+        </div>
+        <div class="sequence-layer" aria-hidden="true">
+          <div class="sequence-track" data-sequence-track>
+            <figure class="sequence-item" data-ratio="portrait">
+              <div class="sequence-caption sequence-caption--left">
+                <span class="sequence-caption-kicker">Portrait</span>
+                <span class="sequence-caption-text">A blurred study of presence and distance.</span>
+              </div>
+              <div class="sequence-photo"></div>
+              <div class="sequence-caption sequence-caption--right">
+                <span class="sequence-caption-kicker">01</span>
+                <span class="sequence-caption-text">Rochester / winter light</span>
+                <span class="sequence-caption-note">vertical frame</span>
+              </div>
+            </figure>
+            <figure class="sequence-item" data-ratio="square">
+              <div class="sequence-caption sequence-caption--left">
+                <span class="sequence-caption-kicker">Desk</span>
+                <span class="sequence-caption-text">Objects, notes, and unfinished interface sketches.</span>
+              </div>
+              <div class="sequence-photo"></div>
+              <div class="sequence-caption sequence-caption--right">
+                <span class="sequence-caption-kicker">02</span>
+                <span class="sequence-caption-text">Working surface</span>
+                <span class="sequence-caption-note">square crop</span>
+              </div>
+            </figure>
+            <figure class="sequence-item" data-ratio="cinema">
+              <div class="sequence-caption sequence-caption--left">
+                <span class="sequence-caption-kicker">Interface</span>
+                <span class="sequence-caption-text">Systems become visible through small controls.</span>
+              </div>
+              <div class="sequence-photo"></div>
+              <div class="sequence-caption sequence-caption--right">
+                <span class="sequence-caption-kicker">03</span>
+                <span class="sequence-caption-text">Screen fragment</span>
+                <span class="sequence-caption-note">wide capture</span>
+              </div>
+            </figure>
+            <figure class="sequence-item is-anchor" data-ratio="wide">
+              <div class="sequence-caption sequence-caption--left">
+                <span class="sequence-caption-kicker">Studio</span>
+                <span class="sequence-caption-text">The default image remains part of the same sequence.</span>
+              </div>
+              <div class="sequence-photo">
+                <div class="sequence-label">
+                  <span>LIU - STUDIO</span>
+                  <span>2025</span>
+                </div>
+              </div>
+              <div class="sequence-caption sequence-caption--right">
+                <span class="sequence-caption-kicker">04</span>
+                <span class="sequence-caption-text">LIU Studio</span>
+                <span class="sequence-caption-note">anchor frame</span>
+              </div>
+            </figure>
+            <figure class="sequence-item" data-ratio="tall">
+              <div class="sequence-caption sequence-caption--left">
+                <span class="sequence-caption-kicker">Notes</span>
+                <span class="sequence-caption-text">A narrow scan, closer to a page than a photograph.</span>
+              </div>
+              <div class="sequence-photo"></div>
+              <div class="sequence-caption sequence-caption--right">
+                <span class="sequence-caption-kicker">05</span>
+                <span class="sequence-caption-text">Vertical note</span>
+                <span class="sequence-caption-note">tall ratio</span>
+              </div>
+            </figure>
+            <figure class="sequence-item" data-ratio="wide">
+              <div class="sequence-caption sequence-caption--left">
+                <span class="sequence-caption-kicker">Place</span>
+                <span class="sequence-caption-text">Rochester appears as weather, light, and institutional texture.</span>
+              </div>
+              <div class="sequence-photo"></div>
+              <div class="sequence-caption sequence-caption--right">
+                <span class="sequence-caption-kicker">06</span>
+                <span class="sequence-caption-text">Campus light</span>
+                <span class="sequence-caption-note">landscape frame</span>
+              </div>
+            </figure>
+            <figure class="sequence-item" data-ratio="portrait">
+              <div class="sequence-caption sequence-caption--left">
+                <span class="sequence-caption-kicker">Archive</span>
+                <span class="sequence-caption-text">A repeated fragment for testing the seamless scroll.</span>
+              </div>
+              <div class="sequence-photo"></div>
+              <div class="sequence-caption sequence-caption--right">
+                <span class="sequence-caption-kicker">07</span>
+                <span class="sequence-caption-text">Returned image</span>
+                <span class="sequence-caption-note">loop sample</span>
+              </div>
+            </figure>
+          </div>
+        </div>
+        <div class="hover-hint">Hover / scroll</div>
+      </div>
+      <div></div>
+    </div>
+
+    <section class="summary">
+      <div>
+        <div class="kicker">Right Now</div>
+        <p>I am taking courses in programming language design, algorithms, computation theory, complex analysis, and the social implications of computing.</p>
+        <p>I am building LLM Quant Profiler, continuing to reshape this site, and looking for small projects that connect systems, writing, and interfaces.</p>
+      </div>
+      <div class="slip">
+        <div class="slip-logo">University<br>of Rochester</div>
+        <div class="slip-body">
+          <div class="slip-top"><span>Registration</span><span>Active</span></div>
+          <div class="slip-title">University of Rochester</div>
+          <div class="slip-grid">
+            <span>Student</span><strong>Aki Liu</strong>
+            <span>Degree</span><strong>Dual degree</strong>
+            <span>Major</span><strong>B.S. in Computer Science, B.S. in Applied Mathematics</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="image-strip-layer" data-strip-layer aria-hidden="true">
+    <div class="image-strip-scrim"></div>
+    <div class="image-strip-window" data-strip-window>
+      <div class="image-strip-track" data-strip-track>
+        <figure class="strip-item" data-ratio="portrait">
+          <div class="strip-photo"></div>
+          <figcaption class="strip-caption"><span>Portrait study</span><span>01</span></figcaption>
+        </figure>
+        <figure class="strip-item" data-ratio="square">
+          <div class="strip-photo"></div>
+          <figcaption class="strip-caption"><span>Desk object</span><span>02</span></figcaption>
+        </figure>
+        <figure class="strip-item is-anchor" data-ratio="wide">
+          <div class="strip-photo"></div>
+          <figcaption class="strip-caption"><span>Studio fragment</span><span>03</span></figcaption>
+        </figure>
+        <figure class="strip-item" data-ratio="cinema">
+          <div class="strip-photo"></div>
+          <figcaption class="strip-caption"><span>Interface capture</span><span>04</span></figcaption>
+        </figure>
+        <figure class="strip-item" data-ratio="tall">
+          <div class="strip-photo"></div>
+          <figcaption class="strip-caption"><span>Vertical note</span><span>05</span></figcaption>
+        </figure>
+        <figure class="strip-item" data-ratio="wide">
+          <div class="strip-photo"></div>
+          <figcaption class="strip-caption"><span>Rochester light</span><span>06</span></figcaption>
+        </figure>
+        <figure class="strip-item" data-ratio="tall">
+          <div class="strip-photo"></div>
+          <figcaption class="strip-caption"><span>Archive scan</span><span>07</span></figcaption>
+        </figure>
+        <figure class="strip-item" data-ratio="wide">
+          <div class="strip-photo"></div>
+          <figcaption class="strip-caption"><span>Studio object</span><span>08</span></figcaption>
+        </figure>
+      </div>
+    </div>
+    <div class="strip-index" data-strip-index>03 / 08</div>
+  </div>
+
+<script>
+(() => {
+  const trigger = document.querySelector("[data-strip-trigger]");
+  const track = document.querySelector("[data-sequence-track]");
+  const baseItems = [...track.querySelectorAll(".sequence-item")];
+  const baseCount = baseItems.length;
+  const anchorBaseIndex = Math.max(0, baseItems.findIndex(item => item.classList.contains("is-anchor")));
+  const repeatCount = 5;
+  const middleSet = Math.floor(repeatCount / 2);
+  track.innerHTML = "";
+  for (let set = 0; set < repeatCount; set += 1) {
+    baseItems.forEach((item, index) => {
+      const clone = item.cloneNode(true);
+      clone.dataset.seqIndex = String(index);
+      track.appendChild(clone);
+    });
+  }
+  const items = [...track.querySelectorAll(".sequence-item")];
+  let active = false;
+  let current = middleSet * baseCount + anchorBaseIndex;
+  let wheelLock = 0;
+  let closeTimer = 0;
+  let resetTimer = 0;
+
+  function centerCurrent(animate = true) {
+    const target = items[current];
+    if (!target) return;
+    track.style.transition = animate ? "" : "none";
+    const itemTop = target.offsetTop;
+    const itemCenter = itemTop + target.offsetHeight / 2;
+    track.style.setProperty("--seq-y", `${-itemCenter}px`);
+    if (!animate) {
+      requestAnimationFrame(() => { track.style.transition = ""; });
+    }
+  }
+
+  function render() {
+    items.forEach((item, index) => item.classList.toggle("is-current", index === current));
+    centerCurrent();
+  }
+
+  function resetToMiddleIfNeeded() {
+    const seqIndex = Number(items[current].dataset.seqIndex || 0);
+    if (current >= baseCount && current < baseCount * (repeatCount - 1)) return;
+    current = middleSet * baseCount + seqIndex;
+    centerCurrent(false);
+  }
+
+  function open() {
+    window.clearTimeout(closeTimer);
+    if (active) return;
+    active = true;
+    trigger.classList.add("is-open");
+    centerCurrent(false);
+    render();
+  }
+
+  function close() {
+    closeTimer = window.setTimeout(() => {
+      active = false;
+      trigger.classList.remove("is-open");
+    }, 120);
+  }
+
+  function keepOpen() {
+    window.clearTimeout(closeTimer);
+  }
+
+  function step(direction) {
+    current += direction;
+    if (current < 0) current = items.length - 1;
+    if (current >= items.length) current = 0;
+    render();
+    window.clearTimeout(resetTimer);
+    resetTimer = window.setTimeout(resetToMiddleIfNeeded, 560);
+  }
+
+  trigger.addEventListener("mouseenter", open);
+  trigger.addEventListener("pointerenter", open);
+  trigger.addEventListener("mouseover", open);
+  trigger.addEventListener("mousemove", open);
+  trigger.addEventListener("click", open);
+  trigger.addEventListener("mouseleave", close);
+  trigger.addEventListener("pointerleave", close);
+  trigger.addEventListener("wheel", event => {
+    if (!active) return;
+    event.preventDefault();
+    const now = performance.now();
+    if (now < wheelLock) return;
+    const direction = event.deltaY > 0 ? 1 : -1;
+    step(direction);
+    wheelLock = now + 260;
+  }, { passive: false });
+
+  window.addEventListener("keydown", event => {
+    if (!active) return;
+    if (event.key === "Escape") close();
+    if (event.key === "ArrowDown") step(1);
+    if (event.key === "ArrowUp") step(-1);
+  });
+
+  window.addEventListener("resize", () => {
+    if (active) render();
+  });
+})();
+</script>
+</body>
+</html>

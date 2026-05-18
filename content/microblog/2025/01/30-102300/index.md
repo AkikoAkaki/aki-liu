@@ -7,4 +7,4 @@ draft: false
 
 > Je dis: une fleur! et, hors de l'oubli où ma voix relègue aucun contour, en tant que quelque chose d'autre que les calices sus, musicalement se lève, idée même et suave, l'absente de tous bouquets.
 
-— Stéphane Mallarmé, *Œuvres complètes*
+Stéphane Mallarmé, *Œuvres complètes*

@@ -279,7 +279,8 @@
    Archive List Page Layout (4-Column Style)
    ========================================================================== */
 
-.kind-section .site-container {
+.kind-section .site-container,
+.kind-term .site-container {
     grid-template-columns: 2fr 5fr 3fr; /* Left sidebar, Main list, Right sidebars combined */
     grid-template-rows: auto minmax(0, 1fr);
     padding-top: 10rem; /* Increased top spacing to avoid menu overlap */
@@ -292,22 +293,27 @@
 }
 
 .kind-section .site-sidebar,
-.kind-section .site-sidebar-right {
+.kind-section .site-sidebar-right,
+.kind-term .site-sidebar,
+.kind-term .site-sidebar-right {
     display: block; /* Ensure they are visible even if empty in other pages */
     grid-row: 1;
     justify-self: stretch;
     padding-right: 0;
 }
 
-.kind-section .site-main {
+.kind-section .site-main,
+.kind-term .site-main {
     grid-row: 1;
 }
 
-.kind-section .site-sidebar-right {
+.kind-section .site-sidebar-right,
+.kind-term .site-sidebar-right {
     align-self: stretch;
 }
 
-.kind-section .site-sidebar-bottom {
+.kind-section .site-sidebar-bottom,
+.kind-term .site-sidebar-bottom {
     display: block;
     grid-column: 1;
     grid-row: 2;
@@ -339,7 +345,8 @@
 }
 
 @media (min-width: 1201px) {
-    .kind-section .archive-right-cols {
+    .kind-section .archive-right-cols,
+    .kind-term .archive-right-cols {
         position: sticky;
         top: 10rem;
         height: calc(100vh - 12rem);
@@ -492,29 +499,34 @@
     }
 
     /* Archive Responsive Overrides */
-    .kind-section .site-container {
+    .kind-section .site-container,
+    .kind-term .site-container {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
         padding-top: 6rem;
         gap: 3rem;
     }
     
-    .kind-section .site-sidebar {
+    .kind-section .site-sidebar,
+    .kind-term .site-sidebar {
         display: block;
         grid-row: auto;
         margin-top: 0;
     }
 
-    .kind-section .site-main {
+    .kind-section .site-main,
+    .kind-term .site-main {
         grid-row: auto;
     }
 
-    .kind-section .site-sidebar-right {
+    .kind-section .site-sidebar-right,
+    .kind-term .site-sidebar-right {
         display: none;
         grid-row: auto;
     }
 
-    .kind-section .site-sidebar-bottom {
+    .kind-section .site-sidebar-bottom,
+    .kind-term .site-sidebar-bottom {
         grid-row: auto;
         position: static;
         margin-top: 2rem;

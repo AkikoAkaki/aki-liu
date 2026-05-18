@@ -1,17 +1,55 @@
-{{ define "main" }}
-<div class="writing-container">
-    {{ $pages := where .Data.Pages "Kind" "page" }}
-    {{ $back := partial "back-link-data.html" (dict "page" . "pages" $pages) }}
+{{ define "sidebar-left" }}
+{{- $mainSections := slice "ideas" "technical" "textlab" -}}
+{{- $regularPages := where .Site.RegularPages "Section" "in" $mainSections -}}
+{{- .Store.Set "regularPages" $regularPages -}}
+{{- $tagCounts := dict -}}
+{{- range $regularPages -}}
+    {{- range .Params.tags -}}
+        {{- $name := printf "%v" . -}}
+        {{- $current := index $tagCounts $name | default 0 -}}
+        {{- $tagCounts = merge $tagCounts (dict $name (add $current 1)) -}}
+    {{- end -}}
+{{- end -}}
+{{- $tagSlice := slice -}}
+{{- range $name, $count := $tagCounts -}}
+    {{- $tagSlice = $tagSlice | append (dict "name" $name "count" $count) -}}
+{{- end -}}
+{{- $tagSlice = sort $tagSlice "count" "desc" -}}
+{{- $years := slice -}}
+{{- range $regularPages.GroupByPublishDate "2006" -}}
+    {{- $years = $years | append .Key -}}
+{{- end -}}
+{{- .Store.Set "years" $years -}}
+{{- .Store.Set "initialTags" (slice (.Data.Term | urlize)) -}}
+{{ partial "archive-sidebar-left.html" (dict "context" . "regularPages" $regularPages "years" $years "tagSlice" $tagSlice) }}
+{{ end }}
 
-    {{ partial "title-with-back.html" (dict
-        "href" $back.href
-        "label" $back.label
-        "title" .Title
-        "titleClass" "writing-label"
-    ) }}
-    {{ if gt (len $pages) 0 }}
-        {{ partial "writing-list-items.html" (dict "pages" $pages) }}
-    {{ end }}
+{{ define "sidebar-bottom" }}
+{{ $years := .Store.Get "years" }}
+{{ partial "archive-sidebar-bottom.html" (dict "years" $years) }}
+{{ end }}
+
+{{ define "main" }}
+{{ $regularPages := .Store.Get "regularPages" }}
+{{ $initialTags := .Store.Get "initialTags" }}
+<div class="archive-main-col">
+    <div class="archive-list-header">
+        <span class="header-col-year">Date:</span>
+        <span class="header-col-project">Project:</span>
+    </div>
+
+    {{ partial "archive-list-items.html" (dict "pages" $regularPages "initialTags" $initialTags) }}
 </div>
 {{ end }}
 
+{{ define "sidebar-right" }}
+<div class="archive-right-cols">
+    <div class="archive-view-col">
+        <h3 class="archive-col-header">Preview:</h3>
+
+        <div id="archive-preview-container" class="preview-container">
+            <!-- Content injected by JS -->
+        </div>
+    </div>
+</div>
+{{ end }}

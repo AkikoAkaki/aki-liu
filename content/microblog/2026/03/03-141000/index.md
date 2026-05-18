@@ -10,4 +10,4 @@ draft: false
 > Where flames a word, would testify for us both?
 > You—all, all real. I—all delusion.
 
-— Paul Celan, *Breathturn*
+Paul Celan, *Breathturn*

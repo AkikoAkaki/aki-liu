@@ -68,7 +68,7 @@ mainSections = ["ideas", "technical", "textlab"]
     [markup.goldmark.renderer]
       # Allow trusted inline HTML in markdown content.
       unsafe = true
-      hardLineBreak = true
+      hardWraps = true
 
   [markup.highlight]
     noClasses = false

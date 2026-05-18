@@ -1,9 +1,16 @@
 {{- $pages := .pages -}}
+{{- $initialTags := .initialTags | default (slice) -}}
 
-<div class="archive-list">
+<div class="archive-list" data-archive-filter-root data-archive-initial-tags="{{ delimit $initialTags "," }}">
     {{ range $pages.GroupByPublishDate "2006" }}
         {{ range .Pages }}
-            <article class="archive-item">
+            {{- $tagSlugs := slice -}}
+            {{- with .Params.tags -}}
+                {{- range . -}}
+                    {{- $tagSlugs = $tagSlugs | append (printf "%v" . | urlize) -}}
+                {{- end -}}
+            {{- end -}}
+            <article class="archive-item" data-archive-year="{{ .Date.Format "2006" }}" data-archive-tags="{{ delimit $tagSlugs "," }}">
                 <div class="item-hover-arrow">
                     {{ partialCached "icons/hover-arrow.html" "hover-arrow" }}
                 </div>

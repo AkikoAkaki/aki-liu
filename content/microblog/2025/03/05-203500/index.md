@@ -7,4 +7,4 @@ draft: false
 
 > 字文 (l'écrit)，抽象化的缄默飞行，面对赤裸声响的坠落，重获它的权利。
 
-— Stéphane Mallarmé, *Œuvres complètes*
+Stéphane Mallarmé, *Œuvres complètes*

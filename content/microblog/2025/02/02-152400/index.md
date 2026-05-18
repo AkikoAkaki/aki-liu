@@ -7,4 +7,4 @@ draft: false
 
 > "一切概念理解（Begreifen）等于一种谋杀"
 
-— Alexandre Kojève, *Introduction à la lecture de Hegel*
+Alexandre Kojève, *Introduction à la lecture de Hegel*

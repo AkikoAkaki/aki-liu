@@ -45,8 +45,11 @@
         {{ end }}
         {{ $allTags = delimit $urlizedTags "," }}
     {{ end }}
-    <aside class="post-toc post-toc--inline" data-tag="{{ $firstTag }}" data-all-tags="{{ $allTags }}">
-        {{ .TableOfContents }}
+    <aside class="post-toc post-toc--inline" data-tag="{{ $firstTag }}" data-all-tags="{{ $allTags }}" aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
+        <div class="post-toc-content">
+            <div class="post-toc-header">{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}</div>
+            {{ .TableOfContents }}
+        </div>
     </aside>
     {{ end }}
 
@@ -77,8 +80,11 @@
         {{ end }}
         {{ $allTags = delimit $urlizedTags "," }}
     {{ end }}
-    <aside class="post-toc post-toc--sidebar" data-tag="{{ $firstTag }}" data-all-tags="{{ $allTags }}">
-        {{ .TableOfContents }}
+    <aside class="post-toc post-toc--sidebar" data-tag="{{ $firstTag }}" data-all-tags="{{ $allTags }}" aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
+        <div class="post-toc-content">
+            <div class="post-toc-header">{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}</div>
+            {{ .TableOfContents }}
+        </div>
     </aside>
     {{ end }}
 {{ end }}

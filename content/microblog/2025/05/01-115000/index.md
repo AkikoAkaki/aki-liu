@@ -7,4 +7,4 @@ draft: false
 
 > 他只感觉到被排斥，被分离，总是被指定待在证人的位置。我们知道，证人的话语只能服从于冷漠规则：或是叙述性的，或是解释性的，或是怨言性的，或是讽刺性的，而永远不会是抒情性的，永远不会等同于赞美的辞藻。他必须在这种赞美辞藻之外寻找他的位置。
 
-— Roland Barthes, *Roland Barthes par Roland Barthes*，片断，排斥
+Roland Barthes, *Roland Barthes par Roland Barthes*，片断，排斥

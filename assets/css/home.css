@@ -960,6 +960,19 @@
     display: block;
 }
 
+/* Inline links in bio text: always show a subtle gray underline */
+.bio-text a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--color-dim);
+    transition: text-decoration-color 0.18s ease;
+}
+
+.bio-text a:hover {
+    text-decoration-color: var(--color-secondary);
+}
+
 @media (prefers-reduced-motion: reduce) {
     .author-name-svg-wrapper {
         clip-path: none;

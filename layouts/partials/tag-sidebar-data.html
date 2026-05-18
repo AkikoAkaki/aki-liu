@@ -1,6 +1,7 @@
 {{- /* Build sorted tag stats for the given page context. */ -}}
+{{- $pages := .Pages -}}
 {{- $tagCounts := dict -}}
-{{- range .Pages -}}
+{{- range $pages -}}
     {{- if eq .Kind "page" -}}
         {{- range .Params.tags -}}
             {{- $name := printf "%v" . -}}

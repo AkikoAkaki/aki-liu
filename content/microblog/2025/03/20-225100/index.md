@@ -9,4 +9,4 @@ draft: false
 
 > Después, las llamas lo perdieron; después gritó y fue como si un incendio gritara.
 
-— 博尔赫斯，《神学家》
+博尔赫斯，《神学家》

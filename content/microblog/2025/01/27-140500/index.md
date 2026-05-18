@@ -5,4 +5,4 @@ tags: []
 draft: false
 ---
 
-— Brice Parain, *Recherches sur la nature et les fonctions du langage*
+Brice Parain, *Recherches sur la nature et les fonctions du langage*

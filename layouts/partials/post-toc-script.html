@@ -3,20 +3,34 @@ document.addEventListener('DOMContentLoaded', function () {
     const tocs = document.querySelectorAll('.post-toc');
     if (!tocs.length) return;
 
-    // Phase 4: Init Stagger & Indicator
-    tocs.forEach(toc => {
-        const nav = toc.querySelector('nav');
-        if (nav && !nav.querySelector('.toc-indicator')) {
-            const indicator = document.createElement('div');
-            indicator.className = 'toc-indicator';
-            nav.insertBefore(indicator, nav.firstChild);
+    const directLink = (li) => Array.from(li.children).find((child) => child.tagName === 'A');
+    const hasLinkedAncestor = (li, root) => {
+        let parent = li.parentElement ? li.parentElement.closest('li') : null;
+        while (parent && root.contains(parent)) {
+            if (directLink(parent)) return true;
+            parent = parent.parentElement ? parent.parentElement.closest('li') : null;
         }
-        
-        // Assign index for Staggered Spring Reveal
-        const listItems = toc.querySelectorAll('li');
-        listItems.forEach((li, index) => {
-            li.style.setProperty('--item-index', index);
+        return false;
+    };
+
+    tocs.forEach((toc) => {
+        const linkedItems = Array.from(toc.querySelectorAll('li')).filter(directLink);
+        const mainItems = [];
+
+        linkedItems.forEach((li) => {
+            li.classList.remove('toc-main-li', 'toc-sub-li', 'has-subitems', 'is-last-main');
+            const isSubitem = hasLinkedAncestor(li, toc);
+            li.classList.add(isSubitem ? 'toc-sub-li' : 'toc-main-li');
+            if (!isSubitem) mainItems.push(li);
         });
+
+        mainItems.forEach((li) => {
+            if (li.querySelector('.toc-sub-li')) li.classList.add('has-subitems');
+        });
+
+        if (mainItems.length) {
+            mainItems[mainItems.length - 1].classList.add('is-last-main');
+        }
     });
 
     const links = Array.from(document.querySelectorAll('.post-toc a'));
@@ -62,12 +76,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         links.forEach((link) => link.classList.remove('is-active'));
-        
-        // Hide all indicators initially
-        tocs.forEach(toc => {
-            const indicator = toc.querySelector('.toc-indicator');
-            if (indicator) indicator.classList.remove('visible');
-        });
 
         if (current) {
             const currentIdDecoded = decodeURIComponent(current.id);
@@ -83,61 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
             
             activeLinks.forEach((link) => {
                 link.classList.add('is-active');
-                
-                // Find the closest toc container and indicator
-                const toc = link.closest('.post-toc');
-                if (toc) {
-                    const indicator = toc.querySelector('.toc-indicator');
-                    if (indicator) {
-                        // Use Range to get exact text node bounding box inside the link
-                        const nav = link.closest('nav');
-                        const navRect = nav.getBoundingClientRect();
-                        
-                        const range = document.createRange();
-                        // Select the contents of the link to measure the text itself
-                        range.selectNodeContents(link);
-                        const textRect = range.getBoundingClientRect();
-                        
-                        // Calculate X and Y relative to the nav container
-                        // Position dot 8px to the right of the text max width, and align with the top of the text + 4px down
-                        const offsetLeft = textRect.right - navRect.left + nav.scrollLeft + 8;
-                        const offsetTop = textRect.top - navRect.top + nav.scrollTop + 4;
-                        
-                        // Apply position with support for the liquid scaleY variable
-                        indicator.style.transform = `translate(${offsetLeft}px, ${offsetTop}px) scaleY(var(--stretch, 1))`;
-                        indicator.classList.add('visible');
-
-                        // Color cycling for multiple tags
-                        const allTags = toc.getAttribute('data-all-tags');
-                        if (allTags) {
-                            const tags = allTags.split(',').map(t => t.trim().toLowerCase());
-                            const tagColorMap = {
-                                'essay': '#007AFF',
-                                'productivity': '#007AFF',
-                                'critique': '#AF52DE',
-                                'mental-model': '#AF52DE',
-                                'poetry': '#FF3B30',
-                                'fiction': '#FFCC00',
-                                'product': '#FFCC00',
-                                'drama': '#34C759',
-                                'translation': '#FF9500',
-                                'content-analysis': '#5856D6',
-                                'technical': '#5856D6',
-                                'ai': '#5AC8FA'
-                            };
-                            
-                            // Find link index among all links in this specific TOC
-                            const tocLinks = Array.from(toc.querySelectorAll('a'));
-                            const linkIndex = tocLinks.indexOf(link);
-                            if (linkIndex !== -1) {
-                                const activeTag = tags[linkIndex % tags.length];
-                                // Check both raw tag and urlized version
-                                const tagColor = tagColorMap[activeTag] || '#8E8E93';
-                                indicator.style.setProperty('--active-dot-color', tagColor);
-                            }
-                        }
-                    }
-                }
             });
         }
     };
@@ -158,68 +111,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial highlight
     setTimeout(highlightActiveHeading, 100);
     window.addEventListener('load', () => setTimeout(highlightActiveHeading, 150));
-
-    // Phase 3: Liquid Morphing Engine
-    let lastScrollY = window.scrollY;
-    let velocity = 0;
-
-    const animateLiquid = () => {
-        const currentScrollY = window.scrollY;
-        const delta = currentScrollY - lastScrollY;
-        
-        // Momentum decay (friction)
-        velocity = velocity * 0.8 + delta * 0.2;
-        lastScrollY = currentScrollY;
-
-        // Calculate stretch multiplier (cap at 1.4 to prevent breaking layout)
-        const stretchAmount = 1 + Math.min(Math.abs(velocity) * 0.008, 0.4);
-        
-        // Stretch from the direction of movement
-        const stretchOrigin = velocity > 0 ? 'top' : 'bottom';
-
-        tocs.forEach(toc => {
-            const indicator = toc.querySelector('.toc-indicator');
-            if (indicator && indicator.classList.contains('visible')) {
-                // Only update variables if we have noticeable velocity or need to settle back to 1
-                if (Math.abs(velocity) > 0.1 || stretchAmount > 1.001) {
-                    indicator.style.setProperty('--stretch', stretchAmount.toFixed(3));
-                    indicator.style.setProperty('--stretch-origin', stretchOrigin);
-                } else {
-                    indicator.style.setProperty('--stretch', '1');
-                }
-            }
-        });
-
-        requestAnimationFrame(animateLiquid);
-    };
-    
-    // Start the 60fps liquid loop
-    requestAnimationFrame(animateLiquid);
-
-    // Phase 2: 3D Tilt Effect
-    tocs.forEach(toc => {
-        toc.addEventListener('mousemove', (e) => {
-            // Get dimensions and position of the TOC panel
-            const rect = toc.getBoundingClientRect();
-            // Calculate mouse position relative to the center of the panel
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            // Calculate rotation amounts (max 10 degrees)
-            const rotateX = ((y - centerY) / centerY) * -10;
-            const rotateY = ((x - centerX) / centerX) * 10;
-            
-            toc.style.setProperty('--rotate-x', `${rotateX}deg`);
-            toc.style.setProperty('--rotate-y', `${rotateY}deg`);
-        });
-        
-        toc.addEventListener('mouseleave', () => {
-            // Reset transforms when mouse leaves
-            toc.style.setProperty('--rotate-x', `0deg`);
-            toc.style.setProperty('--rotate-y', `0deg`);
-        });
-    });
 });
 </script>

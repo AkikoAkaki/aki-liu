@@ -55,6 +55,14 @@
         return feedData.entries.filter(e => (e.tags || []).some(t => String(t).toLowerCase() === lower));
     }
 
+    function entriesForYear(year) {
+        if (!feedData) return [];
+        return feedData.entries.filter(e => {
+            const d = new Date(e.date);
+            return !isNaN(d.getTime()) && String(d.getFullYear()) === String(year);
+        });
+    }
+
     function buildImageGrid(images) {
         if (!images || !images.length) return '';
         const n = images.length;
@@ -258,6 +266,62 @@
         });
     }
 
+    function openYearColumn(year) {
+        year = String(year);
+        const existing = deck.querySelector(`.mb-column[data-mb-year="${CSS.escape(year)}"]`);
+        if (existing) {
+            existing.classList.add('is-pulsing');
+            setTimeout(() => existing.classList.remove('is-pulsing'), 600);
+            return existing;
+        }
+
+        const entries = entriesForYear(year);
+        const column = document.createElement('section');
+        column.className = 'mb-column mb-column-year is-entering';
+        column.dataset.mbColumnId = `year-${columnSeq++}`;
+        column.dataset.mbYear = year;
+        column.innerHTML = `
+            <div class="mb-column-content">
+                <div class="mb-column-header">
+                    <span class="mb-column-title">${escapeHtml(year)}</span>
+                    <span class="mb-column-meta"><span class="mb-column-count" data-mb-column-count>${entries.length}</span> <span data-mb-column-unit>${entries.length === 1 ? 'Entry' : 'Entries'}</span></span>
+                    <button class="mb-column-close" type="button" data-mb-close aria-label="Close column">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M17 7L7 17"/><path d="M7 7l10 10"/></svg>
+                    </button>
+                </div>
+                <div class="mb-column-feed" data-mb-feed></div>
+                <div class="mb-column-sentinel" data-mb-sentinel aria-hidden="true"></div>
+            </div>
+        `;
+        deck.appendChild(column);
+
+        const feedEl = column.querySelector('[data-mb-feed]');
+        if (!entries.length) {
+            const empty = document.createElement('div');
+            empty.className = 'mb-column-empty';
+            empty.textContent = `Nothing in ${year} yet.`;
+            feedEl.appendChild(empty);
+            const sentinel = column.querySelector('[data-mb-sentinel]');
+            if (sentinel) sentinel.dataset.mbDone = 'true';
+        } else {
+            column.dataset.mbNextIdx = '0';
+            appendBatch(column, entries, 0);
+            attachInfiniteScroll(column, entries);
+        }
+
+        void column.getBoundingClientRect();
+        scheduleColumnCompression();
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                column.classList.remove('is-entering');
+                column.classList.add('is-entered');
+            });
+        });
+        column.querySelector('[data-mb-close]').addEventListener('click', () => closeTagColumn(column));
+        syncURL();
+        return column;
+    }
+
     function openTagColumn(tagLabel) {
         const slug = String(tagLabel || '').toLowerCase().replace(/\s+/g, '-');
         if (!slug) return;
@@ -318,37 +382,46 @@
             .filter(c => c.classList.contains('mb-column-tag'))
             .map(c => c.dataset.mbTag)
             .filter(Boolean);
+        const years = getActiveColumns()
+            .filter(c => c.classList.contains('mb-column-year'))
+            .map(c => c.dataset.mbYear)
+            .filter(Boolean);
+
         const url = new URL(window.location.href);
         if (slugs.length) {
             url.searchParams.set('cols', slugs.join(','));
         } else {
             url.searchParams.delete('cols');
         }
-        
-        // Update active state in sidebar
+        if (years.length) {
+            url.searchParams.set('years', years.join(','));
+        } else {
+            url.searchParams.delete('years');
+        }
+
         document.querySelectorAll('.archive-tag-item').forEach(el => {
-            if (slugs.includes(el.dataset.tag)) {
-                el.classList.add('active');
-            } else {
-                el.classList.remove('active');
-            }
+            el.classList.toggle('active', slugs.includes(el.dataset.tag));
+        });
+        document.querySelectorAll('.archive-year-item').forEach(el => {
+            el.classList.toggle('active', years.includes(el.dataset.year));
         });
 
         const next = url.pathname + (url.search ? url.search : '') + url.hash;
         if (next !== window.location.pathname + window.location.search + window.location.hash) {
-            history.pushState({ cols: slugs }, '', next);
+            history.pushState({ cols: slugs, years }, '', next);
         }
     }
 
     function restoreFromURL() {
         const params = new URLSearchParams(window.location.search);
         const cols = (params.get('cols') || '').split(',').map(s => s.trim()).filter(Boolean);
-        if (!cols.length) return;
+        const years = (params.get('years') || '').split(',').map(s => s.trim()).filter(Boolean);
         const tags = feedData.tags || [];
         cols.forEach(slug => {
             const label = tags.find(t => String(t).toLowerCase().replace(/\s+/g, '-') === slug) || slug;
             openTagColumn(label);
         });
+        years.forEach(year => openYearColumn(year));
     }
 
     function bindTagBar() {
@@ -371,6 +444,17 @@
             const labelEl = tagItem.querySelector('.tag-name');
             const label = labelEl ? labelEl.textContent.trim() : tagItem.dataset.tag;
             openTagColumn(label);
+        });
+    }
+
+    function bindSidebarYears() {
+        document.querySelectorAll('.archive-years-list').forEach(list => {
+            list.addEventListener('click', e => {
+                const yearItem = e.target.closest('.archive-year-item');
+                if (!yearItem || !yearItem.dataset.year) return;
+                e.preventDefault();
+                openYearColumn(yearItem.dataset.year);
+            });
         });
     }
 
@@ -405,6 +489,7 @@
         });
         bindTagBar();
         bindSidebarTags();
+        bindSidebarYears();
         bindCardTagClicks();
         bindPopstate();
         bindResize();

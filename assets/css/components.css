@@ -1151,9 +1151,12 @@ body.section-about.about-sequence-open .site-wrapper {
 /* Pinboard canvas */
 .af-pinboard-canvas {
     position: sticky;
-    top: 132px;
+    top: 148px;
     height: min(620px, calc(100vh - 164px));
     min-width: 0;
+    width: calc(100% + clamp(96px, 8vw, 160px));
+    margin-left: clamp(52px, 4vw, 80px);
+    margin-right: calc(-1 * clamp(148px, 12vw, 240px));
     max-width: none;
 }
 
@@ -1304,10 +1307,11 @@ body.section-about.about-sequence-open .site-wrapper {
     text-decoration: none;
     color: inherit;
     display: block;
+    z-index: 5;
     transition: transform .4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .25s ease;
 }
 .af-courses-card:hover {
-    transform: translateY(-4px) rotate(0deg) !important;
+    transform: translateY(-4px) rotate(-0.25deg) !important;
     box-shadow:
         0 4px 8px rgba(0,0,0,0.06),
         0 28px 48px rgba(0,0,0,0.10);
@@ -1511,6 +1515,9 @@ body.section-about.about-sequence-open .site-wrapper {
         position: relative;
         top: auto;
         height: 520px;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
         transform: scale(0.82);
         transform-origin: top left;
     }
@@ -1807,6 +1814,25 @@ body.section-about.about-sequence-open .site-wrapper {
     fill: currentColor;
 }
 
+.filter-active-close {
+    position: absolute;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    color: var(--color-heading);
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.16s ease;
+}
+
+.filter-active-close svg {
+    width: 100%;
+    height: 100%;
+}
+
 .filter-hover-arrow--left {
     left: -0.2rem;
     transform: translate(-10px, -50%);
@@ -1815,6 +1841,16 @@ body.section-about.about-sequence-open .site-wrapper {
 .filter-hover-arrow--right {
     right: -0.2rem;
     transform: translate(10px, -50%) scaleX(-1);
+}
+
+.filter-active-close--left {
+    left: -0.2rem;
+    transform: translate(0, -50%);
+}
+
+.filter-active-close--right {
+    right: -0.2rem;
+    transform: translate(0, -50%);
 }
 
 .archive-tag-item:hover .filter-hover-arrow--left {
@@ -1863,6 +1899,40 @@ body.section-about.about-sequence-open .site-wrapper {
 .archive-year-item:hover .filter-item-label::after {
     transform: scaleX(1);
     transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.46s;
+}
+
+.archive-tag-item.active .filter-item-label::after,
+.archive-year-item.active .filter-item-label::after {
+    transform: scaleX(1);
+    transition: none;
+}
+
+.archive-tag-item.active,
+.archive-year-item.active {
+    font-weight: 600;
+}
+
+.archive-tag-item.active .filter-hover-arrow,
+.archive-year-item.active .filter-hover-arrow {
+    opacity: 0;
+    transition: none;
+}
+
+.archive-tag-item.active .filter-active-close,
+.archive-year-item.active .filter-active-close {
+    opacity: 1;
+}
+
+.archive-tag-item.active .filter-item-label,
+.archive-tag-item.active:hover .filter-item-label {
+    transform: translateX(22px);
+    transition: none;
+}
+
+.archive-year-item.active .filter-item-label,
+.archive-year-item.active:hover .filter-item-label {
+    transform: translateX(-22px);
+    transition: none;
 }
 
 .archive-bottom-section {
@@ -1957,6 +2027,24 @@ body.section-about.about-sequence-open .site-wrapper {
     align-items: center;
     position: relative;
     padding: 0.4rem 0;
+}
+
+.archive-item[hidden] {
+    display: none;
+}
+
+.archive-item.is-filter-leaving {
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.archive-item.is-filter-entering {
+    opacity: 0;
+    transform: translateY(6px);
 }
 
 /* Hover Arrow SVG */
