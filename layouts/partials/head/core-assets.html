@@ -36,10 +36,10 @@
     <link rel="stylesheet" href="{{ $microblogStyle.RelPermalink }}" integrity="{{ $microblogStyle.Data.Integrity }}">
 {{- end -}}
 
-{{- if or (eq .Section "metrics") (eq .Type "metrics") -}}
-    {{- $metrics := resources.Get "css/metrics.css" -}}
-    {{- $metricsStyle := $metrics | resources.Minify | fingerprint -}}
-    <link rel="stylesheet" href="{{ $metricsStyle.RelPermalink }}" integrity="{{ $metricsStyle.Data.Integrity }}">
+{{- if or (eq .Section "dashboard") (eq .Type "dashboard") -}}
+    {{- $dashboard := resources.Get "css/dashboard.css" -}}
+    {{- $dashboardStyle := $dashboard | resources.Minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $dashboardStyle.RelPermalink }}" integrity="{{ $dashboardStyle.Data.Integrity }}">
 {{- end -}}
 
 {{- $mainJS := resources.Get "js/main.js" | js.Build (dict "targetPath" "js/main.js") | resources.Minify | fingerprint -}}

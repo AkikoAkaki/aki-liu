@@ -12,7 +12,7 @@
     {{ partial "head/assets.html" . }}
     <link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
 </head>
-<body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} kind-{{ .Kind }}{{ if and (eq .Kind "page") (lt .WordCount 600) }} post-short{{ end }}">
+<body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} type-{{ .Type }} kind-{{ .Kind }}{{ if and (eq .Kind "page") (lt .WordCount 600) }} post-short{{ end }}">
     <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="site-wrapper">
     <div class="site-container">
@@ -80,7 +80,7 @@
             <div class="menu-panel-inner">
                 <a href="{{ $homePage.RelPermalink }}" class="menu-link{{ if .IsHome }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Home</span></span></a>
                 <a href="{{ with .Site.GetPage "section" "about" }}{{ .RelPermalink }}{{ else }}{{ "about/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "about" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">About</span></span></a>
-                <a href="{{ "/metrics/" | relLangURL }}" class="menu-link{{ if or (eq .Section "metrics") (eq .Type "metrics") }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Metrics</span></span></a>
+                <a href="{{ "/dashboard/" | relLangURL }}" class="menu-link{{ if or (eq .Section "dashboard") (eq .Type "dashboard") }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Dashboard</span></span></a>
                 <div class="menu-group{{ if or (eq .Section "ideas") (eq .Section "textlab") }} is-active{{ end }}" role="group" aria-label="Writing">
                     <div class="menu-group-label">Writing</div>
                     <div class="menu-submenu">

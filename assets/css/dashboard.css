@@ -1,15 +1,15 @@
 /* ==========================================================================
-   Linear-Style Light Monochrome Metrics Dashboard Styles
+   Linear-Style Light Monochrome dashboard Dashboard Styles
    ========================================================================== */
 
-.metrics-container {
-    --metrics-bg: #f5f5f7;
-    --metrics-card-bg: #ffffff;
-    --metrics-border: #e5e5e7;
-    --metrics-text-primary: #1d1d1f;
-    --metrics-text-secondary: #86868b;
-    --metrics-text-tertiary: #a1a1a6;
-    --metrics-mono-num: #000000;
+.dashboard-container {
+    --dashboard-bg: #f5f5f7;
+    --dashboard-card-bg: #ffffff;
+    --dashboard-border: #e5e5e7;
+    --dashboard-text-primary: #1d1d1f;
+    --dashboard-text-secondary: #86868b;
+    --dashboard-text-tertiary: #a1a1a6;
+    --dashboard-mono-num: #000000;
     
     --chart-line: #111111;
     --chart-area: rgba(0, 0, 0, 0.03);
@@ -17,11 +17,11 @@
     --tooltip-bg: #1d1d1f;
     --tooltip-text: #ffffff;
     
-    background-color: var(--metrics-bg);
-    color: var(--metrics-text-primary);
+    background-color: var(--dashboard-bg);
+    color: var(--dashboard-text-primary);
     padding: 32px 24px;
     border-radius: 12px;
-    border: 1px solid var(--metrics-border);
+    border: 1px solid var(--dashboard-border);
     margin: 40px 0;
     font-family: var(--font-sans);
     box-sizing: border-box;
@@ -29,16 +29,16 @@
 }
 
 /* Adapt for Dark Theme */
-:root[data-theme="dark"] .metrics-container,
+:root[data-theme="dark"] .dashboard-container,
 @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .metrics-container {
-        --metrics-bg: #0d0d0f;
-        --metrics-card-bg: #121214;
-        --metrics-border: #222225;
-        --metrics-text-primary: #f5f5f7;
-        --metrics-text-secondary: #86868b;
-        --metrics-text-tertiary: #48484a;
-        --metrics-mono-num: #ffffff;
+    :root:not([data-theme="light"]) .dashboard-container {
+        --dashboard-bg: #0d0d0f;
+        --dashboard-card-bg: #121214;
+        --dashboard-border: #222225;
+        --dashboard-text-primary: #f5f5f7;
+        --dashboard-text-secondary: #86868b;
+        --dashboard-text-tertiary: #48484a;
+        --dashboard-mono-num: #ffffff;
         
         --chart-line: #ffffff;
         --chart-area: rgba(255, 255, 255, 0.03);
@@ -49,13 +49,13 @@
 }
 
 /* 1. System Control Header */
-.metrics-sys-header {
+.dashboard-sys-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
-    border-bottom: 1px solid var(--metrics-border);
+    border-bottom: 1px solid var(--dashboard-border);
     padding-bottom: 14px;
     margin-bottom: 32px;
     font-family: var(--font-mono);
@@ -63,7 +63,7 @@
     letter-spacing: 0.03em;
 }
 
-.metrics-sys-left {
+.dashboard-sys-left {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -71,65 +71,65 @@
 }
 
 .sys-label {
-    color: var(--metrics-text-tertiary);
+    color: var(--dashboard-text-tertiary);
     font-weight: 500;
 }
 
 .sys-dot {
     width: 5px;
     height: 5px;
-    background-color: var(--metrics-text-secondary);
+    background-color: var(--dashboard-text-secondary);
     border-radius: 50%;
     display: inline-block;
 }
 
 .sys-val {
-    color: var(--metrics-text-primary);
+    color: var(--dashboard-text-primary);
     font-weight: 600;
 }
 
 .sys-separator {
-    color: var(--metrics-border);
+    color: var(--dashboard-border);
 }
 
-.metrics-sys-right {
-    color: var(--metrics-text-secondary);
+.dashboard-sys-right {
+    color: var(--dashboard-text-secondary);
 }
 
 /* 2. Hero Headline */
-.metrics-hero {
+.dashboard-hero {
     margin-bottom: 36px;
     max-width: 720px;
 }
 
-.metrics-hero-title {
+.dashboard-hero-title {
     font-family: var(--font-editorial);
     font-size: clamp(2.2rem, 4vw, 3.5rem);
     font-weight: 300;
     line-height: 1.05;
     margin: 0 0 12px 0;
-    color: var(--metrics-text-primary);
+    color: var(--dashboard-text-primary);
 }
 
-.metrics-hero-desc {
+.dashboard-hero-desc {
     font-family: var(--font-serif);
     font-size: 17px;
     line-height: 1.6;
-    color: var(--metrics-text-secondary);
+    color: var(--dashboard-text-secondary);
     margin: 0;
 }
 
-/* 3. Core Metrics Grid */
-.metrics-grid {
+/* 3. Core dashboard Grid */
+.dashboard-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
     margin-bottom: 32px;
 }
 
-.metrics-card {
-    background-color: var(--metrics-card-bg);
-    border: 1px solid var(--metrics-border);
+.dashboard-card {
+    background-color: var(--dashboard-card-bg);
+    border: 1px solid var(--dashboard-border);
     border-radius: 8px;
     padding: 20px;
     display: flex;
@@ -140,7 +140,7 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
 }
 
-.metrics-card:hover {
+.dashboard-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
@@ -150,7 +150,7 @@
     font-size: 11px;
     font-weight: 650;
     letter-spacing: 0.06em;
-    color: var(--metrics-text-secondary);
+    color: var(--dashboard-text-secondary);
     text-transform: uppercase;
 }
 
@@ -158,7 +158,7 @@
     font-size: 28px;
     font-weight: 400;
     margin: 12px 0 6px 0;
-    color: var(--metrics-mono-num);
+    color: var(--dashboard-mono-num);
 }
 
 .mono-num {
@@ -170,14 +170,14 @@
     font-family: var(--font-sans);
     font-size: 13px;
     font-weight: 500;
-    color: var(--metrics-text-secondary);
+    color: var(--dashboard-text-secondary);
     margin-left: 4px;
 }
 
 .status-ok {
     font-family: var(--font-mono);
     font-weight: 600;
-    color: var(--metrics-text-primary);
+    color: var(--dashboard-text-primary);
 }
 
 .status-warn {
@@ -188,14 +188,14 @@
 
 .card-footer-meta {
     font-size: 11px;
-    color: var(--metrics-text-tertiary);
+    color: var(--dashboard-text-tertiary);
     font-family: var(--font-sans);
 }
 
 /* 4. Chart Showcase */
-.metrics-chart-showcase {
-    background-color: var(--metrics-card-bg);
-    border: 1px solid var(--metrics-border);
+.dashboard-chart-showcase {
+    background-color: var(--dashboard-card-bg);
+    border: 1px solid var(--dashboard-border);
     border-radius: 8px;
     padding: 24px;
     margin-bottom: 32px;
@@ -222,7 +222,7 @@
     align-items: center;
     gap: 6px;
     font-size: 11px;
-    color: var(--metrics-text-secondary);
+    color: var(--dashboard-text-secondary);
 }
 
 .legend-dot {
@@ -239,7 +239,7 @@
     overflow: hidden;
 }
 
-.metrics-svg-chart {
+.dashboard-svg-chart {
     width: 100%;
     height: auto;
     display: block;
@@ -252,7 +252,7 @@
 }
 
 .chart-grid-label {
-    fill: var(--metrics-text-tertiary);
+    fill: var(--dashboard-text-tertiary);
     font-family: var(--font-mono);
     font-size: 9px;
 }
@@ -275,7 +275,7 @@
 }
 
 .chart-dot {
-    fill: var(--metrics-card-bg);
+    fill: var(--dashboard-card-bg);
     stroke: var(--chart-line);
     stroke-width: 1.5px;
     transition: fill 0.15s ease, r 0.15s ease;
@@ -341,33 +341,33 @@
     align-items: center;
     margin-top: 14px;
     font-size: 11px;
-    color: var(--metrics-text-secondary);
+    color: var(--dashboard-text-secondary);
 }
 
 .chart-footer-caption span {
     font-family: var(--font-sans);
 }
 
-.metrics-no-data {
+.dashboard-no-data {
     height: 120px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-serif);
     font-style: italic;
-    color: var(--metrics-text-secondary);
+    color: var(--dashboard-text-secondary);
 }
 
 /* 5. Sub-sections: Template Performance & Anomalies */
-.metrics-details-section {
+.dashboard-details-section {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 24px;
 }
 
-.metrics-sub-col {
-    background-color: var(--metrics-card-bg);
-    border: 1px solid var(--metrics-border);
+.dashboard-sub-col {
+    background-color: var(--dashboard-card-bg);
+    border: 1px solid var(--dashboard-border);
     border-radius: 8px;
     padding: 24px;
     display: flex;
@@ -381,7 +381,7 @@
     font-weight: 650;
     margin: 0 0 18px 0;
     letter-spacing: 0.03em;
-    color: var(--metrics-text-secondary);
+    color: var(--dashboard-text-secondary);
     text-transform: uppercase;
 }
 
@@ -391,38 +391,38 @@
     width: 100%;
 }
 
-.metrics-table {
+.dashboard-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 12px;
     text-align: left;
 }
 
-.metrics-table th {
-    border-bottom: 1px solid var(--metrics-border);
+.dashboard-table th {
+    border-bottom: 1px solid var(--dashboard-border);
     padding: 8px 10px;
     font-weight: 600;
-    color: var(--metrics-text-secondary);
+    color: var(--dashboard-text-secondary);
     font-size: 10px;
     letter-spacing: 0.04em;
 }
 
-.metrics-table td {
-    border-bottom: 1px solid var(--metrics-border);
+.dashboard-table td {
+    border-bottom: 1px solid var(--dashboard-border);
     padding: 10px;
-    color: var(--metrics-text-primary);
+    color: var(--dashboard-text-primary);
     white-space: nowrap;
 }
 
-.metrics-table tr:last-child td {
+.dashboard-table tr:last-child td {
     border-bottom: none;
 }
 
-.metrics-table tr:hover td {
+.dashboard-table tr:hover td {
     background-color: rgba(0, 0, 0, 0.015);
 }
 
-:root[data-theme="dark"] .metrics-table tr:hover td {
+:root[data-theme="dark"] .dashboard-table tr:hover td {
     background-color: rgba(255, 255, 255, 0.015);
 }
 
@@ -454,7 +454,7 @@
     align-items: center;
     gap: 8px;
     font-size: 12px;
-    color: var(--metrics-text-primary);
+    color: var(--dashboard-text-primary);
 }
 
 .audit-dot {
@@ -477,9 +477,9 @@
 .audit-scroller {
     max-height: 220px;
     overflow-y: auto;
-    border: 1px solid var(--metrics-border);
+    border: 1px solid var(--dashboard-border);
     border-radius: 6px;
-    background-color: var(--metrics-bg);
+    background-color: var(--dashboard-bg);
 }
 
 .anomaly-items {
@@ -493,7 +493,7 @@
     align-items: flex-start;
     gap: 10px;
     padding: 10px 12px;
-    border-bottom: 1px solid var(--metrics-border);
+    border-bottom: 1px solid var(--dashboard-border);
 }
 
 .anomaly-item:last-child {
@@ -530,11 +530,11 @@
 }
 
 .anomaly-src {
-    color: var(--metrics-text-secondary);
+    color: var(--dashboard-text-secondary);
 }
 
 .anomaly-href {
-    color: var(--metrics-text-primary);
+    color: var(--dashboard-text-primary);
     font-weight: 500;
 }
 
@@ -544,8 +544,8 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background-color: var(--metrics-bg);
-    border: 1px dashed var(--metrics-border);
+    background-color: var(--dashboard-bg);
+    border: 1px dashed var(--dashboard-border);
     border-radius: 6px;
     text-align: center;
     height: 100%;
@@ -553,7 +553,7 @@
 }
 
 .perfect-icon {
-    color: var(--metrics-text-secondary);
+    color: var(--dashboard-text-secondary);
     margin-bottom: 12px;
 }
 
@@ -561,12 +561,12 @@
     font-size: 13px;
     font-weight: 600;
     margin: 0 0 6px 0;
-    color: var(--metrics-text-primary);
+    color: var(--dashboard-text-primary);
 }
 
 .perfect-desc {
     font-size: 11px;
-    color: var(--metrics-text-secondary);
+    color: var(--dashboard-text-secondary);
     margin: 0;
     line-height: 1.5;
 }
@@ -576,10 +576,10 @@
     align-items: center;
     gap: 10px;
     padding: 10px 12px;
-    border: 1px solid var(--metrics-border);
+    border: 1px solid var(--dashboard-border);
     border-radius: 6px;
     font-size: 11px;
-    color: var(--metrics-text-primary);
+    color: var(--dashboard-text-primary);
 }
 
 /* ==========================================================================
@@ -587,30 +587,30 @@
    ========================================================================== */
 
 @media (max-width: 768px) {
-    .metrics-container {
+    .dashboard-container {
         padding: 20px 16px;
         margin: 20px 0;
     }
     
-    .metrics-sys-header {
+    .dashboard-sys-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 6px;
     }
     
-    .metrics-sys-right {
+    .dashboard-sys-right {
         margin-left: 0;
     }
     
-    .metrics-grid {
+    .dashboard-grid {
         grid-template-columns: 1fr 1fr;
     }
     
-    .metrics-chart-showcase {
+    .dashboard-chart-showcase {
         padding: 16px;
     }
     
-    .metrics-svg-chart {
+    .dashboard-svg-chart {
         min-width: 600px;
     }
     
@@ -618,14 +618,24 @@
         overflow-x: auto;
     }
     
-    .metrics-details-section {
+    .dashboard-details-section {
         grid-template-columns: 1fr;
         gap: 16px;
     }
 }
 
 @media (max-width: 480px) {
-    .metrics-grid {
+    .dashboard-grid {
         grid-template-columns: 1fr;
     }
 }
+
+/* Wide Layout for Dashboard Page on Desktop */
+@media (min-width: 901px) {
+    .type-dashboard .site-container {
+        grid-template-columns: 1fr minmax(auto, 1800px) 1fr;
+        padding-left: 4vw;
+        padding-right: 4vw;
+    }
+}
+

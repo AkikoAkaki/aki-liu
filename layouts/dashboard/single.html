@@ -7,10 +7,10 @@
 {{ $history := .Site.Data.metrics.history_timeline }}
 {{ $isZh := eq .Language.Lang "zh" }}
 
-<div class="metrics-container">
+<div class="dashboard-container">
     {{/* 1. System Control Header */}}
-    <div class="metrics-sys-header">
-        <div class="metrics-sys-left">
+    <div class="dashboard-sys-header">
+        <div class="dashboard-sys-left">
             <span class="sys-label">SYSTEM</span>
             <span class="sys-dot"></span>
             <span class="sys-val">hugo.toml</span>
@@ -21,16 +21,16 @@
             <span class="sys-label">COMMIT</span>
             <span class="sys-val">{{ $latest.git.commit }}</span>
         </div>
-        <div class="metrics-sys-right">
+        <div class="dashboard-sys-right">
             <span class="sys-label">GENERATED AT</span>
             <span class="sys-val">{{ $latest.generatedAt }}</span>
         </div>
     </div>
 
     {{/* 2. Hero Headline */}}
-    <div class="metrics-hero">
-        <h1 class="metrics-hero-title">METRICS,</h1>
-        <p class="metrics-hero-desc">
+    <div class="dashboard-hero">
+        <h1 class="dashboard-hero-title">DASHBOARD,</h1>
+        <p class="dashboard-hero-desc">
             {{ if $isZh }}
             静态构建期可观测性与模板性能分析面板。当前运行环境状态良好，审计结果符合规范。
             {{ else }}
@@ -40,9 +40,9 @@
     </div>
 
     {{/* 3. Core Metrics Grid */}}
-    <div class="metrics-grid">
+    <div class="dashboard-grid">
         {{/* Card 1: Build Duration */}}
-        <div class="metrics-card">
+        <div class="dashboard-card">
             <div class="card-kicker">
                 {{ if $isZh }}构建用时{{ else }}BUILD DURATION{{ end }}
             </div>
@@ -55,7 +55,7 @@
         </div>
 
         {{/* Card 2: Cache Hit Rate */}}
-        <div class="metrics-card">
+        <div class="dashboard-card">
             <div class="card-kicker">
                 {{ if $isZh }}模板缓存命中率{{ else }}TEMPLATE CACHE RATE{{ end }}
             </div>
@@ -68,7 +68,7 @@
         </div>
 
         {{/* Card 3: Content Inventory */}}
-        <div class="metrics-card">
+        <div class="dashboard-card">
             <div class="card-kicker">
                 {{ if $isZh }}页面内容盘点{{ else }}CONTENT INVENTORY{{ end }}
             </div>
@@ -82,7 +82,7 @@
         </div>
 
         {{/* Card 4: Quality Scores */}}
-        <div class="metrics-card">
+        <div class="dashboard-card">
             <div class="card-kicker">
                 {{ if $isZh }}系统规范与质量{{ else }}QUALITY AUDIT{{ end }}
             </div>
@@ -100,7 +100,7 @@
     </div>
 
     {{/* 4. Chart Showcase */}}
-    <div class="metrics-chart-showcase">
+    <div class="dashboard-chart-showcase">
         <div class="chart-header">
             <h2>{{ if $isZh }}编译耗时历史趋势{{ else }}Build duration history timeline{{ end }}</h2>
             <div class="chart-legend">
@@ -164,7 +164,7 @@
             {{ $polygonPoints := printf "%d,%d %s %d,%d" (int $xStart) (int $yBaseline) $polylinePoints (int (add $paddingLeft $wPlot)) (int $yBaseline) }}
             
             <div class="svg-chart-wrapper">
-                <svg viewBox="0 0 {{ $width }} {{ $height }}" preserveAspectRatio="xMidYMid meet" class="metrics-svg-chart">
+                <svg viewBox="0 0 {{ $width }} {{ $height }}" preserveAspectRatio="xMidYMid meet" class="dashboard-svg-chart">
                     <!-- Horizontal Grid Lines -->
                     {{ range seq 0 4 }}
                         {{ $ratio := div (float .) 4.0 }}
@@ -201,19 +201,19 @@
                 <span>min: {{ printf "%.0f" $minBuild }}ms / max: {{ printf "%.0f" $maxBuild }}ms</span>
             </div>
         {{ else }}
-            <div class="metrics-no-data">
+            <div class="dashboard-no-data">
                 {{ if $isZh }}历史记录点不足，请多次执行编译以填充图表{{ else }}Insufficient history points to render chart. Run multiple builds to populate.{{ end }}
             </div>
         {{ end }}
     </div>
 
     {{/* 5. Sub-sections: Template Performance & Anomalies */}}
-    <div class="metrics-details-section">
+    <div class="dashboard-details-section">
         {{/* Column Left: Template performance */}}
-        <div class="metrics-sub-col">
+        <div class="dashboard-sub-col">
             <h3 class="section-sub-title">{{ if $isZh }}模板渲染耗时排行榜 (Top 10){{ else }}Slowest rendering templates (Top 10){{ end }}</h3>
             <div class="table-scroll-wrapper">
-                <table class="metrics-table">
+                <table class="dashboard-table">
                     <thead>
                         <tr>
                             <th>{{ if $isZh }}模板路径{{ else }}TEMPLATE PATH{{ end }}</th>
@@ -237,7 +237,7 @@
         </div>
 
         {{/* Column Right: Quality validation details */}}
-        <div class="metrics-sub-col">
+        <div class="dashboard-sub-col">
             <h3 class="section-sub-title">{{ if $isZh }}规范审计违规报告{{ else }}Quality audit anomalies report{{ end }}</h3>
             
             {{ $brokenCount := $latest.quality.brokenRootRelativeLinkCount }}
