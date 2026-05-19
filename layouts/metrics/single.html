@@ -1,0 +1,307 @@
+{{ define "sidebar-left" }}{{ end }}
+{{ define "sidebar-right" }}{{ end }}
+{{ define "post-header" }}{{ end }}
+
+{{ define "main" }}
+{{ $latest := .Site.Data.metrics.latest }}
+{{ $history := .Site.Data.metrics.history_timeline }}
+{{ $isZh := eq .Language.Lang "zh" }}
+
+<div class="metrics-container">
+    {{/* 1. System Control Header */}}
+    <div class="metrics-sys-header">
+        <div class="metrics-sys-left">
+            <span class="sys-label">SYSTEM</span>
+            <span class="sys-dot"></span>
+            <span class="sys-val">hugo.toml</span>
+            <span class="sys-separator">/</span>
+            <span class="sys-label">BRANCH</span>
+            <span class="sys-val">{{ $latest.git.branch }}</span>
+            <span class="sys-separator">/</span>
+            <span class="sys-label">COMMIT</span>
+            <span class="sys-val">{{ $latest.git.commit }}</span>
+        </div>
+        <div class="metrics-sys-right">
+            <span class="sys-label">GENERATED AT</span>
+            <span class="sys-val">{{ $latest.generatedAt }}</span>
+        </div>
+    </div>
+
+    {{/* 2. Hero Headline */}}
+    <div class="metrics-hero">
+        <h1 class="metrics-hero-title">METRICS,</h1>
+        <p class="metrics-hero-desc">
+            {{ if $isZh }}
+            静态构建期可观测性与模板性能分析面板。当前运行环境状态良好，审计结果符合规范。
+            {{ else }}
+            Static build-time observability and template performance dashboard. Clean validation audit and compliant assets.
+            {{ end }}
+        </p>
+    </div>
+
+    {{/* 3. Core Metrics Grid */}}
+    <div class="metrics-grid">
+        {{/* Card 1: Build Duration */}}
+        <div class="metrics-card">
+            <div class="card-kicker">
+                {{ if $isZh }}构建用时{{ else }}BUILD DURATION{{ end }}
+            </div>
+            <div class="card-main-val">
+                <span class="mono-num">{{ $latest.build.totalMs }}</span><span class="mono-unit">ms</span>
+            </div>
+            <div class="card-footer-meta">
+                {{ if $isZh }}全量静态构建与压缩{{ else }}Full static build & minify{{ end }}
+            </div>
+        </div>
+
+        {{/* Card 2: Cache Hit Rate */}}
+        <div class="metrics-card">
+            <div class="card-kicker">
+                {{ if $isZh }}模板缓存命中率{{ else }}TEMPLATE CACHE RATE{{ end }}
+            </div>
+            <div class="card-main-val">
+                <span class="mono-num">{{ $latest.templates.aggregateCacheRatio }}</span><span class="mono-unit">%</span>
+            </div>
+            <div class="card-footer-meta">
+                {{ $latest.templates.aggregateCached }} / {{ $latest.templates.aggregateCalls }} {{ if $isZh }}命中/调用{{ else }}hits/calls{{ end }}
+            </div>
+        </div>
+
+        {{/* Card 3: Content Inventory */}}
+        <div class="metrics-card">
+            <div class="card-kicker">
+                {{ if $isZh }}页面内容盘点{{ else }}CONTENT INVENTORY{{ end }}
+            </div>
+            <div class="card-main-val">
+                <span class="mono-num">{{ $latest.build.zhPages }}</span><span class="mono-unit">ZH</span>
+                <span class="mono-num" style="margin-left: 8px;">{{ $latest.build.enPages }}</span><span class="mono-unit">EN</span>
+            </div>
+            <div class="card-footer-meta">
+                {{ add $latest.build.zhPages $latest.build.enPages }} {{ if $isZh }}总静态页面{{ else }}total static pages{{ end }}
+            </div>
+        </div>
+
+        {{/* Card 4: Quality Scores */}}
+        <div class="metrics-card">
+            <div class="card-kicker">
+                {{ if $isZh }}系统规范与质量{{ else }}QUALITY AUDIT{{ end }}
+            </div>
+            <div class="card-main-val">
+                {{ if eq $latest.quality.brokenRootRelativeLinkCount 0 }}
+                <span class="status-ok">A+</span>
+                {{ else }}
+                <span class="status-warn">B-</span>
+                {{ end }}
+            </div>
+            <div class="card-footer-meta">
+                {{ $latest.quality.brokenRootRelativeLinkCount }} {{ if $isZh }}断链{{ else }}broken links{{ end }} · {{ $latest.quality.missingCanonical }} {{ if $isZh }}缺少规范链接{{ else }}missing canonicals{{ end }}
+            </div>
+        </div>
+    </div>
+
+    {{/* 4. Chart Showcase */}}
+    <div class="metrics-chart-showcase">
+        <div class="chart-header">
+            <h2>{{ if $isZh }}编译耗时历史趋势{{ else }}Build duration history timeline{{ end }}</h2>
+            <div class="chart-legend">
+                <span class="legend-dot"></span>
+                <span>{{ if $isZh }}单次全量构建用时 (ms){{ else }}Build time per run (ms){{ end }}</span>
+            </div>
+        </div>
+        
+        {{ $historyCount := len $history }}
+        {{ if gt $historyCount 1 }}
+            {{/* Core Math for Hugo SVG Render */}}
+            {{ $firstItem := index $history 0 }}
+            {{ $minBuild := float $firstItem.buildMs }}
+            {{ $maxBuild := float $firstItem.buildMs }}
+            
+            {{ range $history }}
+                {{ $val := float .buildMs }}
+                {{ if lt $val $minBuild }}{{ $minBuild = $val }}{{ end }}
+                {{ if gt $val $maxBuild }}{{ $maxBuild = $val }}{{ end }}
+            {{ end }}
+            
+            {{/* Visual padding margins */}}
+            {{ $diff := sub $maxBuild $minBuild }}
+            {{ if eq $diff 0.0 }}{{ $diff = 1.0 }}{{ end }}
+            {{ $pad := mul $diff 0.1 }}
+            {{ $maxBuild = add $maxBuild $pad }}
+            {{ $minBuild = sub $minBuild $pad }}
+            {{ if lt $minBuild 0.0 }}{{ $minBuild = 0.0 }}{{ end }}
+            {{ $diff = sub $maxBuild $minBuild }}
+            
+            {{/* Chart dimensions */}}
+            {{ $width := 1000 }}
+            {{ $height := 240 }}
+            {{ $paddingLeft := 48 }}
+            {{ $paddingRight := 16 }}
+            {{ $paddingTop := 24 }}
+            {{ $paddingBottom := 24 }}
+            
+            {{ $wPlot := sub (sub $width $paddingLeft) $paddingRight }}
+            {{ $hPlot := sub (sub $height $paddingTop) $paddingBottom }}
+            
+            {{ $points := slice }}
+            {{ $dots := slice }}
+            {{ $xStart := $paddingLeft }}
+            {{ $yBaseline := sub $height $paddingBottom }}
+            
+            {{ range $idx, $item := $history }}
+                {{ $denom := sub $historyCount 1 }}
+                {{ if eq $denom 0 }}{{ $denom = 1 }}{{ end }}
+                {{ $pctX := div (float $idx) (float $denom) }}
+                {{ $x := add $paddingLeft (mul $pctX $wPlot) }}
+                
+                {{ $pctY := div (sub (float .buildMs) $minBuild) $diff }}
+                {{ $y := sub (sub $height $paddingBottom) (mul $pctY $hPlot) }}
+                
+                {{ $points = $points | append (printf "%f,%f" $x $y) }}
+                {{ $dots = $dots | append (dict "x" $x "y" $y "val" .buildMs "label" .label "commit" .commit) }}
+            {{ end }}
+            
+            {{ $polylinePoints := delimit $points " " }}
+            {{ $polygonPoints := printf "%f,%f %s %f,%f" $xStart $yBaseline $polylinePoints (add $paddingLeft $wPlot) $yBaseline }}
+            
+            <div class="svg-chart-wrapper">
+                <svg viewBox="0 0 {{ $width }} {{ $height }}" preserveAspectRatio="xMidYMid meet" class="metrics-svg-chart">
+                    <!-- Horizontal Grid Lines -->
+                    {{ range seq 0 4 }}
+                        {{ $ratio := div (float .) 4.0 }}
+                        {{ $y := add $paddingTop (mul $ratio $hPlot) }}
+                        {{ $gridVal := sub $maxBuild (mul $ratio $diff) }}
+                        <line x1="{{ $paddingLeft }}" y1="{{ $y }}" x2="{{ sub $width $paddingRight }}" y2="{{ $y }}" class="chart-grid-line" stroke-dasharray="2 3"></line>
+                        <text x="8" y="{{ $y }}" class="chart-grid-label" dominant-baseline="middle">{{ printf "%.0f" $gridVal }}ms</text>
+                    {{ end }}
+                    
+                    <!-- Area Fill -->
+                    <polygon points="{{ $polygonPoints }}" class="chart-area-fill"></polygon>
+                    
+                    <!-- Line Path -->
+                    <polyline points="{{ $polylinePoints }}" class="chart-line-path"></polyline>
+                    
+                    <!-- Interactive Dots -->
+                    {{ range $dots }}
+                        <g class="chart-dot-group">
+                            <circle cx="{{ .x }}" cy="{{ .y }}" r="3" class="chart-dot"></circle>
+                            <circle cx="{{ .x }}" cy="{{ .y }}" r="7" class="chart-dot-hover-trigger"></circle>
+                            <!-- Linear Tooltip -->
+                            <foreignObject x="{{ sub .x 45 }}" y="{{ sub .y 32 }}" width="90" height="26" class="chart-tooltip-container">
+                                <div class="chart-tooltip">
+                                    <span class="tooltip-val">{{ printf "%.0f" .val }}ms</span>
+                                    <span class="tooltip-commit">{{ .commit }}</span>
+                                </div>
+                            </foreignObject>
+                        </g>
+                    {{ end }}
+                </svg>
+            </div>
+            <div class="chart-footer-caption">
+                <span>{{ if $isZh }}最近 30 次构建趋势 (从早到晚){{ else }}Trend over the last 30 builds (ordered chronologically){{ end }}</span>
+                <span>min: {{ printf "%.0f" $minBuild }}ms / max: {{ printf "%.0f" $maxBuild }}ms</span>
+            </div>
+        {{ else }}
+            <div class="metrics-no-data">
+                {{ if $isZh }}历史记录点不足，请多次执行编译以填充图表{{ else }}Insufficient history points to render chart. Run multiple builds to populate.{{ end }}
+            </div>
+        {{ end }}
+    </div>
+
+    {{/* 5. Sub-sections: Template Performance & Anomalies */}}
+    <div class="metrics-details-section">
+        {{/* Column Left: Template performance */}}
+        <div class="metrics-sub-col">
+            <h3 class="section-sub-title">{{ if $isZh }}模板渲染耗时排行榜 (Top 10){{ else }}Slowest rendering templates (Top 10){{ end }}</h3>
+            <div class="table-scroll-wrapper">
+                <table class="metrics-table">
+                    <thead>
+                        <tr>
+                            <th>{{ if $isZh }}模板路径{{ else }}TEMPLATE PATH{{ end }}</th>
+                            <th class="num-col">{{ if $isZh }}累积用时{{ else }}CUMULATIVE{{ end }}</th>
+                            <th class="num-col">{{ if $isZh }}单次平均{{ else }}AVERAGE{{ end }}</th>
+                            <th class="num-col">{{ if $isZh }}缓存利用{{ else }}CACHED{{ end }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{ range $latest.templates.top }}
+                        <tr>
+                            <td class="mono-txt truncate-path" title="{{ .template }}">{{ .template }}</td>
+                            <td class="mono-txt num-col">{{ .cumulativeMs }}ms</td>
+                            <td class="mono-txt num-col">{{ .averageMs }}ms</td>
+                            <td class="mono-txt num-col">{{ .percentCached }}%</td>
+                        </tr>
+                        {{ end }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{/* Column Right: Quality validation details */}}
+        <div class="metrics-sub-col">
+            <h3 class="section-sub-title">{{ if $isZh }}规范审计违规报告{{ else }}Quality audit anomalies report{{ end }}</h3>
+            
+            {{ $brokenCount := $latest.quality.brokenRootRelativeLinkCount }}
+            {{ $canonicalMissing := $latest.quality.missingCanonical }}
+            {{ $htmlFiles := $latest.quality.htmlFiles }}
+            
+            <div class="audit-anomalies-list">
+                {{/* Summary status card */}}
+                <div class="audit-summary-bar">
+                    <span class="audit-dot {{ if eq $brokenCount 0 }}dot-green{{ else }}dot-red{{ end }}"></span>
+                    <span>
+                        {{ if $isZh }}
+                            已审计 {{ $htmlFiles }} 个静态 HTML 文件，检测到 <strong>{{ $brokenCount }}</strong> 处损坏链接。
+                        {{ else }}
+                            Audited {{ $htmlFiles }} static HTML files. Detected <strong>{{ $brokenCount }}</strong> broken links.
+                        {{ end }}
+                    </span>
+                </div>
+
+                {{ if gt $brokenCount 0 }}
+                    <div class="audit-scroller">
+                        <ul class="anomaly-items">
+                            {{ range $latest.quality.brokenRootRelativeLinkTop }}
+                            <li class="anomaly-item">
+                                <span class="badge badge-error">{{ if $isZh }}断链{{ else }}BROKEN{{ end }}</span>
+                                <div class="anomaly-body">
+                                    <div class="anomaly-src">page: <span class="mono-txt">{{ .page }}</span></div>
+                                    <div class="anomaly-href">href: <span class="mono-txt">{{ .href }}</span></div>
+                                </div>
+                            </li>
+                            {{ end }}
+                        </ul>
+                    </div>
+                {{ else }}
+                    <div class="audit-perfect-card">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" class="perfect-icon">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="22 4 12 14.01 9 11.01" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <p class="perfect-title">{{ if $isZh }}各项审计完美符合规范{{ else }}All validations fully compliant{{ end }}</p>
+                        <p class="perfect-desc">
+                            {{ if $isZh }}
+                            站点根相对链接解析 100% 正确，未检测到死链，SEO 规范化属性与语种标记完整。
+                            {{ else }}
+                            Zero broken links found. Canonical URL mappings and HTML language attributes are fully compliant.
+                            {{ end }}
+                        </p>
+                    </div>
+                {{ end }}
+                
+                {{ if gt $canonicalMissing 0 }}
+                <div class="audit-minor-alert">
+                    <span class="badge badge-minor">SEO</span>
+                    <span>
+                        {{ if $isZh }}
+                        警告：有 {{ $canonicalMissing }} 个页面未包含 rel="canonical" 标签，建议检查基准头文件布局。
+                        {{ else }}
+                        Warning: {{ $canonicalMissing }} pages lack rel="canonical" mappings. Check head template overrides.
+                        {{ end }}
+                    </span>
+                </div>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}

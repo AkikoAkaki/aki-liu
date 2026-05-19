@@ -80,6 +80,7 @@
             <div class="menu-panel-inner">
                 <a href="{{ $homePage.RelPermalink }}" class="menu-link{{ if .IsHome }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Home</span></span></a>
                 <a href="{{ with .Site.GetPage "section" "about" }}{{ .RelPermalink }}{{ else }}{{ "about/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "about" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">About</span></span></a>
+                <a href="{{ "/metrics/" | relLangURL }}" class="menu-link{{ if eq .Section "metrics" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Metrics</span></span></a>
                 <div class="menu-group{{ if or (eq .Section "ideas") (eq .Section "textlab") }} is-active{{ end }}" role="group" aria-label="Writing">
                     <div class="menu-group-label">Writing</div>
                     <div class="menu-submenu">

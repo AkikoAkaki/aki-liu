@@ -373,9 +373,15 @@ function Get-HistorySeries {
         $buildMs = 0.0
         $cacheRatio = 0.0
         $brokenLinks = 0
+        $zhPages = 0
+        $enPages = 0
+        $commit = "unknown"
         try { $buildMs = [double]$item.build.totalMs } catch {}
         try { $cacheRatio = [double]$item.templates.aggregateCacheRatio } catch {}
         try { $brokenLinks = [int]$item.quality.brokenRootRelativeLinkCount } catch {}
+        try { $zhPages = [int]$item.build.zhPages } catch {}
+        try { $enPages = [int]$item.build.enPages } catch {}
+        try { $commit = [string]$item.git.commit } catch {}
         if ($buildMs -le 0) {
             continue
         }
@@ -386,6 +392,9 @@ function Get-HistorySeries {
             buildMs     = [math]::Round($buildMs, 3)
             cacheRatio  = [math]::Round($cacheRatio, 3)
             brokenLinks = $brokenLinks
+            zhPages     = $zhPages
+            enPages     = $enPages
+            commit      = $commit
         }
     }
 
@@ -741,10 +750,23 @@ $historyJsonPath = Join-Path $historyDir "$stamp.json"
 $historyPoints = Get-HistorySeries -HistoryDir $historyDir -Limit 30
 Write-ReportHtml -Metrics $metrics -Delta $delta -Path $latestHtmlPath -HistoryPoints $historyPoints
 
+# Direct Hugo-accessible static data feeding
+$dataMetricsDir = Join-Path $ProjectRoot "data\metrics"
+New-Item -ItemType Directory -Path $dataMetricsDir -Force | Out-Null
+
+$dataLatestJsonPath = Join-Path $dataMetricsDir "latest.json"
+$dataHistoryJsonPath = Join-Path $dataMetricsDir "history_timeline.json"
+
+[System.IO.File]::WriteAllText($dataLatestJsonPath, $json, $utf8NoBom)
+$historyJson = $historyPoints | ConvertTo-Json -Depth 8
+[System.IO.File]::WriteAllText($dataHistoryJsonPath, $historyJson, $utf8NoBom)
+
 Write-Host "Metrics report generated:"
-Write-Host "  JSON    $latestJsonPath"
-Write-Host "  HTML    $latestHtmlPath"
-Write-Host "  History $historyJsonPath"
+Write-Host "  JSON        $latestJsonPath"
+Write-Host "  HTML        $latestHtmlPath"
+Write-Host "  History     $historyJsonPath"
+Write-Host "  Hugo latest $dataLatestJsonPath"
+Write-Host "  Hugo series $dataHistoryJsonPath"
 Write-Host ""
 Write-Host "Summary:"
 Write-Host "  Build total: $($metrics.build.totalMs) ms"

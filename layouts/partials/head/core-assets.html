@@ -36,6 +36,12 @@
     <link rel="stylesheet" href="{{ $microblogStyle.RelPermalink }}" integrity="{{ $microblogStyle.Data.Integrity }}">
 {{- end -}}
 
+{{- if eq .Section "metrics" -}}
+    {{- $metrics := resources.Get "css/metrics.css" -}}
+    {{- $metricsStyle := $metrics | resources.Minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $metricsStyle.RelPermalink }}" integrity="{{ $metricsStyle.Data.Integrity }}">
+{{- end -}}
+
 {{- $mainJS := resources.Get "js/main.js" | js.Build (dict "targetPath" "js/main.js") | resources.Minify | fingerprint -}}
 <script defer src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}"></script>
 

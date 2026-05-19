@@ -1,0 +1,282 @@
+[
+    {
+        "stamp":  "20260219-161220",
+        "label":  "16:12:20",
+        "buildMs":  277,
+        "cacheRatio":  1.64,
+        "brokenLinks":  1,
+        "zhPages":  0,
+        "enPages":  0,
+        "commit":  "unknown"
+    },
+    {
+        "stamp":  "20260219-161307",
+        "label":  "16:13:07",
+        "buildMs":  282,
+        "cacheRatio":  1.64,
+        "brokenLinks":  1,
+        "zhPages":  123,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-161704",
+        "label":  "16:17:04",
+        "buildMs":  225,
+        "cacheRatio":  1.64,
+        "brokenLinks":  1,
+        "zhPages":  123,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-162902",
+        "label":  "16:29:02",
+        "buildMs":  242,
+        "cacheRatio":  1.64,
+        "brokenLinks":  0,
+        "zhPages":  123,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-162934",
+        "label":  "16:29:34",
+        "buildMs":  249,
+        "cacheRatio":  1.64,
+        "brokenLinks":  0,
+        "zhPages":  123,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-163659",
+        "label":  "16:36:59",
+        "buildMs":  276,
+        "cacheRatio":  1.64,
+        "brokenLinks":  0,
+        "zhPages":  123,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-164031",
+        "label":  "16:40:31",
+        "buildMs":  253,
+        "cacheRatio":  20.95,
+        "brokenLinks":  0,
+        "zhPages":  123,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-164114",
+        "label":  "16:41:14",
+        "buildMs":  310,
+        "cacheRatio":  20.95,
+        "brokenLinks":  0,
+        "zhPages":  123,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-164633",
+        "label":  "16:46:33",
+        "buildMs":  240,
+        "cacheRatio":  20.95,
+        "brokenLinks":  0,
+        "zhPages":  123,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-165002",
+        "label":  "16:50:02",
+        "buildMs":  332,
+        "cacheRatio":  20.95,
+        "brokenLinks":  0,
+        "zhPages":  123,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-165025",
+        "label":  "16:50:25",
+        "buildMs":  230,
+        "cacheRatio":  20.95,
+        "brokenLinks":  0,
+        "zhPages":  123,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-165110",
+        "label":  "16:51:10",
+        "buildMs":  216,
+        "cacheRatio":  20.95,
+        "brokenLinks":  0,
+        "zhPages":  123,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-212535",
+        "label":  "21:25:35",
+        "buildMs":  231,
+        "cacheRatio":  14.88,
+        "brokenLinks":  0,
+        "zhPages":  124,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-212832",
+        "label":  "21:28:32",
+        "buildMs":  253,
+        "cacheRatio":  14.88,
+        "brokenLinks":  0,
+        "zhPages":  124,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-213923",
+        "label":  "21:39:23",
+        "buildMs":  327,
+        "cacheRatio":  11.64,
+        "brokenLinks":  0,
+        "zhPages":  124,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-214042",
+        "label":  "21:40:42",
+        "buildMs":  273,
+        "cacheRatio":  20.42,
+        "brokenLinks":  0,
+        "zhPages":  124,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-214216",
+        "label":  "21:42:16",
+        "buildMs":  385,
+        "cacheRatio":  20.42,
+        "brokenLinks":  0,
+        "zhPages":  124,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-215318",
+        "label":  "21:53:18",
+        "buildMs":  458,
+        "cacheRatio":  20.42,
+        "brokenLinks":  0,
+        "zhPages":  124,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260219-215915",
+        "label":  "21:59:15",
+        "buildMs":  299,
+        "cacheRatio":  14.97,
+        "brokenLinks":  0,
+        "zhPages":  124,
+        "enPages":  30,
+        "commit":  "68a97d0"
+    },
+    {
+        "stamp":  "20260501-183533",
+        "label":  "18:35:33",
+        "buildMs":  484,
+        "cacheRatio":  16.98,
+        "brokenLinks":  139,
+        "zhPages":  121,
+        "enPages":  28,
+        "commit":  "109fd34"
+    },
+    {
+        "stamp":  "20260501-183659",
+        "label":  "18:36:59",
+        "buildMs":  369,
+        "cacheRatio":  22.37,
+        "brokenLinks":  139,
+        "zhPages":  121,
+        "enPages":  28,
+        "commit":  "109fd34"
+    },
+    {
+        "stamp":  "20260501-183837",
+        "label":  "18:38:37",
+        "buildMs":  502,
+        "cacheRatio":  23.63,
+        "brokenLinks":  139,
+        "zhPages":  121,
+        "enPages":  28,
+        "commit":  "109fd34"
+    },
+    {
+        "stamp":  "20260501-183955",
+        "label":  "18:39:55",
+        "buildMs":  361,
+        "cacheRatio":  23.49,
+        "brokenLinks":  139,
+        "zhPages":  121,
+        "enPages":  28,
+        "commit":  "109fd34"
+    },
+    {
+        "stamp":  "20260501-184043",
+        "label":  "18:40:43",
+        "buildMs":  324,
+        "cacheRatio":  23.49,
+        "brokenLinks":  139,
+        "zhPages":  121,
+        "enPages":  28,
+        "commit":  "109fd34"
+    },
+    {
+        "stamp":  "20260519-132820",
+        "label":  "13:28:20",
+        "buildMs":  898,
+        "cacheRatio":  34.8,
+        "brokenLinks":  50,
+        "zhPages":  267,
+        "enPages":  33,
+        "commit":  "b26bb27"
+    },
+    {
+        "stamp":  "20260519-133047",
+        "label":  "13:30:47",
+        "buildMs":  870,
+        "cacheRatio":  34.39,
+        "brokenLinks":  0,
+        "zhPages":  267,
+        "enPages":  39,
+        "commit":  "b26bb27"
+    },
+    {
+        "stamp":  "20260519-161136",
+        "label":  "16:11:36",
+        "buildMs":  799,
+        "cacheRatio":  33.55,
+        "brokenLinks":  0,
+        "zhPages":  265,
+        "enPages":  39,
+        "commit":  "8c86232"
+    },
+    {
+        "stamp":  "20260519-162321",
+        "label":  "16:23:21",
+        "buildMs":  874,
+        "cacheRatio":  33.43,
+        "brokenLinks":  0,
+        "zhPages":  266,
+        "enPages":  40,
+        "commit":  "8c86232"
+    }
+]
