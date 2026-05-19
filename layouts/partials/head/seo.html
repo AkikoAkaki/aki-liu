@@ -173,13 +173,9 @@
                 "hasAbsoluteBase" $hasAbsoluteBase
             ) -}}
             {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" $sectionPage.Title "item" $sectionURL) -}}
-            {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 3 "name" $pageTitle) -}}
-        {{- else -}}
-            {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" $pageTitle) -}}
         {{- end -}}
-    {{- else -}}
-        {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" $pageTitle) -}}
     {{- end -}}
+    {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" (add (len $crumbs) 1) "name" $pageTitle) -}}
     {{- $breadcrumbSchema := dict "@context" "https://schema.org" "@type" "BreadcrumbList" "itemListElement" $crumbs -}}
     {{- printf "<script type=\"application/ld+json\">%s</script>" ($breadcrumbSchema | jsonify) | safeHTML -}}
 {{- end -}}

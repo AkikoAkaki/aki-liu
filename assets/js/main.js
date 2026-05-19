@@ -127,68 +127,6 @@
             }
         }
 
-        // --- Archive desktop bottom stats ---
-        const archiveStats = document.querySelector('.archive-sidebar-bottom');
-        const archiveBottomHost = document.querySelector('.kind-section .site-sidebar-bottom');
-        const archiveCopyright = document.querySelector('.archive-copyright');
-        if (archiveStats && archiveBottomHost && archiveCopyright) {
-            const desktopQuery = window.matchMedia('(min-width: 481px)');
-            let statsRaf = 0;
-
-            function clearArchiveStatsPosition() {
-                archiveStats.classList.remove('is-fixed', 'is-bottomed');
-                archiveStats.style.left = '';
-                archiveStats.style.top = '';
-                archiveStats.style.width = '';
-                archiveCopyright.style.left = '';
-                archiveCopyright.style.top = '';
-                archiveCopyright.style.width = '';
-            }
-
-            function positionArchiveStats() {
-                statsRaf = 0;
-
-                if (!desktopQuery.matches) {
-                    clearArchiveStatsPosition();
-                    return;
-                }
-
-                archiveStats.classList.add('is-fixed');
-                archiveStats.classList.remove('is-bottomed');
-                archiveStats.style.top = '';
-
-                const hostRect = archiveBottomHost.getBoundingClientRect();
-                const hostTop = window.scrollY + hostRect.top;
-                const bottomOffset = parseFloat(getComputedStyle(archiveStats).bottom) || 0;
-                const maxScrollY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-                const finalStatsBottom = maxScrollY + window.innerHeight - bottomOffset;
-                const copyrightTop = finalStatsBottom - hostTop;
-
-                archiveCopyright.style.left = '0px';
-                archiveCopyright.style.top = `${copyrightTop}px`;
-                archiveCopyright.style.width = `${hostRect.width}px`;
-
-                archiveStats.style.left = `${hostRect.left}px`;
-                archiveStats.style.top = '';
-
-                archiveStats.style.width = `${hostRect.width}px`;
-            }
-
-            function scheduleArchiveStatsPosition() {
-                if (statsRaf) return;
-                statsRaf = requestAnimationFrame(positionArchiveStats);
-            }
-
-            scheduleArchiveStatsPosition();
-            window.addEventListener('scroll', scheduleArchiveStatsPosition, { passive: true });
-            window.addEventListener('resize', scheduleArchiveStatsPosition);
-            if (desktopQuery.addEventListener) {
-                desktopQuery.addEventListener('change', scheduleArchiveStatsPosition);
-            } else {
-                desktopQuery.addListener(scheduleArchiveStatsPosition);
-            }
-        }
-
         // --- Archive filtering + hover preview ---
         const archiveList = document.querySelector('.archive-list[data-archive-filter-root]');
         const archiveItems = archiveList ? [...archiveList.querySelectorAll('.archive-item')] : [];
@@ -276,9 +214,6 @@
                 });
                 const rightCols = document.querySelector('.archive-right-cols');
                 if (rightCols) resizeObserver.observe(rightCols);
-                window.addEventListener('resize', () => {
-                    if (currentHoverNode) renderForItem(currentHoverNode);
-                });
             }
 
             archiveItems.forEach(item => {
@@ -768,12 +703,8 @@
             resetTimer = setTimeout(resetToMiddleIfNeeded, reduceMotion ? 0 : 560);
         }
 
-        root.addEventListener('mouseenter', open);
         root.addEventListener('pointerenter', open);
-        root.addEventListener('mouseover', open);
-        root.addEventListener('mousemove', open);
         root.addEventListener('click', open);
-        root.addEventListener('mouseleave', close);
         root.addEventListener('pointerleave', close);
 
         root.addEventListener('wheel', event => {
@@ -1337,7 +1268,7 @@
 
         const lang = (document.documentElement.lang || 'zh').toLowerCase().startsWith('en') ? 'en' : 'zh';
         const indexUrl = lang === 'en' ? '/en/search-index.json' : '/search-index.json';
-        const isMac = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent || '');
+        const isMac = /Mac|iPhone|iPad/i.test(navigator.userAgent || '');
 
         let panel = null;
         let inputEl = null;
@@ -1453,14 +1384,14 @@
                 const i = lower.indexOf(t);
                 if (i !== -1 && (pos === -1 || i < pos)) pos = i;
             }
-            const window = len || 160;
+            const span = len || 160;
             if (pos === -1) {
-                const head = body.slice(0, window);
-                return escapeHtml(head) + (body.length > window ? '…' : '');
+                const head = body.slice(0, span);
+                return escapeHtml(head) + (body.length > span ? '…' : '');
             }
-            const half = Math.floor(window / 2);
+            const half = Math.floor(span / 2);
             const start = Math.max(0, pos - half);
-            const end = Math.min(body.length, pos + half + (window - half));
+            const end = Math.min(body.length, pos + half + (span - half));
             let text = body.slice(start, end);
             if (start > 0) text = '…' + text;
             if (end < body.length) text = text + '…';

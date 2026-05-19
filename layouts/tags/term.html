@@ -43,13 +43,5 @@
 {{ end }}
 
 {{ define "sidebar-right" }}
-<div class="archive-right-cols">
-    <div class="archive-view-col">
-        <h3 class="archive-col-header">Preview:</h3>
-
-        <div id="archive-preview-container" class="preview-container">
-            <!-- Content injected by JS -->
-        </div>
-    </div>
-</div>
+{{ partial "archive-preview.html" . }}
 {{ end }}

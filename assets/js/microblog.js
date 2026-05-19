@@ -4,8 +4,6 @@
 
     const feedURL = root.dataset.feedUrl || '/microblog/feed.json';
     const deck = root.querySelector('.microblog-deck');
-    const tagBar = root.querySelector('[data-mb-tag-bar]');
-    const totalEl = root.querySelector('[data-mb-total]');
     const PAGE_SIZE = 30;
     const STAGGER_MS = 40;
     const COMPRESSION_THRESHOLD = 0.96;
@@ -424,16 +422,6 @@
         years.forEach(year => openYearColumn(year));
     }
 
-    function bindTagBar() {
-        if (!tagBar) return;
-        tagBar.addEventListener('click', e => {
-            const chip = e.target.closest('[data-mb-tag]');
-            if (!chip) return;
-            e.preventDefault();
-            openTagColumn(chip.dataset.mbTagLabel || chip.dataset.mbTag);
-        });
-    }
-
     function bindSidebarTags() {
         const sidebar = document.querySelector('.archive-tags-list');
         if (!sidebar) return;
@@ -469,7 +457,7 @@
 
     function bindPopstate() {
         window.addEventListener('popstate', () => {
-            deck.querySelectorAll('.mb-column-tag').forEach(c => c.remove());
+            deck.querySelectorAll('.mb-column-tag, .mb-column-year').forEach(c => c.remove());
             scheduleColumnCompression();
             restoreFromURL();
         });
@@ -482,12 +470,10 @@
     function init() {
         const mainColumn = deck.querySelector('.mb-column-main');
         loadFeed().then(data => {
-            if (totalEl) totalEl.textContent = data.entries.length;
             if (mainColumn) hydrateColumn(mainColumn, '');
             restoreFromURL();
             scheduleColumnCompression();
         });
-        bindTagBar();
         bindSidebarTags();
         bindSidebarYears();
         bindCardTagClicks();

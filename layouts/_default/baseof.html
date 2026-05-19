@@ -14,7 +14,6 @@
 </head>
 <body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} kind-{{ .Kind }}{{ if and (eq .Kind "page") (lt .WordCount 600) }} post-short{{ end }}">
     <a href="#main-content" class="skip-link">Skip to content</a>
-    {{- $connect := site.Data.homepage.connect -}}
     <div class="site-wrapper">
     <div class="site-container">
         {{ block "post-header" . }}{{ end }}
