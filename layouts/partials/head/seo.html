@@ -154,3 +154,32 @@
     {{- end -}}
     {{- printf "<script type=\"application/ld+json\">%s</script>" ($articleSchema | jsonify) | safeHTML -}}
 {{- end -}}
+
+{{- if not $page.IsHome -}}
+    {{- $homeURL := partial "head/resolve-url.html" (dict
+        "rel" $page.Site.Home.RelPermalink
+        "perm" $page.Site.Home.Permalink
+        "siteURL" $siteURL
+        "hasAbsoluteBase" $hasAbsoluteBase
+    ) -}}
+    {{- $crumbs := slice (dict "@type" "ListItem" "position" 1 "name" $siteTitle "item" $homeURL) -}}
+    {{- if and $page.Section (ne $page.Kind "section") -}}
+        {{- $sectionPage := $page.Site.GetPage "section" $page.Section -}}
+        {{- if $sectionPage -}}
+            {{- $sectionURL := partial "head/resolve-url.html" (dict
+                "rel" $sectionPage.RelPermalink
+                "perm" $sectionPage.Permalink
+                "siteURL" $siteURL
+                "hasAbsoluteBase" $hasAbsoluteBase
+            ) -}}
+            {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" $sectionPage.Title "item" $sectionURL) -}}
+            {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 3 "name" $pageTitle) -}}
+        {{- else -}}
+            {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" $pageTitle) -}}
+        {{- end -}}
+    {{- else -}}
+        {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" $pageTitle) -}}
+    {{- end -}}
+    {{- $breadcrumbSchema := dict "@context" "https://schema.org" "@type" "BreadcrumbList" "itemListElement" $crumbs -}}
+    {{- printf "<script type=\"application/ld+json\">%s</script>" ($breadcrumbSchema | jsonify) | safeHTML -}}
+{{- end -}}
