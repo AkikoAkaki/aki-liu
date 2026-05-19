@@ -137,11 +137,11 @@
 /* 全局变量：字体、颜色、间距统一在这里配置 */
 :root {
     /* 字体栈 */
-    --font-serif: "Newsreader", "Playfair Display", "EB Garamond", "Noto Serif SC", "SimSun", serif;
+    --font-serif: "Newsreader", "Playfair Display", "EB Garamond", "Source Han Serif SC", "Noto Serif SC", "SimSun", serif;
     --font-editorial: "PP Editorial Old", var(--font-serif);
     --font-mono: "JetBrains Mono", "Geist Mono", "Space Mono", "Consolas", monospace;
-    --font-sans: "Switzer", "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-ui: "Switzer", "Inter", "Microsoft YaHei", -apple-system, sans-serif;
+    --font-sans: "Switzer", "Inter", "Source Han Sans SC", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-ui: "Switzer", "Inter", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
 
     /* 排版预设 */
     --type-intro: 400 clamp(1.2rem, 2vw, 1.6rem)/1.6 var(--font-serif);

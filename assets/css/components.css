@@ -219,12 +219,6 @@
    About Page — Final Design (af-* / ab-* namespace)
    ========================================================================== */
 
-/* Full-width layout override */
-body.section-about {
-    --font-sans: "Switzer", sans-serif;
-    --font-ui: "Switzer", sans-serif;
-}
-
 body.section-about .site-container {
     grid-template-columns: 1fr;
     padding-left: 0;
