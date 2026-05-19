@@ -1,4 +1,4 @@
-{{- $coreAssetsKey := printf "%s|%s|%s|%t|%t" .Language.Lang .Kind .Section .IsHome .IsPage -}}
+{{- $coreAssetsKey := printf "%s|%s|%s|%s|%t|%t" .Language.Lang .Kind .Section .Type .IsHome .IsPage -}}
 {{- partialCached "head/core-assets.html" . $coreAssetsKey -}}
 
 {{- /* KaTeX (page-level gating is handled in this partial) */ -}}

@@ -1,35 +1,44 @@
 /* ==========================================================================
-   Modern Bento-Style Observability Dashboard Styles
-   Linear Light/Dark Monochrome Aesthetic with Advanced Interactions
+   Premium Bento-Style Observability Dashboard Styles
+   Modern SaaS / Apple-Health Aesthetic (Light-Themed / Slate / Silver)
+   Deep Interactive Visualizations, Splines, Sliders, and Theme Toggles
    ========================================================================== */
 
+/* 1. Reset & Structural Variable Defs */
 .dashboard-container {
-    --dashboard-bg: #f5f5f7;
+    --dashboard-bg: #f8f9fa;
     --dashboard-card-bg: #ffffff;
-    --dashboard-border: #e5e5e7;
-    --dashboard-border-hover: #86868b;
+    --dashboard-border: rgba(0, 0, 0, 0.06);
+    --dashboard-border-hover: rgba(0, 0, 0, 0.16);
     --dashboard-text-primary: #1d1d1f;
-    --dashboard-text-secondary: #86868b;
-    --dashboard-text-tertiary: #a1a1a6;
+    --dashboard-text-secondary: #6e6e73;
+    --dashboard-text-tertiary: #aeaeb2;
     --dashboard-mono-num: #000000;
+    --card-dot-color: rgba(0, 0, 0, 0.02);
     
-    --chart-line: #111111;
-    --chart-area: rgba(0, 0, 0, 0.02);
-    --chart-grid: #e5e5e7;
+    --chart-line: #000000;
+    --chart-area: rgba(0, 0, 0, 0.015);
+    --chart-grid: rgba(0, 0, 0, 0.035);
     --chart-bar-bg: #e5e5e7;
-    --chart-bar-active: #1d1d1f;
-    --chart-accent: #000000;
-    --chart-accent-light: rgba(0, 0, 0, 0.05);
+    --chart-bar-active: #000000;
+    --chart-accent: #007aff;
+    --chart-accent-light: rgba(0, 122, 255, 0.04);
     
-    --tooltip-bg: #1d1d1f;
-    --tooltip-text: #ffffff;
-    --status-glow: rgba(46, 204, 113, 0.2);
-    --status-color: #2ecc71;
+    --tooltip-bg: rgba(255, 255, 255, 0.78);
+    --tooltip-border: rgba(0, 0, 0, 0.08);
+    --tooltip-text: #1d1d1f;
+    
+    --status-glow: rgba(52, 199, 89, 0.15);
+    --status-color: #34c759;
+    --warn-glow: rgba(255, 149, 0, 0.15);
+    --warn-color: #ff9500;
+    --error-glow: rgba(255, 59, 48, 0.15);
+    --error-color: #ff3b30;
     
     background-color: var(--dashboard-bg);
     color: var(--dashboard-text-primary);
-    padding: 40px 32px;
-    border-radius: 16px;
+    padding: 48px 40px;
+    border-radius: 24px;
     border: 1px solid var(--dashboard-border);
     margin: 40px auto;
     font-family: var(--font-sans);
@@ -37,35 +46,65 @@
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Adapt for Dark Theme */
+/* 2. Adaptive Dark Theme Integration */
 :root[data-theme="dark"] .dashboard-container,
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .dashboard-container {
         --dashboard-bg: #0b0b0c;
         --dashboard-card-bg: #121214;
-        --dashboard-border: #222225;
-        --dashboard-border-hover: #48484a;
+        --dashboard-border: rgba(255, 255, 255, 0.06);
+        --dashboard-border-hover: rgba(255, 255, 255, 0.18);
         --dashboard-text-primary: #f5f5f7;
         --dashboard-text-secondary: #86868b;
         --dashboard-text-tertiary: #48484a;
         --dashboard-mono-num: #ffffff;
+        --card-dot-color: rgba(255, 255, 255, 0.015);
         
         --chart-line: #ffffff;
-        --chart-area: rgba(255, 255, 255, 0.02);
-        --chart-grid: #222225;
-        --chart-bar-bg: #222225;
+        --chart-area: rgba(255, 255, 255, 0.015);
+        --chart-grid: rgba(255, 255, 255, 0.04);
+        --chart-bar-bg: #2c2c2e;
         --chart-bar-active: #ffffff;
-        --chart-accent: #ffffff;
-        --chart-accent-light: rgba(255, 255, 255, 0.08);
+        --chart-accent: #0a84ff;
+        --chart-accent-light: rgba(10, 132, 255, 0.08);
         
-        --tooltip-bg: #f5f5f7;
-        --tooltip-text: #1d1d1f;
-        --status-glow: rgba(48, 209, 88, 0.2);
+        --tooltip-bg: rgba(18, 18, 20, 0.82);
+        --tooltip-border: rgba(255, 255, 255, 0.08);
+        --tooltip-text: #f5f5f7;
+        
+        --status-glow: rgba(48, 209, 88, 0.15);
         --status-color: #30d158;
+        --warn-glow: rgba(255, 159, 10, 0.15);
+        --warn-color: #ff9f0a;
+        --error-glow: rgba(255, 69, 58, 0.15);
+        --error-color: #ff453a;
     }
 }
 
-/* 1. System Control Header */
+/* 3. Global CSS Layout Width Overrides */
+/* Disable site layout sidebars on Dashboard to expand layout width */
+.type-dashboard .site-sidebar,
+.type-dashboard .site-sidebar-right,
+.type-dashboard .site-sidebar-bottom {
+    display: none !important;
+}
+
+@media (min-width: 901px) {
+    .type-dashboard .site-container {
+        grid-template-columns: 1fr;
+        max-width: 1560px;
+        margin: 0 auto;
+        padding-left: 3vw;
+        padding-right: 3vw;
+    }
+    .type-dashboard .site-main {
+        grid-column: 1 / -1;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* 4. Technical Status Header */
 .dashboard-sys-header {
     display: flex;
     justify-content: space-between;
@@ -73,7 +112,7 @@
     flex-wrap: wrap;
     gap: 12px;
     border-bottom: 1px solid var(--dashboard-border);
-    padding-bottom: 16px;
+    padding-bottom: 18px;
     margin-bottom: 36px;
     font-family: var(--font-mono);
     font-size: 11px;
@@ -113,15 +152,15 @@
     color: var(--dashboard-text-secondary);
 }
 
-/* 2. Hero Headline */
+/* 5. Hero Section styling */
 .dashboard-hero {
-    margin-bottom: 40px;
+    margin-bottom: 44px;
     max-width: 800px;
 }
 
 .dashboard-hero-title {
     font-family: var(--font-editorial);
-    font-size: clamp(2.4rem, 4.5vw, 4rem);
+    font-size: clamp(2.4rem, 4.5vw, 4.2rem);
     font-weight: 300;
     line-height: 1.02;
     margin: 0 0 14px 0;
@@ -132,29 +171,31 @@
 .dashboard-hero-desc {
     font-family: var(--font-serif);
     font-size: 18px;
-    line-height: 1.6;
+    line-height: 1.65;
     color: var(--dashboard-text-secondary);
     margin: 0;
 }
 
-/* 3. Bento Grid Container */
+/* 6. Bento Grid Layout definition */
 .dashboard-bento-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    gap: 20px;
+    gap: 24px;
     margin-bottom: 36px;
 }
 
-/* Bento Card Base */
+/* Bento Card container */
 .bento-card {
     background-color: var(--dashboard-card-bg);
+    background-image: radial-gradient(var(--card-dot-color) 1.2px, transparent 1.2px);
+    background-size: 16px 16px;
     border: 1px solid var(--dashboard-border);
-    border-radius: 16px;
-    padding: 24px;
+    border-radius: 20px;
+    padding: 26px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01), 0 4px 16px rgba(0, 0, 0, 0.015);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01), 0 6px 20px rgba(0, 0, 0, 0.015);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                 box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
                 border-color 0.3s ease, 
@@ -162,23 +203,23 @@
     box-sizing: border-box;
     position: relative;
     overflow: hidden;
-    min-height: 160px;
+    min-height: 175px;
 }
 
 .bento-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.01);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.01);
     border-color: var(--dashboard-border-hover);
 }
 
-/* Card spans */
+/* Grid Column Spans */
 .bento-span-12 { grid-column: span 12; }
 .bento-span-8 { grid-column: span 8; }
 .bento-span-6 { grid-column: span 6; }
 .bento-span-4 { grid-column: span 4; }
 .bento-span-3 { grid-column: span 3; }
 
-/* Bento Card Header Layout */
+/* Bento Card Header */
 .bento-card-header {
     display: flex;
     justify-content: space-between;
@@ -189,8 +230,8 @@
 .bento-card-title {
     font-family: var(--font-sans);
     font-size: 11px;
-    font-weight: 650;
-    letter-spacing: 0.05em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     color: var(--dashboard-text-secondary);
     text-transform: uppercase;
     margin: 0;
@@ -216,12 +257,20 @@
     justify-content: center;
 }
 
-/* 4. KPI typography */
+/* Horizontal alignment inside KPI body */
+.horizontal-body {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* 7. Typography specs for KPIs */
 .bento-kpi-val {
-    font-size: clamp(28px, 3.2vw, 36px);
+    font-size: clamp(30px, 3.2vw, 38px);
     font-weight: 400;
-    line-height: 1.1;
-    margin: 8px 0;
+    line-height: 1.05;
+    margin: 6px 0;
     color: var(--dashboard-mono-num);
     display: flex;
     align-items: baseline;
@@ -229,13 +278,13 @@
 
 .bento-kpi-num {
     font-family: var(--font-mono);
-    font-weight: 550;
+    font-weight: 600;
 }
 
 .bento-kpi-unit {
     font-family: var(--font-sans);
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 550;
     color: var(--dashboard-text-secondary);
     margin-left: 6px;
 }
@@ -248,22 +297,50 @@
 }
 
 /* ==========================================================================
-   Bento Widgets & Advanced Interactivity
+   Card Elements & Custom SVGs Styling
    ========================================================================== */
 
-/* Widget: Circular Activity Ring (Cache Rate) */
+/* 1. Micro Sparkline in KPI Card */
+.micro-sparkline-wrapper {
+    width: 100px;
+    height: 30px;
+    flex-shrink: 0;
+}
+
+.micro-sparkline-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.micro-spark-line {
+    fill: none;
+    stroke: var(--chart-line);
+    stroke-width: 1.8px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* 2. Apple Activity Double circular Ring */
 .cache-ring-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    margin: 8px 0;
+    margin: 4px 0;
+}
+
+.cache-sub-stat {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--dashboard-text-secondary);
+    margin-top: 4px;
 }
 
 .cache-ring-visual {
     position: relative;
-    width: 90px;
-    height: 90px;
+    width: 82px;
+    height: 82px;
     flex-shrink: 0;
 }
 
@@ -277,38 +354,35 @@
 .cache-ring-bg {
     stroke: var(--dashboard-bg);
 }
+.cache-ring-bg.outer { stroke: rgba(0,0,0,0.025); }
+:root[data-theme="dark"] .cache-ring-bg.outer { stroke: rgba(255,255,255,0.025); }
+
+.cache-ring-bg.inner { stroke: rgba(0,0,0,0.015); }
+:root[data-theme="dark"] .cache-ring-bg.inner { stroke: rgba(255,255,255,0.015); }
 
 .cache-ring-fill {
+    transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cache-ring-fill.outer {
     stroke: var(--chart-line);
-    transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.bento-card:hover .cache-ring-fill {
-    stroke-width: 8.5px;
+.cache-ring-fill.inner {
+    stroke: var(--chart-accent);
+    opacity: 0.85;
 }
 
-.cache-ring-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+.bento-card:hover .cache-ring-fill.outer {
+    stroke-width: 7.5px;
+}
+.bento-card:hover .cache-ring-fill.inner {
+    stroke-width: 6.5px;
 }
 
-.cache-ring-percent {
-    font-family: var(--font-mono);
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--dashboard-mono-num);
-}
-
-/* Widget: Content Segmented Progress Bar */
+/* 3. Segmented inventory bar */
 .inventory-bar-wrapper {
-    height: 12px;
+    height: 14px;
     background-color: var(--dashboard-bg);
     border-radius: 9999px;
     display: flex;
@@ -323,6 +397,9 @@
     transition: width 0.5s ease, opacity 0.25s ease;
     cursor: pointer;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .inventory-bar-segment.zh-segment {
@@ -333,9 +410,23 @@
     background-color: var(--dashboard-text-secondary);
 }
 
-/* Hover dimming effect for segments */
+.bar-pct-label {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--dashboard-card-bg);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.inventory-bar-segment:hover .bar-pct-label {
+    opacity: 1;
+}
+
+/* Stacked segmented Sibling Dimming */
 .inventory-bar-wrapper:hover .inventory-bar-segment:not(:hover) {
-    opacity: 0.45;
+    opacity: 0.35;
 }
 
 .inventory-legend {
@@ -344,6 +435,7 @@
     align-items: center;
     font-size: 11px;
     color: var(--dashboard-text-secondary);
+    margin-top: 4px;
 }
 
 .inventory-legend-item {
@@ -353,19 +445,27 @@
 }
 
 .legend-color-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
 }
-
 .legend-color-dot.zh { background-color: var(--chart-line); }
 .legend-color-dot.en { background-color: var(--dashboard-text-secondary); }
 
-/* Widget: Vertical Bar Chart Sparkline (Page Count Growth over 30 Runs) */
+.legend-txt {
+    font-size: 11px;
+    color: var(--dashboard-text-secondary);
+}
+.legend-txt .mono {
+    font-family: var(--font-mono);
+    color: var(--dashboard-mono-num);
+}
+
+/* 4. Page Growth Sparkbars */
 .bento-spark-bars {
     width: 100%;
     height: 60px;
-    margin: 16px 0 12px 0;
+    margin: 16px 0 10px 0;
 }
 
 .spark-bars-svg {
@@ -381,85 +481,55 @@
 
 .chart-bar {
     fill: var(--chart-bar-bg);
-    transition: fill 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+    transition: fill 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }
 
 .chart-bar:hover {
     fill: var(--chart-bar-active);
 }
 
-/* Premium sibling dimming effect! */
+/* Sparkbars Sibling Dimming */
 .spark-bars-svg:hover .chart-bar-group:not(:hover) .chart-bar {
     opacity: 0.35;
 }
 
-/* Floating tooltips inside SVG */
-.chart-tooltip-container {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(6px);
-    transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
-                transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 100;
+/* 5. Assets budgets Sliders */
+.budget-body-spaced {
+    justify-content: flex-end;
+    padding-bottom: 4px;
 }
 
-.chart-bar-group:hover .chart-tooltip-container,
-.chart-dot-group:hover .chart-tooltip-container {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.chart-tooltip {
-    background-color: var(--tooltip-bg);
-    color: var(--tooltip-text);
-    padding: 5px 8px;
-    border-radius: 6px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+.budget-slider-section {
     display: flex;
     flex-direction: column;
+    gap: 6px;
+}
+
+.budget-label-row {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 11px;
 }
 
-:root[data-theme="dark"] .chart-tooltip {
-    border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.tooltip-title {
-    font-family: var(--font-sans);
-    font-size: 8px;
+.budget-name {
+    font-weight: 550;
     color: var(--dashboard-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    margin-bottom: 2px;
 }
 
-.tooltip-val {
-    font-family: var(--font-mono);
-    font-size: 10px;
+.budget-value {
     font-weight: 600;
-    line-height: 1.1;
+    color: var(--dashboard-mono-num);
 }
 
-.tooltip-commit {
-    font-family: var(--font-mono);
-    font-size: 8px;
-    opacity: 0.6;
-    margin-top: 2px;
-    line-height: 1;
-}
-
-/* Widget: CSS Bundle size Linear Level Gauge */
-.budget-gauge-wrapper {
-    margin: 14px 0 10px 0;
+.budget-track-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .budget-track {
-    height: 6px;
+    height: 5px;
     background-color: var(--dashboard-bg);
     border-radius: 9999px;
     position: relative;
@@ -467,20 +537,20 @@
 }
 
 .budget-pointer {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     background-color: var(--chart-line);
     border: 2px solid var(--dashboard-card-bg);
     border-radius: 50%;
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .bento-card:hover .budget-pointer {
-    transform: translate(-50%, -50%) scale(1.2);
+    transform: translate(-50%, -50%) scale(1.18);
 }
 
 .budget-zone {
@@ -492,58 +562,165 @@
 
 .budget-zone.safe {
     background-color: var(--status-color);
-    opacity: 0.15;
+    opacity: 0.12;
     left: 0;
 }
 
-.budget-scale-labels {
+.budget-scales {
     display: flex;
     justify-content: space-between;
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 8px;
     color: var(--dashboard-text-tertiary);
-    margin-top: 8px;
 }
 
-.budget-badge {
-    align-self: flex-start;
+.budget-badge-row {
+    display: flex;
+    margin-top: 10px;
+}
+
+.budget-status-badge {
     font-family: var(--font-sans);
     font-size: 9px;
-    font-weight: 700;
+    font-weight: 750;
     color: var(--status-color);
     background-color: var(--status-glow);
     padding: 2px 6px;
     border-radius: 4px;
     letter-spacing: 0.04em;
-    margin-top: 4px;
 }
 
-/* Widget: Interactive Build Duration (Line Chart - Span 8) */
-.dashboard-wide-chart-wrapper {
-    background-color: var(--dashboard-card-bg);
+/* 6. Pulse Status Checklist Matrix */
+.audit-pulse-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 12px 0 6px 0;
+}
+
+.audit-matrix-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+}
+
+/* Pulsing keyframe glow rings */
+@keyframes pulse-breathing {
+    0% {
+        box-shadow: 0 0 0 0 var(--pulse-color);
+    }
+    70% {
+        box-shadow: 0 0 0 6px var(--pulse-glow-color);
+    }
+    100% {
+        box-shadow: 0 0 0 0 var(--pulse-color);
+    }
+}
+
+.pulse-glow-ring {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    animation: pulse-breathing 2s infinite ease-in-out;
+}
+
+.pulse-glow-ring.ok {
+    --pulse-color: var(--status-color);
+    --pulse-glow-color: var(--status-glow);
+    background-color: var(--status-color);
+}
+
+.pulse-glow-ring.warn {
+    --pulse-color: var(--warn-color);
+    --pulse-glow-color: var(--warn-glow);
+    background-color: var(--warn-color);
+}
+
+.pulse-glow-ring.error {
+    --pulse-color: var(--error-color);
+    --pulse-glow-color: var(--error-glow);
+    background-color: var(--error-color);
+}
+
+.audit-lbl {
+    font-weight: 550;
+    flex-grow: 1;
+    color: var(--dashboard-text-primary);
+}
+
+.audit-status {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--dashboard-text-secondary);
+}
+
+/* ==========================================================================
+   Large Interactive Spline Chart
+   ========================================================================== */
+.interactive-main-chart {
+    min-height: 380px;
+}
+
+.chart-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.chart-main-title {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--dashboard-text-primary);
+    margin: 0;
+}
+
+.chart-main-desc {
+    font-size: 11px;
+    color: var(--dashboard-text-secondary);
+    margin: 4px 0 0 0;
+}
+
+/* Segmented control tabs */
+.chart-tabs-wrapper {
+    display: flex;
+    background-color: var(--dashboard-bg);
     border: 1px solid var(--dashboard-border);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01), 0 4px 16px rgba(0, 0, 0, 0.015);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-                border-color 0.3s ease, 
-                background-color 0.3s ease;
+    padding: 3px;
+    border-radius: 8px;
 }
 
-.dashboard-wide-chart-wrapper:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.01);
-    border-color: var(--dashboard-border-hover);
+.chart-tab-btn {
+    background: none;
+    border: none;
+    padding: 6px 12px;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--dashboard-text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.wide-chart-svg {
-    width: 100%;
-    height: auto;
-    display: block;
-    overflow: visible;
+.chart-tab-btn:hover {
+    color: var(--dashboard-text-primary);
 }
 
+.chart-tab-btn.active {
+    background-color: var(--dashboard-card-bg);
+    color: var(--dashboard-text-primary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* SVG Spline details */
 .chart-grid-line {
     stroke: var(--chart-grid);
     stroke-width: 1px;
@@ -555,76 +732,141 @@
     font-size: 9px;
 }
 
-.chart-area-fill {
+.spline-area-fill {
     fill: var(--chart-area);
     transition: fill 0.3s ease;
 }
 
-.dashboard-wide-chart-wrapper:hover .chart-area-fill {
-    fill: var(--chart-accent-light);
-}
-
-.chart-line-path {
+.spline-line-path {
     fill: none;
     stroke: var(--chart-line);
-    stroke-width: 1.5px;
+    stroke-width: 1.8px;
     stroke-linecap: round;
     stroke-linejoin: round;
-    transition: stroke-width 0.2s ease;
 }
 
-.dashboard-wide-chart-wrapper:hover .chart-line-path {
+.bento-card:hover .spline-line-path {
+    stroke-width: 2.2px;
+}
+
+.chart-cursor-guide {
+    stroke: var(--dashboard-text-tertiary);
+    stroke-width: 1.2px;
+    stroke-linecap: round;
+    stroke-dasharray: 4 5;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+/* snappings active dot pulse animation */
+.active-dot-glow {
+    fill: var(--chart-accent);
+    opacity: 0.18;
+}
+
+.active-dot-focus {
+    fill: var(--chart-accent);
+    stroke: var(--dashboard-card-bg);
     stroke-width: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
-.chart-dot-group {
+/* Interactive target circles mapping */
+.chart-spline-dot {
+    fill: var(--dashboard-card-bg);
+    stroke: var(--chart-line);
+    stroke-width: 1.8px;
+    transition: r 0.2s ease, stroke-width 0.2s ease, opacity 0.2s ease;
     cursor: crosshair;
 }
 
-.chart-dot {
-    fill: var(--dashboard-card-bg);
-    stroke: var(--chart-line);
-    stroke-width: 1.5px;
-    transition: fill 0.15s ease, r 0.15s ease, stroke-width 0.15s ease;
-}
-
-.chart-dot-hover-trigger {
-    fill: transparent;
-    stroke: none;
-}
-
-.chart-dot-group:hover .chart-dot {
+.chart-spline-dot.active {
     fill: var(--chart-line);
-    r: 4.5px;
-    stroke-width: 2px;
+    r: 4.8px;
+    stroke-width: 2.2px;
 }
 
-/* Widget: Slowest Rendering Templates Table */
-.dashboard-table-card {
-    background-color: var(--dashboard-card-bg);
-    border: 1px solid var(--dashboard-border);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01), 0 4px 16px rgba(0, 0, 0, 0.015);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-                border-color 0.3s ease;
+.chart-spline-dot.dimmed {
+    opacity: 0.35;
 }
 
-.dashboard-table-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.01);
-    border-color: var(--dashboard-border-hover);
+/* Glassmorphic floating HTML Tooltip */
+.glass-chart-tooltip {
+    position: absolute;
+    background-color: var(--tooltip-bg);
+    border: 1px solid var(--tooltip-border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 180px;
+    box-sizing: border-box;
+    z-index: 120;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
 }
 
-.table-title {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    font-weight: 650;
-    letter-spacing: 0.05em;
+.tooltip-header-date {
+    font-family: var(--font-mono);
+    font-size: 8px;
     color: var(--dashboard-text-secondary);
-    text-transform: uppercase;
-    margin: 0 0 20px 0;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid var(--dashboard-border);
+    padding-bottom: 4px;
+    margin-bottom: 2px;
+}
+
+.tooltip-data-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tooltip-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+}
+
+.tooltip-metric .lbl {
+    color: var(--dashboard-text-secondary);
+}
+
+.tooltip-metric .val {
+    font-family: var(--font-mono);
+    font-weight: 650;
+    color: var(--dashboard-mono-num);
+}
+
+.tooltip-metric.change-metric {
+    border-top: 1px dashed var(--dashboard-border);
+    padding-top: 6px;
+    margin-top: 2px;
+}
+
+/* Footer layout */
+.chart-footer-caption-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--dashboard-text-tertiary);
+    margin-top: 18px;
+    border-top: 1px solid var(--dashboard-border);
+    padding-top: 12px;
+}
+
+/* ==========================================================================
+   Leaderboard Rank List & Anomalies Log
+   ========================================================================== */
+.dashboard-table-card,
+.quality-audit-card {
+    min-height: 320px;
 }
 
 .dashboard-table {
@@ -636,17 +878,17 @@
 
 .dashboard-table th {
     border-bottom: 1px solid var(--dashboard-border);
-    padding: 10px 12px;
-    font-weight: 600;
+    padding: 8px 10px;
+    font-weight: 700;
     color: var(--dashboard-text-secondary);
     font-size: 10px;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
 .dashboard-table td {
     border-bottom: 1px solid var(--dashboard-border);
-    padding: 12px;
+    padding: 11px 10px;
     color: var(--dashboard-text-primary);
     white-space: nowrap;
 }
@@ -660,11 +902,10 @@
 }
 
 .dashboard-table tr:hover td {
-    background-color: rgba(0, 0, 0, 0.015);
+    background-color: rgba(0, 0, 0, 0.012);
 }
-
 :root[data-theme="dark"] .dashboard-table tr:hover td {
-    background-color: rgba(255, 255, 255, 0.02);
+    background-color: rgba(255, 255, 255, 0.015);
 }
 
 .mono-txt {
@@ -678,128 +919,81 @@
     font-size: 11px;
 }
 
+.table-path-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 20px;
+}
+
+.path-lbl {
+    position: relative;
+    z-index: 2;
+    padding-left: 4px;
+}
+
+/* comparative fill bar indicator behind text label */
+.table-row-bar {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 14px;
+    background-color: rgba(0,0,0,0.035);
+    border-radius: 4px;
+    z-index: 1;
+    transition: background-color 0.2s ease;
+    pointer-events: none;
+}
+:root[data-theme="dark"] .table-row-bar {
+    background-color: rgba(255, 255, 255, 0.025);
+}
+
+.dashboard-table tr:hover .table-row-bar {
+    background-color: rgba(0,0,0,0.055);
+}
+:root[data-theme="dark"] .dashboard-table tr:hover .table-row-bar {
+    background-color: rgba(255, 255, 255, 0.045);
+}
+
 .num-col {
     text-align: right;
 }
 
-/* Widget: Quality Validation Matrix & Breathing Glow Dots */
-.quality-card {
-    background-color: var(--dashboard-card-bg);
-    border: 1px solid var(--dashboard-border);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01), 0 4px 16px rgba(0, 0, 0, 0.015);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-                border-color 0.3s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-.quality-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.01);
-    border-color: var(--dashboard-border-hover);
-}
-
-.audit-matrix-checklist {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-top: 8px;
-}
-
-.audit-matrix-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 12px;
-    color: var(--dashboard-text-primary);
-    padding: 4px 0;
-}
-
-/* Breathing animation for status dot */
-@keyframes breathing-glow {
-    0% {
-        box-shadow: 0 0 0 0 var(--status-glow);
-    }
-    70% {
-        box-shadow: 0 0 0 6px var(--status-glow);
-    }
-    100% {
-        box-shadow: 0 0 0 0 var(--status-glow);
-    }
-}
-
-.status-glow-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: var(--status-color);
-    display: inline-block;
-    flex-shrink: 0;
-    animation: breathing-glow 2s infinite ease-in-out;
-}
-
-.status-glow-dot.ok {
-    --status-color: #2ecc71;
-    --status-glow: rgba(46, 204, 113, 0.25);
-}
-
-:root[data-theme="dark"] .status-glow-dot.ok {
-    --status-color: #30d158;
-    --status-glow: rgba(48, 209, 88, 0.25);
-}
-
-.status-glow-dot.error {
-    --status-color: #e74c3c;
-    --status-glow: rgba(231, 76, 60, 0.25);
-}
-
-.audit-checklist-lbl {
-    font-weight: 500;
-    flex-grow: 1;
-}
-
-.audit-checklist-status {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--dashboard-text-secondary);
-}
-
-/* Perfect State Breathing Checkmark SVG */
+/* Perfect State Breath Glow checkmark box */
 .audit-perfect-large-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 32px 20px;
+    padding: 24px 20px;
     background-color: var(--dashboard-bg);
     border: 1px dashed var(--dashboard-border);
-    border-radius: 12px;
+    border-radius: 14px;
     text-align: center;
-    margin-top: 16px;
+    margin-top: 10px;
     flex-grow: 1;
 }
 
 .perfect-breathing-badge {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background-color: var(--status-glow);
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--status-color);
-    margin-bottom: 16px;
-    animation: breathing-glow 2.5s infinite ease-in-out;
+    margin-bottom: 12px;
+    animation: pulse-breathing 2.2s infinite ease-in-out;
 }
 
 .perfect-badge-title {
     font-family: var(--font-sans);
     font-size: 13px;
-    font-weight: 650;
-    margin: 0 0 6px 0;
+    font-weight: 700;
+    margin: 0 0 4px 0;
     color: var(--dashboard-text-primary);
 }
 
@@ -809,12 +1003,12 @@
     line-height: 1.5;
     color: var(--dashboard-text-secondary);
     margin: 0;
-    max-width: 280px;
+    max-width: 290px;
 }
 
-/* Anomaly Items Scroller style */
+/* Anomaly Inspections console scroller */
 .audit-scroller-wrapper {
-    margin-top: 16px;
+    margin-top: 10px;
     max-height: 180px;
     overflow-y: auto;
     border: 1px solid var(--dashboard-border);
@@ -832,7 +1026,7 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    padding: 12px;
+    padding: 10px;
     border-bottom: 1px solid var(--dashboard-border);
 }
 
@@ -843,7 +1037,7 @@
 .badge-lbl {
     font-family: var(--font-mono);
     font-size: 8px;
-    font-weight: 700;
+    font-weight: 750;
     padding: 2px 5px;
     border-radius: 3px;
     letter-spacing: 0.05em;
@@ -851,15 +1045,15 @@
 }
 
 .badge-error-red {
-    background-color: rgba(231, 76, 60, 0.1);
-    color: #e74c3c;
-    border: 1px solid rgba(231, 76, 60, 0.15);
+    background-color: var(--error-glow);
+    color: var(--error-color);
+    border: 1px solid rgba(255, 59, 48, 0.15);
 }
 
 .anomaly-details-block {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
     font-size: 11px;
 }
 
@@ -869,7 +1063,7 @@
 
 .anomaly-link-lbl {
     color: var(--dashboard-text-primary);
-    font-weight: 500;
+    font-weight: 550;
 }
 
 .audit-seo-warning {
@@ -881,20 +1075,20 @@
     border-radius: 8px;
     font-size: 11px;
     color: var(--dashboard-text-primary);
-    margin-top: 12px;
+    margin-top: 10px;
 }
 
 .badge-seo-warn {
-    background-color: rgba(230, 126, 34, 0.1);
-    color: #e67e22;
-    border: 1px solid rgba(230, 126, 34, 0.15);
+    background-color: var(--warn-glow);
+    color: var(--warn-color);
+    border: 1px solid rgba(255, 149, 0, 0.15);
 }
 
-/* Scrollbar styling for Slowest Table & Audit Scroller */
+/* Webkit Scrollbars styling */
 .audit-scroller-wrapper::-webkit-scrollbar,
 .table-scroll-wrapper::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
 }
 
 .audit-scroller-wrapper::-webkit-scrollbar-track,
@@ -910,16 +1104,21 @@
 
 .audit-scroller-wrapper::-webkit-scrollbar-thumb:hover,
 .table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
-    background: var(--dashboard-text-tertiary);
+    background: var(--dashboard-text-secondary);
 }
 
 /* ==========================================================================
-   Responsive Layout & Alignment Adjustments
+   Responsive Responsive Adjustments
    ========================================================================== */
-
 @media (max-width: 1024px) {
+    .dashboard-container {
+        padding: 36px 24px;
+        margin: 20px 0;
+    }
+    
     .dashboard-bento-grid {
         grid-template-columns: repeat(6, 1fr);
+        gap: 20px;
     }
     .bento-span-8 {
         grid-column: span 6;
@@ -930,12 +1129,14 @@
     .bento-span-6 {
         grid-column: span 6;
     }
+    .bento-span-12 {
+        grid-column: span 6;
+    }
 }
 
 @media (max-width: 768px) {
     .dashboard-container {
         padding: 24px 16px;
-        margin: 20px 0;
     }
     
     .dashboard-sys-header {
@@ -957,41 +1158,18 @@
     .bento-card {
         grid-column: span 12 !important;
         min-height: auto;
+        padding: 20px;
     }
     
-    .dashboard-wide-chart-wrapper {
-        padding: 16px;
-    }
-    
-    .wide-chart-svg {
-        min-width: 600px;
-    }
-    
-    .svg-chart-wrapper {
+    .svg-canvas-wrapper {
         overflow-x: auto;
     }
     
-    .dashboard-table-card {
-        padding: 16px;
+    #dashboard-spline-svg {
+        min-width: 720px;
     }
     
     .truncate-path {
-        max-width: 140px;
-    }
-}
-
-/* Wide Layout for Dashboard Page on Desktop */
-@media (min-width: 901px) {
-    .type-dashboard .site-container {
-        grid-template-columns: 1fr;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding-left: 4vw;
-        padding-right: 4vw;
-    }
-    .type-dashboard .site-main {
-        grid-column: 1 / -1;
-        width: 100%;
-        max-width: 100%;
+        max-width: 150px;
     }
 }

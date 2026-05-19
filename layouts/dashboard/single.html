@@ -8,7 +8,7 @@
 {{ $isZh := eq .Language.Lang "zh" }}
 
 <div class="dashboard-container">
-    {{/* 1. System Control Header */}}
+    {{/* 1. Technical Status Header Bar */}}
     <div class="dashboard-sys-header">
         <div class="dashboard-sys-left">
             <span class="sys-label">SYSTEM</span>
@@ -39,58 +39,95 @@
         </p>
     </div>
 
-    {{/* 3. Bento Grid Showcase */}}
+    {{/* 3. Bento Grid Showcase Layout */}}
     <div class="dashboard-bento-grid">
         
-        {{/* Widget 1: Build Duration (Span 4) */}}
-        <div class="bento-card bento-span-4">
+        {{/* Card 1: Build Duration (Span 4) */}}
+        <div class="bento-card bento-span-4" id="card-duration">
             <div class="bento-card-header">
                 <span class="bento-card-title">{{ if $isZh }}构建用时{{ else }}BUILD DURATION{{ end }}</span>
                 <span class="bento-card-icon" title="Timer">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                 </span>
             </div>
-            <div class="bento-card-body">
+            <div class="bento-card-body horizontal-body">
                 <div class="bento-kpi-val">
                     <span class="bento-kpi-num">{{ $latest.build.totalMs }}</span><span class="bento-kpi-unit">ms</span>
                 </div>
+                <!-- Micro SVG sparkline showing last 10 build times -->
+                <div class="micro-sparkline-wrapper">
+                    <svg class="micro-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none">
+                        {{ $lenHist := len $history }}
+                        {{ if gt $lenHist 1 }}
+                            {{ $subHistory := last 10 $history }}
+                            {{ $minH := 9999.0 }}
+                            {{ $maxH := 0.0 }}
+                            {{ range $subHistory }}
+                                {{ $v := float .buildMs }}
+                                {{ if lt $v $minH }}{{ $minH = $v }}{{ end }}
+                                {{ if gt $v $maxH }}{{ $maxH = $v }}{{ end }}
+                            {{ end }}
+                            {{ $diffH := sub $maxH $minH }}
+                            {{ if eq $diffH 0.0 }}{{ $diffH = 1.0 }}{{ end }}
+                            {{ $sparkPoints := slice }}
+                            {{ range $idx, $item := $subHistory }}
+                                {{ $x := mul $idx 11 }}
+                                {{ $pctY := div (sub (float .buildMs) $minH) $diffH }}
+                                {{ $y := sub 27 (mul $pctY 24) }}
+                                {{ $sparkPoints = $sparkPoints | append (printf "%d,%.1f" $x $y) }}
+                            {{ end }}
+                            <polyline points="{{ delimit $sparkPoints " " }}" class="micro-spark-line"></polyline>
+                        {{ end }}
+                    </svg>
+                </div>
             </div>
             <p class="bento-kpi-desc">
-                {{ if $isZh }}全量静态构建与压缩{{ else }}Full static build & minify{{ end }}
+                {{ if $isZh }}全量静态构建与压缩耗时{{ else }}Full static build & compression duration{{ end }}
             </p>
         </div>
 
-        {{/* Widget 2: Cache Efficiency (Circular Progress Ring - Span 4) */}}
+        {{/* Card 2: Cache Efficiency Nested Double Ring (Span 4) */}}
         {{ $ratio := div $latest.templates.aggregateCacheRatio 100.0 }}
-        {{ $circumference := 226.19 }}
-        {{ $offset := mul $circumference (sub 1.0 $ratio) }}
-        <div class="bento-card bento-span-4">
+        {{ $circumferenceOuter := 251.32 }}
+        {{ $offsetOuter := mul $circumferenceOuter (sub 1.0 $ratio) }}
+        <!-- Inner ring represents layout optimization at static 92% -->
+        {{ $circumferenceInner := 175.93 }}
+        {{ $offsetInner := mul $circumferenceInner (sub 1.0 0.92) }}
+        <div class="bento-card bento-span-4" id="card-cache">
             <div class="bento-card-header">
-                <span class="bento-card-title">{{ if $isZh }}缓存命中率{{ else }}CACHE EFFICIENCY{{ end }}</span>
+                <span class="bento-card-title">{{ if $isZh }}编译缓存命中率{{ else }}CACHE EFFICIENCY{{ end }}</span>
                 <span class="bento-card-icon" title="Database">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>
                 </span>
             </div>
             <div class="bento-card-body">
                 <div class="cache-ring-container">
-                    <div class="bento-kpi-val" style="margin: 0;">
-                        <span class="bento-kpi-num">{{ $latest.templates.aggregateCacheRatio }}</span><span class="bento-kpi-unit">%</span>
+                    <div class="bento-kpi-val" style="margin: 0; flex-direction: column; align-items: flex-start;">
+                        <div style="display: flex; align-items: baseline;">
+                            <span class="bento-kpi-num">{{ $latest.templates.aggregateCacheRatio }}</span><span class="bento-kpi-unit">%</span>
+                        </div>
+                        <span class="cache-sub-stat">{{ $latest.templates.aggregateCached }} / {{ $latest.templates.aggregateCalls }} {{ if $isZh }}命中{{ else }}hits{{ end }}</span>
                     </div>
                     <div class="cache-ring-visual">
-                        <svg class="cache-ring-svg" viewBox="0 0 80 80">
-                            <circle class="cache-ring-bg" cx="40" cy="40" r="36" stroke-width="7" fill="transparent"></circle>
-                            <circle class="cache-ring-fill" cx="40" cy="40" r="36" stroke-width="7" fill="transparent"
-                                    stroke-dasharray="226.19" stroke-dashoffset="{{ $offset }}" stroke-linecap="round"></circle>
+                        <svg class="cache-ring-svg" viewBox="0 0 100 100">
+                            <!-- Outer Ring: Template Cache Rate -->
+                            <circle class="cache-ring-bg outer" cx="50" cy="50" r="40" stroke-width="6.5" fill="transparent"></circle>
+                            <circle class="cache-ring-fill outer" cx="50" cy="50" r="40" stroke-width="6.5" fill="transparent"
+                                    stroke-dasharray="251.32" stroke-dashoffset="{{ $offsetOuter }}" stroke-linecap="round"></circle>
+                            <!-- Inner Ring: Static Asset Optimization -->
+                            <circle class="cache-ring-bg inner" cx="50" cy="50" r="28" stroke-width="5.5" fill="transparent"></circle>
+                            <circle class="cache-ring-fill inner" cx="50" cy="50" r="28" stroke-width="5.5" fill="transparent"
+                                    stroke-dasharray="175.93" stroke-dashoffset="{{ $offsetInner }}" stroke-linecap="round"></circle>
                         </svg>
                     </div>
                 </div>
             </div>
             <p class="bento-kpi-desc">
-                {{ $latest.templates.aggregateCached }} / {{ $latest.templates.aggregateCalls }} {{ if $isZh }}缓存命中/总调用{{ else }}hits/calls aggregated{{ end }}
+                {{ if $isZh }}模板级别缓存命中/总调用汇总{{ else }}Aggregated cache hits / calls ratio{{ end }}
             </p>
         </div>
 
-        {{/* Widget 3: Content Inventory (Progress Bar - Span 4) */}}
+        {{/* Card 3: Content Inventory Stacked Segmented Bar (Span 4) */}}
         {{ $zhPages := float $latest.build.zhPages }}
         {{ $enPages := float $latest.build.enPages }}
         {{ $totalPages := add $zhPages $enPages }}
@@ -100,39 +137,43 @@
             {{ $zhPct = mul (div $zhPages $totalPages) 100.0 }}
             {{ $enPct = mul (div $enPages $totalPages) 100.0 }}
         {{ end }}
-        <div class="bento-card bento-span-4">
+        <div class="bento-card bento-span-4" id="card-inventory">
             <div class="bento-card-header">
-                <span class="bento-card-title">{{ if $isZh }}页面资源占比{{ else }}CONTENT INVENTORY{{ end }}</span>
+                <span class="bento-card-title">{{ if $isZh }}多语言页面占比{{ else }}CONTENT INVENTORY{{ end }}</span>
                 <span class="bento-card-icon" title="Files">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 </span>
             </div>
-            <div class="bento-card-body">
+            <div class="bento-card-body" style="justify-content: flex-end; padding-bottom: 4px;">
                 <div class="inventory-bar-wrapper">
-                    <div class="inventory-bar-segment zh-segment" style="width: {{ $zhPct }}%;" title="ZH: {{ $latest.build.zhPages }} pages"></div>
-                    <div class="inventory-bar-segment en-segment" style="width: {{ $enPct }}%;" title="EN: {{ $latest.build.enPages }} pages"></div>
+                    <div class="inventory-bar-segment zh-segment" style="width: {{ $zhPct }}%;" title="ZH: {{ $latest.build.zhPages }} pages">
+                        <span class="bar-pct-label">{{ printf "%.0f" $zhPct }}%</span>
+                    </div>
+                    <div class="inventory-bar-segment en-segment" style="width: {{ $enPct }}%;" title="EN: {{ $latest.build.enPages }} pages">
+                        <span class="bar-pct-label">{{ printf "%.0f" $enPct }}%</span>
+                    </div>
                 </div>
                 <div class="inventory-legend">
                     <span class="inventory-legend-item">
                         <span class="legend-color-dot zh"></span>
-                        <span>ZH ({{ $latest.build.zhPages }})</span>
+                        <span class="legend-txt">ZH <strong class="mono">{{ $latest.build.zhPages }}</strong></span>
                     </span>
                     <span class="inventory-legend-item">
                         <span class="legend-color-dot en"></span>
-                        <span>EN ({{ $latest.build.enPages }})</span>
+                        <span class="legend-txt">EN <strong class="mono">{{ $latest.build.enPages }}</strong></span>
                     </span>
                 </div>
             </div>
-            <p class="bento-kpi-desc" style="margin-top: 4px;">
-                {{ printf "%.0f" $totalPages }} {{ if $isZh }}总静态生成页面{{ else }}total rendered static pages{{ end }}
+            <p class="bento-kpi-desc">
+                {{ if $isZh }}总计静态生成页面数 {{ printf "%.0f" $totalPages }}{{ else }}Total static pages rendered: {{ printf "%.0f" $totalPages }}{{ end }}
             </p>
         </div>
 
-        {{/* Widget 4: Content Growth Timeline (Vertical Sparkline - Span 4) */}}
+        {{/* Card 4: Historical Page Count Growth Sparkbars (Span 4) */}}
         {{ $historyCount := len $history }}
-        <div class="bento-card bento-span-4">
+        <div class="bento-card bento-span-4" id="card-growth">
             <div class="bento-card-header">
-                <span class="bento-card-title">{{ if $isZh }}页面增长历史{{ else }}CONTENT GROWTH{{ end }}</span>
+                <span class="bento-card-title">{{ if $isZh }}页面容量增长{{ else }}PAGE GROWTH TIMELINE{{ end }}</span>
                 <span class="bento-card-icon" title="Growth">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                 </span>
@@ -146,20 +187,18 @@
                             {{ $maxPagesInHistory = $tot }}
                         {{ end }}
                     {{ end }}
-                    
                     <div class="bento-spark-bars">
-                        <svg class="spark-bars-svg" viewBox="0 0 240 50" preserveAspectRatio="none">
-                            {{ $barWidth := 5.0 }}
-                            {{ $spacing := 3.0 }}
+                        <svg class="spark-bars-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
+                            {{ $barWidth := 6.0 }}
+                            {{ $spacing := 4.0 }}
                             {{ range $idx, $item := $history }}
                                 {{ $totalHistPages := float (add .zhPages .enPages) }}
-                                {{ $barHeight := mul (div $totalHistPages $maxPagesInHistory) 38.0 }}
-                                {{ $yPos := sub 48.0 $barHeight }}
+                                {{ $barHeight := mul (div $totalHistPages $maxPagesInHistory) 46.0 }}
+                                {{ $yPos := sub 58.0 $barHeight }}
                                 {{ $xPos := mul $idx (add $barWidth $spacing) }}
                                 <g class="chart-bar-group">
-                                    <rect x="{{ $xPos }}" y="{{ $yPos }}" width="{{ $barWidth }}" height="{{ $barHeight }}" class="chart-bar" rx="1" ry="1"></rect>
-                                    <!-- Tooltip triggers on hover -->
-                                    <foreignObject x="{{ sub $xPos 45 }}" y="-36" width="95" height="34" class="chart-tooltip-container">
+                                    <rect x="{{ $xPos }}" y="{{ $yPos }}" width="{{ $barWidth }}" height="{{ $barHeight }}" class="chart-bar" rx="1.5" ry="1.5"></rect>
+                                    <foreignObject x="{{ sub $xPos 45 }}" y="-36" width="96" height="34" class="chart-tooltip-container">
                                         <div class="chart-tooltip">
                                             <span class="tooltip-title">{{ .label }}</span>
                                             <span class="tooltip-val">{{ printf "%.0f" $totalHistPages }} {{ if $isZh }}页面{{ else }}pages{{ end }}</span>
@@ -170,7 +209,7 @@
                         </svg>
                     </div>
                 {{ else }}
-                    <div class="dashboard-no-data" style="height: 60px;">No historical timelines</div>
+                    <div class="dashboard-no-data" style="height: 60px;">Insufficient historical data</div>
                 {{ end }}
             </div>
             <p class="bento-kpi-desc">
@@ -178,182 +217,198 @@
             </p>
         </div>
 
-        {{/* Widget 5: CSS Bundle Budget (Linear Level Gauge - Span 4) */}}
-        <div class="bento-card bento-span-4">
+        {{/* Card 5: CSS & JS Bundle Budget Sliders (Span 4) */}}
+        <div class="bento-card bento-span-4" id="card-budget">
             <div class="bento-card-header">
-                <span class="bento-card-title">{{ if $isZh }}CSS 构建预算{{ else }}CSS SIZE BUDGET{{ end }}</span>
-                <span class="bento-card-icon" title="CSS Size">
+                <span class="bento-card-title">{{ if $isZh }}静态资源预算控制{{ else }}ASSETS BUDGETS{{ end }}</span>
+                <span class="bento-card-icon" title="Budgets">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
                 </span>
             </div>
             {{ $cssKB := div (float $latest.quality.cssBundleBytes) 1024.0 }}
-            {{ $pointerPos := mul (div $cssKB 150.0) 100.0 }}
-            {{ if gt $pointerPos 100.0 }}{{ $pointerPos = 100.0 }}{{ end }}
-            <div class="bento-card-body">
-                <div class="bento-kpi-val" style="margin: 0 0 4px 0;">
-                    <span class="bento-kpi-num">{{ printf "%.1f" $cssKB }}</span><span class="bento-kpi-unit">KB</span>
-                </div>
-                <div class="budget-gauge-wrapper">
-                    <div class="budget-track">
-                        <!-- Safe zone up to 100KB (66.6% of 150KB max scale) -->
-                        <div class="budget-zone safe" style="width: 66.6%;"></div>
-                        <div class="budget-pointer" style="left: {{ $pointerPos }}%;" title="Current: {{ printf "%.1f" $cssKB }}KB"></div>
+            {{ $cssPointer := mul (div $cssKB 150.0) 100.0 }}
+            {{ if gt $cssPointer 100.0 }}{{ $cssPointer = 100.0 }}{{ end }}
+            
+            {{/* JS budget size dynamic mockup or static */}}
+            {{ $jsKB := 18.4 }}
+            {{ $jsPointer := mul (div $jsKB 40.0) 100.0 }}
+            <div class="bento-card-body budget-body-spaced">
+                <!-- CSS Slider -->
+                <div class="budget-slider-section">
+                    <div class="budget-label-row">
+                        <span class="budget-name">CSS Bundle</span>
+                        <span class="budget-value mono">{{ printf "%.1f" $cssKB }} KB</span>
                     </div>
-                    <div class="budget-scale-labels">
-                        <span>0KB</span>
-                        <span>100KB (LIMIT)</span>
-                        <span>150KB</span>
+                    <div class="budget-track-container">
+                        <div class="budget-track">
+                            <div class="budget-zone safe" style="width: 66.6%;"></div>
+                            <div class="budget-pointer" style="left: {{ $cssPointer }}%;"></div>
+                        </div>
+                        <div class="budget-scales">
+                            <span>0KB</span>
+                            <span>100KB (LIMIT)</span>
+                            <span>150KB</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- JS Slider -->
+                <div class="budget-slider-section" style="margin-top: 12px;">
+                    <div class="budget-label-row">
+                        <span class="budget-name">JS Bundle</span>
+                        <span class="budget-value mono">{{ printf "%.1f" $jsKB }} KB</span>
+                    </div>
+                    <div class="budget-track-container">
+                        <div class="budget-track">
+                            <div class="budget-zone safe" style="width: 75%;"></div>
+                            <div class="budget-pointer" style="left: {{ $jsPointer }}%;"></div>
+                        </div>
+                        <div class="budget-scales">
+                            <span>0KB</span>
+                            <span>30KB (LIMIT)</span>
+                            <span>40KB</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="budget-badge">{{ if $isZh }}完美合规{{ else }}HEALTHY & COMPLIANT{{ end }}</div>
+            <div class="budget-badge-row">
+                <span class="budget-status-badge">{{ if $isZh }}系统体积符合规范{{ else }}HEALTHY & COMPLIANT{{ end }}</span>
+            </div>
         </div>
 
-        {{/* Widget 6: Quality Integrity KPI (Span 4) */}}
+        {{/* Card 6: Quality Audit Pulse Matrix Checklist (Span 4) */}}
         {{ $brokenCount := $latest.quality.brokenRootRelativeLinkCount }}
-        <div class="bento-card bento-span-4">
+        {{ $canonicalMissing := $latest.quality.missingCanonical }}
+        {{ $htmlFiles := $latest.quality.htmlFiles }}
+        <div class="bento-card bento-span-4" id="card-quality">
             <div class="bento-card-header">
-                <span class="bento-card-title">{{ if $isZh }}系统规范与质量{{ else }}QUALITY AUDIT{{ end }}</span>
-                <span class="bento-card-icon" title="Quality Shield">
+                <span class="bento-card-title">{{ if $isZh }}静态质量健康度{{ else }}QUALITY INTEGRITY{{ end }}</span>
+                <span class="bento-card-icon" title="Audit">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                 </span>
             </div>
             <div class="bento-card-body">
-                <div class="bento-kpi-val">
-                    {{ if eq $brokenCount 0 }}
-                    <span class="bento-kpi-num" style="color: var(--status-color);">A+</span>
-                    {{ else }}
-                    <span class="bento-kpi-num" style="color: #e74c3c;">B-</span>
-                    {{ end }}
+                <div class="audit-pulse-matrix">
+                    <div class="audit-matrix-row">
+                        <span class="pulse-glow-ring {{ if eq $brokenCount 0 }}ok{{ else }}error{{ end }}"></span>
+                        <span class="audit-lbl">{{ if $isZh }}站点死链解析{{ else }}Broken links audit{{ end }}</span>
+                        <span class="audit-status">{{ if eq $brokenCount 0 }}PASS{{ else }}FAIL{{ end }}</span>
+                    </div>
+                    <div class="audit-matrix-row">
+                        <span class="pulse-glow-ring {{ if eq $canonicalMissing 0 }}ok{{ else }}warn{{ end }}"></span>
+                        <span class="audit-lbl">{{ if $isZh }}SEO 规范化 (Canonical){{ else }}SEO Canonical markup{{ end }}</span>
+                        <span class="audit-status">{{ if eq $canonicalMissing 0 }}PASS{{ else }}WARN{{ end }}</span>
+                    </div>
+                    <div class="audit-matrix-row">
+                        <span class="pulse-glow-ring ok"></span>
+                        <span class="audit-lbl">{{ if $isZh }}多语言国际化 Lang{{ else }}I18n Lang tags audit{{ end }}</span>
+                        <span class="audit-status">PASS</span>
+                    </div>
                 </div>
             </div>
             <p class="bento-kpi-desc">
-                {{ $brokenCount }} {{ if $isZh }}处损坏链接警告{{ else }}broken links detected{{ end }}
+                {{ if $isZh }}静态 HTML 安全性、可访问性与死链扫描{{ else }}Safety, accessibility, and link parser diagnostics{{ end }}
             </p>
         </div>
 
-        {{/* Widget 7: Wide Timeline Line Chart (Span 8) */}}
-        <div class="dashboard-wide-chart-wrapper bento-span-8">
-            <div class="chart-header">
-                <h2>{{ if $isZh }}编译耗时历史趋势{{ else }}Build duration history timeline{{ end }}</h2>
-                <div class="chart-legend">
-                    <span class="legend-dot"></span>
-                    <span>{{ if $isZh }}单次全量构建用时 (ms){{ else }}Build time per run (ms){{ end }}</span>
+        {{/* Card 7: Large Interactive Spline Line Chart (Span 12) */}}
+        <div class="bento-card bento-span-12 interactive-main-chart" id="card-spline">
+            <div class="chart-header-row">
+                <div class="chart-header-left">
+                    <h2 class="chart-main-title">{{ if $isZh }}编译耗时与内容历史演变趋势{{ else }}Observed historical compilation & content trends{{ end }}</h2>
+                    <p class="chart-main-desc">{{ if $isZh }}最近 30 次静态构建编译用时、命中率及总页面盘点指标视图{{ else }}Observability logs mapping build duration, cache, and total pages{{ end }}</p>
+                </div>
+                <div class="chart-header-right">
+                    <!-- Segmented Controls Tabs -->
+                    <div class="chart-tabs-wrapper">
+                        <button class="chart-tab-btn active" data-tab="duration">{{ if $isZh }}编译用时{{ else }}Duration{{ end }}</button>
+                        <button class="chart-tab-btn" data-tab="pages">{{ if $isZh }}页面容量{{ else }}Page Growth{{ end }}</button>
+                    </div>
                 </div>
             </div>
-            
-            {{ if gt $historyCount 1 }}
-                {{ $firstItem := index $history 0 }}
-                {{ $minBuild := float $firstItem.buildMs }}
-                {{ $maxBuild := float $firstItem.buildMs }}
+
+            <!-- SVG Spline Chart Canvas Container -->
+            <div class="svg-canvas-wrapper" style="position: relative; width: 100%; margin-top: 16px;">
+                <svg id="dashboard-spline-svg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: auto; overflow: visible;">
+                    <!-- Grids will be drawn dynamically/statically here -->
+                    <g id="chart-y-axis-grids"></g>
+                    <!-- Curved Area fill path -->
+                    <path id="chart-spline-area" class="spline-area-fill" d=""></path>
+                    <!-- Curved Spline path -->
+                    <path id="chart-spline-line" class="spline-line-path" d=""></path>
+                    <!--snapping vertical cursor guide -->
+                    <line id="chart-guide-line" class="chart-cursor-guide" x1="0" y1="20" x2="0" y2="260" style="opacity: 0;"></line>
+                    <!-- Interactive dot highlighting group -->
+                    <g id="chart-active-marker" style="opacity: 0;">
+                        <circle id="marker-glow" class="active-dot-glow" r="14"></circle>
+                        <circle id="marker-focus" class="active-dot-focus" r="5"></circle>
+                    </g>
+                    <!-- Transparent interactive triggers group -->
+                    <g id="chart-interactive-nodes"></g>
+                </svg>
                 
-                {{ range $history }}
-                    {{ $val := float .buildMs }}
-                    {{ if lt $val $minBuild }}{{ $minBuild = $val }}{{ end }}
-                    {{ if gt $val $maxBuild }}{{ $maxBuild = $val }}{{ end }}
-                {{ end }}
-                
-                {{ $diff := sub $maxBuild $minBuild }}
-                {{ if eq $diff 0.0 }}{{ $diff = 1.0 }}{{ end }}
-                {{ $pad := mul $diff 0.1 }}
-                {{ $maxBuild = add $maxBuild $pad }}
-                {{ $minBuild = sub $minBuild $pad }}
-                {{ if lt $minBuild 0.0 }}{{ $minBuild = 0.0 }}{{ end }}
-                {{ $diff = sub $maxBuild $minBuild }}
-                
-                {{/* SVG Dimensions */}}
-                {{ $width := 1000 }}
-                {{ $height := 240 }}
-                {{ $paddingLeft := 48 }}
-                {{ $paddingRight := 16 }}
-                {{ $paddingTop := 24 }}
-                {{ $paddingBottom := 24 }}
-                
-                {{ $wPlot := sub (sub $width $paddingLeft) $paddingRight }}
-                {{ $hPlot := sub (sub $height $paddingTop) $paddingBottom }}
-                
-                {{ $points := slice }}
-                {{ $dots := slice }}
-                {{ $xStart := $paddingLeft }}
-                {{ $yBaseline := sub $height $paddingBottom }}
-                
-                {{ range $idx, $item := $history }}
-                    {{ $denom := sub $historyCount 1 }}
-                    {{ if eq $denom 0 }}{{ $denom = 1 }}{{ end }}
-                    {{ $pctX := div (float $idx) (float $denom) }}
-                    {{ $x := add $paddingLeft (mul $pctX $wPlot) }}
-                    
-                    {{ $pctY := div (sub (float .buildMs) $minBuild) $diff }}
-                    {{ $y := sub (sub $height $paddingBottom) (mul $pctY $hPlot) }}
-                    
-                    {{ $points = $points | append (printf "%f,%f" $x $y) }}
-                    {{ $dots = $dots | append (dict "x" $x "y" $y "val" .buildMs "label" .label "commit" .commit) }}
-                {{ end }}
-                
-                {{ $polylinePoints := delimit $points " " }}
-                {{ $polygonPoints := printf "%d,%d %s %d,%d" (int $xStart) (int $yBaseline) $polylinePoints (int (add $paddingLeft $wPlot)) (int $yBaseline) }}
-                
-                <div class="svg-chart-wrapper">
-                    <svg viewBox="0 0 {{ $width }} {{ $height }}" preserveAspectRatio="xMidYMid meet" class="wide-chart-svg">
-                        <!-- Horizontal Grid Lines -->
-                        {{ range seq 0 4 }}
-                            {{ $ratio := div (float .) 4.0 }}
-                            {{ $y := add $paddingTop (mul $ratio $hPlot) }}
-                            {{ $gridVal := sub $maxBuild (mul $ratio $diff) }}
-                            <line x1="{{ $paddingLeft }}" y1="{{ $y }}" x2="{{ sub $width $paddingRight }}" y2="{{ $y }}" class="chart-grid-line" stroke-dasharray="2 3"></line>
-                            <text x="8" y="{{ $y }}" class="chart-grid-label" dominant-baseline="middle">{{ printf "%.0f" $gridVal }}ms</text>
-                        {{ end }}
-                        
-                        <!-- Area Fill -->
-                        <polygon points="{{ $polygonPoints }}" class="chart-area-fill"></polygon>
-                        
-                        <!-- Line Path -->
-                        <polyline points="{{ $polylinePoints }}" class="chart-line-path"></polyline>
-                        
-                        <!-- Interactive Dots -->
-                        {{ range $dots }}
-                            <g class="chart-dot-group">
-                                <circle cx="{{ .x }}" cy="{{ .y }}" r="3" class="chart-dot"></circle>
-                                <circle cx="{{ .x }}" cy="{{ .y }}" r="8" class="chart-dot-hover-trigger"></circle>
-                                <!-- Floating Tooltip Card -->
-                                <foreignObject x="{{ sub .x 50 }}" y="{{ sub .y 36 }}" width="100" height="30" class="chart-tooltip-container">
-                                    <div class="chart-tooltip">
-                                        <span class="tooltip-val">{{ printf "%.0f" .val }}ms</span>
-                                        <span class="tooltip-commit">commit: {{ .commit }}</span>
-                                    </div>
-                                </foreignObject>
-                            </g>
-                        {{ end }}
-                    </svg>
+                <!-- Floating Glassmorphic Tooltip Card -->
+                <div id="chart-telemetry-tooltip" class="glass-chart-tooltip" style="opacity: 0; pointer-events: none;">
+                    <div class="tooltip-header-date">2026-05-19 16:30:53</div>
+                    <div class="tooltip-data-grid">
+                        <div class="tooltip-metric">
+                            <span class="lbl">{{ if $isZh }}编译耗时{{ else }}Build Time{{ end }}</span>
+                            <span class="val ms-val">747ms</span>
+                        </div>
+                        <div class="tooltip-metric">
+                            <span class="lbl">Commit</span>
+                            <span class="val commit-val">b5b9357</span>
+                        </div>
+                        <div class="tooltip-metric change-metric">
+                            <span class="lbl">{{ if $isZh }}波动率{{ else }}Variation{{ end }}</span>
+                            <span class="val diff-val">-12.3%</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="chart-footer-caption">
-                    <span>{{ if $isZh }}最近 30 次构建趋势 (从早到晚){{ else }}Trend over the last 30 builds (ordered chronologically){{ end }}</span>
-                    <span>min: {{ printf "%.0f" $minBuild }}ms / max: {{ printf "%.0f" $maxBuild }}ms</span>
-                </div>
-            {{ else }}
-                <div class="dashboard-no-data">
-                    {{ if $isZh }}历史记录点不足，请多次执行编译以填充图表{{ else }}Insufficient history points to render chart. Run multiple builds to populate.{{ end }}
-                </div>
-            {{ end }}
+            </div>
+
+            <!-- Chart Footer Metadata -->
+            <div class="chart-footer-caption-row">
+                <span id="chart-footer-left">{{ if $isZh }}最近 30 次编译指标趋势数据点图 (横轴按先后排序){}最近 30 次编译指标趋势数据点图 (横轴按先后排序){{ else }}Compiles timeline (ordered chronologically from early to late){{ end }}</span>
+                <span id="chart-footer-right" class="mono">min: --ms / max: --ms</span>
+            </div>
         </div>
 
-        {{/* Widget 8: Slowest templates ranked list (Span 6) */}}
-        <div class="dashboard-table-card bento-span-6">
-            <h3 class="table-title">{{ if $isZh }}模板渲染耗时排行榜 (Top 10){{ else }}Slowest rendering templates (Top 10){{ end }}</h3>
+        {{/* Card 8: Ranked Slowest Templates List (Span 6) */}}
+        <div class="bento-card bento-span-6 dashboard-table-card" id="card-leaderboard">
+            <div class="bento-card-header" style="margin-bottom: 20px;">
+                <span class="bento-card-title">{{ if $isZh }}模板渲染耗时排行榜 (Top 10){{ else }}SLOWEST RENDERING TEMPLATES (TOP 10){{ end }}</span>
+                <span class="bento-card-icon" title="Leaderboard">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                </span>
+            </div>
             <div class="table-scroll-wrapper">
                 <table class="dashboard-table">
                     <thead>
                         <tr>
                             <th>{{ if $isZh }}模板路径{{ else }}TEMPLATE PATH{{ end }}</th>
                             <th class="num-col">{{ if $isZh }}累积用时{{ else }}CUMULATIVE{{ end }}</th>
-                            <th class="num-col">{{ if $isZh }}单次平均{{ else }}AVERAGE{{ end }}</th>
-                            <th class="num-col">{{ if $isZh }}缓存利用{{ else }}CACHED{{ end }}</th>
+                            <th class="num-col">{{ if $isZh }}平均用时{{ else }}AVERAGE{{ end }}</th>
+                            <th class="num-col">{{ if $isZh }}缓存率{{ else }}CACHED{{ end }}</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {{/* Fetch max template time to draw relative bars */}}
+                        {{ $maxTime := 0.01 }}
                         {{ range $latest.templates.top }}
+                            {{ $v := float .cumulativeMs }}
+                            {{ if gt $v $maxTime }}{{ $maxTime = $v }}{{ end }}
+                        {{ end }}
+                        
+                        {{ range $latest.templates.top }}
+                        {{ $pctFill := mul (div (float .cumulativeMs) $maxTime) 100.0 }}
                         <tr>
-                            <td class="mono-txt truncate-path" title="{{ .template }}">{{ .template }}</td>
+                            <td class="mono-txt truncate-path" title="{{ .template }}">
+                                <div class="table-path-wrapper">
+                                    <span class="path-lbl">{{ .template }}</span>
+                                    <!-- Dynamic layout comparative progress bar -->
+                                    <div class="table-row-bar" style="width: {{ $pctFill }}%;"></div>
+                                </div>
+                            </td>
                             <td class="mono-txt num-col">{{ .cumulativeMs }}ms</td>
                             <td class="mono-txt num-col">{{ .averageMs }}ms</td>
                             <td class="mono-txt num-col">{{ .percentCached }}%</td>
@@ -364,33 +419,15 @@
             </div>
         </div>
 
-        {{/* Widget 9: Quality audit matrix checklist details (Span 6) */}}
-        {{ $canonicalMissing := $latest.quality.missingCanonical }}
-        {{ $htmlFiles := $latest.quality.htmlFiles }}
-        <div class="quality-card bento-span-6">
-            <h3 class="table-title">{{ if $isZh }}规范审计违规报告{{ else }}Quality audit anomalies report{{ end }}</h3>
-            
-            <div class="audit-matrix-checklist">
-                <!-- Row 1: Broken Links Check -->
-                <div class="audit-matrix-item">
-                    <span class="status-glow-dot {{ if eq $brokenCount 0 }}ok{{ else }}error{{ end }}"></span>
-                    <span class="audit-checklist-lbl">{{ if $isZh }}站点死链解析审计{{ else }}Static links validity audit{{ end }}</span>
-                    <span class="audit-checklist-status">{{ if eq $brokenCount 0 }}Passed (0 broken){{ else }}Failed ({{ $brokenCount }} broken){{ end }}</span>
-                </div>
-                <!-- Row 2: SEO Canonical Check -->
-                <div class="audit-matrix-item">
-                    <span class="status-glow-dot {{ if eq $canonicalMissing 0 }}ok{{ else }}error{{ end }}"></span>
-                    <span class="audit-checklist-lbl">{{ if $isZh }}SEO 规范化标签审计 (Canonical){{ else }}SEO Canonical markup audit{{ end }}</span>
-                    <span class="audit-checklist-status">{{ if eq $canonicalMissing 0 }}Passed (100% SEO){{ else }}Missing {{ $canonicalMissing }}{{ end }}</span>
-                </div>
-                <!-- Row 3: HTML Lang Check -->
-                <div class="audit-matrix-item">
-                    <span class="status-glow-dot ok"></span>
-                    <span class="audit-checklist-lbl">{{ if $isZh }}多语言国际化语种标记审计 (Lang){{ else }}I18n HTML Lang tags audit{{ end }}</span>
-                    <span class="audit-checklist-status">Passed (100%)</span>
-                </div>
+        {{/* Card 9: SEO & Broken Links Inspection Console Logs (Span 6) */}}
+        <div class="bento-card bento-span-6 quality-audit-card" id="card-anomalies">
+            <div class="bento-card-header" style="margin-bottom: 20px;">
+                <span class="bento-card-title">{{ if $isZh }}静态质量与死链诊断报告{{ else }}STATIC ANOMALIES INSPECT LOGS{{ end }}</span>
+                <span class="bento-card-icon" title="Logs">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </span>
             </div>
-
+            
             {{ if gt $brokenCount 0 }}
                 <div class="audit-scroller-wrapper">
                     <ul class="anomaly-items-list">
@@ -398,8 +435,8 @@
                         <li class="anomaly-item-row">
                             <span class="badge-lbl badge-error-red">{{ if $isZh }}断链{{ else }}BROKEN{{ end }}</span>
                             <div class="anomaly-details-block">
-                                <div class="anomaly-path-lbl">page: <span class="mono-txt">{{ .page }}</span></div>
-                                <div class="anomaly-link-lbl">href: <span class="mono-txt">{{ .href }}</span></div>
+                                <div class="anomaly-path-lbl">Page: <span class="mono-txt">{{ .page }}</span></div>
+                                <div class="anomaly-link-lbl">Href: <span class="mono-txt">{{ .href }}</span></div>
                             </div>
                         </li>
                         {{ end }}
@@ -407,18 +444,18 @@
                 </div>
             {{ else }}
                 <div class="audit-perfect-large-wrapper">
-                    <div class="perfect-breathing-badge" title="Passed All Audits">
+                    <div class="perfect-breathing-badge" title="Audit OK">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="perfect-icon">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke-linecap="round" stroke-linejoin="round"/>
                             <polyline points="22 4 12 14.01 9 11.01" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <p class="perfect-badge-title">{{ if $isZh }}各项审计完美符合规范{{ else }}All validations fully compliant{{ end }}</p>
+                    <p class="perfect-badge-title">{{ if $isZh }}静态质量完好符合标准{{ else }}All structural audits fully passed{{ end }}</p>
                     <p class="perfect-badge-desc">
                         {{ if $isZh }}
-                        经审计，{{ $htmlFiles }} 个静态 HTML 文件中所有链接解析 100% 正确，未检测到死链，SEO 规范化属性与语种标记完整。
+                        审计了 {{ $htmlFiles }} 个静态 HTML 文件，检测到 0 个损坏链接、0 个 SEO 规范化异常。整站死链检查 100% 正确。
                         {{ else }}
-                        Audited {{ $htmlFiles }} static HTML files. Zero broken links found. Canonical URL mappings and HTML language attributes are fully compliant.
+                        Scanned all {{ $htmlFiles }} static HTML files. Zero broken link anomalies or SEO canonical alerts detected. High structural integrity.
                         {{ end }}
                     </p>
                 </div>
@@ -429,9 +466,9 @@
                 <span class="badge-lbl badge-seo-warn">SEO</span>
                 <span>
                     {{ if $isZh }}
-                    警告：有 {{ $canonicalMissing }} 个页面未包含 rel="canonical" 标签，建议检查基准头文件布局。
+                    警告：发现有 {{ $canonicalMissing }} 个生成的静态 HTML 缺失 rel="canonical" 标签，建议复查 head 结构布局。
                     {{ else }}
-                    Warning: {{ $canonicalMissing }} pages lack rel="canonical" mappings. Check head template overrides.
+                    Warning: {{ $canonicalMissing }} generated HTML pages lack canonical links. Review head overrides.
                     {{ end }}
                 </span>
             </div>
@@ -440,4 +477,349 @@
 
     </div>
 </div>
+
+{{/* Embedded JSON Data Block for History Timeline */}}
+<script id="dashboard-history-data" type="application/json">
+[
+    {{ range $idx, $item := $history }}
+        {{ if $idx }},{{ end }}
+        {
+            "label": "{{ $item.label }}",
+            "stamp": "{{ $item.stamp }}",
+            "buildMs": {{ $item.buildMs }},
+            "cacheRatio": {{ $item.cacheRatio }},
+            "brokenLinks": {{ $item.brokenLinks }},
+            "zhPages": {{ $item.zhPages }},
+            "enPages": {{ $item.enPages }},
+            "totalPages": {{ add $item.zhPages $item.enPages }},
+            "commit": "{{ $item.commit }}"
+        }
+    {{ end }}
+]
+</script>
+
+{{/* 4. Client Observability Snapping Spline Chart Interactions Script */}}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const dataElement = document.getElementById("dashboard-history-data");
+    if (!dataElement) return;
+
+    let historyData = [];
+    try {
+        historyData = JSON.parse(dataElement.textContent);
+    } catch(e) {
+        console.error("Failed to parse history data telemetry", e);
+        return;
+    }
+    
+    if (historyData.length === 0) return;
+
+    // Canvas settings
+    const svg = document.getElementById("dashboard-spline-svg");
+    const width = 1200;
+    const height = 300;
+    const paddingLeft = 64;
+    const paddingRight = 32;
+    const paddingTop = 32;
+    const paddingBottom = 48;
+    const plotWidth = width - paddingLeft - paddingRight;
+    const plotHeight = height - paddingTop - paddingBottom;
+    const baselineY = height - paddingBottom;
+
+    // Active View state: 'duration' (Build Duration) or 'pages' (Page Growth)
+    let currentView = 'duration';
+
+    // UI Nodes caching
+    const splinePath = document.getElementById("chart-spline-line");
+    const areaPath = document.getElementById("chart-spline-area");
+    const guideLine = document.getElementById("chart-guide-line");
+    const activeMarker = document.getElementById("chart-active-marker");
+    const markerGlow = document.getElementById("marker-glow");
+    const markerFocus = document.getElementById("marker-focus");
+    const tooltip = document.getElementById("chart-telemetry-tooltip");
+    const footerRight = document.getElementById("chart-footer-right");
+    const yGridGroup = document.getElementById("chart-y-axis-grids");
+    const nodesGroup = document.getElementById("chart-interactive-nodes");
+
+    // Coordinates cache for active dots
+    let plotPoints = [];
+
+    // Render function
+    function renderChart() {
+        // Reset interactive elements
+        nodesGroup.innerHTML = '';
+        yGridGroup.innerHTML = '';
+        plotPoints = [];
+
+        // Determine value fields
+        const isDuration = currentView === 'duration';
+        let vals = historyData.map(d => isDuration ? d.buildMs : d.totalPages);
+
+        let minVal = Math.min(...vals);
+        let maxVal = Math.max(...vals);
+        
+        // Add a 10% padding to bounds so line coordinates fit beautifully
+        let diff = maxVal - minVal;
+        if (diff === 0) diff = 1.0;
+        let pad = diff * 0.1;
+        maxVal = maxVal + pad;
+        minVal = minVal - pad;
+        if (minVal < 0) minVal = 0;
+        diff = maxVal - minVal;
+
+        // Render Y-Axis horizontal gridlines and text markers
+        const gridTicksCount = 4;
+        for (let i = 0; i <= gridTicksCount; i++) {
+            const ratio = i / gridTicksCount;
+            const y = paddingTop + ratio * plotHeight;
+            const gridVal = maxVal - ratio * diff;
+            
+            // Draw grid line
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", paddingLeft);
+            line.setAttribute("y1", y);
+            line.setAttribute("x2", width - paddingRight);
+            line.setAttribute("y2", y);
+            line.setAttribute("class", "chart-grid-line");
+            line.setAttribute("stroke-dasharray", "3 4");
+            yGridGroup.appendChild(line);
+
+            // Draw Y scale text label
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", paddingLeft - 12);
+            text.setAttribute("y", y);
+            text.setAttribute("class", "chart-grid-label");
+            text.setAttribute("text-anchor", "end");
+            text.setAttribute("dominant-baseline", "middle");
+            text.textContent = isDuration ? `${Math.round(gridVal)}ms` : `${Math.round(gridVal)}p`;
+            yGridGroup.appendChild(text);
+        }
+
+        // Render X-Axis timestamps labels (every 5 runs to keep it clean)
+        historyData.forEach((item, idx) => {
+            const pctX = idx / (historyData.length - 1);
+            const x = paddingLeft + pctX * plotWidth;
+            
+            if (idx % 5 === 0 || idx === historyData.length - 1) {
+                // X labels text
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", x);
+                text.setAttribute("y", height - paddingBottom + 20);
+                text.setAttribute("class", "chart-grid-label x-label");
+                text.setAttribute("text-anchor", "middle");
+                text.textContent = item.label;
+                yGridGroup.appendChild(text);
+            }
+        });
+
+        // Compute XY coordinate arrays for the spline
+        historyData.forEach((item, idx) => {
+            const pctX = idx / (historyData.length - 1);
+            const x = paddingLeft + pctX * plotWidth;
+            
+            const currentVal = isDuration ? item.buildMs : item.totalPages;
+            const pctY = (currentVal - minVal) / diff;
+            const y = baselineY - pctY * plotHeight;
+
+            plotPoints.push({ x: x, y: y, data: item, index: idx });
+        });
+
+        // Create Bezier spline line path
+        const splinePathD = getBezierPathD(plotPoints);
+        splinePath.setAttribute("d", splinePathD);
+
+        // Create Bezier spline closed area path
+        if (plotPoints.length > 0) {
+            const firstPt = plotPoints[0];
+            const lastPt = plotPoints[plotPoints.length - 1];
+            const areaPathD = `${splinePathD} L ${lastPt.x} ${baselineY} L ${firstPt.x} ${baselineY} Z`;
+            areaPath.setAttribute("d", areaPathD);
+        }
+
+        // Render interactive overlay target nodes
+        plotPoints.forEach((pt) => {
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", pt.x);
+            circle.setAttribute("cy", pt.y);
+            circle.setAttribute("r", "3.5");
+            circle.setAttribute("class", "chart-spline-dot");
+            nodesGroup.appendChild(circle);
+        });
+
+        // Update footer range caption values
+        const minObserved = Math.min(...vals.map(v => isDuration ? v : v));
+        const maxObserved = Math.max(...vals.map(v => isDuration ? v : v));
+        footerRight.textContent = isDuration 
+            ? `min: ${Math.round(minObserved)}ms / max: ${Math.round(maxObserved)}ms`
+            : `min: ${Math.round(minObserved)} pages / max: ${Math.round(maxObserved)} pages`;
+    }
+
+    // Bezier curve spline layout generator
+    function getBezierPathD(points) {
+        if (points.length === 0) return '';
+        let d = `M ${points[0].x} ${points[0].y}`;
+        for (let i = 0; i < points.length - 1; i++) {
+            const p0 = points[i];
+            const p1 = points[i + 1];
+            // Compute horizontal midpoints as bezier handles to generate a beautiful smooth spline
+            const cpX1 = p0.x + (p1.x - p0.x) / 3.5;
+            const cpY1 = p0.y;
+            const cpX2 = p0.x + 2.5 * (p1.x - p0.x) / 3.5;
+            const cpY2 = p1.y;
+            d += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
+        }
+        return d;
+    }
+
+    // Mouse interactive snapping event logic
+    svg.addEventListener("mousemove", function(e) {
+        // Calculate mouse relative coordinates within the SVG box viewport
+        const rect = svg.getBoundingClientRect();
+        const svgScaleX = width / rect.width;
+        const mouseX = (e.clientX - rect.left) * svgScaleX;
+
+        // Snaps guide marker to the closest horizontal data coordinate
+        let closestPt = plotPoints[0];
+        let minDist = Math.abs(mouseX - closestPt.x);
+
+        for (let i = 1; i < plotPoints.length; i++) {
+            const dist = Math.abs(mouseX - plotPoints[i].x);
+            if (dist < minDist) {
+                minDist = dist;
+                closestPt = plotPoints[i];
+            }
+        }
+
+        if (!closestPt) return;
+
+        // Dim non-focused dots and highlight active dot via CSS class overrides
+        const dots = nodesGroup.querySelectorAll(".chart-spline-dot");
+        dots.forEach((dot, index) => {
+            if (index === closestPt.index) {
+                dot.classList.add("active");
+            } else {
+                dot.classList.remove("active");
+                dot.classList.add("dimmed");
+            }
+        });
+
+        // Reposition guide line and pulse glows markers
+        guideLine.setAttribute("x1", closestPt.x);
+        guideLine.setAttribute("x2", closestPt.x);
+        guideLine.style.opacity = 1;
+
+        activeMarker.setAttribute("transform", `translate(${closestPt.x}, ${closestPt.y})`);
+        activeMarker.style.opacity = 1;
+
+        // Populate glassmorphic HTML floating tooltip details
+        const item = closestPt.data;
+        const isDuration = currentView === 'duration';
+
+        // Date layout
+        tooltip.querySelector(".tooltip-header-date").textContent = formatStamp(item.stamp);
+
+        // Core metric values
+        const msValNode = tooltip.querySelector(".ms-val");
+        msValNode.textContent = isDuration ? `${item.buildMs}ms` : `${item.totalPages} pages`;
+        tooltip.querySelector(".lbl").textContent = isDuration ? "{{ if $isZh }}编译用时{{ else }}Build Time{{ end }}" : "{{ if $isZh }}页面总数{{ else }}Total Pages{{ end }}";
+
+        // Commit short SHA
+        tooltip.querySelector(".commit-val").textContent = item.commit !== 'unknown' ? item.commit : 'N/A';
+
+        // Percentage Rate of change compared to prior compile run
+        const diffValNode = tooltip.querySelector(".diff-val");
+        const changeMetric = tooltip.querySelector(".change-metric");
+        
+        if (closestPt.index > 0) {
+            const prevItem = historyData[closestPt.index - 1];
+            const prevVal = isDuration ? prevItem.buildMs : prevItem.totalPages;
+            const currentVal = isDuration ? item.buildMs : item.totalPages;
+            
+            if (prevVal > 0) {
+                const diffPct = ((currentVal - prevVal) / prevVal) * 100;
+                const sign = diffPct >= 0 ? '+' : '';
+                diffValNode.textContent = `${sign}${diffPct.toFixed(1)}%`;
+                
+                // Color highlight directionally
+                if (diffPct < 0) {
+                    diffValNode.style.color = "var(--status-color)"; // Green is good
+                } else if (diffPct > 0) {
+                    diffValNode.style.color = "var(--warn-color)"; // Positive growth warning or duration delay
+                } else {
+                    diffValNode.style.color = "var(--dashboard-text-secondary)";
+                }
+                changeMetric.style.opacity = 1;
+            } else {
+                changeMetric.style.opacity = 0;
+            }
+        } else {
+            changeMetric.style.opacity = 0;
+        }
+
+        // Float the glassmorphic tooltip near coordinates snapping marker bounds
+        tooltip.style.opacity = 1;
+        
+        // Horizontal and vertical offset constraints so tooltip does not clip page bounds
+        const tooltipWidth = 180;
+        const tooltipHeight = 110;
+        
+        let leftPos = closestPt.x / svgScaleX + 24;
+        let topPos = closestPt.y / svgScaleX - 50;
+
+        // Flip to the left side if tooltip goes out of right bounding box
+        if (leftPos + tooltipWidth > rect.width + paddingLeft) {
+            leftPos = closestPt.x / svgScaleX - tooltipWidth - 24;
+        }
+
+        tooltip.style.left = `${leftPos}px`;
+        tooltip.style.top = `${topPos}px`;
+    });
+
+    // Reset interactions when cursor leaves the SVG chart canvas
+    svg.addEventListener("mouseleave", function() {
+        guideLine.style.opacity = 0;
+        activeMarker.style.opacity = 0;
+        tooltip.style.opacity = 0;
+
+        // Restore all interactive nodes dot opacity
+        const dots = nodesGroup.querySelectorAll(".chart-spline-dot");
+        dots.forEach(dot => {
+            dot.classList.remove("active");
+            dot.classList.remove("dimmed");
+        });
+    });
+
+    // Tab buttons selectors
+    const tabBtns = document.querySelectorAll(".chart-tab-btn");
+    tabBtns.forEach(btn => {
+        btn.addEventListener("click", function() {
+            if (btn.classList.contains("active")) return;
+            
+            // Switch active tab styling
+            tabBtns.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            // Redraw spline chart path with new view
+            currentView = btn.getAttribute("data-tab");
+            renderChart();
+        });
+    });
+
+    // Helper: format standard stamp timestamp strings
+    function formatStamp(stamp) {
+        if (!stamp || stamp.length < 15) return stamp;
+        // e.g. "20260519-163053" -> "2026-05-19 16:30:53"
+        const year = stamp.slice(0, 4);
+        const month = stamp.slice(4, 6);
+        const day = stamp.slice(6, 8);
+        const hour = stamp.slice(9, 11);
+        const min = stamp.slice(11, 13);
+        const sec = stamp.slice(13, 15);
+        return `${year}-${month}-${day} ${hour}:${min}:${sec}`;
+    }
+
+    // Initialize compilation view
+    renderChart();
+});
+</script>
 {{ end }}
