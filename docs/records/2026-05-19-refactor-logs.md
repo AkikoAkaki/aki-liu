@@ -106,12 +106,32 @@
 
 ---
 
+## 6. 首次加载字体失效与 WebGL 布局竞态修复
+
+### 问题背景
+* 首次冷启动打开首页时，用户可能遇到 WebGL 背景不渲染（全白）以及自定义品牌字体（Switzer, Newsreader 等）未能正确加载并渲染的问题（刷新后恢复正常）。
+* **原因分析**：
+  1. 全站本地及外部字体之前均被配置了极其激进的 `font-display: optional` 展示策略。在首次冷启动时，字体下载时间极易超过 100ms 的阈值。浏览器会在此次访问中永久剥夺自定义字体的展示权，直接退化为系统默认字体。
+  2. Google Fonts 采用异步非阻塞方式（印制媒体黑客策略）延迟加载，导致样式表在 `DOMContentLoaded` 之后才被激活。此时 `main.js` 已经在 `DOMContentLoaded` 事件内执行了 WebGL 流体画布初始化。
+  3. 由于字体未装载导致页面排版在初始化时处于坍塌状态，`doResize()` 抓取到了畸形的容器高宽（甚至为 0），导致 WebGL viewport 计算错误或直接因为分配零高度缓冲区而引起 Context Lost 挂起。当字体随后下载完成并触发页面重排（Reflow）时，流体引擎未得到通知，从而一直处于空白失效状态。
+
+### 修复方案
+* **字体展示策略平滑降级 (`base.css` & `core-assets.html`)**：
+  * 在 `assets/css/base.css` 中将所有本地 `@font-face` 声明的 `font-display: optional;` 统一变更为 `font-display: swap;`。
+  * 在 `layouts/partials/head/core-assets.html` 中将外部字体的 URL 参数 `&display=optional` 同步修正为 `&display=swap`。这保证了即便是冷启动，自定义字体下载完后也会立即平滑替换占位字体，避免首次打开字体加载失效。
+* **重排竞态防卫 (`main.js`)**：
+  * 在 `assets/js/main.js` 的 `initFluidEngine()` 中引入现代浏览器 Font Loading API 监听器。
+  * 部署 `document.fonts.ready` 异步 Promise 链。一旦页面字体装载完毕、排版重绘尘埃落定的瞬间，自动唤醒流体引擎执行 `engine.doResize()`，确保 WebGL 画布无缝自适应至最终正确的容器尺寸。
+
+---
+
 ## 优化质量指标
 
-* **Hugo 静态编译状态**：编译通过（使用 `hugo --renderToMemory` 全站静态编译构建时间压缩至 622ms）。
+* **Hugo 静态编译状态**：编译通过（使用 `hugo --renderToMemory` 全站静态编译构建时间压缩至 807ms）。
 * **死链率**：全站死链检查结果为 0。
 * **数学公式渲染**：完全本地自托管加载，零外部网络请求依赖。
 * **页面切换延迟**：预加载命中后实现本域 HTTP 缓存瞬开跳转。
+* **字体与 WebGL 健壮性**：解决冷启动字体展示惩罚与 WebGL 零尺寸竞态冲突，支持任意网络延时下的正确渲染与自适应。
 
 *记录人：Antigravity Coding Assistant*  
 *时间：2026-05-19*

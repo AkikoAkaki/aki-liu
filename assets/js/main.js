@@ -607,6 +607,13 @@ import { initPrefetcher } from './modules/prefetch.js';
         const engine = new FluidEngine(intro, wrapper);
         if (!engine.init()) return;
 
+        // Recalculate dimensions once all custom web fonts are fully loaded to prevent layout shift races
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => {
+                engine.doResize();
+            });
+        }
+
         // Throttle WebGL rendering based on viewport visibility
         if ('IntersectionObserver' in window) {
             const observer = new IntersectionObserver((entries) => {
