@@ -29,19 +29,12 @@
 
     {{/* 2. Hero Headline */}}
     <div class="dashboard-hero">
-        <h1 class="dashboard-hero-title">DASHBOARD,</h1>
-        <p class="dashboard-hero-desc">
-            {{ if $isZh }}
-            静态构建期可观测性与模板性能分析面板。当前运行环境状态良好，审计结果符合规范。
-            {{ else }}
-            Static build-time observability and template performance dashboard. Clean validation audit and compliant assets.
-            {{ end }}
-        </p>
+        <h1 class="dashboard-hero-title">Dashboard</h1>
     </div>
 
     {{/* 3. Bento Grid Showcase Layout */}}
     <div class="dashboard-bento-grid">
-        
+
         {{/* Card 1: Build Duration (Span 4) */}}
         <div class="bento-card bento-span-4" id="card-duration">
             <div class="bento-card-header">
@@ -197,13 +190,8 @@
                                 {{ $yPos := sub 58.0 $barHeight }}
                                 {{ $xPos := mul $idx (add $barWidth $spacing) }}
                                 <g class="chart-bar-group">
+                                    <title>{{ .label }} · {{ printf "%.0f" $totalHistPages }} {{ if $isZh }}页面{{ else }}pages{{ end }}</title>
                                     <rect x="{{ $xPos }}" y="{{ $yPos }}" width="{{ $barWidth }}" height="{{ $barHeight }}" class="chart-bar" rx="1.5" ry="1.5"></rect>
-                                    <foreignObject x="{{ sub $xPos 45 }}" y="-36" width="96" height="34" class="chart-tooltip-container">
-                                        <div class="chart-tooltip">
-                                            <span class="tooltip-title">{{ .label }}</span>
-                                            <span class="tooltip-val">{{ printf "%.0f" $totalHistPages }} {{ if $isZh }}页面{{ else }}pages{{ end }}</span>
-                                        </div>
-                                    </foreignObject>
                                 </g>
                             {{ end }}
                         </svg>
@@ -228,7 +216,7 @@
             {{ $cssKB := div (float $latest.quality.cssBundleBytes) 1024.0 }}
             {{ $cssPointer := mul (div $cssKB 150.0) 100.0 }}
             {{ if gt $cssPointer 100.0 }}{{ $cssPointer = 100.0 }}{{ end }}
-            
+
             {{/* JS budget size dynamic mockup or static */}}
             {{ $jsKB := 18.4 }}
             {{ $jsPointer := mul (div $jsKB 40.0) 100.0 }}
@@ -345,7 +333,7 @@
                     <!-- Transparent interactive triggers group -->
                     <g id="chart-interactive-nodes"></g>
                 </svg>
-                
+
                 <!-- Floating Glassmorphic Tooltip Card -->
                 <div id="chart-telemetry-tooltip" class="glass-chart-tooltip" style="opacity: 0; pointer-events: none;">
                     <div class="tooltip-header-date">2026-05-19 16:30:53</div>
@@ -398,7 +386,7 @@
                             {{ $v := float .cumulativeMs }}
                             {{ if gt $v $maxTime }}{{ $maxTime = $v }}{{ end }}
                         {{ end }}
-                        
+
                         {{ range $latest.templates.top }}
                         {{ $pctFill := mul (div (float .cumulativeMs) $maxTime) 100.0 }}
                         <tr>
@@ -427,7 +415,7 @@
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 </span>
             </div>
-            
+
             {{ if gt $brokenCount 0 }}
                 <div class="audit-scroller-wrapper">
                     <ul class="anomaly-items-list">
@@ -460,7 +448,7 @@
                     </p>
                 </div>
             {{ end }}
-            
+
             {{ if gt $canonicalMissing 0 }}
             <div class="audit-seo-warning">
                 <span class="badge-lbl badge-seo-warn">SEO</span>
@@ -511,7 +499,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("Failed to parse history data telemetry", e);
         return;
     }
-    
+
     if (historyData.length === 0) return;
 
     // Canvas settings
@@ -557,7 +545,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         let minVal = Math.min(...vals);
         let maxVal = Math.max(...vals);
-        
+
         // Add a 10% padding to bounds so line coordinates fit beautifully
         let diff = maxVal - minVal;
         if (diff === 0) diff = 1.0;
@@ -573,7 +561,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const ratio = i / gridTicksCount;
             const y = paddingTop + ratio * plotHeight;
             const gridVal = maxVal - ratio * diff;
-            
+
             // Draw grid line
             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
             line.setAttribute("x1", paddingLeft);
@@ -599,7 +587,7 @@ document.addEventListener("DOMContentLoaded", function() {
         historyData.forEach((item, idx) => {
             const pctX = idx / (historyData.length - 1);
             const x = paddingLeft + pctX * plotWidth;
-            
+
             if (idx % 5 === 0 || idx === historyData.length - 1) {
                 // X labels text
                 const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -616,7 +604,7 @@ document.addEventListener("DOMContentLoaded", function() {
         historyData.forEach((item, idx) => {
             const pctX = idx / (historyData.length - 1);
             const x = paddingLeft + pctX * plotWidth;
-            
+
             const currentVal = isDuration ? item.buildMs : item.totalPages;
             const pctY = (currentVal - minVal) / diff;
             const y = baselineY - pctY * plotHeight;
@@ -649,7 +637,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Update footer range caption values
         const minObserved = Math.min(...vals.map(v => isDuration ? v : v));
         const maxObserved = Math.max(...vals.map(v => isDuration ? v : v));
-        footerRight.textContent = isDuration 
+        footerRight.textContent = isDuration
             ? `min: ${Math.round(minObserved)}ms / max: ${Math.round(maxObserved)}ms`
             : `min: ${Math.round(minObserved)} pages / max: ${Math.round(maxObserved)} pages`;
     }
@@ -729,17 +717,17 @@ document.addEventListener("DOMContentLoaded", function() {
         // Percentage Rate of change compared to prior compile run
         const diffValNode = tooltip.querySelector(".diff-val");
         const changeMetric = tooltip.querySelector(".change-metric");
-        
+
         if (closestPt.index > 0) {
             const prevItem = historyData[closestPt.index - 1];
             const prevVal = isDuration ? prevItem.buildMs : prevItem.totalPages;
             const currentVal = isDuration ? item.buildMs : item.totalPages;
-            
+
             if (prevVal > 0) {
                 const diffPct = ((currentVal - prevVal) / prevVal) * 100;
                 const sign = diffPct >= 0 ? '+' : '';
                 diffValNode.textContent = `${sign}${diffPct.toFixed(1)}%`;
-                
+
                 // Color highlight directionally
                 if (diffPct < 0) {
                     diffValNode.style.color = "var(--status-color)"; // Green is good
@@ -758,11 +746,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Float the glassmorphic tooltip near coordinates snapping marker bounds
         tooltip.style.opacity = 1;
-        
+
         // Horizontal and vertical offset constraints so tooltip does not clip page bounds
         const tooltipWidth = 180;
         const tooltipHeight = 110;
-        
+
         let leftPos = closestPt.x / svgScaleX + 24;
         let topPos = closestPt.y / svgScaleX - 50;
 
@@ -794,7 +782,7 @@ document.addEventListener("DOMContentLoaded", function() {
     tabBtns.forEach(btn => {
         btn.addEventListener("click", function() {
             if (btn.classList.contains("active")) return;
-            
+
             // Switch active tab styling
             tabBtns.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");

@@ -15,7 +15,7 @@
     --dashboard-text-tertiary: #aeaeb2;
     --dashboard-mono-num: #000000;
     --card-dot-color: rgba(0, 0, 0, 0.02);
-    
+
     --chart-line: #000000;
     --chart-area: rgba(0, 0, 0, 0.015);
     --chart-grid: rgba(0, 0, 0, 0.035);
@@ -23,18 +23,18 @@
     --chart-bar-active: #000000;
     --chart-accent: #007aff;
     --chart-accent-light: rgba(0, 122, 255, 0.04);
-    
+
     --tooltip-bg: rgba(255, 255, 255, 0.78);
     --tooltip-border: rgba(0, 0, 0, 0.08);
     --tooltip-text: #1d1d1f;
-    
+
     --status-glow: rgba(52, 199, 89, 0.15);
     --status-color: #34c759;
     --warn-glow: rgba(255, 149, 0, 0.15);
     --warn-color: #ff9500;
     --error-glow: rgba(255, 59, 48, 0.15);
     --error-color: #ff3b30;
-    
+
     background-color: var(--dashboard-bg);
     color: var(--dashboard-text-primary);
     padding: 48px 40px;
@@ -43,48 +43,21 @@
     margin: 40px auto;
     font-family: var(--font-sans);
     box-sizing: border-box;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-/* 2. Adaptive Dark Theme Integration */
-:root[data-theme="dark"] .dashboard-container,
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .dashboard-container {
-        --dashboard-bg: #0b0b0c;
-        --dashboard-card-bg: #121214;
-        --dashboard-border: rgba(255, 255, 255, 0.06);
-        --dashboard-border-hover: rgba(255, 255, 255, 0.18);
-        --dashboard-text-primary: #f5f5f7;
-        --dashboard-text-secondary: #86868b;
-        --dashboard-text-tertiary: #48484a;
-        --dashboard-mono-num: #ffffff;
-        --card-dot-color: rgba(255, 255, 255, 0.015);
-        
-        --chart-line: #ffffff;
-        --chart-area: rgba(255, 255, 255, 0.015);
-        --chart-grid: rgba(255, 255, 255, 0.04);
-        --chart-bar-bg: #2c2c2e;
-        --chart-bar-active: #ffffff;
-        --chart-accent: #0a84ff;
-        --chart-accent-light: rgba(10, 132, 255, 0.08);
-        
-        --tooltip-bg: rgba(18, 18, 20, 0.82);
-        --tooltip-border: rgba(255, 255, 255, 0.08);
-        --tooltip-text: #f5f5f7;
-        
-        --status-glow: rgba(48, 209, 88, 0.15);
-        --status-color: #30d158;
-        --warn-glow: rgba(255, 159, 10, 0.15);
-        --warn-color: #ff9f0a;
-        --error-glow: rgba(255, 69, 58, 0.15);
-        --error-color: #ff453a;
-    }
+    transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease;
 }
 
 /* 3. Global CSS Layout Width Overrides */
 /* Disable site layout sidebars on Dashboard to expand layout width */
-.type-dashboard .site-sidebar,
-.type-dashboard .site-sidebar-right,
+.type-dashboard .site-sidebar {
+    display: none !important;
+}
+
+.type-dashboard .site-sidebar-right {
+    display: none !important;
+}
+
 .type-dashboard .site-sidebar-bottom {
     display: none !important;
 }
@@ -187,7 +160,10 @@
 /* Bento Card container */
 .bento-card {
     background-color: var(--dashboard-card-bg);
-    background-image: radial-gradient(var(--card-dot-color) 1.2px, transparent 1.2px);
+    background-image: radial-gradient(
+        var(--card-dot-color) 1.2px,
+        transparent 1.2px
+    );
     background-size: 16px 16px;
     border: 1px solid var(--dashboard-border);
     border-radius: 20px;
@@ -195,11 +171,14 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01), 0 6px 20px rgba(0, 0, 0, 0.015);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-                box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-                border-color 0.3s ease, 
-                background-color 0.3s ease;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.01),
+        0 6px 20px rgba(0, 0, 0, 0.015);
+    transition:
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.3s ease,
+        background-color 0.3s ease;
     box-sizing: border-box;
     position: relative;
     overflow: hidden;
@@ -208,16 +187,28 @@
 
 .bento-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.01);
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.03),
+        0 2px 6px rgba(0, 0, 0, 0.01);
     border-color: var(--dashboard-border-hover);
 }
 
 /* Grid Column Spans */
-.bento-span-12 { grid-column: span 12; }
-.bento-span-8 { grid-column: span 8; }
-.bento-span-6 { grid-column: span 6; }
-.bento-span-4 { grid-column: span 4; }
-.bento-span-3 { grid-column: span 3; }
+.bento-span-12 {
+    grid-column: span 12;
+}
+.bento-span-8 {
+    grid-column: span 8;
+}
+.bento-span-6 {
+    grid-column: span 6;
+}
+.bento-span-4 {
+    grid-column: span 4;
+}
+.bento-span-3 {
+    grid-column: span 3;
+}
 
 /* Bento Card Header */
 .bento-card-header {
@@ -242,7 +233,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.2s ease, transform 0.2s ease;
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .bento-card:hover .bento-card-icon {
@@ -354,11 +347,19 @@
 .cache-ring-bg {
     stroke: var(--dashboard-bg);
 }
-.cache-ring-bg.outer { stroke: rgba(0,0,0,0.025); }
-:root[data-theme="dark"] .cache-ring-bg.outer { stroke: rgba(255,255,255,0.025); }
+.cache-ring-bg.outer {
+    stroke: rgba(0, 0, 0, 0.025);
+}
+:root[data-theme="dark"] .cache-ring-bg.outer {
+    stroke: rgba(255, 255, 255, 0.025);
+}
 
-.cache-ring-bg.inner { stroke: rgba(0,0,0,0.015); }
-:root[data-theme="dark"] .cache-ring-bg.inner { stroke: rgba(255,255,255,0.015); }
+.cache-ring-bg.inner {
+    stroke: rgba(0, 0, 0, 0.015);
+}
+:root[data-theme="dark"] .cache-ring-bg.inner {
+    stroke: rgba(255, 255, 255, 0.015);
+}
 
 .cache-ring-fill {
     transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1);
@@ -394,7 +395,9 @@
 
 .inventory-bar-segment {
     height: 100%;
-    transition: width 0.5s ease, opacity 0.25s ease;
+    transition:
+        width 0.5s ease,
+        opacity 0.25s ease;
     cursor: pointer;
     position: relative;
     display: flex;
@@ -449,8 +452,12 @@
     height: 7px;
     border-radius: 50%;
 }
-.legend-color-dot.zh { background-color: var(--chart-line); }
-.legend-color-dot.en { background-color: var(--dashboard-text-secondary); }
+.legend-color-dot.zh {
+    background-color: var(--chart-line);
+}
+.legend-color-dot.en {
+    background-color: var(--dashboard-text-secondary);
+}
 
 .legend-txt {
     font-size: 11px;
@@ -481,7 +488,9 @@
 
 .chart-bar {
     fill: var(--chart-bar-bg);
-    transition: fill 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+    transition:
+        fill 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.2s ease;
 }
 
 .chart-bar:hover {
@@ -545,7 +554,7 @@
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -707,7 +716,9 @@
     color: var(--dashboard-text-secondary);
     border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
 }
 
 .chart-tab-btn:hover {
@@ -717,7 +728,7 @@
 .chart-tab-btn.active {
     background-color: var(--dashboard-card-bg);
     color: var(--dashboard-text-primary);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 /* SVG Spline details */
@@ -768,7 +779,7 @@
     fill: var(--chart-accent);
     stroke: var(--dashboard-card-bg);
     stroke-width: 2px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 /* Interactive target circles mapping */
@@ -776,7 +787,10 @@
     fill: var(--dashboard-card-bg);
     stroke: var(--chart-line);
     stroke-width: 1.8px;
-    transition: r 0.2s ease, stroke-width 0.2s ease, opacity 0.2s ease;
+    transition:
+        r 0.2s ease,
+        stroke-width 0.2s ease,
+        opacity 0.2s ease;
     cursor: crosshair;
 }
 
@@ -940,7 +954,7 @@
     top: 50%;
     transform: translateY(-50%);
     height: 14px;
-    background-color: rgba(0,0,0,0.035);
+    background-color: rgba(0, 0, 0, 0.035);
     border-radius: 4px;
     z-index: 1;
     transition: background-color 0.2s ease;
@@ -951,7 +965,7 @@
 }
 
 .dashboard-table tr:hover .table-row-bar {
-    background-color: rgba(0,0,0,0.055);
+    background-color: rgba(0, 0, 0, 0.055);
 }
 :root[data-theme="dark"] .dashboard-table tr:hover .table-row-bar {
     background-color: rgba(255, 255, 255, 0.045);
@@ -1115,7 +1129,7 @@
         padding: 36px 24px;
         margin: 20px 0;
     }
-    
+
     .dashboard-bento-grid {
         grid-template-columns: repeat(6, 1fr);
         gap: 20px;
@@ -1138,37 +1152,37 @@
     .dashboard-container {
         padding: 24px 16px;
     }
-    
+
     .dashboard-sys-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
     }
-    
+
     .dashboard-sys-right {
         margin-left: 0;
     }
-    
+
     .dashboard-bento-grid {
         display: flex;
         flex-direction: column;
         gap: 16px;
     }
-    
+
     .bento-card {
         grid-column: span 12 !important;
         min-height: auto;
         padding: 20px;
     }
-    
+
     .svg-canvas-wrapper {
         overflow-x: auto;
     }
-    
+
     #dashboard-spline-svg {
         min-width: 720px;
     }
-    
+
     .truncate-path {
         max-width: 150px;
     }

@@ -25,7 +25,7 @@
         <aside class="site-sidebar-right">{{ block "sidebar-right" . }}{{ end }}</aside>
     </div>
     </div><!-- /.site-wrapper -->
-    
+
     <footer class="site-footer reveal-footer">
         <div class="footer-content">
             {{ block "footer-inner" . }}
@@ -80,7 +80,6 @@
             <div class="menu-panel-inner">
                 <a href="{{ $homePage.RelPermalink }}" class="menu-link{{ if .IsHome }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Home</span></span></a>
                 <a href="{{ with .Site.GetPage "section" "about" }}{{ .RelPermalink }}{{ else }}{{ "about/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "about" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">About</span></span></a>
-                <a href="{{ "/dashboard/" | relLangURL }}" class="menu-link{{ if or (eq .Section "dashboard") (eq .Type "dashboard") }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Dashboard</span></span></a>
                 <div class="menu-group{{ if or (eq .Section "ideas") (eq .Section "textlab") }} is-active{{ end }}" role="group" aria-label="Writing">
                     <div class="menu-group-label">Writing</div>
                     <div class="menu-submenu">
@@ -90,6 +89,7 @@
                 </div>
                 <a href="{{ with $notesPage }}{{ .RelPermalink }}{{ else }}{{ "notes/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "notes" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Notes</span></span></a>
                 <a href="{{ with $microblogPage }}{{ .RelPermalink }}{{ else }}{{ "microblog/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "microblog" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Microblog</span></span></a>
+                <a href="{{ "/dashboard/" | relLangURL }}" class="menu-link{{ if or (eq .Section "dashboard") (eq .Type "dashboard") }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Dashboard</span></span></a>
                 <a href="#search" class="menu-link menu-link--search" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
             </div>
         </nav>

@@ -1,5 +1,6 @@
 # Hugo build outputs
 /public/
+/public_test/
 /resources/_gen/
 /assets/jsconfig.json
 hugo_stats.json
@@ -30,6 +31,8 @@ yarn.lock
 *.log
 *.tmp
 .hugo_build.lock
+/tmp/
+/output/
 
 # Microblog tool temp uploads
 scripts/.temp-uploads/
@@ -37,3 +40,4 @@ scripts/.temp-uploads/
 # Local tooling artifacts
 .playwright-cli/
 .superpowers/
+.claude/worktrees/

@@ -44,6 +44,14 @@ grid:
           date: "2023"
           link: "https://github.com/AkikoAkaki/moodstream"
   right:
+    - id: about
+      title: About
+      link: /about/
+      sublinks:
+        - label: Courses
+          link: /about/courses/
+        - label: Resume
+          link: /about/resume/
     - id: writing
       title: Writing
       link: ""
@@ -58,14 +66,9 @@ grid:
     - id: microblog
       title: Microblog
       link: /microblog/
-    - id: about
-      title: About
-      link: /about/
-      sublinks:
-        - label: Courses
-          link: /about/courses/
-        - label: Resume
-          link: /about/resume/
+    - id: dashboard
+      title: Dashboard
+      link: /dashboard/
 
 # -----------------------------------------------------------------------------
 # Now
@@ -112,7 +115,6 @@ now:
         - num: "3"
           title: "Clothing"
           desc: "I've always admired the clothing from brands like Comme des Garçons, Alexander McQueen, Yohji Yamamoto, Prada, Our Legacy, and Ann Demeulemeester, but they're out of my price range. Most of what I own is fast fashion or mainstream brands — primarily Uniqlo and Zara."
-    
 
 # -----------------------------------------------------------------------------
 # Connect
