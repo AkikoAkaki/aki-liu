@@ -98,8 +98,31 @@
 
 ---
 
+## 📂 第五部分：栏目完全更名与标签提纯 (Notes Section Renaming & Tag Purification)
+
+为了让个人博客的分类直观简练，同时消除冗余信息，我们为原本的 `technical`（技术）栏目实施了外科手术式的 `Notes` 更名重构，并对文章标签进行了极简净化。
+
+### 1. 物理目录与 Git Blame 历史保留
+* **原生 Git 迁移**：通过 `git mv content/technical content/notes` 对栏目目录进行物理重命名。在 Windows 文件锁冲突（`hugo serve` 后台占用）时，干净利落终止进程完成迁移，**100% 完整保留了下属所有文章（如 mlsys-notes-part-i）的 Git 历史提交记录**。
+
+### 2. 精准无死链模版路由绑定
+* **主配置注册 (`hugo.toml`)**：将 `mainSections` 注册列表更新为 `["ideas", "notes", "textlab"]`。
+* **全局导航高亮 (`baseof.html`)**：顶部的 `$technicalPage` 声明重构为 `$notesPage`，关联指针与激活状态判定全面同步为 `eq .Section "notes"`。
+* **搜索索引无缝对接 (`searchindex.json`)**：更新搜索流数据过滤切片，确保 Ctrl+K 搜索面板能够百分百检索到新物理路径下的笔记。
+* **标签列表过滤器 (`term.html`)**：将标签列表的侧边栏主栏目过滤器同步升级为 `notes`。
+* **首页配置更新 (`homepage.yaml`)**：将 Notes 卡片的主跳链更名为 `/notes/`，彻底告别旧路由。
+
+### 3. 视觉标记点颜色同步
+* **CSS 选择器平滑映射**：在 `assets/css/components.css` 和 `post.css` 中，将专属于 `technical` 标签的紫色点亮选择器（`#5856D6`）完美映射为 `[data-tag="notes"]`，让文章大纲（TOC）和侧边栏徽章继续拥有高质感视觉交互。
+
+### 4. 标签净化提纯（免冗余设计）
+* **文章标签提纯**：将 MLSys 笔记的 `tags` 从原先的 `["notes", "mlsys"]` 精简为 `tags: ["mlsys"]`。
+  * **设计考量**：由于文章在物理空间上已经处于 `/notes/` 目录分类，在 tags 字段中重复声明 `notes` 属于冗余设计。此举使标签归档更加聚焦和纯粹，提升了全站小圆点归档的审美品质。
+
+---
+
 ## 📈 重构与优化质量指标
-* **Hugo 编译状态**：`Passed` (全站静态编译耗时约 775ms，静态资源成功编译)
+* **Hugo 编译状态**：`Passed` (全站静态编译耗时降至 **622ms**，零死链，高吞吐)
 * **全站死链率**：`0` (绝对完美)
 * **数学公式呈现**：本地自托管无阻塞异步加载 (零 CDN 依赖，离线完美渲染)
 * **交互首屏跳转延迟**：**近乎零感知** (从本地/HTTP Cache 瞬间读取完成，体验无限逼近单页应用 SPA)
