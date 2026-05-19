@@ -5,809 +5,668 @@
 {{ define "main" }}
 {{ $latest := .Site.Data.metrics.latest }}
 {{ $history := .Site.Data.metrics.history_timeline }}
-{{ $isZh := eq .Language.Lang "zh" }}
+{{ $lastBuild := index $history (sub (len $history) 1) }}
+{{ $totalPages := add $latest.build.zhPages $latest.build.enPages }}
+{{ $zhPct := printf "%.1f" (mul (div (float $latest.build.zhPages) (float $totalPages)) 100) }}
+{{ $enPct := printf "%.1f" (mul (div (float $latest.build.enPages) (float $totalPages)) 100) }}
+{{ $zhBarPct := printf "%.2f" (mul (div (float $latest.build.zhPages) (float $totalPages)) 100) }}
+{{ $enBarPct := printf "%.2f" (mul (div (float $latest.build.enPages) (float $totalPages)) 100) }}
+{{ $cssBundleKB := printf "%.1f" (div (float $latest.quality.cssBundleBytes) 1024.0) }}
+{{ $cacheRatio := $lastBuild.cacheRatio }}
+{{ $cacheRatioStr := printf "%.2f" $cacheRatio }}
+{{ $totalCacheCalls := math.Round (div (mul (float $latest.templates.aggregateCached) 100.0) $cacheRatio) }}
+{{ $ringCirc := 163.36 }}
+{{ $ringOffset := printf "%.2f" (mul $ringCirc (sub 1.0 (div $cacheRatio 100.0))) }}
 
-<div class="dashboard-container">
-    {{/* 1. Technical Status Header Bar */}}
-    <div class="dashboard-sys-header">
-        <div class="dashboard-sys-left">
-            <span class="sys-label">SYSTEM</span>
-            <span class="sys-dot"></span>
-            <span class="sys-val">hugo.toml</span>
-            <span class="sys-separator">/</span>
-            <span class="sys-label">BRANCH</span>
-            <span class="sys-val">{{ $latest.git.branch }}</span>
-            <span class="sys-separator">/</span>
-            <span class="sys-label">COMMIT</span>
-            <span class="sys-val">{{ $latest.git.commit }}</span>
-        </div>
-        <div class="dashboard-sys-right">
-            <span class="sys-label">GENERATED AT</span>
-            <span class="sys-val">{{ $latest.generatedAt }}</span>
-        </div>
+<div class="dash-shell">
+  <div class="dash-container">
+
+    {{/* ---- Meta strip ---- */}}
+    <div class="meta-strip">
+      <span class="meta-item">
+        <span class="live-dot"></span>
+        <span class="meta-label">System</span>
+        <span class="meta-value">hugo.toml</span>
+      </span>
+      <span class="meta-item">
+        <span class="meta-label">Branch</span>
+        <span class="meta-value">main</span>
+      </span>
+      <span class="meta-item">
+        <span class="meta-label">Commit</span>
+        <span class="meta-value">{{ $lastBuild.commit }}</span>
+      </span>
+      <span class="meta-item">
+        <span class="meta-label">Hugo</span>
+        <span class="meta-value">v{{ hugo.Version }}</span>
+      </span>
+      <span class="meta-spacer"></span>
+      <span class="meta-item">
+        <span class="meta-label">Generated at</span>
+        <span class="meta-value">{{ now.Format "2006-01-02T15:04:05Z07:00" }}</span>
+      </span>
     </div>
 
-    {{/* 2. Hero Headline */}}
-    <div class="dashboard-hero">
-        <h1 class="dashboard-hero-title">Dashboard</h1>
+    {{/* ---- Title block ---- */}}
+    <header class="title-block">
+      <div>
+        <h1 class="dash-title">Dashboard.</h1>
+        <p class="dash-epigraph">
+          "Form is a moment crystallised &mdash; a record of what passed
+          through the compiler, what was kept, what was let go."
+          <span class="cite">&mdash; private build log, aki-liu.com</span>
+        </p>
+      </div>
+      <div class="dash-title-meta">
+        <span class="dash-eyebrow">Build observability</span>
+        <span class="dash-sub">a quiet inspector for the site's static heart</span>
+      </div>
+    </header>
+
+    {{/* ---- Section: At a glance ---- */}}
+    <div class="section-head" style="margin-top: 3rem;">
+      <h2>At a glance</h2>
+      <span class="section-rule"></span>
+      <span class="section-cap">6 indicators</span>
     </div>
 
-    {{/* 3. Bento Grid Showcase Layout */}}
-    <div class="dashboard-bento-grid">
+    <section class="cards-grid">
 
-        {{/* Card 1: Build Duration (Span 4) */}}
-        <div class="bento-card bento-span-4" id="card-duration">
-            <div class="bento-card-header">
-                <span class="bento-card-title">{{ if $isZh }}构建用时{{ else }}BUILD DURATION{{ end }}</span>
-                <span class="bento-card-icon" title="Timer">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                </span>
+      {{/* Card 1: Build duration */}}
+      <article class="metric-card">
+        <div class="metric-head">
+          <span class="metric-label">
+            <span class="ml-en">Build duration</span>
+            <span class="ml-zh">构建用时</span>
+          </span>
+          <span class="metric-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2.5"/></svg>
+          </span>
+        </div>
+        <div class="metric-body">
+          <div class="metric-row">
+            <span class="metric-num">
+              {{ $latest.build.totalMs }}<span class="unit">ms</span>
+            </span>
+            <svg id="sparkline-build" class="sparkline" viewBox="0 0 130 42" preserveAspectRatio="none" aria-hidden="true"></svg>
+          </div>
+          <span class="metric-sub" id="spark-delta"></span>
+        </div>
+        <p class="metric-foot">
+          <em>Total static render &amp; minify time</em> &mdash; the moment between
+          <code style="background:transparent;padding:0;color:var(--text-color)">hugo --gc</code> and a clean tree.
+        </p>
+      </article>
+
+      {{/* Card 2: Template cache hit */}}
+      <article class="metric-card">
+        <div class="metric-head">
+          <span class="metric-label">
+            <span class="ml-en">Template cache hit</span>
+            <span class="ml-zh">编译缓存命中率</span>
+          </span>
+          <span class="metric-icon">
+            <svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="2.5"/><path d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg>
+          </span>
+        </div>
+        <div class="metric-body">
+          <div class="metric-row">
+            <div>
+              <span class="metric-num">
+                {{ $cacheRatioStr }}<span class="unit">%</span>
+              </span>
+              <div style="margin-top:.5rem;font-family:var(--font-mono);font-size:11.5px;color:var(--color-muted);letter-spacing:.02em;">
+                {{ $latest.templates.aggregateCached | lang.FormatNumber 0 }} / {{ $totalCacheCalls | lang.FormatNumber 0 }} hits
+              </div>
             </div>
-            <div class="bento-card-body horizontal-body">
-                <div class="bento-kpi-val">
-                    <span class="bento-kpi-num">{{ $latest.build.totalMs }}</span><span class="bento-kpi-unit">ms</span>
-                </div>
-                <!-- Micro SVG sparkline showing last 10 build times -->
-                <div class="micro-sparkline-wrapper">
-                    <svg class="micro-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none">
-                        {{ $lenHist := len $history }}
-                        {{ if gt $lenHist 1 }}
-                            {{ $subHistory := last 10 $history }}
-                            {{ $minH := 9999.0 }}
-                            {{ $maxH := 0.0 }}
-                            {{ range $subHistory }}
-                                {{ $v := float .buildMs }}
-                                {{ if lt $v $minH }}{{ $minH = $v }}{{ end }}
-                                {{ if gt $v $maxH }}{{ $maxH = $v }}{{ end }}
-                            {{ end }}
-                            {{ $diffH := sub $maxH $minH }}
-                            {{ if eq $diffH 0.0 }}{{ $diffH = 1.0 }}{{ end }}
-                            {{ $sparkPoints := slice }}
-                            {{ range $idx, $item := $subHistory }}
-                                {{ $x := mul $idx 11 }}
-                                {{ $pctY := div (sub (float .buildMs) $minH) $diffH }}
-                                {{ $y := sub 27 (mul $pctY 24) }}
-                                {{ $sparkPoints = $sparkPoints | append (printf "%d,%.1f" $x $y) }}
-                            {{ end }}
-                            <polyline points="{{ delimit $sparkPoints " " }}" class="micro-spark-line"></polyline>
-                        {{ end }}
-                    </svg>
-                </div>
+            <div class="ring-wrap">
+              <svg viewBox="0 0 56 56">
+                <circle class="ring-track" cx="28" cy="28" r="26"/>
+                <circle class="ring-fill" cx="28" cy="28" r="26"
+                  stroke-dasharray="{{ $ringCirc }}"
+                  stroke-dashoffset="{{ $ringOffset }}"/>
+              </svg>
             </div>
-            <p class="bento-kpi-desc">
-                {{ if $isZh }}全量静态构建与压缩耗时{{ else }}Full static build & compression duration{{ end }}
-            </p>
+          </div>
+        </div>
+        <p class="metric-foot">
+          <em>Template-level reuse</em> across <code style="background:transparent;padding:0;color:var(--text-color)">partialCached</code> calls.
+        </p>
+      </article>
+
+      {{/* Card 3: Language ratio */}}
+      <article class="metric-card">
+        <div class="metric-head">
+          <span class="metric-label">
+            <span class="ml-en">Language ratio</span>
+            <span class="ml-zh">多语言页面占比</span>
+          </span>
+          <span class="metric-icon">
+            <svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M10 12h6M10 15h6M10 18h4"/></svg>
+          </span>
+        </div>
+        <div class="metric-body">
+          <div>
+            <span class="metric-num">
+              {{ $totalPages }}<span class="unit">pages</span>
+            </span>
+          </div>
+          <div class="stack-bar" aria-hidden="true">
+            <div class="seg seg-zh" style="width:{{ $zhBarPct }}%"></div>
+            <div class="seg seg-en" style="width:{{ $enBarPct }}%"></div>
+          </div>
+          <div class="stack-legend">
+            <span class="lang-zh"><span class="dot"></span>ZH &middot; {{ $latest.build.zhPages }} &middot; {{ $zhPct }}%</span>
+            <span class="lang-en"><span class="dot"></span>EN &middot; {{ $latest.build.enPages }} &middot; {{ $enPct }}%</span>
+          </div>
+        </div>
+        <p class="metric-foot">
+          <em>Bilingual surface</em> &mdash; Chinese dominant; English mirrors the essays I rewrite for distance.
+        </p>
+      </article>
+
+      {{/* Card 4: Content volume */}}
+      <article class="metric-card">
+        <div class="metric-head">
+          <span class="metric-label">
+            <span class="ml-en">Content volume</span>
+            <span class="ml-zh">页面容量增长</span>
+          </span>
+          <span class="metric-icon">
+            <svg viewBox="0 0 24 24"><path d="M5 19V11M10 19V6M15 19V14M20 19V8"/></svg>
+          </span>
+        </div>
+        <div class="metric-body">
+          <div>
+            <span class="metric-num" id="vol-current">
+              {{ $totalPages }}<span class="unit">pages</span>
+            </span>
+            <div style="margin-top:.5rem;font-family:var(--font-mono);font-size:11.5px;color:var(--color-muted);" id="vol-delta"></div>
+          </div>
+          <div class="bars-chart" id="bars-chart" aria-hidden="true"></div>
+        </div>
+        <p class="metric-foot">
+          <em>Total page count</em> over the last 30 deploys.
+        </p>
+      </article>
+
+      {{/* Card 5: Static asset budget */}}
+      {{ $cssKBNum := div (float $latest.quality.cssBundleBytes) 1024.0 }}
+      {{ $cssPct := printf "%.2f" (mul (div $cssKBNum 150.0) 100.0) }}
+      {{ $cssLimitPct := printf "%.2f" (mul (div 100.0 150.0) 100.0) }}
+      <article class="metric-card">
+        <div class="metric-head">
+          <span class="metric-label">
+            <span class="ml-en">Static asset budget</span>
+            <span class="ml-zh">静态资源预算控制</span>
+          </span>
+          <span class="metric-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M4 11h16M9 7v12M15 7v12"/></svg>
+          </span>
+        </div>
+        <div class="metric-body">
+          <div class="budget-rows">
+            <div class="budget-row">
+              <div class="br-head">
+                <span class="br-name">CSS bundle</span>
+                <span class="br-val">{{ $cssBundleKB }} <span style="color:var(--color-muted)">KB</span></span>
+              </div>
+              <div class="br-track">
+                <div class="br-fill" style="width:{{ $cssPct }}%"></div>
+                <div class="br-limit" style="left:{{ $cssLimitPct }}%" title="Limit 100KB"></div>
+              </div>
+              <div class="br-scale">
+                <span>0KB</span>
+                <span style="color:var(--color-muted)">100KB <span style="opacity:.6">(limit)</span></span>
+                <span>150KB</span>
+              </div>
+            </div>
+            <div class="budget-row">
+              <div class="br-head">
+                <span class="br-name">JS bundle</span>
+                <span class="br-val">18.4 <span style="color:var(--color-muted)">KB</span></span>
+              </div>
+              <div class="br-track">
+                <div class="br-fill" style="width:46%"></div>
+                <div class="br-limit" style="left:75%" title="Limit 30KB"></div>
+              </div>
+              <div class="br-scale">
+                <span>0KB</span>
+                <span style="color:var(--color-muted)">30KB <span style="opacity:.6">(limit)</span></span>
+                <span>40KB</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <span class="status-chip">
+            <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
+            Within budget
+          </span>
+        </div>
+      </article>
+
+      {{/* Card 6: Static quality */}}
+      {{ $hasBroken := gt $latest.quality.brokenRootRelativeLinkCount 0 }}
+      {{ $hasMissingCanon := gt $latest.quality.missingCanonical 0 }}
+      {{ $hasLangAttr := eq $latest.quality.missingHtmlLang 0 }}
+      <article class="metric-card">
+        <div class="metric-head">
+          <span class="metric-label">
+            <span class="ml-en">Static quality</span>
+            <span class="ml-zh">静态质量健康度</span>
+          </span>
+          <span class="metric-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4-3.5 7.5-8 9-4.5-1.5-8-5-8-9V6z"/></svg>
+          </span>
+        </div>
+        <div class="metric-body">
+          <div class="health-list">
+            <div class="health-row {{ if $hasBroken }}fail{{ else }}pass{{ end }}">
+              <span class="h-dot"></span>
+              <span class="h-label">
+                Site dead-link audit
+                <em>{{ if $hasBroken }}{{ $latest.quality.brokenRootRelativeLinkCount }} broken root-relative {{ if eq $latest.quality.brokenRootRelativeLinkCount 1 }}reference{{ else }}references{{ end }}{{ else }}All internal links resolve{{ end }}</em>
+              </span>
+              <span class="h-meta">{{ if $hasBroken }}Fail{{ else }}Pass{{ end }}</span>
+            </div>
+            <div class="health-row {{ if $hasMissingCanon }}warn{{ else }}pass{{ end }}">
+              <span class="h-dot"></span>
+              <span class="h-label">
+                SEO canonical
+                <em>{{ if $hasMissingCanon }}{{ $latest.quality.missingCanonical }} {{ if eq $latest.quality.missingCanonical 1 }}post missing{{ else }}posts missing{{ end }} language pair{{ else }}All pages declare language alternates{{ end }}</em>
+              </span>
+              <span class="h-meta">{{ if $hasMissingCanon }}Warn{{ else }}Pass{{ end }}</span>
+            </div>
+            <div class="health-row {{ if $hasLangAttr }}pass{{ else }}warn{{ end }}">
+              <span class="h-dot"></span>
+              <span class="h-label">
+                i18n lang attributes
+                <em>{{ if $hasLangAttr }}All {{ $totalPages }} pages declare zh / en{{ else }}{{ $latest.quality.missingHtmlLang }} pages missing lang attribute{{ end }}</em>
+              </span>
+              <span class="h-meta">{{ if $hasLangAttr }}Pass{{ else }}Warn{{ end }}</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    {{/* ---- Section: Build timeline ---- */}}
+    <section>
+      <div class="section-head">
+        <h2>Build timeline</h2>
+        <span class="section-rule"></span>
+        <span class="section-cap">Last 30 builds</span>
+      </div>
+
+      <div class="trend-card">
+        <div class="trend-head">
+          <div class="trend-titles">
+            <span class="trend-zh">编译耗时与内容历史演变</span>
+            <span class="trend-sub">Static render duration and total page count over the last 30 builds, sampled per deploy.</span>
+          </div>
+          <div class="trend-tabs" role="tablist">
+            <button class="trend-tab active" id="tab-build" onclick="dashSwitchTab('build')">Build</button>
+            <button class="trend-tab" id="tab-pages" onclick="dashSwitchTab('pages')">Volume</button>
+          </div>
         </div>
 
-        {{/* Card 2: Cache Efficiency Nested Double Ring (Span 4) */}}
-        {{ $ratio := div $latest.templates.aggregateCacheRatio 100.0 }}
-        {{ $circumferenceOuter := 251.32 }}
-        {{ $offsetOuter := mul $circumferenceOuter (sub 1.0 $ratio) }}
-        <!-- Inner ring represents layout optimization at static 92% -->
-        {{ $circumferenceInner := 175.93 }}
-        {{ $offsetInner := mul $circumferenceInner (sub 1.0 0.92) }}
-        <div class="bento-card bento-span-4" id="card-cache">
-            <div class="bento-card-header">
-                <span class="bento-card-title">{{ if $isZh }}编译缓存命中率{{ else }}CACHE EFFICIENCY{{ end }}</span>
-                <span class="bento-card-icon" title="Database">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>
-                </span>
-            </div>
-            <div class="bento-card-body">
-                <div class="cache-ring-container">
-                    <div class="bento-kpi-val" style="margin: 0; flex-direction: column; align-items: flex-start;">
-                        <div style="display: flex; align-items: baseline;">
-                            <span class="bento-kpi-num">{{ $latest.templates.aggregateCacheRatio }}</span><span class="bento-kpi-unit">%</span>
-                        </div>
-                        <span class="cache-sub-stat">{{ $latest.templates.aggregateCached }} / {{ $latest.templates.aggregateCalls }} {{ if $isZh }}命中{{ else }}hits{{ end }}</span>
-                    </div>
-                    <div class="cache-ring-visual">
-                        <svg class="cache-ring-svg" viewBox="0 0 100 100">
-                            <!-- Outer Ring: Template Cache Rate -->
-                            <circle class="cache-ring-bg outer" cx="50" cy="50" r="40" stroke-width="6.5" fill="transparent"></circle>
-                            <circle class="cache-ring-fill outer" cx="50" cy="50" r="40" stroke-width="6.5" fill="transparent"
-                                    stroke-dasharray="251.32" stroke-dashoffset="{{ $offsetOuter }}" stroke-linecap="round"></circle>
-                            <!-- Inner Ring: Static Asset Optimization -->
-                            <circle class="cache-ring-bg inner" cx="50" cy="50" r="28" stroke-width="5.5" fill="transparent"></circle>
-                            <circle class="cache-ring-fill inner" cx="50" cy="50" r="28" stroke-width="5.5" fill="transparent"
-                                    stroke-dasharray="175.93" stroke-dashoffset="{{ $offsetInner }}" stroke-linecap="round"></circle>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            <p class="bento-kpi-desc">
-                {{ if $isZh }}模板级别缓存命中/总调用汇总{{ else }}Aggregated cache hits / calls ratio{{ end }}
-            </p>
+        <div class="trend-stats" id="trend-stats">
+          <div class="trend-stat">
+            <span class="ts-label">Min</span>
+            <span class="ts-val" id="ts-min">&mdash;<span class="small">ms</span></span>
+          </div>
+          <div class="trend-stat">
+            <span class="ts-label">Mean</span>
+            <span class="ts-val" id="ts-mean">&mdash;<span class="small">ms</span></span>
+          </div>
+          <div class="trend-stat">
+            <span class="ts-label">Max</span>
+            <span class="ts-val" id="ts-max">&mdash;<span class="small">ms</span></span>
+          </div>
+          <div class="trend-stat">
+            <span class="ts-label">P95</span>
+            <span class="ts-val" id="ts-p95">&mdash;<span class="small">ms</span></span>
+          </div>
         </div>
 
-        {{/* Card 3: Content Inventory Stacked Segmented Bar (Span 4) */}}
-        {{ $zhPages := float $latest.build.zhPages }}
-        {{ $enPages := float $latest.build.enPages }}
-        {{ $totalPages := add $zhPages $enPages }}
-        {{ $zhPct := 50.0 }}
-        {{ $enPct := 50.0 }}
-        {{ if gt $totalPages 0.0 }}
-            {{ $zhPct = mul (div $zhPages $totalPages) 100.0 }}
-            {{ $enPct = mul (div $enPages $totalPages) 100.0 }}
+        <svg class="trend-chart" id="trend-chart" viewBox="0 0 1080 280" preserveAspectRatio="none"></svg>
+
+        <div class="trend-foot">
+          <span class="trend-note">
+            <em>最近 30 次静态构建指标趋势点图</em> &middot; hover to inspect a single build.
+          </span>
+          <span class="trend-range" id="trend-range">&mdash;</span>
+        </div>
+      </div>
+    </section>
+
+    {{/* ---- Section: Where time goes ---- */}}
+    <div class="section-head">
+      <h2>Where time goes</h2>
+      <span class="section-rule"></span>
+      <span class="section-cap">Template &amp; quality detail</span>
+    </div>
+
+    <div class="bottom-row">
+
+      {{/* Template render rank */}}
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-titles">
+            <h3>Template render rank</h3>
+            <span class="panel-zh">模板渲染耗时 · Top {{ len $latest.templates.top }}</span>
+            <span class="panel-sub">where the compiler spends its breath.</span>
+          </div>
+          <span class="metric-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="square" stroke-linejoin="miter"><path d="M4 5h16v14H4z"/><path d="M4 10h16M4 14h16M11 5v14"/></svg>
+          </span>
+        </div>
+
+        {{ $maxTotal := 0.0 }}
+        {{ range $latest.templates.top }}
+          {{ if gt .cumulativeMs $maxTotal }}{{ $maxTotal = .cumulativeMs }}{{ end }}
         {{ end }}
-        <div class="bento-card bento-span-4" id="card-inventory">
-            <div class="bento-card-header">
-                <span class="bento-card-title">{{ if $isZh }}多语言页面占比{{ else }}CONTENT INVENTORY{{ end }}</span>
-                <span class="bento-card-icon" title="Files">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                </span>
+
+        <div class="tmpl-table">
+          <div class="tmpl-row head">
+            <span>Template path</span>
+            <span class="right">Total</span>
+            <span class="right">Mean</span>
+            <span class="right">Cache</span>
+          </div>
+          {{ range $latest.templates.top }}
+            {{ $parts := split .template "/" }}
+            {{ $file := index $parts (sub (len $parts) 1) }}
+            {{ $dir := "" }}
+            {{ if gt (len $parts) 1 }}
+              {{ $dirParts := first (sub (len $parts) 1) $parts }}
+              {{ $dir = printf "%s/" (delimit $dirParts "/") }}
+            {{ end }}
+            {{ $wPct := printf "%.2f" (mul (div .cumulativeMs $maxTotal) 100.0) }}
+            <div class="tmpl-row">
+              <div class="tmpl-bar-bg" style="background:linear-gradient(to right,rgba(var(--text-rgb),.025) {{ $wPct }}%,transparent {{ $wPct }}%)"></div>
+              <span class="path" title="{{ .template }}">{{ if $dir }}<span class="crumb-dim">{{ $dir }}</span>{{ end }}{{ $file }}</span>
+              <span class="num">{{ printf "%.3f" .cumulativeMs }}<span style="color:var(--color-muted)">ms</span></span>
+              <span class="num muted">{{ printf "%.3f" .averageMs }}<span style="color:var(--color-dim)">ms</span></span>
+              <span class="rate {{ if gt .percentCached 0 }}has{{ else }}zero{{ end }}">{{ .percentCached }}%</span>
             </div>
-            <div class="bento-card-body" style="justify-content: flex-end; padding-bottom: 4px;">
-                <div class="inventory-bar-wrapper">
-                    <div class="inventory-bar-segment zh-segment" style="width: {{ $zhPct }}%;" title="ZH: {{ $latest.build.zhPages }} pages">
-                        <span class="bar-pct-label">{{ printf "%.0f" $zhPct }}%</span>
-                    </div>
-                    <div class="inventory-bar-segment en-segment" style="width: {{ $enPct }}%;" title="EN: {{ $latest.build.enPages }} pages">
-                        <span class="bar-pct-label">{{ printf "%.0f" $enPct }}%</span>
-                    </div>
-                </div>
-                <div class="inventory-legend">
-                    <span class="inventory-legend-item">
-                        <span class="legend-color-dot zh"></span>
-                        <span class="legend-txt">ZH <strong class="mono">{{ $latest.build.zhPages }}</strong></span>
-                    </span>
-                    <span class="inventory-legend-item">
-                        <span class="legend-color-dot en"></span>
-                        <span class="legend-txt">EN <strong class="mono">{{ $latest.build.enPages }}</strong></span>
-                    </span>
-                </div>
-            </div>
-            <p class="bento-kpi-desc">
-                {{ if $isZh }}总计静态生成页面数 {{ printf "%.0f" $totalPages }}{{ else }}Total static pages rendered: {{ printf "%.0f" $totalPages }}{{ end }}
-            </p>
+          {{ end }}
+        </div>
+      </div>
+
+      {{/* Diagnostic report */}}
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-titles">
+            <h3>Diagnostic report</h3>
+            <span class="panel-zh">静态质量与死链诊断</span>
+            <span class="panel-sub">an HTML audit, run after every build.</span>
+          </div>
+          <span class="metric-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="square" stroke-linejoin="miter"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>
+          </span>
         </div>
 
-        {{/* Card 4: Historical Page Count Growth Sparkbars (Span 4) */}}
-        {{ $historyCount := len $history }}
-        <div class="bento-card bento-span-4" id="card-growth">
-            <div class="bento-card-header">
-                <span class="bento-card-title">{{ if $isZh }}页面容量增长{{ else }}PAGE GROWTH TIMELINE{{ end }}</span>
-                <span class="bento-card-icon" title="Growth">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        <div class="diag-body">
+          <div class="diag-stat-row">
+            <div class="diag-stat">
+              <span class="ds-label">HTML files audited</span>
+              <span class="ds-val">{{ $latest.quality.htmlFiles }}<span class="ds-unit">pages</span></span>
+            </div>
+            <div class="diag-stat">
+              <span class="ds-label">External hosts</span>
+              <span class="ds-val">{{ len $latest.quality.homeExternalHosts }}<span class="ds-unit">domains</span></span>
+            </div>
+            <div class="diag-stat">
+              <span class="ds-label">Broken links</span>
+              <span class="ds-val" {{ if $hasBroken }}style="color:var(--tag-poetry)"{{ end }}>{{ $latest.quality.brokenRootRelativeLinkCount }}<span class="ds-unit">refs</span></span>
+            </div>
+            <div class="diag-stat">
+              <span class="ds-label">Missing canonical</span>
+              <span class="ds-val" {{ if $hasMissingCanon }}style="color:var(--tag-translation)"{{ end }}>{{ $latest.quality.missingCanonical }}<span class="ds-unit">pages</span></span>
+            </div>
+          </div>
+
+          <div>
+            {{ if $hasBroken }}
+              <div class="diag-finding fail">
+                <span class="d-dot"></span>
+                <span class="d-text">
+                  Internal link audit
+                  <em>{{ $latest.quality.brokenRootRelativeLinkCount }} broken root-relative {{ if eq $latest.quality.brokenRootRelativeLinkCount 1 }}reference{{ else }}references{{ end }} found.</em>
                 </span>
-            </div>
-            <div class="bento-card-body">
-                {{ if gt $historyCount 1 }}
-                    {{ $maxPagesInHistory := 1.0 }}
-                    {{ range $history }}
-                        {{ $tot := float (add .zhPages .enPages) }}
-                        {{ if gt $tot $maxPagesInHistory }}
-                            {{ $maxPagesInHistory = $tot }}
-                        {{ end }}
-                    {{ end }}
-                    <div class="bento-spark-bars">
-                        <svg class="spark-bars-svg" viewBox="0 0 320 60" preserveAspectRatio="none">
-                            {{ $barWidth := 6.0 }}
-                            {{ $spacing := 4.0 }}
-                            {{ range $idx, $item := $history }}
-                                {{ $totalHistPages := float (add .zhPages .enPages) }}
-                                {{ $barHeight := mul (div $totalHistPages $maxPagesInHistory) 46.0 }}
-                                {{ $yPos := sub 58.0 $barHeight }}
-                                {{ $xPos := mul $idx (add $barWidth $spacing) }}
-                                <g class="chart-bar-group">
-                                    <title>{{ .label }} · {{ printf "%.0f" $totalHistPages }} {{ if $isZh }}页面{{ else }}pages{{ end }}</title>
-                                    <rect x="{{ $xPos }}" y="{{ $yPos }}" width="{{ $barWidth }}" height="{{ $barHeight }}" class="chart-bar" rx="1.5" ry="1.5"></rect>
-                                </g>
-                            {{ end }}
-                        </svg>
-                    </div>
-                {{ else }}
-                    <div class="dashboard-no-data" style="height: 60px;">Insufficient historical data</div>
-                {{ end }}
-            </div>
-            <p class="bento-kpi-desc">
-                {{ if $isZh }}最近 30 次编译站点内容容量演变{{ else }}Growth timeline over the last 30 runs{{ end }}
-            </p>
-        </div>
-
-        {{/* Card 5: CSS & JS Bundle Budget Sliders (Span 4) */}}
-        <div class="bento-card bento-span-4" id="card-budget">
-            <div class="bento-card-header">
-                <span class="bento-card-title">{{ if $isZh }}静态资源预算控制{{ else }}ASSETS BUDGETS{{ end }}</span>
-                <span class="bento-card-icon" title="Budgets">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-                </span>
-            </div>
-            {{ $cssKB := div (float $latest.quality.cssBundleBytes) 1024.0 }}
-            {{ $cssPointer := mul (div $cssKB 150.0) 100.0 }}
-            {{ if gt $cssPointer 100.0 }}{{ $cssPointer = 100.0 }}{{ end }}
-
-            {{/* JS budget size dynamic mockup or static */}}
-            {{ $jsKB := 18.4 }}
-            {{ $jsPointer := mul (div $jsKB 40.0) 100.0 }}
-            <div class="bento-card-body budget-body-spaced">
-                <!-- CSS Slider -->
-                <div class="budget-slider-section">
-                    <div class="budget-label-row">
-                        <span class="budget-name">CSS Bundle</span>
-                        <span class="budget-value mono">{{ printf "%.1f" $cssKB }} KB</span>
-                    </div>
-                    <div class="budget-track-container">
-                        <div class="budget-track">
-                            <div class="budget-zone safe" style="width: 66.6%;"></div>
-                            <div class="budget-pointer" style="left: {{ $cssPointer }}%;"></div>
-                        </div>
-                        <div class="budget-scales">
-                            <span>0KB</span>
-                            <span>100KB (LIMIT)</span>
-                            <span>150KB</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- JS Slider -->
-                <div class="budget-slider-section" style="margin-top: 12px;">
-                    <div class="budget-label-row">
-                        <span class="budget-name">JS Bundle</span>
-                        <span class="budget-value mono">{{ printf "%.1f" $jsKB }} KB</span>
-                    </div>
-                    <div class="budget-track-container">
-                        <div class="budget-track">
-                            <div class="budget-zone safe" style="width: 75%;"></div>
-                            <div class="budget-pointer" style="left: {{ $jsPointer }}%;"></div>
-                        </div>
-                        <div class="budget-scales">
-                            <span>0KB</span>
-                            <span>30KB (LIMIT)</span>
-                            <span>40KB</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="budget-badge-row">
-                <span class="budget-status-badge">{{ if $isZh }}系统体积符合规范{{ else }}HEALTHY & COMPLIANT{{ end }}</span>
-            </div>
-        </div>
-
-        {{/* Card 6: Quality Audit Pulse Matrix Checklist (Span 4) */}}
-        {{ $brokenCount := $latest.quality.brokenRootRelativeLinkCount }}
-        {{ $canonicalMissing := $latest.quality.missingCanonical }}
-        {{ $htmlFiles := $latest.quality.htmlFiles }}
-        <div class="bento-card bento-span-4" id="card-quality">
-            <div class="bento-card-header">
-                <span class="bento-card-title">{{ if $isZh }}静态质量健康度{{ else }}QUALITY INTEGRITY{{ end }}</span>
-                <span class="bento-card-icon" title="Audit">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                </span>
-            </div>
-            <div class="bento-card-body">
-                <div class="audit-pulse-matrix">
-                    <div class="audit-matrix-row">
-                        <span class="pulse-glow-ring {{ if eq $brokenCount 0 }}ok{{ else }}error{{ end }}"></span>
-                        <span class="audit-lbl">{{ if $isZh }}站点死链解析{{ else }}Broken links audit{{ end }}</span>
-                        <span class="audit-status">{{ if eq $brokenCount 0 }}PASS{{ else }}FAIL{{ end }}</span>
-                    </div>
-                    <div class="audit-matrix-row">
-                        <span class="pulse-glow-ring {{ if eq $canonicalMissing 0 }}ok{{ else }}warn{{ end }}"></span>
-                        <span class="audit-lbl">{{ if $isZh }}SEO 规范化 (Canonical){{ else }}SEO Canonical markup{{ end }}</span>
-                        <span class="audit-status">{{ if eq $canonicalMissing 0 }}PASS{{ else }}WARN{{ end }}</span>
-                    </div>
-                    <div class="audit-matrix-row">
-                        <span class="pulse-glow-ring ok"></span>
-                        <span class="audit-lbl">{{ if $isZh }}多语言国际化 Lang{{ else }}I18n Lang tags audit{{ end }}</span>
-                        <span class="audit-status">PASS</span>
-                    </div>
-                </div>
-            </div>
-            <p class="bento-kpi-desc">
-                {{ if $isZh }}静态 HTML 安全性、可访问性与死链扫描{{ else }}Safety, accessibility, and link parser diagnostics{{ end }}
-            </p>
-        </div>
-
-        {{/* Card 7: Large Interactive Spline Line Chart (Span 12) */}}
-        <div class="bento-card bento-span-12 interactive-main-chart" id="card-spline">
-            <div class="chart-header-row">
-                <div class="chart-header-left">
-                    <h2 class="chart-main-title">{{ if $isZh }}编译耗时与内容历史演变趋势{{ else }}Observed historical compilation & content trends{{ end }}</h2>
-                    <p class="chart-main-desc">{{ if $isZh }}最近 30 次静态构建编译用时、命中率及总页面盘点指标视图{{ else }}Observability logs mapping build duration, cache, and total pages{{ end }}</p>
-                </div>
-                <div class="chart-header-right">
-                    <!-- Segmented Controls Tabs -->
-                    <div class="chart-tabs-wrapper">
-                        <button class="chart-tab-btn active" data-tab="duration">{{ if $isZh }}编译用时{{ else }}Duration{{ end }}</button>
-                        <button class="chart-tab-btn" data-tab="pages">{{ if $isZh }}页面容量{{ else }}Page Growth{{ end }}</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SVG Spline Chart Canvas Container -->
-            <div class="svg-canvas-wrapper" style="position: relative; width: 100%; margin-top: 16px;">
-                <svg id="dashboard-spline-svg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: auto; overflow: visible;">
-                    <!-- Grids will be drawn dynamically/statically here -->
-                    <g id="chart-y-axis-grids"></g>
-                    <!-- Curved Area fill path -->
-                    <path id="chart-spline-area" class="spline-area-fill" d=""></path>
-                    <!-- Curved Spline path -->
-                    <path id="chart-spline-line" class="spline-line-path" d=""></path>
-                    <!--snapping vertical cursor guide -->
-                    <line id="chart-guide-line" class="chart-cursor-guide" x1="0" y1="20" x2="0" y2="260" style="opacity: 0;"></line>
-                    <!-- Interactive dot highlighting group -->
-                    <g id="chart-active-marker" style="opacity: 0;">
-                        <circle id="marker-glow" class="active-dot-glow" r="14"></circle>
-                        <circle id="marker-focus" class="active-dot-focus" r="5"></circle>
-                    </g>
-                    <!-- Transparent interactive triggers group -->
-                    <g id="chart-interactive-nodes"></g>
-                </svg>
-
-                <!-- Floating Glassmorphic Tooltip Card -->
-                <div id="chart-telemetry-tooltip" class="glass-chart-tooltip" style="opacity: 0; pointer-events: none;">
-                    <div class="tooltip-header-date">2026-05-19 16:30:53</div>
-                    <div class="tooltip-data-grid">
-                        <div class="tooltip-metric">
-                            <span class="lbl">{{ if $isZh }}编译耗时{{ else }}Build Time{{ end }}</span>
-                            <span class="val ms-val">747ms</span>
-                        </div>
-                        <div class="tooltip-metric">
-                            <span class="lbl">Commit</span>
-                            <span class="val commit-val">b5b9357</span>
-                        </div>
-                        <div class="tooltip-metric change-metric">
-                            <span class="lbl">{{ if $isZh }}波动率{{ else }}Variation{{ end }}</span>
-                            <span class="val diff-val">-12.3%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chart Footer Metadata -->
-            <div class="chart-footer-caption-row">
-                <span id="chart-footer-left">{{ if $isZh }}最近 30 次编译指标趋势数据点图 (横轴按先后排序){}最近 30 次编译指标趋势数据点图 (横轴按先后排序){{ else }}Compiles timeline (ordered chronologically from early to late){{ end }}</span>
-                <span id="chart-footer-right" class="mono">min: --ms / max: --ms</span>
-            </div>
-        </div>
-
-        {{/* Card 8: Ranked Slowest Templates List (Span 6) */}}
-        <div class="bento-card bento-span-6 dashboard-table-card" id="card-leaderboard">
-            <div class="bento-card-header" style="margin-bottom: 20px;">
-                <span class="bento-card-title">{{ if $isZh }}模板渲染耗时排行榜 (Top 10){{ else }}SLOWEST RENDERING TEMPLATES (TOP 10){{ end }}</span>
-                <span class="bento-card-icon" title="Leaderboard">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                </span>
-            </div>
-            <div class="table-scroll-wrapper">
-                <table class="dashboard-table">
-                    <thead>
-                        <tr>
-                            <th>{{ if $isZh }}模板路径{{ else }}TEMPLATE PATH{{ end }}</th>
-                            <th class="num-col">{{ if $isZh }}累积用时{{ else }}CUMULATIVE{{ end }}</th>
-                            <th class="num-col">{{ if $isZh }}平均用时{{ else }}AVERAGE{{ end }}</th>
-                            <th class="num-col">{{ if $isZh }}缓存率{{ else }}CACHED{{ end }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{/* Fetch max template time to draw relative bars */}}
-                        {{ $maxTime := 0.01 }}
-                        {{ range $latest.templates.top }}
-                            {{ $v := float .cumulativeMs }}
-                            {{ if gt $v $maxTime }}{{ $maxTime = $v }}{{ end }}
-                        {{ end }}
-
-                        {{ range $latest.templates.top }}
-                        {{ $pctFill := mul (div (float .cumulativeMs) $maxTime) 100.0 }}
-                        <tr>
-                            <td class="mono-txt truncate-path" title="{{ .template }}">
-                                <div class="table-path-wrapper">
-                                    <span class="path-lbl">{{ .template }}</span>
-                                    <!-- Dynamic layout comparative progress bar -->
-                                    <div class="table-row-bar" style="width: {{ $pctFill }}%;"></div>
-                                </div>
-                            </td>
-                            <td class="mono-txt num-col">{{ .cumulativeMs }}ms</td>
-                            <td class="mono-txt num-col">{{ .averageMs }}ms</td>
-                            <td class="mono-txt num-col">{{ .percentCached }}%</td>
-                        </tr>
-                        {{ end }}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        {{/* Card 9: SEO & Broken Links Inspection Console Logs (Span 6) */}}
-        <div class="bento-card bento-span-6 quality-audit-card" id="card-anomalies">
-            <div class="bento-card-header" style="margin-bottom: 20px;">
-                <span class="bento-card-title">{{ if $isZh }}静态质量与死链诊断报告{{ else }}STATIC ANOMALIES INSPECT LOGS{{ end }}</span>
-                <span class="bento-card-icon" title="Logs">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                </span>
-            </div>
-
-            {{ if gt $brokenCount 0 }}
-                <div class="audit-scroller-wrapper">
-                    <ul class="anomaly-items-list">
-                        {{ range $latest.quality.brokenRootRelativeLinkTop }}
-                        <li class="anomaly-item-row">
-                            <span class="badge-lbl badge-error-red">{{ if $isZh }}断链{{ else }}BROKEN{{ end }}</span>
-                            <div class="anomaly-details-block">
-                                <div class="anomaly-path-lbl">Page: <span class="mono-txt">{{ .page }}</span></div>
-                                <div class="anomaly-link-lbl">Href: <span class="mono-txt">{{ .href }}</span></div>
-                            </div>
-                        </li>
-                        {{ end }}
-                    </ul>
-                </div>
+                <span class="d-meta">Current</span>
+              </div>
             {{ else }}
-                <div class="audit-perfect-large-wrapper">
-                    <div class="perfect-breathing-badge" title="Audit OK">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="perfect-icon">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke-linecap="round" stroke-linejoin="round"/>
-                            <polyline points="22 4 12 14.01 9 11.01" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <p class="perfect-badge-title">{{ if $isZh }}静态质量完好符合标准{{ else }}All structural audits fully passed{{ end }}</p>
-                    <p class="perfect-badge-desc">
-                        {{ if $isZh }}
-                        审计了 {{ $htmlFiles }} 个静态 HTML 文件，检测到 0 个损坏链接、0 个 SEO 规范化异常。整站死链检查 100% 正确。
-                        {{ else }}
-                        Scanned all {{ $htmlFiles }} static HTML files. Zero broken link anomalies or SEO canonical alerts detected. High structural integrity.
-                        {{ end }}
-                    </p>
-                </div>
+              <div class="diag-finding pass">
+                <span class="d-dot"></span>
+                <span class="d-text">
+                  Internal link audit
+                  <em>All root-relative links resolve cleanly.</em>
+                </span>
+                <span class="d-meta">Current</span>
+              </div>
             {{ end }}
 
-            {{ if gt $canonicalMissing 0 }}
-            <div class="audit-seo-warning">
-                <span class="badge-lbl badge-seo-warn">SEO</span>
-                <span>
-                    {{ if $isZh }}
-                    警告：发现有 {{ $canonicalMissing }} 个生成的静态 HTML 缺失 rel="canonical" 标签，建议复查 head 结构布局。
-                    {{ else }}
-                    Warning: {{ $canonicalMissing }} generated HTML pages lack canonical links. Review head overrides.
-                    {{ end }}
+            {{ if $hasMissingCanon }}
+              <div class="diag-finding warn">
+                <span class="d-dot"></span>
+                <span class="d-text">
+                  SEO canonical pair
+                  <em>{{ $latest.quality.missingCanonical }} {{ if eq $latest.quality.missingCanonical 1 }}post missing{{ else }}posts missing{{ end }} zh/en language pair.</em>
                 </span>
-            </div>
+                <span class="d-meta">Current</span>
+              </div>
+            {{ else }}
+              <div class="diag-finding pass">
+                <span class="d-dot"></span>
+                <span class="d-text">
+                  SEO canonical pair
+                  <em>All pages correctly paired with language alternates.</em>
+                </span>
+                <span class="d-meta">Current</span>
+              </div>
             {{ end }}
+
+            <div class="diag-finding {{ if $hasLangAttr }}pass{{ else }}warn{{ end }}">
+              <span class="d-dot"></span>
+              <span class="d-text">
+                HTML lang attribute
+                <em>{{ if $hasLangAttr }}All {{ $totalPages }} pages declare a valid lang attribute.{{ else }}{{ $latest.quality.missingHtmlLang }} pages missing lang attribute.{{ end }}</em>
+              </span>
+              <span class="d-meta">Current</span>
+            </div>
+          </div>
         </div>
+      </div>
 
     </div>
+
+    <footer class="dash-footer">
+      <span>aki-liu.com &middot; /_dash</span>
+      <span class="epigraph">"The starry heavens above me, and the moral law within me." &mdash; Kant</span>
+      <span>Hugo v{{ hugo.Version }} &middot; internal</span>
+    </footer>
+
+  </div>
 </div>
 
-{{/* Embedded JSON Data Block for History Timeline */}}
-<script id="dashboard-history-data" type="application/json">
-[
-    {{ range $idx, $item := $history }}
-        {{ if $idx }},{{ end }}
-        {
-            "label": "{{ $item.label }}",
-            "stamp": "{{ $item.stamp }}",
-            "buildMs": {{ $item.buildMs }},
-            "cacheRatio": {{ $item.cacheRatio }},
-            "brokenLinks": {{ $item.brokenLinks }},
-            "zhPages": {{ $item.zhPages }},
-            "enPages": {{ $item.enPages }},
-            "totalPages": {{ add $item.zhPages $item.enPages }},
-            "commit": "{{ $item.commit }}"
-        }
-    {{ end }}
-]
-</script>
-
-{{/* 4. Client Observability Snapping Spline Chart Interactions Script */}}
+{{/* ---- Chart data + JS ---- */}}
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const dataElement = document.getElementById("dashboard-history-data");
-    if (!dataElement) return;
+(function() {
+  const H = {{ $history | jsonify }};
 
-    let historyData = [];
-    try {
-        historyData = JSON.parse(dataElement.textContent);
-    } catch(e) {
-        console.error("Failed to parse history data telemetry", e);
-        return;
+  /* ---- Sparkline (build time card) ---- */
+  const sparkData = H.slice(-12).map(d => d.buildMs);
+  (function drawSparkline() {
+    const svg = document.getElementById('sparkline-build');
+    if (!svg) return;
+    const W = 130, H2 = 42, pad = 2;
+    const min = Math.min(...sparkData), max = Math.max(...sparkData);
+    const span = max - min || 1;
+    const stepX = (W - pad * 2) / (sparkData.length - 1);
+    const pts = sparkData.map((v, i) => [
+      pad + i * stepX,
+      pad + (1 - (v - min) / span) * (H2 - pad * 2),
+    ]);
+    const linePath = pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+    const areaPath = `${linePath} L${pts[pts.length-1][0]} ${H2-pad} L${pts[0][0]} ${H2-pad} Z`;
+    const lastPt = pts[pts.length - 1];
+    svg.innerHTML = `
+      <path d="${areaPath}" fill="rgba(var(--text-rgb),.04)" stroke="none"/>
+      <path d="${linePath}" fill="none" stroke="var(--color-heading)" stroke-width="1.1" stroke-linecap="square" stroke-linejoin="miter"/>
+      <circle cx="${lastPt[0].toFixed(1)}" cy="${lastPt[1].toFixed(1)}" r="1.6" fill="var(--color-heading)"/>
+    `;
+    /* delta label */
+    const allMs = H.map(d => d.buildMs);
+    const mean30 = Math.round(allMs.reduce((a, b) => a + b, 0) / allMs.length);
+    const current = allMs[allMs.length - 1];
+    const delta = current - mean30;
+    const el = document.getElementById('spark-delta');
+    if (el) {
+      const sign = delta >= 0 ? '+' : '';
+      const color = delta > 0 ? 'var(--tag-poetry)' : 'var(--tag-drama)';
+      el.innerHTML = `<span style="color:${color};font-family:var(--font-mono)">${sign}${delta}ms</span> over 30-build mean`;
     }
+  })();
 
-    if (historyData.length === 0) return;
+  /* ---- Volume bars (content volume card) ---- */
+  (function drawBars() {
+    const container = document.getElementById('bars-chart');
+    if (!container) return;
+    const vols = H.map(d => (d.zhPages || 0) + (d.enPages || 0));
+    const min = Math.min(...vols), max = Math.max(...vols);
+    const span = max - min || 1;
+    container.innerHTML = vols.map((v, i) => {
+      const h = 12 + ((v - min) / span) * 88;
+      const isLast = i === vols.length - 1;
+      return `<div class="bar${isLast ? ' last' : ''}" style="height:${h}%"></div>`;
+    }).join('');
+    /* delta label */
+    const delta = vols[vols.length - 1] - vols[0];
+    const el = document.getElementById('vol-delta');
+    if (el && delta > 0) el.textContent = `+${delta} pages over 30 builds`;
+  })();
 
-    // Canvas settings
-    const svg = document.getElementById("dashboard-spline-svg");
-    const width = 1200;
-    const height = 300;
-    const paddingLeft = 64;
-    const paddingRight = 32;
-    const paddingTop = 32;
-    const paddingBottom = 48;
-    const plotWidth = width - paddingLeft - paddingRight;
-    const plotHeight = height - paddingTop - paddingBottom;
-    const baselineY = height - paddingBottom;
+  /* ---- Trend chart ---- */
+  let currentMetric = 'build';
 
-    // Active View state: 'duration' (Build Duration) or 'pages' (Page Growth)
-    let currentView = 'duration';
+  function getData(metric) {
+    return H.map(d => metric === 'build' ? d.buildMs : (d.zhPages || 0) + (d.enPages || 0));
+  }
 
-    // UI Nodes caching
-    const splinePath = document.getElementById("chart-spline-line");
-    const areaPath = document.getElementById("chart-spline-area");
-    const guideLine = document.getElementById("chart-guide-line");
-    const activeMarker = document.getElementById("chart-active-marker");
-    const markerGlow = document.getElementById("marker-glow");
-    const markerFocus = document.getElementById("marker-focus");
-    const tooltip = document.getElementById("chart-telemetry-tooltip");
-    const footerRight = document.getElementById("chart-footer-right");
-    const yGridGroup = document.getElementById("chart-y-axis-grids");
-    const nodesGroup = document.getElementById("chart-interactive-nodes");
+  function updateStats(data, unit) {
+    const sorted = [...data].sort((a, b) => a - b);
+    const mean = Math.round(data.reduce((a, b) => a + b, 0) / data.length);
+    const p95 = sorted[Math.floor(data.length * 0.95)];
+    const min = sorted[0], max = sorted[sorted.length - 1];
+    document.getElementById('ts-min').innerHTML = `${min}<span class="small">${unit}</span>`;
+    document.getElementById('ts-mean').innerHTML = `${mean}<span class="small">${unit}</span>`;
+    document.getElementById('ts-max').innerHTML = `${max}<span class="small">${unit}</span>`;
+    document.getElementById('ts-p95').innerHTML = `${p95}<span class="small">${unit}</span>`;
+    document.getElementById('trend-range').textContent = `min ${min}${unit} / max ${max}${unit}`.toUpperCase();
+  }
 
-    // Coordinates cache for active dots
-    let plotPoints = [];
+  function drawChart(metric) {
+    const svg = document.getElementById('trend-chart');
+    if (!svg) return;
+    const data = getData(metric);
+    const unit = metric === 'build' ? 'ms' : '';
+    updateStats(data, unit);
 
-    // Render function
-    function renderChart() {
-        // Reset interactive elements
-        nodesGroup.innerHTML = '';
-        yGridGroup.innerHTML = '';
-        plotPoints = [];
+    const W = 1080, H2 = 280;
+    const padL = 56, padR = 24, padT = 24, padB = 36;
+    const innerW = W - padL - padR, innerH = H2 - padT - padB;
+    const min = Math.min(...data), max = Math.max(...data);
+    const span = max - min || 1;
+    const lo = Math.floor(min - span * 0.1);
+    const hi = Math.ceil(max + span * 0.1);
+    const yspan = hi - lo;
 
-        // Determine value fields
-        const isDuration = currentView === 'duration';
-        let vals = historyData.map(d => isDuration ? d.buildMs : d.totalPages);
+    const x = (i) => padL + (i / (data.length - 1)) * innerW;
+    const y = (v) => padT + (1 - (v - lo) / yspan) * innerH;
 
-        let minVal = Math.min(...vals);
-        let maxVal = Math.max(...vals);
+    const linePath = data.map((v, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ');
+    const areaPath = `${linePath} L${x(data.length-1)} ${H2-padB} L${padL} ${H2-padB} Z`;
+    const yTicks = [0, 0.25, 0.5, 0.75, 1].map(t => lo + t * yspan);
+    const tickIdx = [0, 5, 10, 15, 20, 25, 29];
+    const labels = H.map(d => d.label || d.stamp || '');
 
-        // Add a 10% padding to bounds so line coordinates fit beautifully
-        let diff = maxVal - minVal;
-        if (diff === 0) diff = 1.0;
-        let pad = diff * 0.1;
-        maxVal = maxVal + pad;
-        minVal = minVal - pad;
-        if (minVal < 0) minVal = 0;
-        diff = maxVal - minVal;
+    let html = '';
 
-        // Render Y-Axis horizontal gridlines and text markers
-        const gridTicksCount = 4;
-        for (let i = 0; i <= gridTicksCount; i++) {
-            const ratio = i / gridTicksCount;
-            const y = paddingTop + ratio * plotHeight;
-            const gridVal = maxVal - ratio * diff;
-
-            // Draw grid line
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", paddingLeft);
-            line.setAttribute("y1", y);
-            line.setAttribute("x2", width - paddingRight);
-            line.setAttribute("y2", y);
-            line.setAttribute("class", "chart-grid-line");
-            line.setAttribute("stroke-dasharray", "3 4");
-            yGridGroup.appendChild(line);
-
-            // Draw Y scale text label
-            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            text.setAttribute("x", paddingLeft - 12);
-            text.setAttribute("y", y);
-            text.setAttribute("class", "chart-grid-label");
-            text.setAttribute("text-anchor", "end");
-            text.setAttribute("dominant-baseline", "middle");
-            text.textContent = isDuration ? `${Math.round(gridVal)}ms` : `${Math.round(gridVal)}p`;
-            yGridGroup.appendChild(text);
-        }
-
-        // Render X-Axis timestamps labels (every 5 runs to keep it clean)
-        historyData.forEach((item, idx) => {
-            const pctX = idx / (historyData.length - 1);
-            const x = paddingLeft + pctX * plotWidth;
-
-            if (idx % 5 === 0 || idx === historyData.length - 1) {
-                // X labels text
-                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                text.setAttribute("x", x);
-                text.setAttribute("y", height - paddingBottom + 20);
-                text.setAttribute("class", "chart-grid-label x-label");
-                text.setAttribute("text-anchor", "middle");
-                text.textContent = item.label;
-                yGridGroup.appendChild(text);
-            }
-        });
-
-        // Compute XY coordinate arrays for the spline
-        historyData.forEach((item, idx) => {
-            const pctX = idx / (historyData.length - 1);
-            const x = paddingLeft + pctX * plotWidth;
-
-            const currentVal = isDuration ? item.buildMs : item.totalPages;
-            const pctY = (currentVal - minVal) / diff;
-            const y = baselineY - pctY * plotHeight;
-
-            plotPoints.push({ x: x, y: y, data: item, index: idx });
-        });
-
-        // Create Bezier spline line path
-        const splinePathD = getBezierPathD(plotPoints);
-        splinePath.setAttribute("d", splinePathD);
-
-        // Create Bezier spline closed area path
-        if (plotPoints.length > 0) {
-            const firstPt = plotPoints[0];
-            const lastPt = plotPoints[plotPoints.length - 1];
-            const areaPathD = `${splinePathD} L ${lastPt.x} ${baselineY} L ${firstPt.x} ${baselineY} Z`;
-            areaPath.setAttribute("d", areaPathD);
-        }
-
-        // Render interactive overlay target nodes
-        plotPoints.forEach((pt) => {
-            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("cx", pt.x);
-            circle.setAttribute("cy", pt.y);
-            circle.setAttribute("r", "3.5");
-            circle.setAttribute("class", "chart-spline-dot");
-            nodesGroup.appendChild(circle);
-        });
-
-        // Update footer range caption values
-        const minObserved = Math.min(...vals.map(v => isDuration ? v : v));
-        const maxObserved = Math.max(...vals.map(v => isDuration ? v : v));
-        footerRight.textContent = isDuration
-            ? `min: ${Math.round(minObserved)}ms / max: ${Math.round(maxObserved)}ms`
-            : `min: ${Math.round(minObserved)} pages / max: ${Math.round(maxObserved)} pages`;
-    }
-
-    // Bezier curve spline layout generator
-    function getBezierPathD(points) {
-        if (points.length === 0) return '';
-        let d = `M ${points[0].x} ${points[0].y}`;
-        for (let i = 0; i < points.length - 1; i++) {
-            const p0 = points[i];
-            const p1 = points[i + 1];
-            // Compute horizontal midpoints as bezier handles to generate a beautiful smooth spline
-            const cpX1 = p0.x + (p1.x - p0.x) / 3.5;
-            const cpY1 = p0.y;
-            const cpX2 = p0.x + 2.5 * (p1.x - p0.x) / 3.5;
-            const cpY2 = p1.y;
-            d += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
-        }
-        return d;
-    }
-
-    // Mouse interactive snapping event logic
-    svg.addEventListener("mousemove", function(e) {
-        // Calculate mouse relative coordinates within the SVG box viewport
-        const rect = svg.getBoundingClientRect();
-        const svgScaleX = width / rect.width;
-        const mouseX = (e.clientX - rect.left) * svgScaleX;
-
-        // Snaps guide marker to the closest horizontal data coordinate
-        let closestPt = plotPoints[0];
-        let minDist = Math.abs(mouseX - closestPt.x);
-
-        for (let i = 1; i < plotPoints.length; i++) {
-            const dist = Math.abs(mouseX - plotPoints[i].x);
-            if (dist < minDist) {
-                minDist = dist;
-                closestPt = plotPoints[i];
-            }
-        }
-
-        if (!closestPt) return;
-
-        // Dim non-focused dots and highlight active dot via CSS class overrides
-        const dots = nodesGroup.querySelectorAll(".chart-spline-dot");
-        dots.forEach((dot, index) => {
-            if (index === closestPt.index) {
-                dot.classList.add("active");
-            } else {
-                dot.classList.remove("active");
-                dot.classList.add("dimmed");
-            }
-        });
-
-        // Reposition guide line and pulse glows markers
-        guideLine.setAttribute("x1", closestPt.x);
-        guideLine.setAttribute("x2", closestPt.x);
-        guideLine.style.opacity = 1;
-
-        activeMarker.setAttribute("transform", `translate(${closestPt.x}, ${closestPt.y})`);
-        activeMarker.style.opacity = 1;
-
-        // Populate glassmorphic HTML floating tooltip details
-        const item = closestPt.data;
-        const isDuration = currentView === 'duration';
-
-        // Date layout
-        tooltip.querySelector(".tooltip-header-date").textContent = formatStamp(item.stamp);
-
-        // Core metric values
-        const msValNode = tooltip.querySelector(".ms-val");
-        msValNode.textContent = isDuration ? `${item.buildMs}ms` : `${item.totalPages} pages`;
-        tooltip.querySelector(".lbl").textContent = isDuration ? "{{ if $isZh }}编译用时{{ else }}Build Time{{ end }}" : "{{ if $isZh }}页面总数{{ else }}Total Pages{{ end }}";
-
-        // Commit short SHA
-        tooltip.querySelector(".commit-val").textContent = item.commit !== 'unknown' ? item.commit : 'N/A';
-
-        // Percentage Rate of change compared to prior compile run
-        const diffValNode = tooltip.querySelector(".diff-val");
-        const changeMetric = tooltip.querySelector(".change-metric");
-
-        if (closestPt.index > 0) {
-            const prevItem = historyData[closestPt.index - 1];
-            const prevVal = isDuration ? prevItem.buildMs : prevItem.totalPages;
-            const currentVal = isDuration ? item.buildMs : item.totalPages;
-
-            if (prevVal > 0) {
-                const diffPct = ((currentVal - prevVal) / prevVal) * 100;
-                const sign = diffPct >= 0 ? '+' : '';
-                diffValNode.textContent = `${sign}${diffPct.toFixed(1)}%`;
-
-                // Color highlight directionally
-                if (diffPct < 0) {
-                    diffValNode.style.color = "var(--status-color)"; // Green is good
-                } else if (diffPct > 0) {
-                    diffValNode.style.color = "var(--warn-color)"; // Positive growth warning or duration delay
-                } else {
-                    diffValNode.style.color = "var(--dashboard-text-secondary)";
-                }
-                changeMetric.style.opacity = 1;
-            } else {
-                changeMetric.style.opacity = 0;
-            }
-        } else {
-            changeMetric.style.opacity = 0;
-        }
-
-        // Float the glassmorphic tooltip near coordinates snapping marker bounds
-        tooltip.style.opacity = 1;
-
-        // Horizontal and vertical offset constraints so tooltip does not clip page bounds
-        const tooltipWidth = 180;
-        const tooltipHeight = 110;
-
-        let leftPos = closestPt.x / svgScaleX + 24;
-        let topPos = closestPt.y / svgScaleX - 50;
-
-        // Flip to the left side if tooltip goes out of right bounding box
-        if (leftPos + tooltipWidth > rect.width + paddingLeft) {
-            leftPos = closestPt.x / svgScaleX - tooltipWidth - 24;
-        }
-
-        tooltip.style.left = `${leftPos}px`;
-        tooltip.style.top = `${topPos}px`;
+    /* grid lines + y labels */
+    yTicks.forEach(v => {
+      html += `<line class="grid-line" x1="${padL}" x2="${W - padR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/>`;
+      html += `<text class="axis-text" x="${padL - 10}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end">${Math.round(v)}${unit}</text>`;
     });
 
-    // Reset interactions when cursor leaves the SVG chart canvas
-    svg.addEventListener("mouseleave", function() {
-        guideLine.style.opacity = 0;
-        activeMarker.style.opacity = 0;
-        tooltip.style.opacity = 0;
+    /* area + line */
+    html += `<path class="chart-area" d="${areaPath}"/>`;
+    html += `<path class="chart-line" d="${linePath}"/>`;
 
-        // Restore all interactive nodes dot opacity
-        const dots = nodesGroup.querySelectorAll(".chart-spline-dot");
-        dots.forEach(dot => {
-            dot.classList.remove("active");
-            dot.classList.remove("dimmed");
-        });
+    /* data points */
+    data.forEach((v, i) => {
+      html += `<circle class="chart-pt" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2"/>`;
     });
 
-    // Tab buttons selectors
-    const tabBtns = document.querySelectorAll(".chart-tab-btn");
-    tabBtns.forEach(btn => {
-        btn.addEventListener("click", function() {
-            if (btn.classList.contains("active")) return;
+    /* hover cursor group (updated on mousemove) */
+    html += `<g id="chart-cursor" style="display:none">
+      <line class="cursor-line" id="cursor-line" x1="0" x2="0" y1="${padT}" y2="${H2 - padB}"/>
+      <circle class="chart-pt-cursor" id="cursor-dot" cx="0" cy="0" r="3.2"/>
+      <rect id="cursor-rect" x="0" y="0" width="80" height="22" rx="6" fill="var(--color-heading)"/>
+      <text id="cursor-text" x="0" y="0" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--bg-color)" letter-spacing=".04em"></text>
+    </g>`;
 
-            // Switch active tab styling
-            tabBtns.forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-
-            // Redraw spline chart path with new view
-            currentView = btn.getAttribute("data-tab");
-            renderChart();
-        });
+    /* x axis labels */
+    tickIdx.forEach((i, k) => {
+      if (i < labels.length) {
+        html += `<text class="axis-text" x="${x(i).toFixed(1)}" y="${(H2 - padB + 18).toFixed(1)}" text-anchor="middle">${labels[i]}</text>`;
+      }
     });
 
-    // Helper: format standard stamp timestamp strings
-    function formatStamp(stamp) {
-        if (!stamp || stamp.length < 15) return stamp;
-        // e.g. "20260519-163053" -> "2026-05-19 16:30:53"
-        const year = stamp.slice(0, 4);
-        const month = stamp.slice(4, 6);
-        const day = stamp.slice(6, 8);
-        const hour = stamp.slice(9, 11);
-        const min = stamp.slice(11, 13);
-        const sec = stamp.slice(13, 15);
-        return `${year}-${month}-${day} ${hour}:${min}:${sec}`;
-    }
+    svg.innerHTML = html;
 
-    // Initialize compilation view
-    renderChart();
-});
+    /* hover interaction */
+    svg.addEventListener('mousemove', function(e) {
+      const rect = svg.getBoundingClientRect();
+      const vbScale = W / rect.width;
+      const px = (e.clientX - rect.left) * vbScale;
+      const i = Math.round(((px - padL) / innerW) * (data.length - 1));
+      if (i < 0 || i >= data.length) return;
+      const cx = x(i), cy = y(data[i]);
+      const cursor = document.getElementById('chart-cursor');
+      const line = document.getElementById('cursor-line');
+      const dot = document.getElementById('cursor-dot');
+      const crect = document.getElementById('cursor-rect');
+      const ctext = document.getElementById('cursor-text');
+      if (!cursor) return;
+      cursor.style.display = '';
+      line.setAttribute('x1', cx.toFixed(1)); line.setAttribute('x2', cx.toFixed(1));
+      dot.setAttribute('cx', cx.toFixed(1)); dot.setAttribute('cy', cy.toFixed(1));
+      const tx = Math.min(W - padR - 80, Math.max(padL + 4, cx - 40));
+      const ty = Math.max(padT + 4, cy - 32);
+      crect.setAttribute('x', tx); crect.setAttribute('y', ty);
+      ctext.setAttribute('x', tx + 40); ctext.setAttribute('y', ty + 14);
+      ctext.textContent = `${data[i]}${unit}`;
+    });
+    svg.addEventListener('mouseleave', function() {
+      const cursor = document.getElementById('chart-cursor');
+      if (cursor) cursor.style.display = 'none';
+    });
+  }
+
+  window.dashSwitchTab = function(metric) {
+    currentMetric = metric;
+    ['build', 'pages'].forEach(m => {
+      const btn = document.getElementById('tab-' + m);
+      if (btn) btn.classList.toggle('active', m === metric);
+    });
+    drawChart(metric);
+  };
+
+  drawChart('build');
+})();
 </script>
 {{ end }}
