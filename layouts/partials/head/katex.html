@@ -37,10 +37,9 @@
     {{- end -}}
 
     {{- if $enableKaTeX -}}
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ "lib/katex/katex.min.css" | relURL }}">
+    <script defer src="{{ "lib/katex/katex.min.js" | relURL }}"></script>
+    <script defer src="{{ "lib/katex/auto-render.min.js" | relURL }}"></script>
     <script defer>
         document.addEventListener('DOMContentLoaded', function () {
             if (typeof renderMathInElement === 'function') {
