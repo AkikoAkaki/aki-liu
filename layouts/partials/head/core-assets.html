@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="{{ $microblogStyle.RelPermalink }}" integrity="{{ $microblogStyle.Data.Integrity }}">
 {{- end -}}
 
-{{- if eq .Section "metrics" -}}
+{{- if or (eq .Section "metrics") (eq .Type "metrics") -}}
     {{- $metrics := resources.Get "css/metrics.css" -}}
     {{- $metricsStyle := $metrics | resources.Minify | fingerprint -}}
     <link rel="stylesheet" href="{{ $metricsStyle.RelPermalink }}" integrity="{{ $metricsStyle.Data.Integrity }}">

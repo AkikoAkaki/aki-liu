@@ -161,7 +161,7 @@
             {{ end }}
             
             {{ $polylinePoints := delimit $points " " }}
-            {{ $polygonPoints := printf "%f,%f %s %f,%f" $xStart $yBaseline $polylinePoints (add $paddingLeft $wPlot) $yBaseline }}
+            {{ $polygonPoints := printf "%d,%d %s %d,%d" (int $xStart) (int $yBaseline) $polylinePoints (int (add $paddingLeft $wPlot)) (int $yBaseline) }}
             
             <div class="svg-chart-wrapper">
                 <svg viewBox="0 0 {{ $width }} {{ $height }}" preserveAspectRatio="xMidYMid meet" class="metrics-svg-chart">
