@@ -136,33 +136,18 @@
 
 /* 全局变量：字体、颜色、间距统一在这里配置 */
 :root {
-    /* 字体栈 - 引入高级对比 */
-    /* 大标题切换为本地 Hero 字体 */
-    --font-display: "Hero", "Syncopate", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    
-    /* 衬线体首选 Noto Serif SC (思源宋体) */
+    /* 字体栈 */
     --font-serif: "Newsreader", "Playfair Display", "EB Garamond", "Noto Serif SC", "SimSun", serif;
-    
-    /* 注入新的 Editorial 衬线 */
     --font-editorial: "PP Editorial Old", var(--font-serif);
-    
-    /* 数据等宽首选 JetBrains Mono（备选 Geist Mono 也可以在此直接切换前置） */
     --font-mono: "JetBrains Mono", "Geist Mono", "Space Mono", "Consolas", monospace;
-    
-    /* 常规无衬线首选 Noto Sans SC (思源黑体) */
     --font-sans: "Switzer", "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
-    
     --font-ui: "Switzer", "Inter", "Microsoft YaHei", -apple-system, sans-serif;
 
-
-    /* 排版预设 - 构建剧烈视差 */
-    --type-hero: 700 clamp(4rem, 14vw, 20rem)/1 var(--font-display);
+    /* 排版预设 */
     --type-intro: 400 clamp(1.2rem, 2vw, 1.6rem)/1.6 var(--font-serif);
-    --type-data: 500 12px/16px var(--font-mono); /* 稍微改大一点，提升可读性 */
+    --type-data: 500 12px/16px var(--font-mono);
     --type-heading: 400 16px/24px var(--font-sans);
-    --type-heading-l: 400 16px/28px var(--font-sans);
-    --type-italic: 400 italic 1.1rem/normal var(--font-serif);
-    --type-l: 400 16px/1.8 var(--font-sans); /* 增加字重到 400，字号稍微加大到 16px，行高增至 1.8 */
+    --type-l: 400 16px/1.8 var(--font-sans);
     --type-s: 400 14px/1.6 var(--font-sans);
 
     /* 亮色主题配色 */
@@ -189,8 +174,6 @@
     --panel-shell-backdrop: blur(32px) saturate(180%);
     --panel-shell-radius: 16px;
 
-    /* 间距基准 */
-    --spacing-unit: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {

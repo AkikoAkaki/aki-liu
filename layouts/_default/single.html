@@ -31,8 +31,9 @@
 
     {{ $toc := .TableOfContents }}
     {{ $hasTOC := gt (len (findRE "<li" $toc)) 0 }}
+    {{ .Store.Set "toc" $toc }}
+    {{ .Store.Set "hasTOC" $hasTOC }}
 
-    {{ if $hasTOC }}
     {{ $firstTag := "" }}
     {{ if and .Params.tags (gt (len .Params.tags) 0) }}
         {{ $firstTag = index .Params.tags 0 | urlize }}
@@ -45,10 +46,14 @@
         {{ end }}
         {{ $allTags = delimit $urlizedTags "," }}
     {{ end }}
+    {{ .Store.Set "firstTag" $firstTag }}
+    {{ .Store.Set "allTags" $allTags }}
+
+    {{ if $hasTOC }}
     <aside class="post-toc post-toc--inline" data-tag="{{ $firstTag }}" data-all-tags="{{ $allTags }}" aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
         <div class="post-toc-content">
             <div class="post-toc-header">{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}</div>
-            {{ .TableOfContents }}
+            {{ $toc }}
         </div>
     </aside>
     {{ end }}
@@ -64,26 +69,11 @@
 {{ end }}
 
 {{ define "sidebar-right" }}
-    {{ $toc := .TableOfContents }}
-    {{ $hasTOC := gt (len (findRE "<li" $toc)) 0 }}
-
-    {{ if $hasTOC }}
-    {{ $firstTag := "" }}
-    {{ if and .Params.tags (gt (len .Params.tags) 0) }}
-        {{ $firstTag = index .Params.tags 0 | urlize }}
-    {{ end }}
-    {{ $allTags := "" }}
-    {{ if .Params.tags }}
-        {{ $urlizedTags := slice }}
-        {{ range .Params.tags }}
-            {{ $urlizedTags = $urlizedTags | append (urlize .) }}
-        {{ end }}
-        {{ $allTags = delimit $urlizedTags "," }}
-    {{ end }}
-    <aside class="post-toc post-toc--sidebar" data-tag="{{ $firstTag }}" data-all-tags="{{ $allTags }}" aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
+    {{ if .Store.Get "hasTOC" }}
+    <aside class="post-toc post-toc--sidebar" data-tag="{{ .Store.Get "firstTag" }}" data-all-tags="{{ .Store.Get "allTags" }}" aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
         <div class="post-toc-content">
             <div class="post-toc-header">{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}</div>
-            {{ .TableOfContents }}
+            {{ .Store.Get "toc" }}
         </div>
     </aside>
     {{ end }}

@@ -856,11 +856,6 @@
         padding: 0 0 64px;
     }
 
-    .microblog-page-header,
-    .microblog-tag-bar {
-        max-width: 100%;
-    }
-
     .microblog-deck {
         gap: var(--mb-col-gap);
         padding: 2px 0 36px;
