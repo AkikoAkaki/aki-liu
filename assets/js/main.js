@@ -1789,7 +1789,20 @@
                 return;
             }
             if (!isOpen) return;
-            if (e.key === 'Escape') {
+            if (e.key === 'Tab') {
+                const focusable = panel.querySelectorAll('input, button, a[href], [tabindex]:not([tabindex="-1"])');
+                if (focusable.length) {
+                    const first = focusable[0];
+                    const last = focusable[focusable.length - 1];
+                    if (e.shiftKey && document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    } else if (!e.shiftKey && document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                }
+            } else if (e.key === 'Escape') {
                 e.preventDefault();
                 close();
             } else if (e.key === 'ArrowDown') {

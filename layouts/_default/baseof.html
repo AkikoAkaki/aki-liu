@@ -13,12 +13,13 @@
     <link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
 </head>
 <body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} kind-{{ .Kind }}{{ if and (eq .Kind "page") (lt .WordCount 600) }} post-short{{ end }}">
+    <a href="#main-content" class="skip-link">Skip to content</a>
     {{- $connect := site.Data.homepage.connect -}}
     <div class="site-wrapper">
     <div class="site-container">
         {{ block "post-header" . }}{{ end }}
         <aside class="site-sidebar">{{ block "sidebar-left" . }}{{ end }}</aside>
-        <main class="site-main">
+        <main class="site-main" id="main-content">
             {{ block "main" . }}{{ end }}
         </main>
         <aside class="site-sidebar-bottom">{{ block "sidebar-bottom" . }}{{ end }}</aside>
