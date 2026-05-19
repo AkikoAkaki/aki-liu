@@ -103,13 +103,12 @@ export class FluidEngine {
             '  vec2 q=vec2(fbm(p+vec2(0.0,t)),fbm(p+vec2(5.2,t+1.3)));',
             '  vec2 r=vec2(fbm(p+4.0*q+vec2(1.7,t*0.9)),fbm(p+4.0*q+vec2(9.2,t*0.6)));',
             '  float f=fbm(p+4.0*r);',
-            '  float g=0.75+f*0.2;',
+            '  float g=0.80+f*0.22;',
             '  g=clamp(g,0.0,1.0);',
-            '  float ex=smoothstep(0.0,0.15,uv.x)*smoothstep(1.0,0.85,uv.x);',
-            '  float ey=smoothstep(0.0,0.15,uv.y)*smoothstep(1.0,0.85,uv.y);',
-            '  float alpha=ex*ey*0.85;',
-            '  vec3 color=mix(u_bg,vec3(g),alpha);',
-            '  gl_FragColor=vec4(color,1.0);',
+            '  float dist=length(uv-vec2(0.5));',
+            '  float alpha=smoothstep(0.5,0.05,dist)*0.62;',
+            '  vec3 color=vec3(g);',
+            '  gl_FragColor=vec4(color*alpha,alpha);',
             '}'
         ].join('\n');
         
@@ -163,7 +162,7 @@ export class FluidEngine {
         if (parts.length >= 3 && parts.every(val => Number.isFinite(val))) {
             this.bg = [parts[0] / 255, parts[1] / 255, parts[2] / 255];
         }
-        if (this.gl) this.gl.clearColor(this.bg[0], this.bg[1], this.bg[2], 1);
+        if (this.gl) this.gl.clearColor(0, 0, 0, 0);
     }
     
     handleMouseMove(e) {
@@ -198,7 +197,7 @@ export class FluidEngine {
         this.updateThemeColor();
         const wr = this.wrapper.getBoundingClientRect();
         const ir = this.intro.getBoundingClientRect();
-        const cw = wr.width  * 0.43;
+        const cw = wr.width  * 1.55;
         const ch = wr.height * 1.05;
         const cl = (wr.left - ir.left) + (wr.width - cw) / 2;
         const ct = (wr.top  - ir.top)  + (wr.height - ch) / 2;

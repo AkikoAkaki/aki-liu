@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Microblog</title>
+<title>Aki Liu - Studio</title>
 <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -20,7 +20,7 @@ body {
 
 #app {
   width: 100%;
-  max-width: 940px;
+  max-width: 960px;
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 14px;
@@ -28,30 +28,50 @@ body {
   box-shadow: 0 4px 24px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.04);
 }
 
-/* ── Titlebar ── */
+/* -- Titlebar -- */
 #titlebar {
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
   padding: 10px 16px;
   display: flex;
   align-items: center;
-  gap: 8px;
   user-select: none;
 }
 .dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
 .dot-r { background: #ff5f57; }
 .dot-y { background: #febc2e; }
 .dot-g { background: #28c840; }
-#app-title {
+
+#tabs {
+  display: flex;
+  gap: 16px;
   margin: 0 auto;
   transform: translateX(-24px);
+}
+.tab-btn {
+  background: none;
+  border: none;
+  outline: none;
   font-size: 12px;
-  color: #9ca3af;
+  color: #6b7280;
   font-weight: 500;
-  letter-spacing: .04em;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+.tab-btn:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+.tab-btn.active {
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 600;
 }
 
-/* ── Meta strip ── */
+/* -- Meta strip -- */
 #meta-strip {
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
@@ -71,7 +91,7 @@ body {
 #slug-display { font-family: 'Menlo', 'Consolas', monospace; color: #c4c9d4; font-size: 11px; }
 #git-status { margin-left: auto; font-size: 10.5px; }
 
-/* ── Split pane ── */
+/* -- Split pane -- */
 #split {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -95,28 +115,81 @@ body {
   background: #fafafa;
   border-bottom: 1px solid #f3f4f6;
   flex-shrink: 0;
+  min-height: 29px;
+  display: flex;
+  align-items: center;
 }
 
-/* ── Editor ── */
-#editor {
+.pane-label-tabs {
+  padding: 0 10px;
+  background: #fafafa;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+  min-height: 29px;
+}
+.pane-subtab {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0 12px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #9ca3af;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  height: 29px;
+  line-height: 29px;
+  font-family: inherit;
+}
+.pane-subtab:hover {
+  color: #4b5563;
+}
+.pane-subtab.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+/* -- Editor inputs -- */
+.editor-title-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #f3f4f6;
+  outline: none;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  font-family: inherit;
+}
+.editor-title-input::placeholder {
+  color: #d1d5db;
+}
+
+/* -- Editor -- */
+.editor-textarea {
   flex: 1;
   border: none;
   outline: none;
   resize: none;
-  overflow: hidden;
+  overflow-y: auto;
   padding: 18px 20px;
   font-family: 'Menlo', 'Consolas', monospace;
   font-size: 13px;
   line-height: 1.85;
   color: #374151;
   background: transparent;
-  min-height: 220px;
+  min-height: 280px;
   display: block;
   width: 100%;
 }
-#editor::placeholder { color: #d1d5db; }
+.editor-textarea::placeholder { color: #d1d5db; }
 
-/* ── Drop hint ── */
+/* -- Drop hint -- */
 #drop-hint {
   padding: 7px 18px;
   font-size: 10.5px;
@@ -135,11 +208,11 @@ body {
   border-top-color: #bfdbfe;
 }
 
-/* ── Preview ── */
+/* -- Preview -- */
 #preview-body {
   flex: 1;
   padding: 18px 20px;
-  min-height: 220px;
+  min-height: 280px;
 }
 #preview {
   font-size: 14px;
@@ -195,14 +268,168 @@ body {
   font-style: italic;
 }
 
-/* preview spacer to match drop-hint height */
 #preview-spacer {
   height: 35px;
   flex-shrink: 0;
   border-top: 1px solid transparent;
 }
 
-/* ── Bottom bar ── */
+/* -- Meta Pane for Articles -- */
+#meta-pane {
+  padding: 18px 20px;
+  flex: 1;
+  min-height: 280px;
+  overflow-y: auto;
+}
+.meta-field {
+  margin-bottom: 16px;
+}
+.meta-field.inline {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+.meta-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.meta-input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #374151;
+  outline: none;
+  background: #fafafa;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.meta-input:focus {
+  border-color: #93c5fd;
+}
+.meta-checkbox {
+  width: 14px;
+  height: 14px;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+.meta-checkbox-label {
+  font-size: 12.5px;
+  color: #374151;
+  margin-left: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+.meta-row {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* -- Manager Layout -- */
+#manager-container {
+  width: 100%;
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+#manager-list-pane {
+  border-right: 1px solid #e5e7eb;
+}
+#manager-list {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 520px;
+}
+.manager-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.manager-item:hover {
+  background: #f9fafb;
+}
+.manager-item.active {
+  background: #eff6ff;
+  border-left: 3px solid #2563eb;
+  padding-left: 13px;
+}
+.manager-item-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+.manager-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  color: #9ca3af;
+}
+.badge {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.badge-microblog { background: #f3f4f6; color: #4b5563; }
+.badge-ideas     { background: #eff6ff; color: #2563eb; }
+.badge-notes     { background: #ecfdf5; color: #059669; }
+.badge-textlab   { background: #fdf2f8; color: #db2777; }
+.badge-influences{ background: #fff7ed; color: #ea580c; }
+.badge-draft     { background: #fff1f2; color: #e11d48; border: 1px solid #ffe4e6; }
+
+#manager-preview-pane {
+  background: #fff;
+}
+#manager-preview-body {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 520px;
+  padding: 18px 20px;
+}
+.mgr-action-btn {
+  background: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  font-family: inherit;
+}
+.mgr-action-btn.edit-btn {
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+.mgr-action-btn.edit-btn:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+.mgr-action-btn.delete-btn {
+  color: #dc2626;
+  border-color: #fecaca;
+  margin-left: 6px;
+}
+.mgr-action-btn.delete-btn:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+/* -- Bottom bar -- */
 #bottom-bar {
   border-top: 1px solid #e5e7eb;
   padding: 10px 16px;
@@ -287,7 +514,7 @@ body {
 #publish-btn.success { background: #16a34a; box-shadow: 0 1px 4px rgba(22,163,74,.3); }
 #publish-btn.error   { background: #dc2626; box-shadow: 0 1px 4px rgba(220,38,38,.3); }
 
-/* ── Status message ── */
+/* -- Status message -- */
 #status-msg {
   display: none;
   font-size: 11px;
@@ -312,7 +539,11 @@ body {
     <div class="dot dot-r"></div>
     <div class="dot dot-y"></div>
     <div class="dot dot-g"></div>
-    <div id="app-title">Microblog</div>
+    <div id="tabs">
+      <button class="tab-btn active" id="tab-btn-microblog">微微博</button>
+      <button class="tab-btn" id="tab-btn-article">写文章</button>
+      <button class="tab-btn" id="tab-btn-manager">稿件管理</button>
+    </div>
   </div>
 
   <!-- Meta strip -->
@@ -326,22 +557,107 @@ body {
 
   <!-- Split pane -->
   <div id="split">
-    <!-- Editor -->
+    <!-- Editor Pane -->
     <div class="pane" id="editor-pane">
-      <div class="pane-label">编辑</div>
-      <textarea id="editor" placeholder="写点什么……" spellcheck="false"></textarea>
-      <div id="drop-hint">⬆ 拖拽或粘贴图片</div>
+      <div class="pane-label" id="editor-zh-label">编辑</div>
+      
+      <!-- Article sub-tab selectors (Zh / En / Meta) -->
+      <div id="article-editor-tabs" class="pane-label-tabs" style="display: none;">
+        <button class="pane-subtab active" id="subtab-zh-edit">中文编辑</button>
+        <button class="pane-subtab" id="subtab-en-edit">英文编辑</button>
+        <button class="pane-subtab" id="subtab-meta-edit">元数据配置</button>
+      </div>
+
+      <!-- Article Title Input fields -->
+      <input type="text" id="article-title-zh" class="editor-title-input" placeholder="中文标题..." autocomplete="off" style="display: none;">
+      <input type="text" id="article-title-en" class="editor-title-input" placeholder="英文标题 (English Title)..." autocomplete="off" style="display: none;">
+
+      <!-- Textareas for Chinese and English -->
+      <textarea id="editor" class="editor-textarea" placeholder="写点什么……" spellcheck="false"></textarea>
+      <textarea id="editor-en" class="editor-textarea" placeholder="Write english translation here..." spellcheck="false" style="display: none;"></textarea>
+
+      <!-- Article metadata editor panel -->
+      <div id="meta-pane" style="display: none;">
+        <div class="meta-field">
+          <label class="meta-label">发布分类 (Section)</label>
+          <select id="article-section" class="meta-input">
+            <option value="ideas">ideas</option>
+            <option value="notes">notes</option>
+            <option value="textlab">textlab</option>
+            <option value="influences">influences</option>
+          </select>
+        </div>
+        <div class="meta-field">
+          <label class="meta-label">路径标识 (Slug / Folder Name)</label>
+          <input type="text" id="article-slug" class="meta-input" placeholder="例如: fake-work (留空则根据英文标题自动生成)">
+        </div>
+        <div class="meta-field">
+          <label class="meta-label">发布日期 (Date)</label>
+          <input type="date" id="article-date" class="meta-input">
+        </div>
+        <div class="meta-row">
+          <div class="meta-field inline">
+            <input type="checkbox" id="article-draft" class="meta-checkbox">
+            <label for="article-draft" class="meta-checkbox-label">保存为草稿 (Draft)</label>
+          </div>
+          <div class="meta-field inline" style="margin-left: 24px;">
+            <input type="checkbox" id="article-math" class="meta-checkbox">
+            <label for="article-math" class="meta-checkbox-label">启用数学公式 (KaTeX Math)</label>
+          </div>
+        </div>
+      </div>
+
+      <div id="drop-hint">拖拽或粘贴图片</div>
     </div>
 
-    <!-- Preview -->
+    <!-- Preview Pane -->
     <div class="pane" id="preview-pane">
-      <div class="pane-label">预览</div>
+      <div class="pane-label" id="preview-zh-label">预览</div>
+      
+      <!-- Article preview language sub-tab selectors -->
+      <div id="article-preview-tabs" class="pane-label-tabs" style="display: none;">
+        <button class="pane-subtab active" id="subtab-zh-preview">中文预览</button>
+        <button class="pane-subtab" id="subtab-en-preview">英文预览</button>
+      </div>
+
       <div id="preview-body">
         <div id="preview">
           <span id="preview-placeholder">预览将在这里出现</span>
         </div>
       </div>
       <div id="preview-spacer"></div>
+    </div>
+
+    <!-- Unified Manager Container (spans full split width) -->
+    <div id="manager-container" style="display: none;">
+      <!-- Left List of posts -->
+      <div class="pane" id="manager-list-pane">
+        <div class="pane-label">所有稿件</div>
+        <div style="padding: 10px 16px; border-bottom: 1px solid #f3f4f6;">
+          <input type="text" id="manager-search" placeholder="检索标题、标签、内容..." style="width: 100%; border: 1px solid #e5e7eb; border-radius: 6px; padding: 6px 10px; font-size: 12px; outline: none; background: #fafafa;" autocomplete="off">
+        </div>
+        <div id="manager-list"></div>
+      </div>
+      <!-- Right detailed view -->
+      <div class="pane" id="manager-preview-pane">
+        <div class="pane-label" style="display: flex; align-items: center; justify-content: space-between;">
+          <span>稿件预览</span>
+          <div id="manager-actions" style="display: none;">
+            <button id="mgr-btn-edit" class="mgr-action-btn edit-btn">编辑</button>
+            <button id="mgr-btn-delete" class="mgr-action-btn delete-btn">删除</button>
+          </div>
+        </div>
+        <div id="manager-preview-body">
+          <div id="manager-preview-placeholder">
+            选择左侧稿件查看预览
+          </div>
+          <div id="manager-preview-content" style="display: none;">
+            <h2 id="mgr-preview-title" style="font-size: 18px; margin-bottom: 8px; font-weight: 700; color: #111827;"></h2>
+            <div id="mgr-preview-meta" style="font-size: 11px; color: #9ca3af; margin-bottom: 16px; display: flex; gap: 12px; align-items: center;"></div>
+            <div id="mgr-preview-html" class="preview" style="font-size: 13.5px; line-height: 1.8;"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -358,17 +674,22 @@ body {
 </div>
 
 <script>
-// ── State ──────────────────────────────────────────────────────────────────
+// -- State --
 let tags = [];
 let existingTags = [];
+let currentTab = 'microblog'; // microblog, article, manager
+let articleEditorSubtab = 'zh'; // zh, en, meta
+let articlePreviewLang = 'zh'; // zh, en
+let allPosts = [];
+let selectedPost = null;
+let editingRelPath = null; // null if creating new, string if editing
 
-// ── Markdown renderer with image proxy ─────────────────────────────────────
+// -- Markdown renderer with image proxy --
 function setupMarked() {
   if (typeof marked === 'undefined') return;
   const renderer = new marked.Renderer();
   const origImage = renderer.image.bind(renderer);
   renderer.image = function(href, title, text) {
-    // Route temp images through the server's /uploads/ endpoint
     const src = /^https?:\/\//.test(href) ? href : `/uploads/${href}`;
     return `<img src="${src}" alt="${text || ''}" title="${title || ''}">`;
   };
@@ -378,14 +699,13 @@ setupMarked();
 
 function renderMarkdown(md) {
   if (typeof marked !== 'undefined') return marked.parse(md);
-  // Minimal fallback: just escape HTML and preserve line breaks
   return '<p>' + md
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .split(/\n\n+/).join('</p><p>')
     .replace(/\n/g, '<br>') + '</p>';
 }
 
-// ── Clock & slug ────────────────────────────────────────────────────────────
+// -- Clock & slug --
 const clockEl = document.getElementById('clock');
 const slugEl  = document.getElementById('slug-display');
 const days    = ['日','一','二','三','四','五','六'];
@@ -394,22 +714,29 @@ function updateClock() {
   const now = new Date();
   const pad = n => String(n).padStart(2, '0');
   clockEl.textContent = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} · 周${days[now.getDay()]} · ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-  slugEl.textContent  = `slug: ${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  if (!editingRelPath) {
+    slugEl.textContent  = `slug: ${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  } else {
+    slugEl.textContent  = `编辑: ${editingRelPath.split('/').slice(-2).join('/')}`;
+  }
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-// ── Load existing tags ──────────────────────────────────────────────────────
-fetch('/api/tags')
-  .then(r => r.json())
-  .then(data => {
-    existingTags = data.tags || [];
-    const dl = document.getElementById('tag-list');
-    dl.innerHTML = existingTags.map(t => `<option value="${t}">`).join('');
-  })
-  .catch(() => {});
+// -- Load tags --
+function loadTags() {
+  fetch('/api/tags')
+    .then(r => r.json())
+    .then(data => {
+      existingTags = data.tags || [];
+      const dl = document.getElementById('tag-list');
+      dl.innerHTML = existingTags.map(t => `<option value="${t}">`).join('');
+    })
+    .catch(() => {});
+}
+loadTags();
 
-// ── Tag chip management ─────────────────────────────────────────────────────
+// -- Tag chip management --
 function addTag(raw) {
   const tag = raw.trim().replace(/^#+/, '').trim();
   if (!tag || tags.includes(tag)) return;
@@ -453,18 +780,25 @@ tagInput.addEventListener('blur', () => {
   }
 });
 
-// ── Editor auto-resize & preview sync ──────────────────────────────────────
+// -- Editor Auto-resize & Preview Sync --
 const editor      = document.getElementById('editor');
+const editorEn    = document.getElementById('editor-en');
 const preview     = document.getElementById('preview');
 const placeholder = document.getElementById('preview-placeholder');
 
-editor.addEventListener('input', () => {
-  // Auto-resize textarea
-  editor.style.height = 'auto';
-  editor.style.height = editor.scrollHeight + 'px';
-
-  // Update preview
-  const md = editor.value;
+function updatePreview() {
+  let md = '';
+  if (currentTab === 'microblog') {
+    md = editor.value;
+  } else {
+    // Article mode
+    if (articlePreviewLang === 'zh') {
+      md = editor.value;
+    } else {
+      md = editorEn.value;
+    }
+  }
+  
   if (md.trim()) {
     placeholder.style.display = 'none';
     preview.innerHTML = renderMarkdown(md);
@@ -472,36 +806,44 @@ editor.addEventListener('input', () => {
     preview.innerHTML = '';
     placeholder.style.display = '';
   }
-});
+}
 
-// ── Image drag & drop ───────────────────────────────────────────────────────
-const dropHint = document.getElementById('drop-hint');
-
-editor.addEventListener('dragover', e => {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'copy';
-  dropHint.classList.add('active');
-});
-editor.addEventListener('dragleave', () => dropHint.classList.remove('active'));
-editor.addEventListener('drop', e => {
-  e.preventDefault();
-  dropHint.classList.remove('active');
-  const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
-  files.forEach(uploadImage);
-});
-
-// ── Image paste ─────────────────────────────────────────────────────────────
-editor.addEventListener('paste', e => {
-  const imageItems = [...e.clipboardData.items].filter(i => i.type.startsWith('image/'));
-  if (imageItems.length === 0) return;
-  e.preventDefault();
-  imageItems.forEach(item => {
-    const file = item.getAsFile();
-    if (file) uploadImage(file);
+[editor, editorEn].forEach(ed => {
+  ed.addEventListener('input', () => {
+    ed.style.height = 'auto';
+    ed.style.height = ed.scrollHeight + 'px';
+    updatePreview();
   });
 });
 
-async function uploadImage(file) {
+// -- Image Drag / Drop and Paste handlers --
+const dropHint = document.getElementById('drop-hint');
+
+[editor, editorEn].forEach(ed => {
+  ed.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    dropHint.classList.add('active');
+  });
+  ed.addEventListener('dragleave', () => dropHint.classList.remove('active'));
+  ed.addEventListener('drop', e => {
+    e.preventDefault();
+    dropHint.classList.remove('active');
+    const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+    files.forEach(f => uploadImage(f, ed));
+  });
+  ed.addEventListener('paste', e => {
+    const imageItems = [...e.clipboardData.items].filter(i => i.type.startsWith('image/'));
+    if (imageItems.length === 0) return;
+    e.preventDefault();
+    imageItems.forEach(item => {
+      const file = item.getAsFile();
+      if (file) uploadImage(file, ed);
+    });
+  });
+});
+
+async function uploadImage(file, targetEditor) {
   return new Promise(resolve => {
     const reader = new FileReader();
     reader.onload = async () => {
@@ -516,14 +858,14 @@ async function uploadImage(file) {
         if (error) throw new Error(error);
 
         const insertion = `![](${filename})`;
-        const start = editor.selectionStart;
-        const end   = editor.selectionEnd;
-        const before = editor.value.slice(0, start);
-        const after  = editor.value.slice(end);
+        const start = targetEditor.selectionStart;
+        const end   = targetEditor.selectionEnd;
+        const before = targetEditor.value.slice(0, start);
+        const after  = targetEditor.value.slice(end);
         const sep = before && !before.endsWith('\n') ? '\n' : '';
-        editor.value = before + sep + insertion + '\n' + after;
-        editor.selectionStart = editor.selectionEnd = start + sep.length + insertion.length + 1;
-        editor.dispatchEvent(new Event('input'));
+        targetEditor.value = before + sep + insertion + '\n' + after;
+        targetEditor.selectionStart = targetEditor.selectionEnd = start + sep.length + insertion.length + 1;
+        targetEditor.dispatchEvent(new Event('input'));
       } catch (err) {
         showError('图片上传失败：' + err.message);
       }
@@ -533,8 +875,338 @@ async function uploadImage(file) {
   });
 }
 
-// ── Publish ─────────────────────────────────────────────────────────────────
+// -- Tab transitions --
+const btnMicroblog = document.getElementById('tab-btn-microblog');
+const btnArticle   = document.getElementById('tab-btn-article');
+const btnManager   = document.getElementById('tab-btn-manager');
+
+const editorPane   = document.getElementById('editor-pane');
+const previewPane  = document.getElementById('preview-pane');
+const managerContainer = document.getElementById('manager-container');
+const bottomBar    = document.getElementById('bottom-bar');
+
+const articleEditorTabs = document.getElementById('article-editor-tabs');
+const articlePreviewTabs = document.getElementById('article-preview-tabs');
+const articleTitleZh = document.getElementById('article-title-zh');
+const articleTitleEn = document.getElementById('article-title-en');
+const metaPane = document.getElementById('meta-pane');
 const publishBtn = document.getElementById('publish-btn');
+
+function resetEditors() {
+  editor.value = '';
+  editorEn.value = '';
+  articleTitleZh.value = '';
+  articleTitleEn.value = '';
+  tags = [];
+  renderChips();
+  document.getElementById('article-slug').value = '';
+  document.getElementById('article-date').value = '';
+  document.getElementById('article-draft').checked = false;
+  document.getElementById('article-math').checked = false;
+  editingRelPath = null;
+  publishBtn.textContent = '发布 ↑';
+  updateClock();
+  
+  editor.style.height = 'auto';
+  editorEn.style.height = 'auto';
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  
+  // Update button states
+  btnMicroblog.classList.remove('active');
+  btnArticle.classList.remove('active');
+  btnManager.classList.remove('active');
+  
+  if (tab === 'microblog') {
+    btnMicroblog.classList.add('active');
+    
+    // Show standard split panes, hide manager
+    editorPane.style.display = 'flex';
+    previewPane.style.display = 'flex';
+    managerContainer.style.display = 'none';
+    bottomBar.style.display = 'flex';
+    
+    // Adjust editors/subtabs
+    articleEditorTabs.style.display = 'none';
+    articlePreviewTabs.style.display = 'none';
+    articleTitleZh.style.display = 'none';
+    articleTitleEn.style.display = 'none';
+    metaPane.style.display = 'none';
+    
+    editor.style.display = 'block';
+    editorEn.style.display = 'none';
+    document.getElementById('editor-zh-label').style.display = 'flex';
+    document.getElementById('preview-zh-label').style.display = 'flex';
+    
+    updatePreview();
+  } else if (tab === 'article') {
+    btnArticle.classList.add('active');
+    
+    editorPane.style.display = 'flex';
+    previewPane.style.display = 'flex';
+    managerContainer.style.display = 'none';
+    bottomBar.style.display = 'flex';
+    
+    articleEditorTabs.style.display = 'flex';
+    articlePreviewTabs.style.display = 'flex';
+    
+    document.getElementById('editor-zh-label').style.display = 'none';
+    document.getElementById('preview-zh-label').style.display = 'none';
+    
+    switchEditorSubtab(articleEditorSubtab);
+    switchPreviewLang(articlePreviewLang);
+  } else if (tab === 'manager') {
+    btnManager.classList.add('active');
+    
+    // Hide standard split editors, show manager
+    editorPane.style.display = 'none';
+    previewPane.style.display = 'none';
+    managerContainer.style.display = 'grid';
+    bottomBar.style.display = 'none';
+    
+    loadManagerPosts();
+  }
+  clearStatus();
+}
+
+btnMicroblog.addEventListener('click', () => {
+  resetEditors();
+  switchTab('microblog');
+});
+btnArticle.addEventListener('click', () => {
+  resetEditors();
+  switchTab('article');
+});
+btnManager.addEventListener('click', () => {
+  switchTab('manager');
+});
+
+// -- Subtab switches --
+const subZhEdit = document.getElementById('subtab-zh-edit');
+const subEnEdit = document.getElementById('subtab-en-edit');
+const subMetaEdit = document.getElementById('subtab-meta-edit');
+
+function switchEditorSubtab(subtab) {
+  articleEditorSubtab = subtab;
+  
+  subZhEdit.classList.remove('active');
+  subEnEdit.classList.remove('active');
+  subMetaEdit.classList.remove('active');
+  
+  articleTitleZh.style.display = 'none';
+  articleTitleEn.style.display = 'none';
+  editor.style.display = 'none';
+  editorEn.style.display = 'none';
+  metaPane.style.display = 'none';
+  
+  if (subtab === 'zh') {
+    subZhEdit.classList.add('active');
+    articleTitleZh.style.display = 'block';
+    editor.style.display = 'block';
+  } else if (subtab === 'en') {
+    subEnEdit.classList.add('active');
+    articleTitleEn.style.display = 'block';
+    editorEn.style.display = 'block';
+  } else if (subtab === 'meta') {
+    subMetaEdit.classList.add('active');
+    metaPane.style.display = 'block';
+  }
+}
+
+subZhEdit.addEventListener('click', () => switchEditorSubtab('zh'));
+subEnEdit.addEventListener('click', () => switchEditorSubtab('en'));
+subMetaEdit.addEventListener('click', () => switchEditorSubtab('meta'));
+
+const subZhPreview = document.getElementById('subtab-zh-preview');
+const subEnPreview = document.getElementById('subtab-en-preview');
+
+function switchPreviewLang(lang) {
+  articlePreviewLang = lang;
+  subZhPreview.classList.remove('active');
+  subEnPreview.classList.remove('active');
+  
+  if (lang === 'zh') {
+    subZhPreview.classList.add('active');
+  } else {
+    subEnPreview.classList.add('active');
+  }
+  updatePreview();
+}
+subZhPreview.addEventListener('click', () => switchPreviewLang('zh'));
+subEnPreview.addEventListener('click', () => switchPreviewLang('en'));
+
+// -- Manager Dashboard --
+const mList = document.getElementById('manager-list');
+const mSearch = document.getElementById('manager-search');
+const mPlaceholder = document.getElementById('manager-preview-placeholder');
+const mContent = document.getElementById('manager-preview-content');
+const mActions = document.getElementById('manager-actions');
+
+const mTitle = document.getElementById('mgr-preview-title');
+const mMeta = document.getElementById('mgr-preview-meta');
+const mHtml = document.getElementById('mgr-preview-html');
+
+async function loadManagerPosts() {
+  mList.innerHTML = '<div style="padding:20px; color:#9ca3af; font-size:12px; text-align:center;">读取列表中...</div>';
+  try {
+    const res = await fetch('/api/posts');
+    const data = await res.json();
+    allPosts = data.posts || [];
+    renderManagerList(allPosts);
+  } catch (err) {
+    mList.innerHTML = `<div style="padding:20px; color:#dc2626; font-size:12px; text-align:center;">错误: ${err.message}</div>`;
+  }
+}
+
+function renderManagerList(postsList) {
+  if (postsList.length === 0) {
+    mList.innerHTML = '<div style="padding:20px; color:#9ca3af; font-size:12px; text-align:center;">无稿件</div>';
+    return;
+  }
+  
+  mList.innerHTML = postsList.map((post, idx) => {
+    const sectionBadge = `<span class="badge badge-${post.section}">${post.section}</span>`;
+    const draftBadge = post.draft ? '<span class="badge badge-draft">草稿</span>' : '';
+    const name = post.type === 'microblog' 
+      ? `微微博 ${post.dirName.slice(3)}`
+      : (post.title || post.slug || '未命名');
+    
+    return `
+      <div class="manager-item" data-idx="${idx}">
+        <div class="manager-item-title">${escHtml(name)}</div>
+        <div class="manager-item-meta">
+          ${sectionBadge}
+          ${draftBadge}
+          <span>${post.date.split('T')[0]}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  mList.querySelectorAll('.manager-item').forEach(el => {
+    el.addEventListener('click', () => {
+      mList.querySelectorAll('.manager-item').forEach(item => item.classList.remove('active'));
+      el.classList.add('active');
+      const post = postsList[el.dataset.idx];
+      selectPostInManager(post);
+    });
+  });
+}
+
+mSearch.addEventListener('input', () => {
+  const q = mSearch.value.toLowerCase().trim();
+  if (!q) {
+    renderManagerList(allPosts);
+    return;
+  }
+  const filtered = allPosts.filter(p => 
+    p.title.toLowerCase().includes(q) ||
+    p.titleEn.toLowerCase().includes(q) ||
+    p.content.toLowerCase().includes(q) ||
+    p.contentEn.toLowerCase().includes(q) ||
+    p.tags.some(t => t.toLowerCase().includes(q)) ||
+    p.section.toLowerCase().includes(q)
+  );
+  renderManagerList(filtered);
+});
+
+function selectPostInManager(post) {
+  selectedPost = post;
+  mPlaceholder.style.display = 'none';
+  mContent.style.display = 'block';
+  mActions.style.display = 'flex';
+  
+  const isMb = post.type === 'microblog';
+  mTitle.textContent = isMb ? `微微博 ${post.dirName.slice(3)}` : post.title;
+  
+  const draftTxt = post.draft ? '<span class="badge badge-draft">草稿</span>' : '';
+  const sectTxt = `<span class="badge badge-${post.section}">${post.section}</span>`;
+  mMeta.innerHTML = `${sectTxt} ${draftTxt} <span>日期: ${post.date.split('T')[0]}</span>`;
+  
+  let html = renderMarkdown(post.content);
+  if (post.hasEn && post.contentEn) {
+    html += '<hr style="border:none; border-top:1px dashed #e5e7eb; margin:16px 0;">';
+    html += '<div style="font-size:10px; font-weight:700; color:#c4c9d4; letter-spacing:.1em; margin-bottom:8px;">ENGLISH</div>';
+    html += renderMarkdown(post.contentEn);
+  }
+  mHtml.innerHTML = html;
+}
+
+// -- Edit and Delete triggers --
+const mgrBtnEdit = document.getElementById('mgr-btn-edit');
+const mgrBtnDelete = document.getElementById('mgr-btn-delete');
+
+mgrBtnEdit.addEventListener('click', () => {
+  if (!selectedPost) return;
+  const post = selectedPost;
+  
+  editingRelPath = post.relPath;
+  tags = [...post.tags];
+  renderChips();
+  
+  if (post.type === 'microblog') {
+    switchTab('microblog');
+    editor.value = post.content;
+    editor.dispatchEvent(new Event('input'));
+  } else {
+    switchTab('article');
+    articleTitleZh.value = post.title;
+    articleTitleEn.value = post.titleEn;
+    editor.value = post.content;
+    editorEn.value = post.contentEn;
+    
+    document.getElementById('article-section').value = post.section;
+    document.getElementById('article-slug').value = post.slug;
+    document.getElementById('article-date').value = post.date.split('T')[0];
+    document.getElementById('article-draft').checked = post.draft;
+    document.getElementById('article-math').checked = post.math;
+    
+    switchEditorSubtab('zh');
+    switchPreviewLang('zh');
+    editor.dispatchEvent(new Event('input'));
+    editorEn.dispatchEvent(new Event('input'));
+  }
+  
+  publishBtn.textContent = '保存修改 ↑';
+});
+
+mgrBtnDelete.addEventListener('click', async () => {
+  if (!selectedPost) return;
+  const post = selectedPost;
+  const name = post.type === 'microblog' ? `微微博 ${post.dirName.slice(3)}` : post.title;
+  if (!confirm(`确定要永久下线/删除 "${name}" 吗？该操作会自动同步Git。`)) return;
+  
+  mgrBtnDelete.disabled = true;
+  mgrBtnDelete.textContent = '删除中...';
+  
+  try {
+    const res = await fetch('/api/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ relPath: post.relPath })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      mPlaceholder.style.display = 'block';
+      mContent.style.display = 'none';
+      mActions.style.display = 'none';
+      selectedPost = null;
+      loadManagerPosts();
+      loadTags();
+    } else {
+      alert('删除失败: ' + data.error);
+    }
+  } catch (err) {
+    alert('网络错误: ' + err.message);
+  } finally {
+    mgrBtnDelete.disabled = false;
+    mgrBtnDelete.textContent = '删除';
+  }
+});
+
+// -- Publish submission --
 const statusMsg  = document.getElementById('status-msg');
 
 function showError(msg) {
@@ -548,61 +1220,100 @@ function clearStatus() {
 
 publishBtn.addEventListener('click', async () => {
   const content = editor.value.trim();
-  if (!content) {
+  if (currentTab === 'microblog' && !content) {
     editor.focus();
     return;
+  }
+  if (currentTab === 'article') {
+    const titleZh = articleTitleZh.value.trim();
+    if (!titleZh) {
+      switchEditorSubtab('zh');
+      articleTitleZh.focus();
+      return;
+    }
+    if (!content) {
+      switchEditorSubtab('zh');
+      editor.focus();
+      return;
+    }
   }
 
   clearStatus();
   publishBtn.disabled = true;
-  publishBtn.textContent = '发布中…';
+  const origBtnText = publishBtn.textContent;
+  publishBtn.textContent = '处理中...';
   publishBtn.className = '';
+
+  const payload = {
+    type: currentTab,
+    relPath: editingRelPath,
+    tags
+  };
+
+  if (currentTab === 'microblog') {
+    payload.content = content;
+    payload.draft = false;
+  } else {
+    payload.section = document.getElementById('article-section').value;
+    payload.title = articleTitleZh.value.trim();
+    payload.titleEn = articleTitleEn.value.trim();
+    payload.content = content;
+    payload.contentEn = editorEn.value.trim();
+    payload.draft = document.getElementById('article-draft').checked;
+    payload.math = document.getElementById('article-math').checked;
+    payload.date = document.getElementById('article-date').value || undefined;
+  }
 
   try {
     const res = await fetch('/api/publish', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content, tags }),
+      body: JSON.stringify(payload),
     });
     const data = await res.json();
 
     if (data.ok) {
-      publishBtn.textContent = '✓ 已发布';
+      publishBtn.textContent = '成功';
       publishBtn.classList.add('success');
       setTimeout(() => {
-        editor.value = '';
-        editor.style.height = 'auto';
-        editor.dispatchEvent(new Event('input'));
-        tags = [];
-        renderChips();
+        resetEditors();
         publishBtn.disabled = false;
         publishBtn.textContent = '发布 ↑';
         publishBtn.className = '';
-      }, 2500);
+        loadTags();
+        if (editingRelPath) {
+          switchTab('manager');
+        } else {
+          switchTab(currentTab);
+        }
+      }, 2000);
     } else {
-      publishBtn.textContent = '✗ 失败';
+      publishBtn.textContent = '失败';
       publishBtn.classList.add('error');
-      showError('发布失败：' + data.error);
+      showError('提交失败：' + data.error);
       setTimeout(() => {
         publishBtn.disabled = false;
-        publishBtn.textContent = '发布 ↑';
+        publishBtn.textContent = origBtnText;
         publishBtn.className = '';
       }, 3000);
     }
   } catch (e) {
-    publishBtn.textContent = '✗ 失败';
+    publishBtn.textContent = '失败';
     publishBtn.classList.add('error');
     showError('网络错误：' + e.message);
     setTimeout(() => {
       publishBtn.disabled = false;
-      publishBtn.textContent = '发布 ↑';
+      publishBtn.textContent = origBtnText;
       publishBtn.className = '';
     }, 3000);
   }
 });
 
-// Allow Ctrl+Enter to publish
+// Shortcuts
 editor.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') publishBtn.click();
+});
+editorEn.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') publishBtn.click();
 });
 </script>
