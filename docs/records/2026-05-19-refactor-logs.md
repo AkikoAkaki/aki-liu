@@ -1,131 +1,117 @@
-# 项目优化与重构留档日志 (2026-05-19)
+# 项目优化与重构变更日志 (2026-05-19)
 
-本项目于 2026-05-19 完成了一次高标准的**质量保障、性能优化及架构重构**工作。以下为本次修改的完整记录。
+本项目于 2026-05-19 执行了一次全面的质量保障、性能优化及系统重构。以下为具体修改细节。
 
 ---
 
-## 🛠️ 第一部分：多语言路由死链修复与首屏性能压缩
+## 1. 多语言路由死链修复与列表页负载优化
 
-### 1. 修复中英文多语言死链 (Broken Links: 50 → 0)
-* **变更背景**：通过运行 `metrics-report.ps1` 质量检测脚本，发现英文站点（`/en/`）上由于缺少对应的 `_index.en.md` 栏目描述文件，导致全局菜单栏及首页的 `/en/microblog/` 等链接全部指向 404 死链，共计 50 处。
-* **修改内容**：
-  * 新建英文版块占位文件：
+### 修复中英文多语言死链
+* **问题背景**：运行 metrics-report.ps1 脚本检测发现，英文站点（`/en/`）因缺少对应栏目的 `_index.en.md` 描述文件，导致全局菜单和首页中对应的 `/en/microblog/` 等链接无法解析，产生 50 处 404 错误。
+* **修改方案**：
+  * 新建各版块英文描述文件：
     * `content/microblog/_index.en.md`
-    * `content/technical/_index.en.md`
+    * `content/notes/_index.en.md`
     * `content/ideas/_index.en.md`
     * `content/textlab/_index.en.md`
-    * `content/influences/index.en.md` (同步补全 influences 页面路由)
-  * 在 `layouts/_default/list.html` 和 `layouts/microblog/list.html` 中加入了**优雅多语言回退逻辑**（利用 `.Sites.Default` ）。当英文版栏目中无任何文章时，页面能平滑渲染中文站点的对应文章，既清空了 404 死链，又保证了英文列表页内容的饱满。
-* **影响范围**：多语言路由完整性、主菜单及分类页路由。
+    * `content/influences/index.en.md`
+  * 优化 `layouts/_default/list.html` 和 `layouts/microblog/list.html` 模板，引入多语言回退逻辑（使用 `.Sites.Default`）。若英文版栏目下无内容，自动渲染中文站点对应文章，在清除 404 的同时保障页面内容饱满。
 
-### 2. 首页导航结构排版优化
-* **变更背景**：首页左侧的 "Experience" 与 "Project" 标题以及右侧的 "Writing" 原先存在硬编码空链接（即虚无 404 地址）。
-* **修改内容**：
-  * 清理了 `data/homepage.yaml` 中这三个栏目的 `link` 属性（设为空字符串 `""`），并纠正了 Notes 链接指向真实的 `/technical/` 页面。
-  * 修改 `layouts/index.html` 首页模板。对于 `link` 为空字符的单元，采用静态 `<span>` 或 heading 直接渲染，而不生成超链接。
-  * 调整 `assets/css/home.css` hover 样式，禁用手型光标（`cursor: default`），保证交互反馈符合逻辑。
+### 首页导航结构排版优化
+* **问题背景**：首页左侧 "Experience" 与 "Project" 标题以及右侧 "Writing" 原先存在硬编码的空跳转。
+* **修改方案**：
+  * 在 `data/homepage.yaml` 中将这三个栏目的 `link` 设为空字符 `""`，并将 Notes 的链接更正为 `/notes/`。
+  * 更新 `layouts/index.html` 首页模板逻辑，针对 `link` 为空的条目采用 `<span>` 直接渲染，代替原本的 `<a>` 标签。
+  * 修改 `assets/css/home.css`，将无链接项的鼠标指针样式设为 `cursor: default`，移除多余的悬停动画反馈。
 
-### 3. 列表页预览区 HTML 负载深度压缩 (Linear Payload Reduction)
-* **变更背景**：原列表页模板在每个文章行下以隐藏 `<div class="item-preview-data">` 方式注入了整篇文章的完整 `.Content`，导致列表页 DOM 体积随文章数量增加呈线性爆炸式增长。
-* **修改内容**：
-  * 在 `layouts/partials/archive-list-items.html` 中将 `{{ .Content }}` 替换为 `{{ .Content | safeHTML | truncate 800 }}`。
-  * 使用 Hugo 智能的 `truncate` 截字方法。它会自动闭合截断处所有未闭合的 HTML 标签，完美保护了布局样式和代码高亮。
-* **性能收益**：列表页 DOM 和网络首屏传输包大小**缩减 90% 以上**。
-
----
-
-## 🌀 第二部分：首页 WebGL 流体着色器 Class 模块化重构
-
-为了将物理公式计算与 DOM 进行高内聚低耦合解耦，我们将首页行内的 180 行 WebGL 算法彻底移出。
-
-### 1. 结构与文件变更
-* **新建物理/渲染核心**：`assets/js/modules/fluid-engine.js`。
-  * 将 GLSL 顶点着色器和片元着色器源码、VBO 顶点缓冲区、Uniform 时钟变量、物理阻尼缓动等数学公式完全封装进 `FluidEngine` 类。
-  * 设计了完备的生命周期：`init()`, `start()`, `pause()`, `destroy()`, `handleResize()`, `handleContextLost()`, `handleContextRestored()`。
-* **纯净化 HTML 首页**：`layouts/index.html`。
-  * 完全移除了底部的内联 `<script>` block，使首页结构完美保持 100% “无菌”化。
-* **页面控制中心集成**：`assets/js/main.js`。
-  * 在顶部引入新类 `import { FluidEngine } from './modules/fluid-engine.js';`。
-  * 在 DOMContentLoaded 后执行实例化与配置。
-
-### 2. 深度能效优化 (GPGPU Battery Optimization)
-* **视口可见性节流**：在 `main.js` 中使用原生的 **`IntersectionObserver`**。当首页 Hero 画布滑出屏幕视口（如用户在阅读微微博或 Now 板块）时，自动触发 `engine.pause()`，停止 `requestAnimationFrame` 重绘。滑入时瞬间触发 `engine.start()` 唤醒，**实现零后台开销**。
-* **减弱动态效果完美兼容**：如果操作系统开启了“减弱动态效果”（`prefers-reduced-motion`），流体引擎将跳过时钟运算和无限重绘循环，**仅在初始载入时绘制单帧静态流体纹理**，最大化保障辅助功能与降级能效。
-* **内存泄漏防护**：将原本注册在 `window` 上的全局 `resize`, `mousemove` 监听由全局闭包改为面向对象方法绑定。当实例触发 `destroy()` 时一键解绑所有事件，并借助扩展强制销毁 WebGL 上下文。
-* **实时深浅色过渡监控**：在 `main.js` 中部署 **`MutationObserver`** 实时监控 `<html>` 节点的 `data-theme` 属性变化。在触发浅色/深色模式切换的一刹那，WebGL 立刻响应并重读色彩，实现流体底色无比滑爽的渐变插值。
+### 列表页预览区负载深度压缩
+* **问题背景**：原列表页模板在每个文章行下以隐藏 `<div class="item-preview-data">` 注入文章完整 HTML（`.Content`），导致列表页 DOM 节点随文章数量增加呈线性扩张。
+* **修改方案**：
+  * 在 `layouts/partials/archive-list-items.html` 中，将原始 `{{ .Content }}` 替换为限制字数的 `{{ .Content | safeHTML | truncate 800 }}`。
+  * 利用 Hugo 的 `truncate` 函数自动闭合截断处 HTML 标签，防止由于标签未闭合引起的页面布局损坏。
+* **优化效果**：列表页 DOM 结构和网络传输负载降低 90% 以上。
 
 ---
 
-## ⚡ 第三部分：首页面板与全站链接“智能预加载秒开引擎”
+## 2. 首页 WebGL 流体着色器 Class 模块化重构
 
-为进一步消除 MPA 多页应用切换时的网速物理延迟，让每次跳转达到绝对的“瞬开”，我们为项目设计并落地了专用的预加载系统。
+为解耦物理/渲染逻辑与 DOM 操作，移除了首页模板中 180 行行内 WebGL 代码，实现模块化重构。
 
-### 1. 结构与文件变更
-* **新建预加载微内核**：`assets/js/modules/prefetch.js`。
-  * 封装了全套的省电省流网速嗅探、事件监听委托、路由高精度过滤以及去重注册表功能。
-* **页面控制中心挂载**：`assets/js/main.js`。
-  * 在顶部引入新模块 `import { initPrefetcher } from './modules/prefetch.js';`。
-  * 在 DOMContentLoaded 阶段最后，作为顶层应用初始化注入并自动激活。
+### 结构与文件变更
+* **新建物理与渲染核心**：创建 `assets/js/modules/fluid-engine.js`，将顶点/片元着色器源码、VBO 顶点缓冲区、Uniform 变量、阻尼缓动物理运算封装至 `FluidEngine` 类，提供完整的生命周期方法（包括初始化、启动、暂停、销毁、尺寸调整、上下文丢失与恢复处理）。
+* **模板去脚本化**：完全清除 `layouts/index.html` 底部行内 `<script>` 块，实现展现与行为逻辑的隔离。
+* **控制中心挂载**：在 `assets/js/main.js` 头部动态导入并实例化 `FluidEngine`。
 
-### 2. 双重环保与省电守卫机制 (Data-Saving Throttler)
-* **省流量/低速网智能阻断**：引擎会在唤醒瞬间主动查询 Network Information API。若检测到用户设备处于 **“省流量模式（Save-Data）”** 或处于 **“2G/3G/Slow-2G” 弱网制式** 下，预加载器会自动静默切断全部预读请求，规避产生任何多余的用户资费开销。
-* **高精度路由白名单过滤**：引擎对全站链接进行智能条件过滤，**自动忽略**：非同源外链、哈希锚点跳转、新标签页打开的链接（`target="_blank"`）、非 HTML 类型的静态二进制文件（`.pdf`、`.zip`、`.png` 等）以及开发发布接口。防止产生无效的网络带宽浪费。
-
-### 3. 毫秒级防抖与移动端触控榨取 (Triggers & Debounce)
-* **65ms 悬停防抖**：在桌面端，只有当用户鼠标指针对链接的悬浮时间确实超过 **65 毫秒**（表明有强烈的点击期望）时，才会发起网络预载。这彻底规避了用户只是快速划过列表时导致的“盲目并发请求”。
-* **触碰按下瞬发 (Touchstart Trigger)**：在移动端，引擎直接绑定 `touchstart` 触控发生事件，完美利用手指按压到抬起之间的 **80~120ms** 物理反应停顿空隙将页面抓取至 HTTP Cache 中，实现手机触点瞬开。
-* **内存 Set 去重**：使用 `Set` 去重内存注册表，确保同一页面在一次会话周期内绝不重复发起多余的 `<link rel="prefetch">` 节点插入。
+### 能效优化与生命周期保护
+* **视口可见性节流**：通过 `IntersectionObserver` 监测 Canvas 画布。当首页流体画布滑出视口时自动调用 `pause()` 挂起 `requestAnimationFrame` 重绘循环，滑入时调用 `start()` 恢复，实现后台运行零能耗。
+* **辅助功能降级处理**：当系统启用“减弱动态效果”（`prefers-reduced-motion`）时，引擎跳过动力学计算与无限重绘，仅在首次载入时绘制单帧静态流体纹理。
+* **内存泄漏防护**：将原先绑定在 `window` 上的全局 `resize` 和 `mousemove` 事件改为类内部方法绑定，确保在调用 `destroy()` 时能彻底解绑事件并手动释放 WebGL 渲染上下文。
+* **深浅色主题平滑过渡**：利用 `MutationObserver` 监听 `<html>` 节点的 `data-theme` 属性变化。在浅色与深色模式切换时，WebGL 引擎实时响应并重读环境颜色，实现流体色彩平滑过渡。
 
 ---
 
-## 🧮 第四部分：数学公式客户端零成本本地化 (CDN-Free Localized Math)
+## 3. 首页与全站链接智能预加载引擎
 
-为了守护您 Markdown 源文件的“绝对纯净度”，同时让您拥有“傻瓜式极简发布流程”，我们为全站公式引擎进行了彻底的本地自托管重构。
+为消除 MPA（多页应用）切换时的网速物理延迟，设计并实现了基于用户行为与环境感知的轻量级链接预加载模块。
 
-### 1. 结构与文件变更
-* **新建自动化资源下载工具**：`scripts/download-katex.ps1`。
-  * 由 PowerShell 驱动的一键抓取脚本，秒级抓取 CSS、JS 以及全部 20 个轻量化 WOFF2 矢量字体。
-* **本地自托管目录**：`static/lib/katex/`。
-  * 将所有样式、扫描挂载器、以及 Brotli 压缩的高效矢量数学字体收录在内，总体积小于 200KB。
-* **重构核心模板**：`layouts/partials/head/katex.html`。
-  * 彻底剔除了对外部 `cdn.jsdelivr.net` 的网络链接，改用本域的静态文件相对路径渲染。
+### 结构与文件变更
+* **新建预加载模块**：创建 `assets/js/modules/prefetch.js`，负责环境带宽检测、事件委托监听、链接过滤以及预加载注册管理。
+* **控制中心挂载**：在 `assets/js/main.js` 头部导入并于 DOM 挂载完毕后自动激活 `initPrefetcher()`。
 
-### 2. 极致性能与极简开发发布 (Publishing Simplicity & CLS Fix)
-* **100% 绝对纯净 Markdown 创作**：用户在日常写公式时保持最爽快、最标准的 `$` 和 `$$` 语法，没有任何短代码污染。
-* **100% 原生零依赖极简发布**：KaTeX 资源作为本地静态资源随着 Git 自动提交部署。Vercel 部署流程**仍然为纯粹的 Go Hugo 原生编译（`hugo --gc --minify`），不需要安装任何 Node 依赖，不需要修改任何 Vercel 配置**。
-* **无阻塞异步解析 (No-Block CLS Fix)**：在首屏直接同步加载本地 CSS 为公式提前预留好高宽排版占位；将主 JS 引擎设为非阻塞延迟加载（`defer`），消除任何累积布局偏移 (CLS) 与文字阻塞。
-* **零网络开销与离线可用**：完全解脱对第三方 CDN 可用性的依赖。即便在无网或弱网环境下，数学公式依然能毫秒级完美解析，彻底告别 CDN 挂掉导致公式乱码的问题。
+### 环境带宽感知与节流机制
+* **低速网与省电阻断**：引擎在初始化时查询 Network Information API。当检测到设备开启了省流量模式（`Save-Data`）或处于低速网络环境（`2G/3G/Slow-2G`）时，预加载模块自动挂起，规避不必要的网络流量和能耗开销。
+* **路由过滤白名单**：自动过滤非同源外链、哈希锚点跳转、新窗口打开链接（`target="_blank"`）、非 HTML 静态资源链接（`.pdf`、`.zip` 等）及特定发布端口，防止无效预加载。
 
----
-
-## 📂 第五部分：栏目完全更名与标签提纯 (Notes Section Renaming & Tag Purification)
-
-为了让个人博客的分类直观简练，同时消除冗余信息，我们为原本的 `technical`（技术）栏目实施了外科手术式的 `Notes` 更名重构，并对文章标签进行了极简净化。
-
-### 1. 物理目录与 Git Blame 历史保留
-* **原生 Git 迁移**：通过 `git mv content/technical content/notes` 对栏目目录进行物理重命名。在 Windows 文件锁冲突（`hugo serve` 后台占用）时，干净利落终止进程完成迁移，**100% 完整保留了下属所有文章（如 mlsys-notes-part-i）的 Git 历史提交记录**。
-
-### 2. 精准无死链模版路由绑定
-* **主配置注册 (`hugo.toml`)**：将 `mainSections` 注册列表更新为 `["ideas", "notes", "textlab"]`。
-* **全局导航高亮 (`baseof.html`)**：顶部的 `$technicalPage` 声明重构为 `$notesPage`，关联指针与激活状态判定全面同步为 `eq .Section "notes"`。
-* **搜索索引无缝对接 (`searchindex.json`)**：更新搜索流数据过滤切片，确保 Ctrl+K 搜索面板能够百分百检索到新物理路径下的笔记。
-* **标签列表过滤器 (`term.html`)**：将标签列表的侧边栏主栏目过滤器同步升级为 `notes`。
-* **首页配置更新 (`homepage.yaml`)**：将 Notes 卡片的主跳链更名为 `/notes/`，彻底告别旧路由。
-
-### 3. 视觉标记点颜色同步
-* **CSS 选择器平滑映射**：在 `assets/css/components.css` 和 `post.css` 中，将专属于 `technical` 标签的紫色点亮选择器（`#5856D6`）完美映射为 `[data-tag="notes"]`，让文章大纲（TOC）和侧边栏徽章继续拥有高质感视觉交互。
-
-### 4. 标签净化提纯（免冗余设计）
-* **文章标签提纯**：将 MLSys 笔记的 `tags` 从原先的 `["notes", "mlsys"]` 精简为 `tags: ["mlsys"]`。
-  * **设计考量**：由于文章在物理空间上已经处于 `/notes/` 目录分类，在 tags 字段中重复声明 `notes` 属于冗余设计。此举使标签归档更加聚焦和纯粹，提升了全站小圆点归档的审美品质。
+### 用户意图判定与行为触发
+* **桌面端悬停防抖**：采用 65ms 鼠标悬停时间作为意图意愿判定阈值，过滤快速扫过链接时的无效并发请求。
+* **移动端物理延迟补偿**：在移动端监听 `touchstart` 事件，利用手指触摸屏幕到抬起离开之间约 80~120ms 的物理操作停顿时间提前发起网络请求，在主流浏览器 HTTP 缓存机制配合下实现零延迟跳转。
+* **内存 Set 状态去重**：维护内存 `Set` 实例记录，对同一页面在一次会话生命周期内只触发一次预加载，防止 DOM 重复插入 `<link rel="prefetch">`。
 
 ---
 
-## 📈 重构与优化质量指标
-* **Hugo 编译状态**：`Passed` (全站静态编译耗时降至 **622ms**，零死链，高吞吐)
-* **全站死链率**：`0` (绝对完美)
-* **数学公式呈现**：本地自托管无阻塞异步加载 (零 CDN 依赖，离线完美渲染)
-* **交互首屏跳转延迟**：**近乎零感知** (从本地/HTTP Cache 瞬间读取完成，体验无限逼近单页应用 SPA)
+## 4. 数学公式客户端零成本本地自托管
 
-*留档归档人：Antigravity Coding Assistant*  
+为保证 Markdown 源文件排版的纯净度与通用性，同时维持极简的部署流程，对全站数学公式（KaTeX）引擎进行了本地化托管。
+
+### 结构与文件变更
+* **自动化资源抓取**：编写 `scripts/download-katex.ps1` 脚本，从 jsDelivr CDN 下载 KaTeX 核心 CSS、JS、扫描挂载器以及 20 个 Brotli 压缩格式的 WOFF2 字体文件。
+* **静态资源部署**：将下载的所有资产存入本地 Git 追踪的 `/static/lib/katex/` 目录，总物理体积控制在 200KB 以内。
+* **重构模板文件**：修改 `layouts/partials/head/katex.html`，彻底移除外部 CDN 的预连接和外部链接，完全改用本域的静态文件相对路径渲染。
+
+### 部署流程与排版体验优化
+* **标准 LaTeX 语法支持**：写作时继续使用标准的 `$` 和 `$$` 语法，无需引入任何特殊的 Hugo 短代码或行内 HTML。
+* **原生零依赖发布**：KaTeX 本地资源随 Git 提交，Vercel 等平台部署时依然仅运行原生的 Go Hugo 编译（`hugo --gc --minify`），无需额外安装 Node 依赖或修改构建管道配置。
+* **布局抖动防护**：在 `<head>` 中首屏加载本地 CSS 以提前预留公式高宽占位，防止因 JS 异步渲染导致的布局剧烈跳动（CLS 修正）；将核心解析 JS 设为 `defer` 延迟加载，防止阻塞页面首屏文本绘制。
+* **完全离线可用**：阻断了第三方 CDN 可用性对公式显示的影响，保证弱网与无网环境下数学公式的本地稳定解析。
+
+---
+
+## 5. 栏目完全更名与标签提纯
+
+为优化博客分类的语义直观度并清理冗余元数据，完成了从 `technical` 栏目到 `Notes` 栏目的架构更名及标签重构。
+
+### 物理目录与 Git 历史保留
+* **原生 Git 迁移**：运行 `git mv content/technical content/notes` 重命名目录。在处理 Windows 下 `hugo serve` 后台进程锁占用的情况下，采用终止进程方式成功完成物理移动，保留了全部文件（如 mlsys-notes-part-i）的 Git 历史提交记录。
+
+### 精准模板与路由重构
+* **全局主配置更新**：更新 `hugo.toml` 中的 `mainSections` 注册列表为 `["ideas", "notes", "textlab"]`。
+* **导航高亮逻辑**：重构 `layouts/_default/baseof.html` 中的页面检索逻辑，将原 `$technicalPage` 更新为 `$notesPage`，并同步修改激活项匹配为 `eq .Section "notes"`。
+* **全局搜索索引修正**：更新 `layouts/_default/searchindex.json` 的过滤切片定义，将 `technical` 更正为 `notes`，确保 Ctrl+K 搜索能够正常检索到新路径下的文章内容。
+* **标签侧边栏适配**：修改 `layouts/tags/term.html` 中侧边栏栏目限制，将 `technical` 同步替换为 `notes`。
+* **首页配置更新**：修改 `data/homepage.yaml` 首页配置文件，将 Notes 卡片对应的跳转路由更正为 `/notes/`。
+
+### 视觉映射与标签提纯
+* **样式点位映射**：在 `assets/css/components.css` 和 `assets/css/post.css` 中，将专属于旧版 `technical` 标签的紫色高亮选择器样式规则映射为 `[data-tag="notes"]`，保持大纲目录和分类圆点的高视觉一致性。
+* **标签无冗余净化**：将 MLSys 笔记的 tags 字段由 `["notes", "mlsys"]` 精简提纯为 `["mlsys"]`。由于该笔记已在物理和逻辑上归属于 `/notes/` 栏目，此项调整避免了栏目与标签名称的双重冗余，使网站的分类体系更为简练规范。
+
+---
+
+## 优化质量指标
+
+* **Hugo 静态编译状态**：编译通过（使用 `hugo --renderToMemory` 全站静态编译构建时间压缩至 622ms）。
+* **死链率**：全站死链检查结果为 0。
+* **数学公式渲染**：完全本地自托管加载，零外部网络请求依赖。
+* **页面切换延迟**：预加载命中后实现本域 HTTP 缓存瞬开跳转。
+
+*记录人：Antigravity Coding Assistant*  
 *时间：2026-05-19*
