@@ -4,7 +4,7 @@
     {{- $homePage := .Site.Home -}}
     {{- $ideasPage := .Site.GetPage "section" "ideas" -}}
     {{- $textLabPage := .Site.GetPage "section" "textlab" -}}
-    {{- $technicalPage := .Site.GetPage "section" "technical" -}}
+    {{- $notesPage := .Site.GetPage "section" "notes" -}}
     {{- $microblogPage := .Site.GetPage "section" "microblog" -}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -87,7 +87,7 @@
                         <a href="{{ with $textLabPage }}{{ .RelPermalink }}{{ else }}{{ "textlab/" | relLangURL }}{{ end }}" class="menu-link menu-link--sub{{ if eq .Section "textlab" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Text Lab</span></span></a>
                     </div>
                 </div>
-                <a href="{{ with $technicalPage }}{{ .RelPermalink }}{{ else }}{{ "technical/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "technical" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Notes</span></span></a>
+                <a href="{{ with $notesPage }}{{ .RelPermalink }}{{ else }}{{ "notes/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "notes" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Notes</span></span></a>
                 <a href="{{ with $microblogPage }}{{ .RelPermalink }}{{ else }}{{ "microblog/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "microblog" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Microblog</span></span></a>
                 <a href="#search" class="menu-link menu-link--search" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
             </div>

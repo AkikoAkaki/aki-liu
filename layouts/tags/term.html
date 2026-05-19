@@ -1,5 +1,5 @@
 {{ define "sidebar-left" }}
-{{- $mainSections := slice "ideas" "technical" "textlab" -}}
+{{- $mainSections := slice "ideas" "notes" "textlab" -}}
 {{- $regularPages := where .Site.RegularPages "Section" "in" $mainSections -}}
 {{- .Store.Set "regularPages" $regularPages -}}
 {{- $tagCounts := dict -}}

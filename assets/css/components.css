@@ -1708,7 +1708,7 @@ body.section-about.about-sequence-open .site-wrapper {
 .archive-tag-item[data-tag="translation"] .tag-dot, .item-dot[data-tag="translation"] { background-color: #FF9500; } /* Orange */
 
 .archive-tag-item[data-tag="content-analysis"] .tag-dot, .item-dot[data-tag="content-analysis"] { background-color: #5856D6; }
-.archive-tag-item[data-tag="technical"] .tag-dot, .item-dot[data-tag="technical"] { background-color: #5856D6; }
+.archive-tag-item[data-tag="notes"] .tag-dot, .item-dot[data-tag="notes"] { background-color: #5856D6; }
 .archive-tag-item[data-tag="ai"] .tag-dot, .item-dot[data-tag="ai"] { background-color: #5AC8FA; }
 
 /* Microblog Specific Tags */

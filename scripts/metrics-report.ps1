@@ -15,6 +15,8 @@ function Invoke-HugoCapture {
     )
 
     Push-Location $Root
+    $oldEap = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
     try {
         $output = & hugo @Args 2>&1 | ForEach-Object { "$_" }
         $text = ($output -join "`n")
@@ -24,6 +26,7 @@ function Invoke-HugoCapture {
         return $text
     }
     finally {
+        $ErrorActionPreference = $oldEap
         Pop-Location
     }
 }

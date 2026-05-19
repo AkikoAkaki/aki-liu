@@ -1,5 +1,5 @@
 {{- /* Per-language site search index. Hugo emits one file per language. */ -}}
-{{- $sections := slice "ideas" "technical" "textlab" "influences" "microblog" -}}
+{{- $sections := slice "ideas" "notes" "textlab" "influences" "microblog" -}}
 {{- $pages := where site.RegularPages "Section" "in" $sections -}}
 {{- $items := slice -}}
 {{- range $pages -}}

@@ -1,7 +1,7 @@
 ---
 title: "MLSys 笔记 Part I：硬件、内存、并行与数据布局"
 date: 2026-05-18
-tags: ["technical", "mlsys"]
+tags: ["notes", "mlsys"]
 math: true
 draft: false
 ---

@@ -1,3 +1,6 @@
+import { FluidEngine } from './modules/fluid-engine.js';
+import { initPrefetcher } from './modules/prefetch.js';
+
 (function () {
     // --- Theme persistence (run before paint where possible) ---
     try {
@@ -588,7 +591,48 @@
 
         // --- Footer Reveal ---
         initFooterReveal();
+
+        // --- Fluid Engine WebGL ---
+        initFluidEngine();
+
+        // --- Smart Link Prefetch ---
+        initPrefetcher();
     });
+
+    function initFluidEngine() {
+        const wrapper = document.querySelector('.author-name-svg-wrapper');
+        const intro = document.querySelector('.intro');
+        if (!wrapper || !intro) return;
+
+        const engine = new FluidEngine(intro, wrapper);
+        if (!engine.init()) return;
+
+        // Throttle WebGL rendering based on viewport visibility
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        engine.start();
+                    } else {
+                        engine.pause();
+                    }
+                });
+            }, { threshold: 0.0, rootMargin: '100px 0px 100px 0px' });
+            observer.observe(intro);
+        } else {
+            engine.start();
+        }
+
+        // Smoothly interpolate background if data-theme toggles at runtime
+        const themeObserver = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+                if (mutation.attributeName === 'data-theme') {
+                    engine.updateThemeColor();
+                }
+            });
+        });
+        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    }
 
     function initScrollReveal() {
         const targets = document.querySelectorAll('.reveal-on-scroll, .reveal-pin');

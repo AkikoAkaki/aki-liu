@@ -243,7 +243,7 @@ body.post-short {
 .post-toc[data-tag="drama"] { --active-dot-color: #34C759; }
 .post-toc[data-tag="translation"] { --active-dot-color: #FF9500; }
 .post-toc[data-tag="content-analysis"] { --active-dot-color: #5856D6; }
-.post-toc[data-tag="technical"] { --active-dot-color: #5856D6; }
+.post-toc[data-tag="notes"] { --active-dot-color: #5856D6; }
 .post-toc[data-tag="ai"] { --active-dot-color: #5AC8FA; }
 
 .post-toc nav > ul {

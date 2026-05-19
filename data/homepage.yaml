@@ -18,7 +18,7 @@ grid:
   left:
     - id: experience
       title: Experience
-      link: /experience/
+      link: ""
       items:
         - title: Artisk
           role: Full-stack AI Engineer Intern
@@ -35,7 +35,7 @@ grid:
           link: "https://rochester-bear-lab.github.io/"
     - id: projects
       title: Project
-      link: /projects/
+      link: ""
       items:
         - title: LLM Quant Profiler
           date: "2024"
@@ -46,7 +46,7 @@ grid:
   right:
     - id: writing
       title: Writing
-      link: /writing/
+      link: ""
       sublinks:
         - label: Ideas
           link: /ideas/

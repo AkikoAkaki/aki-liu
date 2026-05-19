@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    Homepage Styles
    棣栭〉涓撶敤鏍峰紡锛歩ntro銆亀ork table銆乶ow/connect sections
    ========================================================================== */
@@ -332,8 +332,8 @@
     z-index: 1;
 }
 
-.nav-panel-item:hover,
-.nav-panel-subitem:hover {
+a.nav-panel-item:hover,
+a.nav-panel-subitem:hover {
     background-color: var(--color-bg-muted);
 }
 

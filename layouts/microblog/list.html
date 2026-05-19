@@ -1,5 +1,9 @@
 {{ define "sidebar-left" }}
 {{- $entries := where .Site.RegularPages "Section" "microblog" -}}
+{{- if and (eq .Language.Lang "en") (eq (len $entries) 0) -}}
+    {{- $zhSite := .Sites.Default -}}
+    {{- $entries = where $zhSite.RegularPages "Section" "microblog" -}}
+{{- end -}}
 {{- $entries = $entries.ByDate.Reverse -}}
 {{- .Store.Set "entries" $entries -}}
 {{- $tagSlice := partialCached "tag-sidebar-data.html" . .Path -}}

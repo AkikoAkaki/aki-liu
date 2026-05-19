@@ -35,7 +35,7 @@
                 <div class="item-preview-data" data-href="{{ .RelPermalink }}" style="display: none;">
                     <h4 class="preview-title">{{ .Title }}</h4>
                     <div class="preview-summary raw-content-preview">
-                        {{ .Content }}
+                        {{ .Content | safeHTML | truncate 800 }}
                     </div>
                 </div>
             </article>
