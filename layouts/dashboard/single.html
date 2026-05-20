@@ -96,14 +96,7 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
                 <p class="metric-foot">
                     Total static render &amp; minify time &mdash; the moment
                     between
-                    <code
-                        style="
-                            background: transparent;
-                            padding: 0;
-                            color: var(--text-color);
-                        "
-                        >hugo --gc</code
-                    >
+                    <code>hugo --gc</code>
                     and a clean tree.
                 </p>
             </article>
@@ -148,8 +141,8 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
                             <svg viewBox="0 0 56 56">
                                 <defs>
                                     <linearGradient id="cache-ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#10b981" />
-                                        <stop offset="100%" stop-color="#059669" />
+                                        <stop offset="0%" stop-color="var(--dash-good)" />
+                                        <stop offset="100%" stop-color="var(--dash-good)" />
                                     </linearGradient>
                                 </defs>
                                 <circle
@@ -173,14 +166,7 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
                 </div>
                 <p class="metric-foot">
                     Template-level reuse across
-                    <code
-                        style="
-                            background: transparent;
-                            padding: 0;
-                            color: var(--text-color);
-                        "
-                        >partialCached</code
-                    >
+                    <code>partialCached</code>
                     calls.
                 </p>
             </article>
@@ -504,8 +490,8 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
                             <svg viewBox="0 0 56 56">
                                 <defs>
                                     <linearGradient id="parity-ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#6366f1" />
-                                        <stop offset="100%" stop-color="#4f46e5" />
+                                        <stop offset="0%" stop-color="var(--dash-accent)" />
+                                        <stop offset="100%" stop-color="var(--dash-accent)" />
                                     </linearGradient>
                                 </defs>
                                 <circle class="ring-track" cx="28" cy="28" r="26" />
@@ -921,10 +907,10 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
                         <div style="display: flex; align-items: center; gap: 4px;">
                             <span>Less</span>
                             <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(var(--text-rgb), 0.04);"></span>
-                            <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(52, 199, 89, 0.15);"></span>
-                            <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(52, 199, 89, 0.35);"></span>
-                            <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(52, 199, 89, 0.65);"></span>
-                            <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(52, 199, 89, 0.95);"></span>
+                            <span style="width: 10px; height: 10px; border-radius: 2px; background: color-mix(in srgb, var(--dash-good) 15%, transparent);"></span>
+                            <span style="width: 10px; height: 10px; border-radius: 2px; background: color-mix(in srgb, var(--dash-good) 35%, transparent);"></span>
+                            <span style="width: 10px; height: 10px; border-radius: 2px; background: color-mix(in srgb, var(--dash-good) 65%, transparent);"></span>
+                            <span style="width: 10px; height: 10px; border-radius: 2px; background: color-mix(in srgb, var(--dash-good) 95%, transparent);"></span>
                             <span>More</span>
                         </div>
                     </div>
@@ -1002,9 +988,9 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
                 transform: scaleY(1.3);
             }
             .metric-card.asset-card {
-                --asset-base: #6366f1;
-                --asset-layout: #06b6d4;
-                --asset-components: #10b981;
+                --asset-base: var(--dash-accent);
+                --asset-layout: var(--dash-accent-2);
+                --asset-components: var(--dash-good);
             }
             .segmented-asset-bar .segment.seg-base {
                 background: linear-gradient(to bottom, color-mix(in srgb, var(--asset-base) 96%, white), var(--asset-base));
@@ -1045,10 +1031,10 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
                 cursor: pointer;
             }
             .heatmap-sq.level-0 { background: rgba(var(--text-rgb), 0.04); }
-            .heatmap-sq.level-1 { background: rgba(52, 199, 89, 0.15); }
-            .heatmap-sq.level-2 { background: rgba(52, 199, 89, 0.35); }
-            .heatmap-sq.level-3 { background: rgba(52, 199, 89, 0.65); }
-            .heatmap-sq.level-4 { background: rgba(52, 199, 89, 0.95); }
+            .heatmap-sq.level-1 { background: color-mix(in srgb, var(--dash-good) 15%, transparent); }
+            .heatmap-sq.level-2 { background: color-mix(in srgb, var(--dash-good) 35%, transparent); }
+            .heatmap-sq.level-3 { background: color-mix(in srgb, var(--dash-good) 65%, transparent); }
+            .heatmap-sq.level-4 { background: color-mix(in srgb, var(--dash-good) 95%, transparent); }
 
             .diag-detail-item {
                 display: flex;
@@ -1091,6 +1077,25 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
 <script>
     (function() {
       const H = JSON.parse({{ $history | jsonify }});
+      const timelineColors = {
+        good: 'var(--dash-good)',
+        mid: 'var(--dash-accent-2)',
+        warn: 'var(--dash-warn)',
+        bad: 'var(--dash-bad)',
+        accent: 'var(--dash-accent)'
+      };
+
+      function colorForValue(value, min, max, metric) {
+        if (metric === 'pages') {
+          return timelineColors.accent;
+        }
+        const span = max - min || 1;
+        const t = (value - min) / span;
+        if (t >= 0.72) return timelineColors.bad;
+        if (t >= 0.5) return timelineColors.warn;
+        if (t >= 0.28) return timelineColors.mid;
+        return timelineColors.good;
+      }
 
       /* ---- Sparkline (build time card) ---- */
       const sparkData = H.slice(-12).map(d => d.buildMs);
@@ -1111,14 +1116,16 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
         svg.innerHTML = `
           <defs>
             <linearGradient id="sparkline-line-grad" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stop-color="#10b981" />
-              <stop offset="60%" stop-color="#f59e0b" />
-              <stop offset="100%" stop-color="#ef4444" />
+              <stop offset="0%" stop-color="var(--dash-good)" />
+              <stop offset="58%" stop-color="var(--dash-accent-2)" />
+              <stop offset="80%" stop-color="var(--dash-warn)" />
+              <stop offset="100%" stop-color="var(--dash-bad)" />
             </linearGradient>
             <linearGradient id="sparkline-area-grad" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stop-color="#10b981" stop-opacity="0.01" />
-              <stop offset="60%" stop-color="#f59e0b" stop-opacity="0.06" />
-              <stop offset="100%" stop-color="#ef4444" stop-opacity="0.18" />
+              <stop offset="0%" stop-color="var(--dash-good)" stop-opacity="0.01" />
+              <stop offset="58%" stop-color="var(--dash-accent-2)" stop-opacity="0.05" />
+              <stop offset="80%" stop-color="var(--dash-warn)" stop-opacity="0.08" />
+              <stop offset="100%" stop-color="var(--dash-bad)" stop-opacity="0.18" />
             </linearGradient>
           </defs>
           <path d="${areaPath}" fill="url(#sparkline-area-grad)" stroke="none"/>
@@ -1202,28 +1209,28 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
 
         let html = `
           <defs>
-            <!-- Build Duration Gradient (Red-Yellow-Green) -->
+            <!-- Build Duration Gradient -->
             <linearGradient id="trend-line-grad-build" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stop-color="#10b981" />
-              <stop offset="50%" stop-color="#f59e0b" />
-              <stop offset="100%" stop-color="#ef4444" />
+              <stop offset="0%" stop-color="var(--dash-good)" />
+              <stop offset="54%" stop-color="var(--dash-accent-2)" />
+              <stop offset="80%" stop-color="var(--dash-warn)" />
+              <stop offset="100%" stop-color="var(--dash-bad)" />
             </linearGradient>
             <linearGradient id="trend-area-grad-build" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stop-color="#10b981" stop-opacity="0.01" />
-              <stop offset="50%" stop-color="#f59e0b" stop-opacity="0.07" />
-              <stop offset="100%" stop-color="#ef4444" stop-opacity="0.2" />
+              <stop offset="0%" stop-color="var(--dash-good)" stop-opacity="0.01" />
+              <stop offset="54%" stop-color="var(--dash-accent-2)" stop-opacity="0.05" />
+              <stop offset="80%" stop-color="var(--dash-warn)" stop-opacity="0.08" />
+              <stop offset="100%" stop-color="var(--dash-bad)" stop-opacity="0.2" />
             </linearGradient>
 
-            <!-- Page Volume Gradient (Indigo-Cyan-Emerald) -->
+            <!-- Page Volume Gradient -->
             <linearGradient id="trend-line-grad-pages" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stop-color="#6366f1" />
-              <stop offset="50%" stop-color="#06b6d4" />
-              <stop offset="100%" stop-color="#10b981" />
+              <stop offset="0%" stop-color="var(--dash-accent)" />
+              <stop offset="100%" stop-color="var(--dash-accent)" />
             </linearGradient>
             <linearGradient id="trend-area-grad-pages" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stop-color="#6366f1" stop-opacity="0.01" />
-              <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.07" />
-              <stop offset="100%" stop-color="#10b981" stop-opacity="0.2" />
+              <stop offset="0%" stop-color="var(--dash-accent)" stop-opacity="0.01" />
+              <stop offset="100%" stop-color="var(--dash-accent)" stop-opacity="0.12" />
             </linearGradient>
           </defs>
         `;
@@ -1240,11 +1247,12 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
 
         /* data points */
         data.forEach((v, i) => {
-          html += `<circle class="chart-pt" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.2" stroke="url(#trend-line-grad-${metric})" fill="var(--bg-color)" stroke-width="1.3"/>`;
+          const pointColor = colorForValue(v, min, max, metric);
+          html += `<circle class="chart-pt" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.4" stroke="${pointColor}" fill="var(--bg-color)" stroke-width="1.4"/>`;
         });
 
         /* hover cursor group (updated on mousemove) */
-        html += `<g id="chart-cursor" style="display:none">
+        html += `<g id="chart-cursor">
           <line class="cursor-line" id="cursor-line" x1="0" x2="0" y1="${padT}" y2="${H2 - padB}"/>
           <circle class="chart-pt-cursor" id="cursor-dot" cx="0" cy="0" r="3.6" fill="var(--bg-color)" stroke="url(#trend-line-grad-${metric})" stroke-width="1.8"/>
           <rect id="cursor-rect" x="0" y="0" width="80" height="22" rx="6" fill="var(--color-heading)"/>
@@ -1260,32 +1268,95 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
 
         svg.innerHTML = html;
 
-        /* hover interaction */
-        svg.addEventListener('mousemove', function(e) {
-          const rect = svg.getBoundingClientRect();
-          const vbScale = W / rect.width;
-          const px = (e.clientX - rect.left) * vbScale;
-          const i = Math.round(((px - padL) / innerW) * (data.length - 1));
-          if (i < 0 || i >= data.length) return;
-          const cx = x(i), cy = y(data[i]);
+        /* hover interaction with smooth lerp animation */
+        let activeIdx = -1;
+        let animFrameId = null;
+        let curX = null, curY = null;
+        let curTx = null, curTy = null;
+        let curVal = null;
+        let firstMove = true;
+
+        function updateCursorPositions(cx, cy, tx, ty, val) {
           const cursor = document.getElementById('chart-cursor');
           const line = document.getElementById('cursor-line');
           const dot = document.getElementById('cursor-dot');
           const crect = document.getElementById('cursor-rect');
           const ctext = document.getElementById('cursor-text');
           if (!cursor) return;
-          cursor.style.display = '';
+          cursor.classList.add('active');
           line.setAttribute('x1', cx.toFixed(1)); line.setAttribute('x2', cx.toFixed(1));
           dot.setAttribute('cx', cx.toFixed(1)); dot.setAttribute('cy', cy.toFixed(1));
-          const tx = Math.min(W - padR - 80, Math.max(padL + 4, cx - 40));
-          const ty = Math.max(padT + 4, cy - 32);
-          crect.setAttribute('x', tx); crect.setAttribute('y', ty);
-          ctext.setAttribute('x', tx + 40); ctext.setAttribute('y', ty + 14);
-          ctext.textContent = `${data[i]}${unit}`;
+          const pointColor = colorForValue(val, min, max, metric);
+          dot.setAttribute('stroke', pointColor);
+          crect.setAttribute('x', tx.toFixed(1)); crect.setAttribute('y', ty.toFixed(1));
+          ctext.setAttribute('x', (tx + 40).toFixed(1)); ctext.setAttribute('y', (ty + 14).toFixed(1));
+          ctext.textContent = `${Math.round(val)}${unit}`;
+        }
+
+        function animateCursor() {
+          if (activeIdx === -1) {
+            animFrameId = null;
+            return;
+          }
+          
+          const targetX = x(activeIdx);
+          const targetY = y(data[activeIdx]);
+          const targetTx = Math.min(W - padR - 80, Math.max(padL + 4, targetX - 40));
+          const targetTy = Math.max(padT + 4, targetY - 32);
+          const targetVal = data[activeIdx];
+          
+          // Smooth lerp interpolation
+          curX += (targetX - curX) * 0.18;
+          curY += (targetY - curY) * 0.18;
+          curTx += (targetTx - curTx) * 0.18;
+          curTy += (targetTy - curTy) * 0.18;
+          curVal += (targetVal - curVal) * 0.18;
+          
+          updateCursorPositions(curX, curY, curTx, curTy, curVal);
+          
+          const dist = Math.abs(targetX - curX) + Math.abs(targetY - curY);
+          if (dist < 0.05) {
+            updateCursorPositions(targetX, targetY, targetTx, targetTy, targetVal);
+            animFrameId = null;
+          } else {
+            animFrameId = requestAnimationFrame(animateCursor);
+          }
+        }
+
+        svg.addEventListener('mousemove', function(e) {
+          const rect = svg.getBoundingClientRect();
+          const vbScale = W / rect.width;
+          const px = (e.clientX - rect.left) * vbScale;
+          const i = Math.round(((px - padL) / innerW) * (data.length - 1));
+          if (i < 0 || i >= data.length) return;
+          
+          activeIdx = i;
+          
+          if (firstMove) {
+            const cx = x(i), cy = y(data[i]);
+            curX = cx;
+            curY = cy;
+            curTx = Math.min(W - padR - 80, Math.max(padL + 4, cx - 40));
+            curTy = Math.max(padT + 4, cy - 32);
+            curVal = data[i];
+            firstMove = false;
+            updateCursorPositions(curX, curY, curTx, curTy, curVal);
+          }
+          
+          if (!animFrameId) {
+            animFrameId = requestAnimationFrame(animateCursor);
+          }
         });
+
         svg.addEventListener('mouseleave', function() {
+          activeIdx = -1;
+          firstMove = true;
+          if (animFrameId) {
+            cancelAnimationFrame(animFrameId);
+            animFrameId = null;
+          }
           const cursor = document.getElementById('chart-cursor');
-          if (cursor) cursor.style.display = 'none';
+          if (cursor) cursor.classList.remove('active');
         });
       }
 

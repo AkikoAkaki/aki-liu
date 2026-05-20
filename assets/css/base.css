@@ -274,6 +274,32 @@ body {
     -webkit-font-smoothing: subpixel-antialiased;
 }
 
+/* 代码元素默认使用等宽字体 */
+code,
+pre,
+kbd,
+samp {
+    font-family: var(--font-mono);
+}
+
+/* 行内代码基础样式 (参考文章页风格，颜色继承父级文字) */
+code {
+    font-size: 0.85em;
+    background-color: var(--color-bg-muted);
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    color: inherit;
+}
+
+/* 块级代码中 code 的重置 */
+pre code {
+    font-size: inherit;
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    color: inherit;
+}
+
 /* 链接默认取消装饰 */
 a {
     color: inherit;

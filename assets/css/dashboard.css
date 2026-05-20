@@ -36,11 +36,23 @@
     --radius-pill: 999px;
     --dur-fast: 160ms;
     --dur-base: 260ms;
+    --dur-slow: 520ms;
     --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
-    --tag-default: #8f8f8f;
-    --tag-drama: #34c759;
-    --tag-translation: #ff9500;
-    --tag-poetry: #ff3b30;
+    --dash-neutral: #8b93a7;
+    --dash-good: #5d7cff;
+    --dash-good-soft: rgba(93, 124, 255, 0.16);
+    --dash-warn: #f0bf00;
+    --dash-warn-soft: rgba(240, 191, 0, 0.14);
+    --dash-bad: #e88b95;
+    --dash-bad-soft: rgba(232, 139, 149, 0.14);
+    --dash-accent: #5d7cff;
+    --dash-accent-2: #74809a;
+    --dash-accent-soft: rgba(93, 124, 255, 0.14);
+    --dash-accent-2-soft: rgba(116, 128, 154, 0.14);
+    --tag-default: var(--dash-neutral);
+    --tag-drama: var(--dash-good);
+    --tag-translation: var(--dash-warn);
+    --tag-poetry: var(--dash-bad);
     --dash-card-bg: linear-gradient(180deg, #fdfdfd 0%, #fbfbfb 100%);
     --dash-card-border: rgba(5, 5, 5, 0.075);
     --dash-card-highlight: linear-gradient(
@@ -547,7 +559,7 @@
     fill: none;
     stroke-width: 4.2;
     stroke-linecap: round;
-    filter: drop-shadow(0 0 2px rgba(16, 185, 129, 0.25));
+    filter: drop-shadow(0 0 2px var(--dash-good-soft));
     transition: stroke-dashoffset var(--dur-slow) ease;
 }
 
@@ -565,10 +577,10 @@
     transition: width var(--dur-slow) ease;
 }
 .stack-bar .seg-zh {
-    background: linear-gradient(90deg, #6366f1, #4f46e5);
+    background: var(--dash-accent);
 }
 .stack-bar .seg-en {
-    background: linear-gradient(90deg, #ec4899, #d946ef);
+    background: var(--dash-accent-2);
 }
 
 .stack-legend {
@@ -598,12 +610,12 @@
     animation: livepulse 2.4s ease-out infinite;
 }
 .stack-legend .lang-zh .dot {
-    background: #4f46e5;
-    box-shadow: 0 0 6px rgba(79, 70, 229, 0.4);
+    background: var(--dash-accent);
+    box-shadow: 0 0 6px var(--dash-accent-soft);
 }
 .stack-legend .lang-en .dot {
-    background: #d946ef;
-    box-shadow: 0 0 6px rgba(217, 70, 239, 0.4);
+    background: var(--dash-accent-2);
+    box-shadow: 0 0 6px var(--dash-accent-2-soft);
 }
 
 /* Volume bar chart */
@@ -616,18 +628,18 @@
 }
 .bars-chart .bar {
     flex: 1 1 0;
-    background: linear-gradient(to top, rgba(99, 102, 241, 0.14), rgba(99, 102, 241, 0.5));
+    background: color-mix(in srgb, var(--dash-accent) 24%, transparent);
     border-radius: 2px 2px 0 0;
     min-height: 4px;
     transition: background var(--dur-fast) ease, transform var(--dur-fast) ease;
 }
 .bars-chart .bar:hover {
-    background: linear-gradient(to top, rgba(99, 102, 241, 0.3), rgba(99, 102, 241, 0.8));
+    background: color-mix(in srgb, var(--dash-accent) 42%, transparent);
     transform: scaleY(1.06);
 }
 .bars-chart .bar.last {
-    background: linear-gradient(to top, #4f46e5, #6366f1);
-    box-shadow: 0 0 8px rgba(79, 70, 229, 0.45);
+    background: var(--dash-accent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--dash-accent) 16%, transparent);
 }
 
 /* Budget rows */
@@ -673,12 +685,12 @@
     transition: width var(--dur-slow) ease;
 }
 .budget-row:nth-child(1) .br-fill {
-    background: linear-gradient(90deg, #10b981, #34d399);
-    box-shadow: 0 0 4px rgba(16, 185, 129, 0.2);
+    background: var(--dash-good);
+    box-shadow: 0 0 4px var(--dash-good-soft);
 }
 .budget-row:nth-child(2) .br-fill {
-    background: linear-gradient(90deg, #3b82f6, #60a5fa);
-    box-shadow: 0 0 4px rgba(59, 130, 246, 0.2);
+    background: var(--dash-accent);
+    box-shadow: 0 0 4px var(--dash-accent-soft);
 }
 .budget-row .br-limit {
     position: absolute;
@@ -709,19 +721,19 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
     white-space: nowrap;
-    background: rgba(52, 199, 89, 0.07);
-    color: #2a9c4a;
-    border: 1px solid rgba(52, 199, 89, 0.18);
+    background: color-mix(in srgb, var(--dash-good) 7%, transparent);
+    color: var(--dash-good);
+    border: 1px solid color-mix(in srgb, var(--dash-good) 18%, transparent);
 }
 .status-chip.warn {
-    background: rgba(255, 149, 0, 0.07);
-    color: #c97600;
-    border-color: rgba(255, 149, 0, 0.18);
+    background: color-mix(in srgb, var(--dash-warn) 7%, transparent);
+    color: var(--dash-warn);
+    border-color: color-mix(in srgb, var(--dash-warn) 18%, transparent);
 }
 .status-chip.fail {
-    background: rgba(255, 59, 48, 0.07);
-    color: #c92e22;
-    border-color: rgba(255, 59, 48, 0.18);
+    background: color-mix(in srgb, var(--dash-bad) 7%, transparent);
+    color: var(--dash-bad);
+    border-color: color-mix(in srgb, var(--dash-bad) 18%, transparent);
 }
 
 .budget-status-wrap {
@@ -999,6 +1011,14 @@
     stroke-dasharray: 2 3;
     pointer-events: none;
 }
+.trend-chart #chart-cursor {
+    transition: opacity 0.14s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+.trend-chart #chart-cursor.active {
+    opacity: 1;
+}
 
 .trend-foot {
     display: flex;
@@ -1178,7 +1198,7 @@
     color: var(--color-dim);
 }
 .tmpl-row .rate.has {
-    color: #2a9c4a;
+    color: var(--dash-good);
 }
 
 /* Diagnostic report */
