@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Performance Table Redesign Showroom — 10 Styles</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Modern Reset & Theme variables */
+        :root[data-theme="light"] {
+            --bg-color: #fafafa;
+            --bg-grid: #f5f5f7;
+            --card-bg: #ffffff;
+            --card-border: rgba(0, 0, 0, 0.06);
+            --text-main: #1d1d1f;
+            --text-muted: #6e6e73;
+            --text-dim: #86868b;
+            --code-bg: #f5f5f7;
+            --color-divider: rgba(0, 0, 0, 0.06);
+            
+            --tag-default: #8e8e93;
+            --tag-pass: #34c759;
+            --tag-warn: #ff9500;
+            --tag-fail: #ff3b30;
+        }
+        
+        :root[data-theme="dark"] {
+            --bg-color: #08080a;
+            --bg-grid: #121214;
+            --card-bg: #16161a;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f5f5f7;
+            --text-muted: #a1a1a6;
+            --text-dim: #7d7d82;
+            --code-bg: #1c1c22;
+            --color-divider: rgba(255, 255, 255, 0.08);
+            
+            --tag-default: #8e8e93;
+            --tag-pass: #30d158;
+            --tag-warn: #ff9f0a;
+            --tag-fail: #ff453a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            padding: 4rem 2rem 8rem;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Header Style */
+        header {
+            margin-bottom: 3.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: 3rem;
+            letter-spacing: -0.02em;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            font-weight: 300;
+        }
+
+        /* Theme Toggle Button */
+        .btn-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 0.6rem 1.2rem;
+            border-radius: 99px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        /* Main Showcase Grid */
+        .showroom-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3.5rem;
+        }
+
+        /* Style Section Card */
+        .style-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 2.2rem;
+            display: grid;
+            grid-template-columns: 1.3fr 1.7fr;
+            gap: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.02);
+        }
+        @media(max-width: 1100px) {
+            .style-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .style-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .style-header h3 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .style-header .badge {
+            font-size: 0.75rem;
+            background: rgba(48, 209, 88, 0.15);
+            color: var(--tag-pass);
+            padding: 0.2rem 0.6rem;
+            border-radius: 99px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .style-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* Visual Demo Panel */
+        .demo-panel {
+            background: var(--bg-grid);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid var(--card-border);
+        }
+
+        /* Code Block */
+        .code-container {
+            position: relative;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 1.2rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            border: 1px solid var(--card-border);
+            max-height: 380px;
+            color: var(--text-muted);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.6rem;
+            right: 0.6rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .copy-btn:hover {
+            color: var(--text-main);
+        }
+
+        /* Standard Demo Row Template Structures */
+        .table-base {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .row-base {
+            display: grid;
+            grid-template-columns: 1fr 90px 90px 60px;
+            gap: 0.5rem;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .row-base.head {
+            font-family: 'Outfit', sans-serif;
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            padding-bottom: 0.7rem;
+            border-bottom: 1px solid var(--color-divider);
+        }
+
+        .row-base .path {
+            font-weight: 400;
+            color: var(--text-main);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .row-base .path .dim {
+            color: var(--text-dim);
+            opacity: 0.6;
+        }
+
+        .row-base .num {
+            text-align: right;
+            color: var(--text-main);
+        }
+        .row-base .num span {
+            color: var(--text-dim);
+            font-size: 10.5px;
+            margin-left: 1px;
+        }
+        .row-base .num.muted {
+            color: var(--text-muted);
+        }
+
+        .row-base .rate {
+            text-align: right;
+            font-weight: 500;
+        }
+        .row-base .rate.zero {
+            color: var(--text-dim);
+        }
+        .row-base .rate.has {
+            color: var(--tag-pass);
+            font-weight: 600;
+        }
+
+        .row-base.head .right {
+            text-align: right;
+        }
+
+    </style>
+
+    <!-- Style Redesigns Injection -->
+    <style>
+        /* ==========================================================================
+           10 PREMIUM DESIGNS FOR TEMPLATE PERFORMANCE TABLE
+           ========================================================================== */
+
+        /* --- STYLE 1: Modern Minimalist Line (Highly Recommended) --- */
+        .s1-table .row-base:not(.head) {
+            padding: 0.75rem 0.4rem;
+            border-bottom: 1px solid var(--color-divider);
+            position: relative;
+        }
+        .s1-table .row-base:not(.head):last-child {
+            border-bottom: none;
+        }
+        /* Subtle Underline Progress Bar */
+        .s1-table .row-base:not(.head)::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: var(--work-pct, 0%);
+            height: 1.5px;
+            background: color-mix(in srgb, var(--row-status, var(--tag-default)) 40%, transparent);
+            transition: width 0.6s ease;
+        }
+        .s1-table .cache-hit { --row-status: var(--tag-pass); }
+        .s1-table .cache-zero { --row-status: var(--tag-default); }
+
+        /* --- STYLE 2: Glassmorphic Floating Panel --- */
+        .s2-table {
+            gap: 0.45rem;
+        }
+        .s2-table .row-base:not(.head) {
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.01);
+            position: relative;
+            overflow: hidden;
+        }
+        /* Glass Highlight track */
+        .s2-table .row-base:not(.head)::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            width: var(--work-pct, 0%);
+            background: color-mix(in srgb, var(--row-status, var(--tag-default)) 4%, transparent);
+            z-index: 0;
+        }
+        .s2-table .row-base:not(.head) > * {
+            position: relative;
+            z-index: 1;
+        }
+        .s2-table .cache-hit { 
+            --row-status: var(--tag-pass); 
+            border-left: 3px solid var(--tag-pass) !important;
+        }
+        .s2-table .cache-zero { 
+            --row-status: var(--tag-default); 
+            border-left: 3px solid var(--card-border) !important;
+        }
+
+        /* --- STYLE 3: Modern Developer Grid (Subtle Terminal) --- */
+        .s3-table {
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.1);
+        }
+        .s3-table .row-base {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--color-divider);
+        }
+        .s3-table .row-base.head {
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--card-border);
+        }
+        .s3-table .row-base:not(.head):last-child {
+            border-bottom: none;
+        }
+        /* Micro Pill status tag for cache */
+        .s3-table .rate {
+            font-size: 11px;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            display: inline-block;
+            width: fit-content;
+            justify-self: end;
+        }
+        .s3-table .rate.has {
+            background: rgba(48, 209, 88, 0.12);
+            color: var(--tag-pass);
+        }
+        .s3-table .rate.zero {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-dim);
+        }
+
+        /* --- STYLE 4: Sleek Card Stacks --- */
+        .s4-table {
+            gap: 0.6rem;
+        }
+        .s4-table .row-base:not(.head) {
+            padding: 0.85rem 1.1rem;
+            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.015);
+            border-left: 4px solid var(--row-status, var(--tag-default));
+            position: relative;
+        }
+        .s4-table .cache-hit { --row-status: var(--tag-pass); }
+        .s4-table .cache-zero { --row-status: var(--tag-default); }
+
+        /* --- STYLE 5: Split Column Progress Chart --- */
+        .s5-table .row-base {
+            grid-template-columns: 1fr 100px 90px 90px 60px;
+        }
+        .s5-table .row-base:not(.head) {
+            padding: 0.75rem 0.4rem;
+            border-bottom: 1px solid var(--color-divider);
+        }
+        /* Inner horizontal tracking progress bar */
+        .s5-table .bar-track {
+            width: 80px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 99px;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .s5-table .bar-fill {
+            height: 100%;
+            width: var(--fill-pct, 0%);
+            background: var(--row-status, var(--tag-default));
+            border-radius: 99px;
+        }
+        .s5-table .cache-hit { --row-status: var(--tag-pass); }
+        .s5-table .cache-zero { --row-status: var(--tag-default); }
+
+        /* --- STYLE 6: Cyberpunk Console Matrix --- */
+        .s6-table .row-base:not(.head) {
+            padding: 0.8rem 0.6rem;
+            border-bottom: 1px dashed var(--color-divider);
+        }
+        .s6-table .rate::before {
+            content: "[";
+            color: var(--text-dim);
+            margin-right: 2px;
+        }
+        .s6-table .rate::after {
+            content: "]";
+            color: var(--text-dim);
+            margin-left: 2px;
+        }
+        .s6-table .path::before {
+            content: ":: ";
+            color: var(--row-status, var(--tag-default));
+        }
+        .s6-table .cache-hit { --row-status: var(--tag-pass); }
+        .s6-table .cache-zero { --row-status: var(--tag-default); }
+
+        /* --- STYLE 7: Soft Neo-Brutalism Grid --- */
+        .s7-table {
+            border: 2px solid var(--text-main);
+            background: var(--card-bg);
+            box-shadow: 4px 4px 0px var(--text-main);
+        }
+        .s7-table .row-base {
+            padding: 0.8rem 1rem;
+            border-bottom: 2px solid var(--text-main);
+        }
+        .s7-table .row-base:last-child {
+            border-bottom: none;
+        }
+        .s7-table .row-base.head {
+            background: var(--tag-warn);
+            color: var(--bg-color) !important;
+            border-bottom: 2px solid var(--text-main);
+        }
+        .s7-table .row-base.head * {
+            color: var(--bg-color) !important;
+        }
+        .s7-table .rate.has {
+            background: var(--tag-pass);
+            color: var(--bg-color) !important;
+            padding: 2px 6px;
+            border: 1.5px solid var(--text-main);
+        }
+
+        /* --- STYLE 8: Elegant Editorial Table --- */
+        .s8-table .row-base {
+            padding: 0.9rem 0;
+            border-bottom: 1px solid var(--color-divider);
+        }
+        .s8-table .row-base.head {
+            border-bottom: 2px solid var(--text-main);
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            text-transform: none;
+            font-size: 13px;
+        }
+        .s8-table .path {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 300;
+        }
+
+        /* --- STYLE 9: Dynamic Micro-Dot Emitter --- */
+        .s9-table .row-base:not(.head) {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid var(--color-divider);
+            display: grid;
+            grid-template-columns: 24px 1fr 90px 90px 60px;
+            align-items: center;
+        }
+        .s9-table .row-base.head {
+            grid-template-columns: 24px 1fr 90px 90px 60px;
+        }
+        /* Dynamic micro dot indicator on left */
+        .s9-table .indicator-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--row-status, var(--tag-default));
+            position: relative;
+        }
+        .s9-table .cache-hit { --row-status: var(--tag-pass); }
+        .s9-table .cache-zero { --row-status: var(--tag-default); }
+
+        .s9-table .indicator-dot::after {
+            content: "";
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: var(--row-status, var(--tag-default));
+            opacity: 0.25;
+            animation: livepulse 2.4s ease-out infinite;
+        }
+
+        /* --- STYLE 10: Smooth Gradient Band --- */
+        .s10-table {
+            gap: 0.4rem;
+        }
+        .s10-table .row-base:not(.head) {
+            padding: 0.8rem 1rem;
+            border-radius: 99px;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-grid);
+        }
+        /* Gradient progress indicator */
+        .s10-table .row-base:not(.head)::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            width: var(--work-pct, 0%);
+            background: linear-gradient(90deg, color-mix(in srgb, var(--row-status, var(--tag-default)) 8%, transparent), transparent);
+            z-index: 0;
+        }
+        .s10-table .row-base:not(.head) > * {
+            position: relative;
+            z-index: 1;
+        }
+        .s10-table .cache-hit { --row-status: var(--tag-pass); }
+        .s10-table .cache-zero { --row-status: var(--tag-default); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>Template Rank Redesign Showroom</h1>
+                <p class="subtitle">10 modern, premium layouts for Hugo template observation list</p>
+            </div>
+            <button class="btn-toggle" onclick="toggleTheme()">
+                <span id="theme-icon">☀️</span> <span id="theme-text">Light Mode</span>
+            </button>
+        </header>
+
+        <div class="showroom-grid">
+            
+            <!-- OPTION 1 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 1: Modern Minimalist Line <span class="badge">Recommended</span></h3>
+                        <p class="style-desc">Features a ultra-thin, highly polished layout. The total rendering time is illustrated by a sleek 1.5px state-colored horizontal line indicator at the bottom of the row, perfectly matching the row width. Looks very clean, quiet, and premium.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="table-base s1-table">
+                            <div class="row-base head">
+                                <span>Template path</span>
+                                <span class="right">Total</span>
+                                <span class="right">Mean</span>
+                                <span class="right">Cache</span>
+                            </div>
+                            <div class="row-base cache-zero" style="--work-pct: 100%;">
+                                <span class="path"><span class="dim">_partials/</span>archive-list-items.html</span>
+                                <span class="num">3147.966<span>ms</span></span>
+                                <span class="num muted">131.165<span>ms</span></span>
+                                <span class="rate zero">0%</span>
+                            </div>
+                            <div class="row-base cache-hit" style="--work-pct: 14%;">
+                                <span class="path"><span class="dim">_partials/head/</span>core-assets.html</span>
+                                <span class="num">442.702<span>ms</span></span>
+                                <span class="num muted">1.652<span>ms</span></span>
+                                <span class="rate has">88%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.tmpl-row {
+    display: grid;
+    grid-template-columns: 1fr 90px 90px 56px;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.75rem 0.4rem;
+    border-bottom: 1px solid var(--color-divider);
+    position: relative;
+}
+.tmpl-row:last-child {
+    border-bottom: none;
+}
+.tmpl-row::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: var(--work-pct, 0%);
+    height: 1.5px;
+    background: color-mix(in srgb, var(--row-status) 40%, transparent);
+}
+.tmpl-row.cache-hit { --row-status: var(--tag-drama); }
+.tmpl-row.cache-zero { --row-status: var(--color-dim); }</code></pre>
+                </div>
+            </div>
+
+            <!-- OPTION 2 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 2: Glassmorphic Floating Panel</h3>
+                        <p class="style-desc">Envelopes rows in beautifully rounded glass panels with soft left accent borders. The bar chart progress forms a translucent color-mixed background track inside each card. Gives an premium iOS dev feeling.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="table-base s2-table">
+                            <div class="row-base head" style="border-bottom: none; padding-left: 1rem;">
+                                <span>Template path</span>
+                                <span class="right">Total</span>
+                                <span class="right">Mean</span>
+                                <span class="right">Cache</span>
+                            </div>
+                            <div class="row-base cache-zero" style="--work-pct: 100%;">
+                                <span class="path"><span class="dim">_partials/</span>archive-list-items.html</span>
+                                <span class="num">3147.966<span>ms</span></span>
+                                <span class="num muted">131.165<span>ms</span></span>
+                                <span class="rate zero">0%</span>
+                            </div>
+                            <div class="row-base cache-hit" style="--work-pct: 14%;">
+                                <span class="path"><span class="dim">_partials/head/</span>core-assets.html</span>
+                                <span class="num">442.702<span>ms</span></span>
+                                <span class="num muted">1.652<span>ms</span></span>
+                                <span class="rate has">88%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.tmpl-table { gap: 0.45rem; }
+.tmpl-row:not(.head) {
+    display: grid;
+    grid-template-columns: 1fr 90px 90px 56px;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--dash-card-border);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent);
+    position: relative;
+    overflow: hidden;
+}
+.tmpl-row:not(.head)::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: var(--work-pct, 0%);
+    background: color-mix(in srgb, var(--row-status) 4%, transparent);
+    z-index: 0;
+}
+.tmpl-row.cache-hit { 
+    --row-status: var(--tag-drama); 
+    border-left: 3px solid var(--tag-drama) !important;
+}
+.tmpl-row.cache-zero { 
+    --row-status: var(--color-dim); 
+    border-left: 3px solid var(--dash-card-border) !important;
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- OPTION 3 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 3: Modern Developer Grid</h3>
+                        <p class="style-desc">Encapsulates the table in a rounded card grid reminiscent of highly detailed terminal or console monitoring tools. Replaces simple percentages with beautiful micro pill badges.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="table-base s3-table">
+                            <div class="row-base head">
+                                <span>Template path</span>
+                                <span class="right">Total</span>
+                                <span class="right">Mean</span>
+                                <span class="right">Cache</span>
+                            </div>
+                            <div class="row-base cache-zero">
+                                <span class="path"><span class="dim">_partials/</span>archive-list-items.html</span>
+                                <span class="num">3147.966<span>ms</span></span>
+                                <span class="num muted">131.165<span>ms</span></span>
+                                <span class="rate zero">0%</span>
+                            </div>
+                            <div class="row-base cache-hit">
+                                <span class="path"><span class="dim">_partials/head/</span>core-assets.html</span>
+                                <span class="num">442.702<span>ms</span></span>
+                                <span class="num muted">1.652<span>ms</span></span>
+                                <span class="rate has">88%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.tmpl-table {
+    border: 1px solid var(--dash-card-border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.1);
+}
+.tmpl-row {
+    display: grid;
+    grid-template-columns: 1fr 90px 90px 56px;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--color-divider);
+}
+.tmpl-row.head {
+    background: rgba(255, 255, 255, 0.02);
+}
+.tmpl-row .rate {
+    font-size: 11px;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+}
+.tmpl-row .rate.has {
+    background: rgba(48, 209, 88, 0.12);
+    color: var(--tag-drama);
+}
+.tmpl-row .rate.zero {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-dim);
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- OPTION 4 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 4: Sleek Card Stacks</h3>
+                        <p class="style-desc">Each row becomes a distinct cards separated by fine gaps, featuring solid color-coded left side accents. Promotes legibility through isolated visual units.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="table-base s4-table">
+                            <div class="row-base head" style="border-bottom: none; padding-left: 1.1rem;">
+                                <span>Template path</span>
+                                <span class="right">Total</span>
+                                <span class="right">Mean</span>
+                                <span class="right">Cache</span>
+                            </div>
+                            <div class="row-base cache-zero">
+                                <span class="path"><span class="dim">_partials/</span>archive-list-items.html</span>
+                                <span class="num">3147.966<span>ms</span></span>
+                                <span class="num muted">131.165<span>ms</span></span>
+                                <span class="rate zero">0%</span>
+                            </div>
+                            <div class="row-base cache-hit">
+                                <span class="path"><span class="dim">_partials/head/</span>core-assets.html</span>
+                                <span class="num">442.702<span>ms</span></span>
+                                <span class="num muted">1.652<span>ms</span></span>
+                                <span class="rate has">88%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.tmpl-table { gap: 0.6rem; }
+.tmpl-row:not(.head) {
+    display: grid;
+    grid-template-columns: 1fr 90px 90px 56px;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.85rem 1.1rem;
+    border-radius: 12px;
+    background: var(--dash-card-bg);
+    border: 1px solid var(--dash-card-border);
+    border-left: 4px solid var(--row-status);
+}
+.tmpl-row.cache-hit { --row-status: var(--tag-drama); }
+.tmpl-row.cache-zero { --row-status: var(--color-dim); }</code></pre>
+                </div>
+            </div>
+
+            <!-- OPTION 5 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 5: Split Column Progress Chart</h3>
+                        <p class="style-desc">Dedicates a separate visual column specifically for the performance bar chart. Total time is represented by an elegant micro progress bar, keeping path strings clean and uncluttered.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="table-base s5-table">
+                            <div class="row-base head">
+                                <span>Template path</span>
+                                <span class="right">Weight</span>
+                                <span class="right">Total</span>
+                                <span class="right">Mean</span>
+                                <span class="right">Cache</span>
+                            </div>
+                            <div class="row-base cache-zero" style="--work-pct: 100%;">
+                                <span class="path"><span class="dim">_partials/</span>archive-list-items.html</span>
+                                <span class="right"><span class="bar-track"><span class="bar-fill" style="--fill-pct: 100%;"></span></span></span>
+                                <span class="num">3147.966<span>ms</span></span>
+                                <span class="num muted">131.165<span>ms</span></span>
+                                <span class="rate zero">0%</span>
+                            </div>
+                            <div class="row-base cache-hit" style="--work-pct: 14%;">
+                                <span class="path"><span class="dim">_partials/head/</span>core-assets.html</span>
+                                <span class="right"><span class="bar-track"><span class="bar-fill" style="--fill-pct: 14%;"></span></span></span>
+                                <span class="num">442.702<span>ms</span></span>
+                                <span class="num muted">1.652<span>ms</span></span>
+                                <span class="rate has">88%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.tmpl-row {
+    display: grid;
+    grid-template-columns: 1fr 100px 90px 90px 56px;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.75rem 0.4rem;
+    border-bottom: 1px solid var(--color-divider);
+}
+.tmpl-row .bar-track {
+    width: 80px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 99px;
+    display: inline-block;
+    overflow: hidden;
+}
+.tmpl-row .bar-fill {
+    height: 100%;
+    width: var(--work-pct, 0%);
+    background: var(--row-status);
+    border-radius: 99px;
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- OPTION 6 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 6: Cyberpunk Console Matrix</h3>
+                        <p class="style-desc">A retro-futuristic hacker-style monospace matrix table. Wraps cache hit tags in console-like square brackets `[88%]` and appends tech indicators `::` in front of paths.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="table-base s6-table">
+                            <div class="row-base head">
+                                <span>Template path</span>
+                                <span class="right">Total</span>
+                                <span class="right">Mean</span>
+                                <span class="right">Cache</span>
+                            </div>
+                            <div class="row-base cache-zero">
+                                <span class="path"><span class="dim">_partials/</span>archive-list-items.html</span>
+                                <span class="num">3147.966<span>ms</span></span>
+                                <span class="num muted">131.165<span>ms</span></span>
+                                <span class="rate zero">0%</span>
+                            </div>
+                            <div class="row-base cache-hit">
+                                <span class="path"><span class="dim">_partials/head/</span>core-assets.html</span>
+                                <span class="num">442.702<span>ms</span></span>
+                                <span class="num muted">1.652<span>ms</span></span>
+                                <span class="rate has">88%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.tmpl-row {
+    padding: 0.8rem 0.6rem;
+    border-bottom: 1px dashed var(--color-divider);
+}
+.tmpl-row .rate::before { content: "["; color: var(--color-dim); }
+.tmpl-row .rate::after { content: "]"; color: var(--color-dim); }
+.tmpl-row .path::before {
+    content: ":: ";
+    color: var(--row-status);
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- OPTION 7 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 7: Soft Neo-Brutalism Grid</h3>
+                        <p class="style-desc">Features thick solid borders, high contrast layouts, solid flat color tags, and absolute clarity. Striking and highly styled with strong character.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="table-base s7-table">
+                            <div class="row-base head">
+                                <span>Template path</span>
+                                <span class="right">Total</span>
+                                <span class="right">Mean</span>
+                                <span class="right">Cache</span>
+                            </div>
+                            <div class="row-base cache-zero">
+                                <span class="path"><span class="dim">_partials/</span>archive-list-items.html</span>
+                                <span class="num">3147.966<span>ms</span></span>
+                                <span class="num muted">131.165<span>ms</span></span>
+                                <span class="rate zero">0%</span>
+                            </div>
+                            <div class="row-base cache-hit">
+                                <span class="path"><span class="dim">_partials/head/</span>core-assets.html</span>
+                                <span class="num">442.702<span>ms</span></span>
+                                <span class="num muted">1.652<span>ms</span></span>
+                                <span class="rate has">88%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.tmpl-table {
+    border: 2px solid var(--text-color);
+    background: var(--dash-card-bg);
+    box-shadow: 4px 4px 0px var(--text-color);
+}
+.tmpl-row {
+    padding: 0.8rem 1rem;
+    border-bottom: 2px solid var(--text-color);
+}
+.tmpl-row.head {
+    background: var(--tag-translation);
+    color: var(--bg-color) !important;
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- OPTION 8 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 8: Elegant Editorial Table</h3>
+                        <p class="style-desc">Typographic editorial style. Uses beautiful serif headings for headers, light margins, and generous vertical whitespace. Feels like reading a premium literary print review.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="table-base s8-table">
+                            <div class="row-base head">
+                                <span>Template path</span>
+                                <span class="right">Total</span>
+                                <span class="right">Mean</span>
+                                <span class="right">Cache</span>
+                            </div>
+                            <div class="row-base cache-zero">
+                                <span class="path"><span class="dim">_partials/</span>archive-list-items.html</span>
+                                <span class="num">3147.966<span>ms</span></span>
+                                <span class="num muted">131.165<span>ms</span></span>
+                                <span class="rate zero">0%</span>
+                            </div>
+                            <div class="row-base cache-hit">
+                                <span class="path"><span class="dim">_partials/head/</span>core-assets.html</span>
+                                <span class="num">442.702<span>ms</span></span>
+                                <span class="num muted">1.652<span>ms</span></span>
+                                <span class="rate has">88%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.tmpl-row {
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--color-divider);
+}
+.tmpl-row.head {
+    border-bottom: 2px solid var(--text-color);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    text-transform: none;
+    font-size: 13px;
+}
+.tmpl-row .path {
+    font-family: var(--font-sans);
+    font-weight: 300;
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- OPTION 9 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 9: Dynamic Micro-Dot Emitter</h3>
+                        <p class="style-desc">Places a mini pulsating status emitter dot on the left side of each row. Unifies the table with your dashboard's status indicator language, creating a highly cohesive observational report.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="table-base s9-table">
+                            <div class="row-base head">
+                                <span></span>
+                                <span>Template path</span>
+                                <span class="right">Total</span>
+                                <span class="right">Mean</span>
+                                <span class="right">Cache</span>
+                            </div>
+                            <div class="row-base cache-zero">
+                                <span class="indicator-dot"></span>
+                                <span class="path"><span class="dim">_partials/</span>archive-list-items.html</span>
+                                <span class="num">3147.966<span>ms</span></span>
+                                <span class="num muted">131.165<span>ms</span></span>
+                                <span class="rate zero">0%</span>
+                            </div>
+                            <div class="row-base cache-hit">
+                                <span class="indicator-dot"></span>
+                                <span class="path"><span class="dim">_partials/head/</span>core-assets.html</span>
+                                <span class="num">442.702<span>ms</span></span>
+                                <span class="num muted">1.652<span>ms</span></span>
+                                <span class="rate has">88%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.tmpl-row {
+    grid-template-columns: 24px 1fr 90px 90px 56px;
+    align-items: center;
+    padding: 0.75rem 0.5rem;
+}
+.tmpl-row .indicator-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--row-status);
+    position: relative;
+}
+.tmpl-row .indicator-dot::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: var(--row-status);
+    opacity: 0.25;
+    animation: livepulse 2.4s ease-out infinite;
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- OPTION 10 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 10: Smooth Gradient Band</h3>
+                        <p class="style-desc">Wraps rows in extremely sleek capsule bands. The performance bar charts fade smoothly as horizontal backgrounds (`linear-gradient`) behind the clean monospace text.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="table-base s10-table">
+                            <div class="row-base head" style="border-bottom: none; padding-left: 1rem;">
+                                <span>Template path</span>
+                                <span class="right">Total</span>
+                                <span class="right">Mean</span>
+                                <span class="right">Cache</span>
+                            </div>
+                            <div class="row-base cache-zero" style="--work-pct: 100%;">
+                                <span class="path"><span class="dim">_partials/</span>archive-list-items.html</span>
+                                <span class="num">3147.966<span>ms</span></span>
+                                <span class="num muted">131.165<span>ms</span></span>
+                                <span class="rate zero">0%</span>
+                            </div>
+                            <div class="row-base cache-hit" style="--work-pct: 14%;">
+                                <span class="path"><span class="dim">_partials/head/</span>core-assets.html</span>
+                                <span class="num">442.702<span>ms</span></span>
+                                <span class="num muted">1.652<span>ms</span></span>
+                                <span class="rate has">88%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.tmpl-table { gap: 0.4rem; }
+.tmpl-row:not(.head) {
+    padding: 0.8rem 1rem;
+    border-radius: 99px;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-grid);
+}
+.tmpl-row:not(.head)::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: var(--work-pct);
+    background: linear-gradient(90deg, color-mix(in srgb, var(--row-status) 8%, transparent), transparent);
+    z-index: 0;
+}</code></pre>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            if (newTheme === 'dark') {
+                icon.textContent = '☀️';
+                text.textContent = 'Light Mode';
+            } else {
+                icon.textContent = '🌙';
+                text.textContent = 'Dark Mode';
+            }
+        }
+
+        function copyCode(btn) {
+            const pre = btn.nextElementSibling;
+            const code = pre.textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = 'Copy CSS';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

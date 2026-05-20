@@ -33,6 +33,36 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    const fitSidebarToc = () => {
+        const sidebarToc = document.querySelector('.post-toc--sidebar');
+        if (!sidebarToc) return;
+
+        if (window.matchMedia('(max-width: 1200px)').matches) {
+            sidebarToc.style.removeProperty('--toc-max-height');
+            sidebarToc.style.removeProperty('--toc-sticky-top');
+            return;
+        }
+
+        if (!sidebarToc.dataset.baseTop) {
+            sidebarToc.dataset.baseTop = `${parseFloat(getComputedStyle(sidebarToc).top) || 0}`;
+        }
+        if (!sidebarToc.dataset.normalTop) {
+            sidebarToc.dataset.normalTop = `${sidebarToc.offsetTop || (sidebarToc.getBoundingClientRect().top + window.scrollY)}`;
+        }
+
+        const rect = sidebarToc.getBoundingClientRect();
+        const viewportGap = 24;
+        const baseTop = parseFloat(sidebarToc.dataset.baseTop) || 0;
+        const normalTop = parseFloat(sidebarToc.dataset.normalTop) || 0;
+        const centeredTop = Math.max(viewportGap, (baseTop + viewportGap) / 2);
+        const isStuck = window.scrollY >= normalTop - centeredTop;
+        const stickyTop = isStuck ? centeredTop : baseTop;
+        const availableHeight = Math.max(1, window.innerHeight - (isStuck ? baseTop : rect.top) - viewportGap);
+
+        sidebarToc.style.setProperty('--toc-sticky-top', `${Math.floor(stickyTop)}px`);
+        sidebarToc.style.setProperty('--toc-max-height', `${Math.floor(availableHeight)}px`);
+    };
+
     const links = Array.from(document.querySelectorAll('.post-toc a'));
     const headings = links
         .map((link) => {
@@ -99,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const onScrollOrResize = () => {
         if (ticking) return;
         window.requestAnimationFrame(() => {
+            fitSidebarToc();
             highlightActiveHeading();
             ticking = false;
         });
@@ -106,10 +137,19 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     window.addEventListener('scroll', onScrollOrResize);
+    document.addEventListener('scroll', onScrollOrResize, { passive: true });
     window.addEventListener('resize', onScrollOrResize);
 
     // Initial highlight
-    setTimeout(highlightActiveHeading, 100);
-    window.addEventListener('load', () => setTimeout(highlightActiveHeading, 150));
+    setTimeout(() => {
+        fitSidebarToc();
+        highlightActiveHeading();
+    }, 100);
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            fitSidebarToc();
+            highlightActiveHeading();
+        }, 150);
+    });
 });
 </script>

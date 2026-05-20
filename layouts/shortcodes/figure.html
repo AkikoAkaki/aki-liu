@@ -13,6 +13,11 @@
   {{- $alt = "" -}}
 {{- end -}}
 
+{{- /* Use markdownify to support both markdown and HTML tags in caption */ -}}
+{{- with $caption -}}
+  {{- $caption = . | markdownify -}}
+{{- end -}}
+
 {{- $link := .Get "link" -}}
 {{- $target := .Get "target" -}}
 {{- $rel := .Get "rel" -}}
@@ -47,6 +52,6 @@
   </a>
   {{- end -}}
   {{- with $caption -}}
-  <figcaption>{{ . | markdownify }}</figcaption>
+  <figcaption class="figure-caption">{{ . | safeHTML }}</figcaption>
   {{- end -}}
 </figure>

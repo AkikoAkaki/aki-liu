@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Indicator Redesign Showroom — 10 Styles</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Modern Reset & Theme variables */
+        :root[data-theme="light"] {
+            --bg-color: #fafafa;
+            --bg-grid: #f5f5f7;
+            --card-bg: #ffffff;
+            --card-border: rgba(0, 0, 0, 0.06);
+            --text-main: #1d1d1f;
+            --text-muted: #6e6e73;
+            --text-dim: #86868b;
+            --code-bg: #f5f5f7;
+            
+            --tag-default: #8e8e93;
+            --tag-pass: #34c759;
+            --tag-warn: #ff9500;
+            --tag-fail: #ff3b30;
+        }
+        
+        :root[data-theme="dark"] {
+            --bg-color: #08080a;
+            --bg-grid: #121214;
+            --card-bg: #16161a;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f5f5f7;
+            --text-muted: #a1a1a6;
+            --text-dim: #7d7d82;
+            --code-bg: #1c1c22;
+            
+            --tag-default: #8e8e93;
+            --tag-pass: #30d158;
+            --tag-warn: #ff9f0a;
+            --tag-fail: #ff453a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            padding: 4rem 2rem 8rem;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Header Style */
+        header {
+            margin-bottom: 3.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: 3rem;
+            letter-spacing: -0.02em;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            font-weight: 300;
+        }
+
+        /* Theme Toggle Button */
+        .btn-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 0.6rem 1.2rem;
+            border-radius: 99px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        /* Main Showcase Grid */
+        .showroom-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+
+        /* Style Section Card */
+        .style-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1.2fr 1.8fr;
+            gap: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+        }
+        @media(max-width: 900px) {
+            .style-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .style-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .style-header h3 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .style-header .badge {
+            font-size: 0.75rem;
+            background: rgba(48, 209, 88, 0.15);
+            color: var(--tag-pass);
+            padding: 0.2rem 0.6rem;
+            border-radius: 99px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .style-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Visual Demo Panel */
+        .demo-panel {
+            background: var(--bg-grid);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            justify-content: center;
+            border: 1px solid var(--card-border);
+        }
+
+        .demo-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .demo-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            width: 80px;
+            text-transform: uppercase;
+        }
+
+        /* Code Block */
+        .code-container {
+            position: relative;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 1.2rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            border: 1px solid var(--card-border);
+            max-height: 280px;
+            color: var(--text-muted);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.6rem;
+            right: 0.6rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            color: var(--text-main);
+        }
+
+        /* ==========================================================================
+           THE 10 REDESIGNED STATUS DOT CSS STYLES
+           ========================================================================== */
+
+        /* STYLE 1: Concentric Matte LED */
+        .dot-s1 {
+            --status-color: var(--tag-default);
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, color-mix(in srgb, var(--status-color), #fff 25%), var(--status-color) 70%, color-mix(in srgb, var(--status-color) 85%, #000) 100%);
+            box-shadow: 
+                0 0 0 1px color-mix(in srgb, var(--status-color) 35%, transparent),
+                0 0 0 4.5px color-mix(in srgb, var(--status-color) 15%, transparent),
+                0 1px 2px rgba(0, 0, 0, 0.08);
+            flex-shrink: 0;
+        }
+
+        /* STYLE 2: Linear-Style Minimalist Ring */
+        .dot-s2 {
+            --status-color: var(--tag-default);
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--status-color);
+            box-shadow: 
+                0 0 0 3px var(--bg-grid), 
+                0 0 0 4.5px color-mix(in srgb, var(--status-color) 32%, transparent);
+            flex-shrink: 0;
+        }
+
+        /* STYLE 3: Satin Ceramic Bead */
+        .dot-s3 {
+            --status-color: var(--tag-default);
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--status-color), #fff 15%), var(--status-color) 65%, color-mix(in srgb, var(--status-color) 75%, #000));
+            box-shadow: 
+                inset 0 -1.5px 2px rgba(0, 0, 0, 0.15), 
+                inset 0 1px 1px rgba(255, 255, 255, 0.15), 
+                0 1.5px 3px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+        }
+
+        /* STYLE 4: Pulse Halo Emitter */
+        .dot-s4 {
+            --status-color: var(--tag-default);
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--status-color);
+            position: relative;
+            flex-shrink: 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .dot-s4::after {
+            content: "";
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 1px solid var(--status-color);
+            opacity: 0.4;
+            animation: pulse-halo 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+        @keyframes pulse-halo {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+
+        /* STYLE 5: Glassmorphic Capsule Status */
+        .card-s5 {
+            --status-color: var(--tag-default);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 99px;
+            border: 1px solid color-mix(in srgb, var(--status-color) 20%, transparent);
+            background: color-mix(in srgb, var(--status-color) 6%, transparent);
+            box-shadow: 0 4px 14px color-mix(in srgb, var(--status-color) 4%, transparent);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .dot-s5 {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--status-color);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--status-color) 20%, transparent);
+        }
+
+        /* STYLE 6: Flat Tech Hardware Emitter */
+        .dot-s6 {
+            --status-color: var(--tag-default);
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 3.5px; /* Squircle indicator */
+            background: var(--status-color);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 0 0 1px var(--status-color),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        /* STYLE 7: Glowing Neon Core */
+        .dot-s7 {
+            --status-color: var(--tag-default);
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 
+                0 0 0 1px #ffffff,
+                0 0 10px var(--status-color),
+                0 0 18px var(--status-color);
+            flex-shrink: 0;
+        }
+
+        /* STYLE 8: Minimalist Tag Chip */
+        .card-s8 {
+            --status-color: var(--tag-default);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: color-mix(in srgb, var(--status-color) 8%, transparent);
+            color: color-mix(in srgb, var(--status-color) 85%, var(--text-main));
+            border: 1px solid color-mix(in srgb, var(--status-color) 20%, transparent);
+        }
+        .dot-s8 {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--status-color);
+        }
+
+        /* STYLE 9: Cyberpunk Observability Bracket */
+        .card-s9 {
+            --status-color: var(--tag-default);
+            display: inline-flex;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--status-color);
+        }
+        .card-s9::before {
+            content: "[";
+            margin-right: 0.25rem;
+            color: var(--text-dim);
+        }
+        .card-s9::after {
+            content: "]";
+            margin-left: 0.25rem;
+            color: var(--text-dim);
+        }
+        .dot-s9 {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background: var(--status-color);
+            transform: rotate(45deg); /* Diamond */
+            margin: 0 0.2rem;
+        }
+
+        /* STYLE 10: Editorial Restraint Dot */
+        .dot-s10 {
+            --status-color: var(--tag-default);
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--status-color);
+            outline: 1px solid var(--status-color);
+            outline-offset: 3.5px;
+            margin: 4px;
+            flex-shrink: 0;
+        }
+
+
+        /* Dynamic helper status bindings */
+        .pass { --status-color: var(--tag-pass) !important; }
+        .warn { --status-color: var(--tag-warn) !important; }
+        .fail { --status-color: var(--tag-fail) !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>Status Redesign Showroom</h1>
+                <p class="subtitle">10 modern, premium, high-texture directions for your observability dashboard</p>
+            </div>
+            <button class="btn-toggle" onclick="toggleTheme()">
+                <span id="theme-icon">☀️</span> <span id="theme-text">Light Mode</span>
+            </button>
+        </header>
+
+        <div class="showroom-grid">
+            
+            <!-- STYLE 1 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 1: Concentric Matte LED <span class="badge">Highly Recommended</span></h3>
+                        <p class="style-desc">Features a solid glowing core with matte diffusion, surrounded by high-precision concentric glow rings. Replaces cheap 3D Web 2.0 plastic with refined hardware-like light emission.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="demo-row">
+                            <span class="demo-label">Pass</span>
+                            <span class="dot-s1 pass"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Warning</span>
+                            <span class="dot-s1 warn"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Failure</span>
+                            <span class="dot-s1 fail"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.status-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 40% 40%, 
+        color-mix(in srgb, var(--status-color), #fff 25%), 
+        var(--status-color) 70%, 
+        color-mix(in srgb, var(--status-color) 85%, #000)
+    );
+    box-shadow: 
+        0 0 0 1px color-mix(in srgb, var(--status-color) 35%, transparent),
+        0 0 0 4.5px color-mix(in srgb, var(--status-color) 15%, transparent),
+        0 1px 2px rgba(0, 0, 0, 0.08);
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- STYLE 2 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 2: Linear-Style Minimalist Ring</h3>
+                        <p class="style-desc">Inspired by Linear.app. A tiny flat core dot sitting inside a sharp, high-resolution hairline outline ring with an elegant empty gap. Looks incredibly architectural and quiet.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="demo-row">
+                            <span class="demo-label">Pass</span>
+                            <span class="dot-s2 pass"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Warning</span>
+                            <span class="dot-s2 warn"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Failure</span>
+                            <span class="dot-s2 fail"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--status-color);
+    box-shadow: 
+        0 0 0 3px var(--bg-container-color), 
+        0 0 0 4.5px color-mix(in srgb, var(--status-color) 32%, transparent);
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- STYLE 3 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 3: Satin Ceramic Bead</h3>
+                        <p class="style-desc">A matte ceramic gemstone look with micro-drop shadows and tiny internal gradients that provide organic, tactile weight without any glassy, plastic, or glossy highlights.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="demo-row">
+                            <span class="demo-label">Pass</span>
+                            <span class="dot-s3 pass"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Warning</span>
+                            <span class="dot-s3 warn"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Failure</span>
+                            <span class="dot-s3 fail"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 35% 35%, 
+        color-mix(in srgb, var(--status-color), #fff 15%), 
+        var(--status-color) 65%, 
+        color-mix(in srgb, var(--status-color) 75%, #000)
+    );
+    box-shadow: 
+        inset 0 -1.5px 2px rgba(0, 0, 0, 0.15), 
+        inset 0 1px 1px rgba(255, 255, 255, 0.15), 
+        0 1.5px 3px rgba(0, 0, 0, 0.15);
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- STYLE 4 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 4: Breathing Pulse Halo</h3>
+                        <p class="style-desc">An active emitter design with a continuous, micro-animated breathing halo expanding outward. Highlights active observability in a highly stylized, restrained manner.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="demo-row">
+                            <span class="demo-label">Pass</span>
+                            <span class="dot-s4 pass"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Warning</span>
+                            <span class="dot-s4 warn"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Failure</span>
+                            <span class="dot-s4 fail"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--status-color);
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.status-dot::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid var(--status-color);
+    opacity: 0.4;
+    animation: pulse-halo 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes pulse-halo {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(2.2); opacity: 0; }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- STYLE 5 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 5: Glassmorphic Capsule Status</h3>
+                        <p class="style-desc">Redesigns the status into an integrated, elegant, floating translucent container. Adapts naturally to card backgrounds and uses an elegant 1px matching border.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="demo-row">
+                            <span class="demo-label">Pass</span>
+                            <div class="card-s5 pass"><span class="dot-s5"></span>Within Budget</div>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Warning</span>
+                            <div class="card-s5 warn"><span class="dot-s5"></span>SEO Warn</div>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Failure</span>
+                            <div class="card-s5 fail"><span class="dot-s5"></span>Link Broken</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.budget-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 99px;
+    border: 1px solid color-mix(in srgb, var(--status-color) 20%, transparent);
+    background: color-mix(in srgb, var(--status-color) 6%, transparent);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--status-color) 4%, transparent);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+.status-orb {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--status-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--status-color) 20%, transparent);
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- STYLE 6 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 6: Flat Tech Squircle Emitter</h3>
+                        <p class="style-desc">Features a contemporary rounded-square (squircle) design with double concentric borders. Perfect for a premium tech developer/builder feel.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="demo-row">
+                            <span class="demo-label">Pass</span>
+                            <span class="dot-s6 pass"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Warning</span>
+                            <span class="dot-s6 warn"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="dot-s6 fail"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 3.5px;
+    background: var(--status-color);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 0 0 1px var(--status-color),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- STYLE 7 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 7: Glowing Neon Core</h3>
+                        <p class="style-desc">A highly visible glowing point light. Wraps a brilliant pure-white core inside an intense, multi-tiered soft colored blur. Perfect for strong observability focus.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="demo-row">
+                            <span class="demo-label">Pass</span>
+                            <span class="dot-s7 pass"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Warning</span>
+                            <span class="dot-s7 warn"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Failure</span>
+                            <span class="dot-s7 fail"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 
+        0 0 0 1px #ffffff,
+        0 0 10px var(--status-color),
+        0 0 18px var(--status-color);
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- STYLE 8 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 8: Minimalist Tag Chip</h3>
+                        <p class="style-desc">A structured, developer-focused tag design. Contains a micro status point inside a subtle, color-toned code tag. Extremely neat, readable, and highly informative.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="demo-row">
+                            <span class="demo-label">Pass</span>
+                            <div class="card-s8 pass"><span class="dot-s8"></span>Pass</div>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Warning</span>
+                            <div class="card-s8 warn"><span class="dot-s8"></span>Warn</div>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Failure</span>
+                            <div class="card-s8 fail"><span class="dot-s8"></span>Fail</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: color-mix(in srgb, var(--status-color) 8%, transparent);
+    color: color-mix(in srgb, var(--status-color) 85%, var(--text-color));
+    border: 1px solid color-mix(in srgb, var(--status-color) 20%, transparent);
+}
+.status-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--status-color);
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- STYLE 9 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 9: Cyberpunk Diamond Bracket</h3>
+                        <p class="style-desc">Features a retro-futuristic, console-inspired design using a solid diamond core enclosed in bracket symbols. Excellent for adding tech character without being loud.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="demo-row">
+                            <span class="demo-label">Pass</span>
+                            <div class="card-s9 pass"><span class="dot-s9"></span>OK</div>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Warning</span>
+                            <div class="card-s9 warn"><span class="dot-s9"></span>WRN</div>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Failure</span>
+                            <div class="card-s9 fail"><span class="dot-s9"></span>ERR</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.status-wrap {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--status-color);
+}
+.status-wrap::before { content: "["; color: var(--text-dim); }
+.status-wrap::after { content: "]"; color: var(--text-dim); }
+.status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: var(--status-color);
+    transform: rotate(45deg);
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- STYLE 10 -->
+            <div class="style-card">
+                <div class="style-info">
+                    <div class="style-header">
+                        <h3>Option 10: Editorial Restraint Ink Dot</h3>
+                        <p class="style-desc">The ultimate quiet design. Matches the typographic restraint of literary prints. Uses a tiny solid ink point surrounded by a super-thin hairline outline at a calculated distance.</p>
+                    </div>
+                    <div class="demo-panel">
+                        <div class="demo-row">
+                            <span class="demo-label">Pass</span>
+                            <span class="dot-s10 pass"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Warning</span>
+                            <span class="dot-s10 warn"></span>
+                        </div>
+                        <div class="demo-row">
+                            <span class="demo-label">Failure</span>
+                            <span class="dot-s10 fail"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy CSS</button>
+                    <pre><code class="css">.status-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--status-color);
+    outline: 1px solid var(--status-color);
+    outline-offset: 3.5px;
+    margin: 4px;
+}</code></pre>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            if (newTheme === 'dark') {
+                icon.textContent = '☀️';
+                text.textContent = 'Light Mode';
+            } else {
+                icon.textContent = '🌙';
+                text.textContent = 'Dark Mode';
+            }
+        }
+
+        function copyCode(btn) {
+            const pre = btn.nextElementSibling;
+            const code = pre.textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = 'Copy CSS';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

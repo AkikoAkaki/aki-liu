@@ -24,15 +24,17 @@ grid:
           role: Full-stack AI Engineer Intern
           date: "2024 ~ Present"
           link: "https://gemini.artisk.ai/about"
-          preview: "https://images.unsplash.com/photo-1707343843437-caacff5cfa74?q=80&w=600&auto=format&fit=crop"
+          preview: "images/home/artisk.png"
         - title: Dentist Journey
           role: QA & Test Intern
           date: "2023 ~ 2024"
           link: "https://dentistjourney.com"
+          preview: "images/home/dentistjourney.png"
         - title: Bear Lab @URochester
           role: Research Assistant
           date: "2023 ~ 2024"
           link: "https://rochester-bear-lab.github.io/"
+          preview: "images/home/bearlab.png"
     - id: projects
       title: Project
       link: ""
