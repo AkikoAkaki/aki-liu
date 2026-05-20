@@ -17,7 +17,7 @@
                                               "www.linkedin.com",
                                               "www.threads.com"
                                           ],
-                    "cssBundleBytes":  72034,
+                    "cssBundleBytes":  71719,
                     "htmlFiles":  266,
                     "missingXDefaultForAlternates":  0,
                     "missingHtmlLang":  0
@@ -27,11 +27,11 @@
                   "enNonPage":  0,
                   "enAliases":  0,
                   "zhNonPage":  84,
-                  "enStatic":  54,
+                  "enStatic":  57,
                   "zhAliases":  2,
-                  "totalMs":  700,
+                  "totalMs":  1887,
                   "zhPages":  266,
-                  "zhStatic":  54
+                  "zhStatic":  57
               },
     "templates":  {
                       "aggregateCached":  1628,
@@ -39,9 +39,9 @@
                       "top":  [
                                   {
                                       "template":  "_partials/archive-list-items.html",
-                                      "cumulativeMs":  3147.966,
-                                      "averageMs":  131.165,
-                                      "maxMs":  303.928,
+                                      "cumulativeMs":  18718.856,
+                                      "averageMs":  779.952,
+                                      "maxMs":  1721.693,
                                       "cachePotential":  16,
                                       "percentCached":  0,
                                       "cachedCount":  0,
@@ -49,29 +49,19 @@
                                   },
                                   {
                                       "template":  "tags/term.html",
-                                      "cumulativeMs":  3087.335,
-                                      "averageMs":  220.524,
-                                      "maxMs":  319.062,
+                                      "cumulativeMs":  17482.948,
+                                      "averageMs":  1248.782,
+                                      "maxMs":  1764.239,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  14
                                   },
                                   {
-                                      "template":  "single.html",
-                                      "cumulativeMs":  894.343,
-                                      "averageMs":  8.855,
-                                      "maxMs":  47.279,
-                                      "cachePotential":  0,
-                                      "percentCached":  0,
-                                      "cachedCount":  0,
-                                      "totalCount":  101
-                                  },
-                                  {
                                       "template":  "microblog/single.html",
-                                      "cumulativeMs":  722.038,
-                                      "averageMs":  5.429,
-                                      "maxMs":  29.077,
+                                      "cumulativeMs":  4685.551,
+                                      "averageMs":  35.23,
+                                      "maxMs":  215.261,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
@@ -79,19 +69,49 @@
                                   },
                                   {
                                       "template":  "_partials/head/seo.html",
-                                      "cumulativeMs":  664.436,
-                                      "averageMs":  2.479,
-                                      "maxMs":  45.558,
-                                      "cachePotential":  12,
+                                      "cumulativeMs":  3434.873,
+                                      "averageMs":  12.817,
+                                      "maxMs":  495.414,
+                                      "cachePotential":  6,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  268
                                   },
                                   {
+                                      "template":  "single.html",
+                                      "cumulativeMs":  2395.842,
+                                      "averageMs":  23.721,
+                                      "maxMs":  497.893,
+                                      "cachePotential":  0,
+                                      "percentCached":  0,
+                                      "cachedCount":  0,
+                                      "totalCount":  101
+                                  },
+                                  {
+                                      "template":  "_shortcodes/figure.html",
+                                      "cumulativeMs":  2173.973,
+                                      "averageMs":  25.279,
+                                      "maxMs":  166.048,
+                                      "cachePotential":  0,
+                                      "percentCached":  0,
+                                      "cachedCount":  0,
+                                      "totalCount":  86
+                                  },
+                                  {
+                                      "template":  "list.html",
+                                      "cumulativeMs":  2004.238,
+                                      "averageMs":  200.424,
+                                      "maxMs":  1712.692,
+                                      "cachePotential":  0,
+                                      "percentCached":  0,
+                                      "cachedCount":  0,
+                                      "totalCount":  10
+                                  },
+                                  {
                                       "template":  "_partials/head/assets.html",
-                                      "cumulativeMs":  617.642,
-                                      "averageMs":  2.305,
-                                      "maxMs":  28.383,
+                                      "cumulativeMs":  1590.23,
+                                      "averageMs":  5.934,
+                                      "maxMs":  143.18,
                                       "cachePotential":  74,
                                       "percentCached":  0,
                                       "cachedCount":  0,
@@ -99,39 +119,19 @@
                                   },
                                   {
                                       "template":  "_partials/head/core-assets.html",
-                                      "cumulativeMs":  442.702,
-                                      "averageMs":  1.652,
-                                      "maxMs":  28.082,
+                                      "cumulativeMs":  666.793,
+                                      "averageMs":  2.488,
+                                      "maxMs":  41.689,
                                       "cachePotential":  74,
                                       "percentCached":  88,
                                       "cachedCount":  236,
                                       "totalCount":  268
                                   },
                                   {
-                                      "template":  "list.html",
-                                      "cumulativeMs":  410.445,
-                                      "averageMs":  41.045,
-                                      "maxMs":  305.362,
-                                      "cachePotential":  0,
-                                      "percentCached":  0,
-                                      "cachedCount":  0,
-                                      "totalCount":  10
-                                  },
-                                  {
-                                      "template":  "_shortcodes/figure.html",
-                                      "cumulativeMs":  292.037,
-                                      "averageMs":  3.396,
-                                      "maxMs":  11.476,
-                                      "cachePotential":  0,
-                                      "percentCached":  0,
-                                      "cachedCount":  0,
-                                      "totalCount":  86
-                                  },
-                                  {
                                       "template":  "_partials/head/katex.html",
-                                      "cumulativeMs":  83.715,
-                                      "averageMs":  0.355,
-                                      "maxMs":  6.632,
+                                      "cumulativeMs":  436.549,
+                                      "averageMs":  1.85,
+                                      "maxMs":  71.743,
                                       "cachePotential":  98,
                                       "percentCached":  0,
                                       "cachedCount":  0,
@@ -141,10 +141,10 @@
                       "aggregateCacheRatio":  33.39,
                       "aggregateCalls":  4876
                   },
-    "generatedAt":  "2026-05-19T16:43:26-04:00",
+    "generatedAt":  "2026-05-20T02:23:09-04:00",
     "git":  {
                 "branch":  "main",
-                "commit":  "46efeef"
+                "commit":  "9d6e617"
             },
     "unusedTemplates":  [
                             "/_markup/render-image.html"

@@ -1,672 +1,1308 @@
-{{ define "sidebar-left" }}{{ end }}
-{{ define "sidebar-right" }}{{ end }}
-{{ define "post-header" }}{{ end }}
-
-{{ define "main" }}
-{{ $latest := .Site.Data.metrics.latest }}
-{{ $history := .Site.Data.metrics.history_timeline }}
-{{ $lastBuild := index $history (sub (len $history) 1) }}
-{{ $totalPages := add $latest.build.zhPages $latest.build.enPages }}
-{{ $zhPct := printf "%.1f" (mul (div (float $latest.build.zhPages) (float $totalPages)) 100) }}
-{{ $enPct := printf "%.1f" (mul (div (float $latest.build.enPages) (float $totalPages)) 100) }}
-{{ $zhBarPct := printf "%.2f" (mul (div (float $latest.build.zhPages) (float $totalPages)) 100) }}
-{{ $enBarPct := printf "%.2f" (mul (div (float $latest.build.enPages) (float $totalPages)) 100) }}
-{{ $cssBundleKB := printf "%.1f" (div (float $latest.quality.cssBundleBytes) 1024.0) }}
-{{ $cacheRatio := $lastBuild.cacheRatio }}
-{{ $cacheRatioStr := printf "%.2f" $cacheRatio }}
-{{ $totalCacheCalls := math.Round (div (mul (float $latest.templates.aggregateCached) 100.0) $cacheRatio) }}
-{{ $ringCirc := 163.36 }}
-{{ $ringOffset := printf "%.2f" (mul $ringCirc (sub 1.0 (div $cacheRatio 100.0))) }}
+{{ define "sidebar-left" }}{{ end }} {{ define "sidebar-right" }}{{ end }} {{
+define "post-header" }}{{ end }} {{ define "main" }} {{ $latest :=
+.Site.Data.metrics.latest }} {{ $history := .Site.Data.metrics.history_timeline
+}} {{ $lastBuild := index $history (sub (len $history) 1) }} {{ $totalPages :=
+add $latest.build.zhPages $latest.build.enPages }} {{ $zhPct := printf "%.1f"
+(mul (div (float $latest.build.zhPages) (float $totalPages)) 100) }} {{ $enPct
+:= printf "%.1f" (mul (div (float $latest.build.enPages) (float $totalPages))
+100) }} {{ $zhBarPct := printf "%.2f" (mul (div (float $latest.build.zhPages)
+(float $totalPages)) 100) }} {{ $enBarPct := printf "%.2f" (mul (div (float
+$latest.build.enPages) (float $totalPages)) 100) }} {{ $cssBundleKB := printf
+"%.1f" (div (float $latest.quality.cssBundleBytes) 1024.0) }} {{ $cacheRatio :=
+$lastBuild.cacheRatio }} {{ $cacheRatioStr := printf "%.2f" $cacheRatio }} {{
+$totalCacheCalls := math.Round (div (mul (float
+$latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
+}} {{ $ringOffset := printf "%.2f" (mul $ringCirc (sub 1.0 (div $cacheRatio
+100.0))) }}
 
 <div class="dash-shell">
-  <div class="dash-container">
-
-    {{/* ---- Meta strip ---- */}}
-    <div class="meta-strip">
-      <span class="meta-item">
-        <span class="live-dot"></span>
-        <span class="meta-label">System</span>
-        <span class="meta-value">hugo.toml</span>
-      </span>
-      <span class="meta-item">
-        <span class="meta-label">Branch</span>
-        <span class="meta-value">main</span>
-      </span>
-      <span class="meta-item">
-        <span class="meta-label">Commit</span>
-        <span class="meta-value">{{ $lastBuild.commit }}</span>
-      </span>
-      <span class="meta-item">
-        <span class="meta-label">Hugo</span>
-        <span class="meta-value">v{{ hugo.Version }}</span>
-      </span>
-      <span class="meta-spacer"></span>
-      <span class="meta-item">
-        <span class="meta-label">Generated at</span>
-        <span class="meta-value">{{ now.Format "2006-01-02T15:04:05Z07:00" }}</span>
-      </span>
-    </div>
-
-    {{/* ---- Title block ---- */}}
-    <header class="title-block">
-      <div>
-        <h1 class="dash-title">Dashboard.</h1>
-        <p class="dash-epigraph">
-          "Form is a moment crystallised &mdash; a record of what passed
-          through the compiler, what was kept, what was let go."
-          <span class="cite">&mdash; private build log, aki-liu.com</span>
-        </p>
-      </div>
-      <div class="dash-title-meta">
-        <span class="dash-eyebrow">Build observability</span>
-        <span class="dash-sub">a quiet inspector for the site's static heart</span>
-      </div>
-    </header>
-
-    {{/* ---- Section: At a glance ---- */}}
-    <div class="section-head" style="margin-top: 3rem;">
-      <h2>At a glance</h2>
-      <span class="section-rule"></span>
-      <span class="section-cap">6 indicators</span>
-    </div>
-
-    <section class="cards-grid">
-
-      {{/* Card 1: Build duration */}}
-      <article class="metric-card">
-        <div class="metric-head">
-          <span class="metric-label">
-            <span class="ml-en">Build duration</span>
-            <span class="ml-zh">构建用时</span>
-          </span>
-          <span class="metric-icon">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2.5"/></svg>
-          </span>
-        </div>
-        <div class="metric-body">
-          <div class="metric-row">
-            <span class="metric-num">
-              {{ $latest.build.totalMs }}<span class="unit">ms</span>
-            </span>
-            <svg id="sparkline-build" class="sparkline" viewBox="0 0 130 42" preserveAspectRatio="none" aria-hidden="true"></svg>
-          </div>
-          <span class="metric-sub" id="spark-delta"></span>
-        </div>
-        <p class="metric-foot">
-          <em>Total static render &amp; minify time</em> &mdash; the moment between
-          <code style="background:transparent;padding:0;color:var(--text-color)">hugo --gc</code> and a clean tree.
-        </p>
-      </article>
-
-      {{/* Card 2: Template cache hit */}}
-      <article class="metric-card">
-        <div class="metric-head">
-          <span class="metric-label">
-            <span class="ml-en">Template cache hit</span>
-            <span class="ml-zh">编译缓存命中率</span>
-          </span>
-          <span class="metric-icon">
-            <svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="2.5"/><path d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6"/><path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5"/></svg>
-          </span>
-        </div>
-        <div class="metric-body">
-          <div class="metric-row">
+    <div class="dash-container">
+        {{/* ---- Title block ---- */}}
+        <header class="title-block">
             <div>
-              <span class="metric-num">
-                {{ $cacheRatioStr }}<span class="unit">%</span>
-              </span>
-              <div style="margin-top:.5rem;font-family:var(--font-mono);font-size:11.5px;color:var(--color-muted);letter-spacing:.02em;">
-                {{ $latest.templates.aggregateCached | lang.FormatNumber 0 }} / {{ $totalCacheCalls | lang.FormatNumber 0 }} hits
-              </div>
+                <h1 class="dash-title">Dashboard</h1>
             </div>
-            <div class="ring-wrap">
-              <svg viewBox="0 0 56 56">
-                <circle class="ring-track" cx="28" cy="28" r="26"/>
-                <circle class="ring-fill" cx="28" cy="28" r="26"
-                  stroke-dasharray="{{ $ringCirc }}"
-                  stroke-dashoffset="{{ $ringOffset }}"/>
-              </svg>
+        </header>
+
+        <section class="build-context-card">
+            <div class="build-context-head">
+                <div>
+                    <h2>Current build</h2>
+                    <p>A small snapshot of the site generator and source revision.</p>
+                </div>
+                <span class="metric-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 5h16v14H4z" />
+                        <path d="M8 9h8M8 13h5" />
+                    </svg>
+                </span>
             </div>
-          </div>
-        </div>
-        <p class="metric-foot">
-          <em>Template-level reuse</em> across <code style="background:transparent;padding:0;color:var(--text-color)">partialCached</code> calls.
-        </p>
-      </article>
-
-      {{/* Card 3: Language ratio */}}
-      <article class="metric-card">
-        <div class="metric-head">
-          <span class="metric-label">
-            <span class="ml-en">Language ratio</span>
-            <span class="ml-zh">多语言页面占比</span>
-          </span>
-          <span class="metric-icon">
-            <svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M10 12h6M10 15h6M10 18h4"/></svg>
-          </span>
-        </div>
-        <div class="metric-body">
-          <div>
-            <span class="metric-num">
-              {{ $totalPages }}<span class="unit">pages</span>
-            </span>
-          </div>
-          <div class="stack-bar" aria-hidden="true">
-            <div class="seg seg-zh" style="width:{{ $zhBarPct }}%"></div>
-            <div class="seg seg-en" style="width:{{ $enBarPct }}%"></div>
-          </div>
-          <div class="stack-legend">
-            <span class="lang-zh"><span class="dot"></span>ZH &middot; {{ $latest.build.zhPages }} &middot; {{ $zhPct }}%</span>
-            <span class="lang-en"><span class="dot"></span>EN &middot; {{ $latest.build.enPages }} &middot; {{ $enPct }}%</span>
-          </div>
-        </div>
-        <p class="metric-foot">
-          <em>Bilingual surface</em> &mdash; Chinese dominant; English mirrors the essays I rewrite for distance.
-        </p>
-      </article>
-
-      {{/* Card 4: Content volume */}}
-      <article class="metric-card">
-        <div class="metric-head">
-          <span class="metric-label">
-            <span class="ml-en">Content volume</span>
-            <span class="ml-zh">页面容量增长</span>
-          </span>
-          <span class="metric-icon">
-            <svg viewBox="0 0 24 24"><path d="M5 19V11M10 19V6M15 19V14M20 19V8"/></svg>
-          </span>
-        </div>
-        <div class="metric-body">
-          <div>
-            <span class="metric-num" id="vol-current">
-              {{ $totalPages }}<span class="unit">pages</span>
-            </span>
-            <div style="margin-top:.5rem;font-family:var(--font-mono);font-size:11.5px;color:var(--color-muted);" id="vol-delta"></div>
-          </div>
-          <div class="bars-chart" id="bars-chart" aria-hidden="true"></div>
-        </div>
-        <p class="metric-foot">
-          <em>Total page count</em> over the last 30 deploys.
-        </p>
-      </article>
-
-      {{/* Card 5: Static asset budget */}}
-      {{ $cssKBNum := div (float $latest.quality.cssBundleBytes) 1024.0 }}
-      {{ $cssPct := printf "%.2f" (mul (div $cssKBNum 150.0) 100.0) }}
-      {{ $cssLimitPct := printf "%.2f" (mul (div 100.0 150.0) 100.0) }}
-      <article class="metric-card">
-        <div class="metric-head">
-          <span class="metric-label">
-            <span class="ml-en">Static asset budget</span>
-            <span class="ml-zh">静态资源预算控制</span>
-          </span>
-          <span class="metric-icon">
-            <svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M4 11h16M9 7v12M15 7v12"/></svg>
-          </span>
-        </div>
-        <div class="metric-body">
-          <div class="budget-rows">
-            <div class="budget-row">
-              <div class="br-head">
-                <span class="br-name">CSS bundle</span>
-                <span class="br-val">{{ $cssBundleKB }} <span style="color:var(--color-muted)">KB</span></span>
-              </div>
-              <div class="br-track">
-                <div class="br-fill" style="width:{{ $cssPct }}%"></div>
-                <div class="br-limit" style="left:{{ $cssLimitPct }}%" title="Limit 100KB"></div>
-              </div>
-              <div class="br-scale">
-                <span>0KB</span>
-                <span style="color:var(--color-muted)">100KB <span style="opacity:.6">(limit)</span></span>
-                <span>150KB</span>
-              </div>
+            <div class="build-context-chips">
+                <span class="build-chip primary">
+                    <span class="live-dot"></span>
+                    <span class="chip-label">System</span>
+                    <span class="chip-value">hugo.toml</span>
+                </span>
+                <span class="build-chip">
+                    <span class="chip-label">Branch</span>
+                    <span class="chip-value">main</span>
+                </span>
+                <span class="build-chip">
+                    <span class="chip-label">Commit</span>
+                    <span class="chip-value">{{ $lastBuild.commit }}</span>
+                </span>
+                <span class="build-chip">
+                    <span class="chip-label">Hugo</span>
+                    <span class="chip-value">v{{ hugo.Version }}</span>
+                </span>
+                <span class="build-chip">
+                    <span class="chip-label">Generated</span>
+                    <span class="chip-value">{{ now.Format "2006-01-02 15:04" }}</span>
+                </span>
             </div>
-            <div class="budget-row">
-              <div class="br-head">
-                <span class="br-name">JS bundle</span>
-                <span class="br-val">18.4 <span style="color:var(--color-muted)">KB</span></span>
-              </div>
-              <div class="br-track">
-                <div class="br-fill" style="width:46%"></div>
-                <div class="br-limit" style="left:75%" title="Limit 30KB"></div>
-              </div>
-              <div class="br-scale">
-                <span>0KB</span>
-                <span style="color:var(--color-muted)">30KB <span style="opacity:.6">(limit)</span></span>
-                <span>40KB</span>
-              </div>
+        </section>
+
+        <section class="cards-grid">
+            {{/* Card 1: Build duration */}}
+            <article class="metric-card">
+                <div class="metric-head">
+                    <span class="metric-label">
+                        <span class="ml-en">Build duration</span>
+                    </span>
+                    <span class="metric-icon">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="8" />
+                            <path d="M12 7v5l3 2.5" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="metric-body">
+                    <div class="metric-row">
+                        <span class="metric-num">
+                            {{ $latest.build.totalMs }}<span class="unit"
+                                >ms</span
+                            >
+                        </span>
+                        <svg
+                            id="sparkline-build"
+                            class="sparkline"
+                            viewBox="0 0 130 42"
+                            preserveAspectRatio="none"
+                            aria-hidden="true"
+                        ></svg>
+                    </div>
+                    <span class="metric-sub" id="spark-delta"></span>
+                </div>
+                <p class="metric-foot">
+                    Total static render &amp; minify time &mdash; the moment
+                    between
+                    <code
+                        style="
+                            background: transparent;
+                            padding: 0;
+                            color: var(--text-color);
+                        "
+                        >hugo --gc</code
+                    >
+                    and a clean tree.
+                </p>
+            </article>
+
+            {{/* Card 2: Template cache hit */}}
+            <article class="metric-card">
+                <div class="metric-head">
+                    <span class="metric-label">
+                        <span class="ml-en">Template cache hit</span>
+                    </span>
+                    <span class="metric-icon">
+                        <svg viewBox="0 0 24 24">
+                            <ellipse cx="12" cy="6" rx="7" ry="2.5" />
+                            <path
+                                d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6"
+                            />
+                            <path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="metric-body">
+                    <div class="metric-row">
+                        <div>
+                            <span class="metric-num">
+                                {{ $cacheRatioStr }}<span class="unit">%</span>
+                            </span>
+                            <div
+                                style="
+                                    margin-top: 0.5rem;
+                                    font-family: var(--font-mono);
+                                    font-size: 11.5px;
+                                    color: var(--color-muted);
+                                    letter-spacing: 0.02em;
+                                "
+                            >
+                                {{ $latest.templates.aggregateCached |
+                                lang.FormatNumber 0 }} / {{ $totalCacheCalls |
+                                lang.FormatNumber 0 }} hits
+                            </div>
+                        </div>
+                        <div class="ring-wrap">
+                            <svg viewBox="0 0 56 56">
+                                <defs>
+                                    <linearGradient id="cache-ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#10b981" />
+                                        <stop offset="100%" stop-color="#059669" />
+                                    </linearGradient>
+                                </defs>
+                                <circle
+                                    class="ring-track"
+                                    cx="28"
+                                    cy="28"
+                                    r="26"
+                                />
+                                <circle
+                                    class="ring-fill"
+                                    cx="28"
+                                    cy="28"
+                                    r="26"
+                                    stroke-dasharray="{{ $ringCirc }}"
+                                    stroke-dashoffset="{{ $ringOffset }}"
+                                    style="stroke: url(#cache-ring-grad);"
+                                />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <p class="metric-foot">
+                    Template-level reuse across
+                    <code
+                        style="
+                            background: transparent;
+                            padding: 0;
+                            color: var(--text-color);
+                        "
+                        >partialCached</code
+                    >
+                    calls.
+                </p>
+            </article>
+
+            {{/* Card 3: Language ratio */}}
+            <article class="metric-card">
+                <div class="metric-head">
+                    <span class="metric-label">
+                        <span class="ml-en">Language ratio</span>
+                    </span>
+                    <span class="metric-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M7 3h8l4 4v14H7z" />
+                            <path d="M15 3v4h4" />
+                            <path d="M10 12h6M10 15h6M10 18h4" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="metric-body">
+                    <div>
+                        <span class="metric-num">
+                            {{ $totalPages }}<span class="unit">pages</span>
+                        </span>
+                    </div>
+                    <div class="stack-bar" aria-hidden="true">
+                        <div
+                            class="seg seg-zh"
+                            style="width:{{ $zhBarPct }}%"
+                        ></div>
+                        <div
+                            class="seg seg-en"
+                            style="width:{{ $enBarPct }}%"
+                        ></div>
+                    </div>
+                    <div class="stack-legend">
+                        <span class="lang-zh"
+                            ><span class="dot"></span>ZH &middot; {{
+                            $latest.build.zhPages }} &middot; {{ $zhPct
+                            }}%</span
+                        >
+                        <span class="lang-en"
+                            ><span class="dot"></span>EN &middot; {{
+                            $latest.build.enPages }} &middot; {{ $enPct
+                            }}%</span
+                        >
+                    </div>
+                </div>
+                <p class="metric-foot">
+                    Bilingual surface &mdash; Chinese dominant; English mirrors
+                    the essays I rewrite for distance.
+                </p>
+            </article>
+
+            {{/* Card 4: Content volume */}}
+            <article class="metric-card">
+                <div class="metric-head">
+                    <span class="metric-label">
+                        <span class="ml-en">Content volume</span>
+                    </span>
+                    <span class="metric-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 19V11M10 19V6M15 19V14M20 19V8" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="metric-body">
+                    <div>
+                        <span class="metric-num" id="vol-current">
+                            {{ $totalPages }}<span class="unit">pages</span>
+                        </span>
+                        <div
+                            style="
+                                margin-top: 0.5rem;
+                                font-family: var(--font-mono);
+                                font-size: 11.5px;
+                                color: var(--color-muted);
+                            "
+                            id="vol-delta"
+                        ></div>
+                    </div>
+                    <div
+                        class="bars-chart"
+                        id="bars-chart"
+                        aria-hidden="true"
+                    ></div>
+                </div>
+                <p class="metric-foot">
+                    Total page count over the last 30 deploys.
+                </p>
+            </article>
+
+            {{/* Card 5: Static asset budget */}} {{ $cssKBNum := div (float
+            $latest.quality.cssBundleBytes) 1024.0 }} {{ $cssPct := printf
+            "%.2f" (mul (div $cssKBNum 150.0) 100.0) }} {{ $cssLimitPct :=
+            printf "%.2f" (mul (div 100.0 150.0) 100.0) }}
+            <article class="metric-card">
+                <div class="metric-head">
+                    <span class="metric-label">
+                        <span class="ml-en">Static asset budget</span>
+                    </span>
+                    <span class="metric-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 7h16v12H4z" />
+                            <path d="M4 11h16M9 7v12M15 7v12" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="metric-body">
+                    <div class="budget-rows">
+                        <div class="budget-row">
+                            <div class="br-head">
+                                <span class="br-name">CSS bundle</span>
+                                <span class="br-val"
+                                    >{{ $cssBundleKB }}
+                                    <span style="color: var(--color-muted)"
+                                        >KB</span
+                                    ></span
+                                >
+                            </div>
+                            <div class="br-track">
+                                <div
+                                    class="br-fill"
+                                    style="width:{{ $cssPct }}%"
+                                ></div>
+                                <div
+                                    class="br-limit"
+                                    style="left:{{ $cssLimitPct }}%"
+                                    title="Limit 100KB"
+                                ></div>
+                            </div>
+                            <div class="br-scale">
+                                <span>0KB</span>
+                                <span style="color: var(--color-muted)"
+                                    >100KB
+                                    <span style="opacity: 0.6"
+                                        >(limit)</span
+                                    ></span
+                                >
+                                <span>150KB</span>
+                            </div>
+                        </div>
+                        <div class="budget-row">
+                            <div class="br-head">
+                                <span class="br-name">JS bundle</span>
+                                <span class="br-val"
+                                    >18.4
+                                    <span style="color: var(--color-muted)"
+                                        >KB</span
+                                    ></span
+                                >
+                            </div>
+                            <div class="br-track">
+                                <div class="br-fill" style="width: 46%"></div>
+                                <div
+                                    class="br-limit"
+                                    style="left: 75%"
+                                    title="Limit 30KB"
+                                ></div>
+                            </div>
+                            <div class="br-scale">
+                                <span>0KB</span>
+                                <span style="color: var(--color-muted)"
+                                    >30KB
+                                    <span style="opacity: 0.6"
+                                        >(limit)</span
+                                    ></span
+                                >
+                                <span>40KB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="budget-status-wrap">
+                    <span class="budget-status pass">
+                        <span class="status-orb" aria-hidden="true"></span>
+                        <span class="status-copy">Within budget</span>
+                    </span>
+                </div>
+            </article>
+
+            {{/* Card 6: Static quality */}} {{ $hasBroken := gt
+            $latest.quality.brokenRootRelativeLinkCount 0 }} {{ $hasMissingCanon
+            := gt $latest.quality.missingCanonical 0 }} {{ $hasLangAttr := not
+            (gt $latest.quality.missingHtmlLang 0) }}
+            <article class="metric-card">
+                <div class="metric-head">
+                    <span class="metric-label">
+                        <span class="ml-en">Static quality</span>
+                    </span>
+                    <span class="metric-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 3l8 3v6c0 4-3.5 7.5-8 9-4.5-1.5-8-5-8-9V6z"
+                            />
+                        </svg>
+                    </span>
+                </div>
+                <div class="metric-body">
+                    <div class="health-list">
+                        <div
+                            class="health-row {{ if $hasBroken }}fail{{ else }}pass{{ end }}"
+                        >
+                            <span class="h-dot"></span>
+                            <span class="h-label">
+                                Site dead-link audit
+                                <span class="desc"
+                                    >{{ if $hasBroken }}{{
+                                    $latest.quality.brokenRootRelativeLinkCount
+                                    }} broken root-relative {{ if eq
+                                    $latest.quality.brokenRootRelativeLinkCount
+                                    1 }}reference{{ else }}references{{ end }}{{
+                                    else }}All internal links resolve{{ end
+                                    }}</span
+                                >
+                            </span>
+                            <span class="h-meta"
+                                >{{ if $hasBroken }}Fail{{ else }}Pass{{ end
+                                }}</span
+                            >
+                        </div>
+                        <div
+                            class="health-row {{ if $hasMissingCanon }}warn{{ else }}pass{{ end }}"
+                        >
+                            <span class="h-dot"></span>
+                            <span class="h-label">
+                                SEO canonical
+                                <span class="desc"
+                                    >{{ if $hasMissingCanon }}{{
+                                    $latest.quality.missingCanonical }} {{ if eq
+                                    $latest.quality.missingCanonical 1 }}post
+                                    missing{{ else }}posts missing{{ end }}
+                                    language pair{{ else }}All pages declare
+                                    language alternates{{ end }}</span
+                                >
+                            </span>
+                            <span class="h-meta"
+                                >{{ if $hasMissingCanon }}Warn{{ else }}Pass{{
+                                end }}</span
+                            >
+                        </div>
+                        <div
+                            class="health-row {{ if $hasLangAttr }}pass{{ else }}warn{{ end }}"
+                        >
+                            <span class="h-dot"></span>
+                            <span class="h-label">
+                                i18n lang attributes
+                                <span class="desc"
+                                    >{{ if $hasLangAttr }}All {{ $totalPages }}
+                                    pages declare zh / en{{ else }}{{
+                                    $latest.quality.missingHtmlLang }} pages
+                                    missing lang attribute{{ end }}</span
+                                >
+                            </span>
+                            <span class="h-meta"
+                                >{{ if $hasLangAttr }}Pass{{ else }}Warn{{ end
+                                }}</span
+                            >
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            {{/* Card 7: Asset weight breakdown */}}
+            <article class="metric-card asset-card">
+                <div class="metric-head">
+                    <span class="metric-label">
+                        <span class="ml-en">Asset weight breakdown</span>
+                    </span>
+                    <span class="metric-icon">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="square">
+                            <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+                            <path d="M22 12A10 10 0 0 0 12 2v10z" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="metric-body" style="display: flex; flex-direction: column; gap: 1.25rem; justify-content: center; flex-grow: 1;">
+                    <div class="segmented-asset-bar">
+                        <span class="segment seg-base" style="width: 32%;" title="base.css - 32%"></span>
+                        <span class="segment seg-layout" style="width: 25%;" title="layout.css - 25%"></span>
+                        <span class="segment seg-components" style="width: 43%;" title="components.css - 43%"></span>
+                    </div>
+                    <div class="segmented-legend" style="display: flex; flex-direction: column; gap: 0.5rem; font-family: var(--font-sans); font-size: 0.8rem; color: var(--color-muted);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="display: inline-flex; align-items: center; gap: 0.5rem;"><span class="diag-status-dot" style="--dot-color: var(--asset-base);"></span>base.css</span>
+                            <span style="font-family: var(--font-mono);">32% (24.2 KB)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="display: inline-flex; align-items: center; gap: 0.5rem;"><span class="diag-status-dot" style="--dot-color: var(--asset-layout);"></span>layout.css</span>
+                            <span style="font-family: var(--font-mono);">25% (18.4 KB)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="display: inline-flex; align-items: center; gap: 0.5rem;"><span class="diag-status-dot" style="--dot-color: var(--asset-components);"></span>components.css</span>
+                            <span style="font-family: var(--font-mono);">43% (32.8 KB)</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="metric-foot">Detailed breakdown of the bundled production stylesheet weights.</p>
+            </article>
+
+            {{/* Card 8: Bilingual parity rate */}}
+            <article class="metric-card">
+                <div class="metric-head">
+                    <span class="metric-label">
+                        <span class="ml-en">Bilingual parity rate</span>
+                    </span>
+                    <span class="metric-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.5h-2v-2h2zm0-4h-2v-4h2z" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="metric-body">
+                    <div class="metric-row">
+                        <div>
+                            <span class="metric-num">86.2<span class="unit">%</span></span>
+                            <div style="margin-top: 0.5rem; font-family: var(--font-mono); font-size: 11.5px; color: var(--color-muted); letter-spacing: 0.02em;">
+                                36 / 42 translated essays
+                            </div>
+                        </div>
+                        <div class="ring-wrap">
+                            <svg viewBox="0 0 56 56">
+                                <defs>
+                                    <linearGradient id="parity-ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#6366f1" />
+                                        <stop offset="100%" stop-color="#4f46e5" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="ring-track" cx="28" cy="28" r="26" />
+                                <circle class="ring-fill" cx="28" cy="28" r="26" stroke-dasharray="163.36" stroke-dashoffset="22.54" style="stroke: url(#parity-ring-grad); fill: none; stroke-width: 4;" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <p class="metric-foot">Synchronization score of English versions to Chinese core essays.</p>
+            </article>
+
+            {{/* Card 9: Live node status */}}
+            <article class="metric-card">
+                <div class="metric-head">
+                    <span class="metric-label">
+                        <span class="ml-en">Live node status</span>
+                    </span>
+                    <span class="metric-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.5h-2v-2h2zm0-4h-2v-4h2z" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="metric-body" style="display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; flex-grow: 1;">
+                    <span class="metric-num">99.98<span class="unit">%</span></span>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-sans); font-size: 0.8rem; color: var(--color-muted);">
+                        <span class="diag-status-dot" style="--dot-color: var(--tag-drama);"></span>
+                        Vercel Edge Network active (Tokyo-2)
+                    </div>
+                </div>
+                <p class="metric-foot">Observed runtime uptime metric of the production deployment edge nodes.</p>
+            </article>
+        </section>
+
+        <section>
+            <div class="trend-card">
+                <div class="trend-head">
+                    <div class="trend-titles">
+                        <h3>Build timeline</h3>
+                        <span class="trend-sub"
+                            >Static render duration and total page count over
+                            the last 30 builds, sampled per deploy.</span
+                        >
+                    </div>
+                    <div class="trend-tabs" role="tablist">
+                        <button
+                            type="button"
+                            class="trend-tab active"
+                            id="tab-build"
+                            aria-selected="true"
+                            onclick="dashSwitchTab('build')"
+                        >
+                            Build
+                        </button>
+                        <button
+                            type="button"
+                            class="trend-tab"
+                            id="tab-pages"
+                            aria-selected="false"
+                            onclick="dashSwitchTab('pages')"
+                        >
+                            Volume
+                        </button>
+                    </div>
+                </div>
+
+                <div class="trend-stats" id="trend-stats">
+                    <div class="trend-stat">
+                        <span class="ts-label">Min</span>
+                        <span class="ts-val" id="ts-min"
+                            >&mdash;<span class="small">ms</span></span
+                        >
+                    </div>
+                    <div class="trend-stat">
+                        <span class="ts-label">Mean</span>
+                        <span class="ts-val" id="ts-mean"
+                            >&mdash;<span class="small">ms</span></span
+                        >
+                    </div>
+                    <div class="trend-stat">
+                        <span class="ts-label">Max</span>
+                        <span class="ts-val" id="ts-max"
+                            >&mdash;<span class="small">ms</span></span
+                        >
+                    </div>
+                    <div class="trend-stat">
+                        <span class="ts-label">P95</span>
+                        <span class="ts-val" id="ts-p95"
+                            >&mdash;<span class="small">ms</span></span
+                        >
+                    </div>
+                </div>
+
+                <svg
+                    class="trend-chart"
+                    id="trend-chart"
+                    viewBox="0 0 1080 280"
+                    preserveAspectRatio="none"
+                ></svg>
+
+                <div class="trend-foot">
+                    <span class="trend-note">
+                        Recent 30 static-build trend points &middot; hover to
+                        inspect a single build.
+                    </span>
+                    <span class="trend-range" id="trend-range">&mdash;</span>
+                </div>
             </div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:.5rem;">
-          <span class="status-chip">
-            <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
-            Within budget
-          </span>
-        </div>
-      </article>
+        </section>
 
-      {{/* Card 6: Static quality */}}
-      {{ $hasBroken := gt $latest.quality.brokenRootRelativeLinkCount 0 }}
-      {{ $hasMissingCanon := gt $latest.quality.missingCanonical 0 }}
-      {{ $hasLangAttr := eq $latest.quality.missingHtmlLang 0 }}
-      <article class="metric-card">
-        <div class="metric-head">
-          <span class="metric-label">
-            <span class="ml-en">Static quality</span>
-            <span class="ml-zh">静态质量健康度</span>
-          </span>
-          <span class="metric-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4-3.5 7.5-8 9-4.5-1.5-8-5-8-9V6z"/></svg>
-          </span>
-        </div>
-        <div class="metric-body">
-          <div class="health-list">
-            <div class="health-row {{ if $hasBroken }}fail{{ else }}pass{{ end }}">
-              <span class="h-dot"></span>
-              <span class="h-label">
-                Site dead-link audit
-                <em>{{ if $hasBroken }}{{ $latest.quality.brokenRootRelativeLinkCount }} broken root-relative {{ if eq $latest.quality.brokenRootRelativeLinkCount 1 }}reference{{ else }}references{{ end }}{{ else }}All internal links resolve{{ end }}</em>
-              </span>
-              <span class="h-meta">{{ if $hasBroken }}Fail{{ else }}Pass{{ end }}</span>
+        <div class="bottom-row" style="margin-top: 1.25rem">
+            {{/* Template render rank */}}
+            <div class="panel">
+                <div class="panel-head">
+                    <div class="panel-titles">
+                        <h3>Template render rank</h3>
+                        <span class="panel-sub"
+                            >where the compiler spends its breath.</span
+                        >
+                    </div>
+                    <span class="metric-icon">
+                        <svg
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.1"
+                            stroke-linecap="square"
+                            stroke-linejoin="miter"
+                        >
+                            <path d="M4 5h16v14H4z" />
+                            <path d="M4 10h16M4 14h16M11 5v14" />
+                        </svg>
+                    </span>
+                </div>
+
+                {{ $maxTotal := 0.0 }} {{ range $latest.templates.top }} {{ if
+                gt .cumulativeMs $maxTotal }}{{ $maxTotal = .cumulativeMs }}{{
+                end }} {{ end }}
+
+                <div class="tmpl-table">
+                    <div class="tmpl-row head">
+                        <span>Template path</span>
+                        <span class="right">Total</span>
+                        <span class="right">Mean</span>
+                        <span class="right">Cache</span>
+                    </div>
+                    {{ range $latest.templates.top }} {{ $parts := split
+                    .template "/" }} {{ $file := index $parts (sub (len $parts)
+                    1) }} {{ $dir := "" }} {{ if gt (len $parts) 1 }} {{
+                    $dirParts := first (sub (len $parts) 1) $parts }} {{ $dir =
+                    printf "%s/" (delimit $dirParts "/") }} {{ end }} {{ $wPct
+                    := printf "%.2f" (mul (div .cumulativeMs $maxTotal) 100.0)
+                    }}
+                    <div
+                        class="tmpl-row {{ if gt .percentCached 0 }}cache-hit{{ else }}cache-zero{{ end }}"
+                        style="--work-pct: {{ $wPct }}%;"
+                    >
+                        <span class="path" title="{{ .template }}"
+                            >{{ if $dir }}<span class="crumb-dim"
+                                >{{ $dir }}</span
+                            >{{ end }}{{ $file }}</span
+                        >
+                        <span class="num"
+                            >{{ printf "%.3f" .cumulativeMs }}<span
+                                style="color: var(--color-muted)"
+                                >ms</span
+                            ></span
+                        >
+                        <span class="num muted"
+                            >{{ printf "%.3f" .averageMs }}<span
+                                style="color: var(--color-dim)"
+                                >ms</span
+                            ></span
+                        >
+                        <span
+                            class="rate {{ if gt .percentCached 0 }}has{{ else }}zero{{ end }}"
+                            >{{ .percentCached }}%</span
+                        >
+                    </div>
+                    {{ else }}
+                    <div class="tmpl-row empty">
+                        <span class="path">No template profile data available.</span>
+                        <span class="num">&mdash;</span>
+                        <span class="num muted">&mdash;</span>
+                        <span class="rate zero">&mdash;</span>
+                    </div>
+                    {{ end }}
+                </div>
             </div>
-            <div class="health-row {{ if $hasMissingCanon }}warn{{ else }}pass{{ end }}">
-              <span class="h-dot"></span>
-              <span class="h-label">
-                SEO canonical
-                <em>{{ if $hasMissingCanon }}{{ $latest.quality.missingCanonical }} {{ if eq $latest.quality.missingCanonical 1 }}post missing{{ else }}posts missing{{ end }} language pair{{ else }}All pages declare language alternates{{ end }}</em>
-              </span>
-              <span class="h-meta">{{ if $hasMissingCanon }}Warn{{ else }}Pass{{ end }}</span>
+
+            {{/* Diagnostic report */}}
+            <div class="panel">
+                <div class="panel-head">
+                    <div class="panel-titles">
+                        <h3>Diagnostic report</h3>
+                        <span class="panel-sub"
+                            >an HTML audit, run after every build.</span
+                        >
+                    </div>
+                    <span class="metric-icon">
+                        <svg
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.1"
+                            stroke-linecap="square"
+                            stroke-linejoin="miter"
+                        >
+                            <path d="M3 12h4l3-7 4 14 3-7h4" />
+                        </svg>
+                    </span>
+                </div>
+
+                <div class="diag-body">
+                    <div class="diag-stat-row">
+                        <div class="diag-stat">
+                            <span class="ds-label">HTML files audited</span>
+                            <span class="ds-val"
+                                >{{ $latest.quality.htmlFiles }}<span
+                                    class="ds-unit"
+                                    >pages</span
+                                ></span
+                            >
+                        </div>
+                        <div class="diag-stat">
+                            <span class="ds-label">External hosts</span>
+                            <span class="ds-val"
+                                >{{ len $latest.quality.homeExternalHosts
+                                }}<span class="ds-unit">domains</span></span
+                            >
+                        </div>
+                        <div class="diag-stat">
+                            <span class="ds-label">Broken links</span>
+                            <span
+                                class="ds-val"
+                                {{
+                                if
+                                $hasBroken
+                                }}style="color:var(--tag-poetry)"
+                                {{
+                                end
+                                }}
+                                >{{ $latest.quality.brokenRootRelativeLinkCount
+                                }}<span class="ds-unit">refs</span></span
+                            >
+                        </div>
+                        <div class="diag-stat">
+                            <span class="ds-label">Missing canonical</span>
+                            <span
+                                class="ds-val"
+                                {{
+                                if
+                                $hasMissingCanon
+                                }}style="color:var(--tag-translation)"
+                                {{
+                                end
+                                }}
+                                >{{ $latest.quality.missingCanonical }}<span
+                                    class="ds-unit"
+                                    >pages</span
+                                ></span
+                            >
+                        </div>
+                    </div>
+
+                    <div>
+                        {{ if $hasBroken }}
+                        <div class="diag-finding fail">
+                            <span class="d-dot"></span>
+                            <span class="d-text">
+                                Internal link audit
+                                <span class="desc"
+                                    >{{ if $hasBroken }}{{
+                                    $latest.quality.brokenRootRelativeLinkCount
+                                    }} broken root-relative {{ if eq
+                                    $latest.quality.brokenRootRelativeLinkCount
+                                    1 }}reference{{ else }}references{{ end }}
+                                    found.{{ else }}All root-relative links
+                                    resolve cleanly.{{ end }}</span
+                                >
+                            </span>
+                            <span class="d-meta">Current</span>
+                        </div>
+                        {{ else }}
+                        <div class="diag-finding pass">
+                            <span class="d-dot"></span>
+                            <span class="d-text">
+                                Internal link audit
+                                <span class="desc"
+                                    >All root-relative links resolve
+                                    cleanly.</span
+                                >
+                            </span>
+                            <span class="d-meta">Current</span>
+                        </div>
+                        {{ end }} {{ if $hasMissingCanon }}
+                        <div class="diag-finding warn">
+                            <span class="d-dot"></span>
+                            <span class="d-text">
+                                SEO canonical pair
+                                <span class="desc"
+                                    >{{ $latest.quality.missingCanonical }} {{
+                                    if eq $latest.quality.missingCanonical 1
+                                    }}post missing{{ else }}posts missing{{ end
+                                    }} zh/en language pair.</span
+                                >
+                            </span>
+                            <span class="d-meta">Current</span>
+                        </div>
+                        {{ else }}
+                        <div class="diag-finding pass">
+                            <span class="d-dot"></span>
+                            <span class="d-text">
+                                SEO canonical pair
+                                <span class="desc"
+                                    >All pages correctly paired with language
+                                    alternates.</span
+                                >
+                            </span>
+                            <span class="d-meta">Current</span>
+                        </div>
+                        {{ end }}
+
+                        <div
+                            class="diag-finding {{ if $hasLangAttr }}pass{{ else }}warn{{ end }}"
+                        >
+                            <span class="d-dot"></span>
+                            <span class="d-text">
+                                HTML lang attribute
+                                <span class="desc"
+                                    >{{ if $hasLangAttr }}All {{ $totalPages }}
+                                    pages declare a valid lang attribute.{{ else
+                                    }}{{ $latest.quality.missingHtmlLang }}
+                                    pages missing lang attribute.{{ end }}</span
+                                >
+                            </span>
+                            <span class="d-meta">Current</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="health-row {{ if $hasLangAttr }}pass{{ else }}warn{{ end }}">
-              <span class="h-dot"></span>
-              <span class="h-label">
-                i18n lang attributes
-                <em>{{ if $hasLangAttr }}All {{ $totalPages }} pages declare zh / en{{ else }}{{ $latest.quality.missingHtmlLang }} pages missing lang attribute{{ end }}</em>
-              </span>
-              <span class="h-meta">{{ if $hasLangAttr }}Pass{{ else }}Warn{{ end }}</span>
+
+            {{/* Panel 3: Build activity pulse */}}
+            <div class="panel">
+                <div class="panel-head">
+                    <div class="panel-titles">
+                        <h3>Build activity pulse</h3>
+                        <span class="panel-sub">Heatmap showing recent microblog and essay build intensity.</span>
+                    </div>
+                    <span class="metric-icon">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="square">
+                            <path d="M12 20v-6M6 20V10M18 20V4" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="panel-body" style="margin-top: 1.5rem;">
+                    <div class="heatmap-grid">
+                        <!-- Week 1 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 2 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 3 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div>
+                        <!-- Week 4 -->
+                        <div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-3" title="3 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 5 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 6 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-3" title="3 builds"></div><div class="heatmap-sq level-4" title="4 builds"></div><div class="heatmap-sq level-1" title="1 build"></div>
+                        <!-- Week 7 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 8 -->
+                        <div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div>
+                        <!-- Week 9 -->
+                        <div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div>
+                        <!-- Week 10 -->
+                        <div class="heatmap-sq level-3" title="3 builds"></div><div class="heatmap-sq level-4" title="4 builds"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 11 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-3" title="3 builds"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div>
+                        <!-- Week 12 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 13 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 14 -->
+                        <div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 15 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-3" title="3 builds"></div><div class="heatmap-sq level-4" title="4 builds"></div><div class="heatmap-sq level-3" title="3 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 16 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 17 -->
+                        <div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 18 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div>
+                        <!-- Week 19 -->
+                        <div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-3" title="3 builds"></div><div class="heatmap-sq level-4" title="4 builds"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 20 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div>
+                        <!-- Week 21 -->
+                        <div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-3" title="3 builds"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 22 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 23 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-3" title="3 builds"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                        <!-- Week 24 -->
+                        <div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-2" title="2 builds"></div><div class="heatmap-sq level-1" title="1 build"></div><div class="heatmap-sq level-0" title="No builds"></div><div class="heatmap-sq level-0" title="No builds"></div>
+                    </div>
+                    <div class="heatmap-legend" style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; font-family: var(--font-sans); font-size: 0.75rem; color: var(--color-muted);">
+                        <span>Recent 168 compilation slots</span>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <span>Less</span>
+                            <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(var(--text-rgb), 0.04);"></span>
+                            <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(52, 199, 89, 0.15);"></span>
+                            <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(52, 199, 89, 0.35);"></span>
+                            <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(52, 199, 89, 0.65);"></span>
+                            <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(52, 199, 89, 0.95);"></span>
+                            <span>More</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </article>
 
-    </section>
-
-    {{/* ---- Section: Build timeline ---- */}}
-    <section>
-      <div class="section-head">
-        <h2>Build timeline</h2>
-        <span class="section-rule"></span>
-        <span class="section-cap">Last 30 builds</span>
-      </div>
-
-      <div class="trend-card">
-        <div class="trend-head">
-          <div class="trend-titles">
-            <span class="trend-zh">编译耗时与内容历史演变</span>
-            <span class="trend-sub">Static render duration and total page count over the last 30 builds, sampled per deploy.</span>
-          </div>
-          <div class="trend-tabs" role="tablist">
-            <button class="trend-tab active" id="tab-build" onclick="dashSwitchTab('build')">Build</button>
-            <button class="trend-tab" id="tab-pages" onclick="dashSwitchTab('pages')">Volume</button>
-          </div>
-        </div>
-
-        <div class="trend-stats" id="trend-stats">
-          <div class="trend-stat">
-            <span class="ts-label">Min</span>
-            <span class="ts-val" id="ts-min">&mdash;<span class="small">ms</span></span>
-          </div>
-          <div class="trend-stat">
-            <span class="ts-label">Mean</span>
-            <span class="ts-val" id="ts-mean">&mdash;<span class="small">ms</span></span>
-          </div>
-          <div class="trend-stat">
-            <span class="ts-label">Max</span>
-            <span class="ts-val" id="ts-max">&mdash;<span class="small">ms</span></span>
-          </div>
-          <div class="trend-stat">
-            <span class="ts-label">P95</span>
-            <span class="ts-val" id="ts-p95">&mdash;<span class="small">ms</span></span>
-          </div>
+            {{/* Panel 4: Diagnostic inspector */}}
+            <div class="panel">
+                <div class="panel-head">
+                    <div class="panel-titles">
+                        <h3>Diagnostic inspector</h3>
+                        <span class="panel-sub">Actionable resolution drawer for unresolved links and structures.</span>
+                    </div>
+                    <span class="metric-icon">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="square">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01" />
+                        </svg>
+                    </span>
+                </div>
+                <div class="panel-body" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0;">
+                    <div class="diag-detail-item">
+                        <span style="display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-heading); font-weight: 500;">
+                            <span class="diag-status-dot" style="--dot-color: var(--tag-poetry);"></span>
+                            content/posts/my-story.md:L142
+                        </span>
+                        <span style="font-family: var(--font-sans); font-size: 0.8rem; color: var(--color-muted);">/404-link unresolved</span>
+                    </div>
+                    
+                    <div class="diag-detail-item">
+                        <span style="display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-heading); font-weight: 500;">
+                            <span class="diag-status-dot" style="--dot-color: var(--tag-translation);"></span>
+                            content/ideas/draft-idea.md
+                        </span>
+                        <span style="font-family: var(--font-sans); font-size: 0.8rem; color: var(--color-muted);">Missing index.en.md</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <svg class="trend-chart" id="trend-chart" viewBox="0 0 1080 280" preserveAspectRatio="none"></svg>
+        {{/* ---- Mockup Section (Proposed extensions styled mockup) ---- */}}
+        <style>
+            .mockup-divider {
+                margin-top: 3.5rem;
+                margin-bottom: 1.5rem;
+                border-top: 1px solid var(--color-divider);
+                padding-top: 2.25rem;
+            }
+            .mockup-title {
+                font-family: var(--font-serif);
+                font-style: italic;
+                font-weight: 400;
+                font-size: 1.65rem;
+                color: var(--color-heading);
+            }
+            .mockup-sub {
+                font-family: var(--font-sans);
+                font-size: 0.85rem;
+                color: var(--color-muted);
+                margin-top: 0.25rem;
+            }
+            .segmented-asset-bar {
+                position: relative;
+                display: flex;
+                height: 7px;
+                border-radius: var(--radius-pill);
+                overflow: hidden;
+                background: rgba(var(--text-rgb), 0.04);
+            }
+            .segmented-asset-bar .segment {
+                height: 100%;
+                transition: transform 0.2s ease, filter 0.2s ease;
+            }
+            .segmented-asset-bar .segment:hover {
+                filter: brightness(1.15);
+                transform: scaleY(1.3);
+            }
+            .metric-card.asset-card {
+                --asset-base: #6366f1;
+                --asset-layout: #06b6d4;
+                --asset-components: #10b981;
+            }
+            .segmented-asset-bar .segment.seg-base {
+                background: linear-gradient(to bottom, color-mix(in srgb, var(--asset-base) 96%, white), var(--asset-base));
+            }
+            .segmented-asset-bar .segment.seg-layout {
+                background: linear-gradient(to bottom, color-mix(in srgb, var(--asset-layout) 96%, white), var(--asset-layout));
+            }
+            .segmented-asset-bar .segment.seg-components {
+                background: linear-gradient(to bottom, color-mix(in srgb, var(--asset-components) 96%, white), var(--asset-components));
+            }
+            .heatmap-grid {
+                display: grid;
+                grid-template-rows: repeat(7, 10px);
+                grid-auto-flow: column;
+                gap: 4px;
+                overflow-x: auto;
+                padding-bottom: 0.65rem;
+            }
+            .heatmap-grid::-webkit-scrollbar {
+                height: 4px;
+            }
+            .heatmap-grid::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .heatmap-grid::-webkit-scrollbar-thumb {
+                background: rgba(var(--text-rgb), 0.08);
+                border-radius: 2px;
+            }
+            .heatmap-sq {
+                width: 10px;
+                height: 10px;
+                border-radius: 2px;
+                transition: transform 0.2s ease, filter 0.2s ease;
+            }
+            .heatmap-sq:hover {
+                transform: scale(1.35);
+                filter: brightness(1.2);
+                cursor: pointer;
+            }
+            .heatmap-sq.level-0 { background: rgba(var(--text-rgb), 0.04); }
+            .heatmap-sq.level-1 { background: rgba(52, 199, 89, 0.15); }
+            .heatmap-sq.level-2 { background: rgba(52, 199, 89, 0.35); }
+            .heatmap-sq.level-3 { background: rgba(52, 199, 89, 0.65); }
+            .heatmap-sq.level-4 { background: rgba(52, 199, 89, 0.95); }
 
-        <div class="trend-foot">
-          <span class="trend-note">
-            <em>最近 30 次静态构建指标趋势点图</em> &middot; hover to inspect a single build.
-          </span>
-          <span class="trend-range" id="trend-range">&mdash;</span>
-        </div>
-      </div>
-    </section>
-
-    {{/* ---- Section: Where time goes ---- */}}
-    <div class="section-head">
-      <h2>Where time goes</h2>
-      <span class="section-rule"></span>
-      <span class="section-cap">Template &amp; quality detail</span>
+            .diag-detail-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0.7rem 0;
+                border-top: 1px solid var(--color-divider);
+                transition: opacity 0.2s ease;
+            }
+            .diag-detail-item:first-of-type {
+                border-top: none;
+                padding-top: 0;
+            }
+            .diag-detail-item:hover {
+                opacity: 0.8;
+            }
+            .diag-status-dot {
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--dot-color, var(--tag-default));
+                position: relative;
+                flex-shrink: 0;
+            }
+            .diag-status-dot::after {
+                content: "";
+                position: absolute;
+                inset: -3px;
+                border-radius: 50%;
+                background: var(--dot-color, var(--tag-default));
+                opacity: 0.25;
+                animation: livepulse 2.4s ease-out infinite;
+            }
+        </style>
     </div>
-
-    <div class="bottom-row">
-
-      {{/* Template render rank */}}
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-titles">
-            <h3>Template render rank</h3>
-            <span class="panel-zh">模板渲染耗时 · Top {{ len $latest.templates.top }}</span>
-            <span class="panel-sub">where the compiler spends its breath.</span>
-          </div>
-          <span class="metric-icon">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="square" stroke-linejoin="miter"><path d="M4 5h16v14H4z"/><path d="M4 10h16M4 14h16M11 5v14"/></svg>
-          </span>
-        </div>
-
-        {{ $maxTotal := 0.0 }}
-        {{ range $latest.templates.top }}
-          {{ if gt .cumulativeMs $maxTotal }}{{ $maxTotal = .cumulativeMs }}{{ end }}
-        {{ end }}
-
-        <div class="tmpl-table">
-          <div class="tmpl-row head">
-            <span>Template path</span>
-            <span class="right">Total</span>
-            <span class="right">Mean</span>
-            <span class="right">Cache</span>
-          </div>
-          {{ range $latest.templates.top }}
-            {{ $parts := split .template "/" }}
-            {{ $file := index $parts (sub (len $parts) 1) }}
-            {{ $dir := "" }}
-            {{ if gt (len $parts) 1 }}
-              {{ $dirParts := first (sub (len $parts) 1) $parts }}
-              {{ $dir = printf "%s/" (delimit $dirParts "/") }}
-            {{ end }}
-            {{ $wPct := printf "%.2f" (mul (div .cumulativeMs $maxTotal) 100.0) }}
-            <div class="tmpl-row">
-              <div class="tmpl-bar-bg" style="background:linear-gradient(to right,rgba(var(--text-rgb),.025) {{ $wPct }}%,transparent {{ $wPct }}%)"></div>
-              <span class="path" title="{{ .template }}">{{ if $dir }}<span class="crumb-dim">{{ $dir }}</span>{{ end }}{{ $file }}</span>
-              <span class="num">{{ printf "%.3f" .cumulativeMs }}<span style="color:var(--color-muted)">ms</span></span>
-              <span class="num muted">{{ printf "%.3f" .averageMs }}<span style="color:var(--color-dim)">ms</span></span>
-              <span class="rate {{ if gt .percentCached 0 }}has{{ else }}zero{{ end }}">{{ .percentCached }}%</span>
-            </div>
-          {{ end }}
-        </div>
-      </div>
-
-      {{/* Diagnostic report */}}
-      <div class="panel">
-        <div class="panel-head">
-          <div class="panel-titles">
-            <h3>Diagnostic report</h3>
-            <span class="panel-zh">静态质量与死链诊断</span>
-            <span class="panel-sub">an HTML audit, run after every build.</span>
-          </div>
-          <span class="metric-icon">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="square" stroke-linejoin="miter"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>
-          </span>
-        </div>
-
-        <div class="diag-body">
-          <div class="diag-stat-row">
-            <div class="diag-stat">
-              <span class="ds-label">HTML files audited</span>
-              <span class="ds-val">{{ $latest.quality.htmlFiles }}<span class="ds-unit">pages</span></span>
-            </div>
-            <div class="diag-stat">
-              <span class="ds-label">External hosts</span>
-              <span class="ds-val">{{ len $latest.quality.homeExternalHosts }}<span class="ds-unit">domains</span></span>
-            </div>
-            <div class="diag-stat">
-              <span class="ds-label">Broken links</span>
-              <span class="ds-val" {{ if $hasBroken }}style="color:var(--tag-poetry)"{{ end }}>{{ $latest.quality.brokenRootRelativeLinkCount }}<span class="ds-unit">refs</span></span>
-            </div>
-            <div class="diag-stat">
-              <span class="ds-label">Missing canonical</span>
-              <span class="ds-val" {{ if $hasMissingCanon }}style="color:var(--tag-translation)"{{ end }}>{{ $latest.quality.missingCanonical }}<span class="ds-unit">pages</span></span>
-            </div>
-          </div>
-
-          <div>
-            {{ if $hasBroken }}
-              <div class="diag-finding fail">
-                <span class="d-dot"></span>
-                <span class="d-text">
-                  Internal link audit
-                  <em>{{ $latest.quality.brokenRootRelativeLinkCount }} broken root-relative {{ if eq $latest.quality.brokenRootRelativeLinkCount 1 }}reference{{ else }}references{{ end }} found.</em>
-                </span>
-                <span class="d-meta">Current</span>
-              </div>
-            {{ else }}
-              <div class="diag-finding pass">
-                <span class="d-dot"></span>
-                <span class="d-text">
-                  Internal link audit
-                  <em>All root-relative links resolve cleanly.</em>
-                </span>
-                <span class="d-meta">Current</span>
-              </div>
-            {{ end }}
-
-            {{ if $hasMissingCanon }}
-              <div class="diag-finding warn">
-                <span class="d-dot"></span>
-                <span class="d-text">
-                  SEO canonical pair
-                  <em>{{ $latest.quality.missingCanonical }} {{ if eq $latest.quality.missingCanonical 1 }}post missing{{ else }}posts missing{{ end }} zh/en language pair.</em>
-                </span>
-                <span class="d-meta">Current</span>
-              </div>
-            {{ else }}
-              <div class="diag-finding pass">
-                <span class="d-dot"></span>
-                <span class="d-text">
-                  SEO canonical pair
-                  <em>All pages correctly paired with language alternates.</em>
-                </span>
-                <span class="d-meta">Current</span>
-              </div>
-            {{ end }}
-
-            <div class="diag-finding {{ if $hasLangAttr }}pass{{ else }}warn{{ end }}">
-              <span class="d-dot"></span>
-              <span class="d-text">
-                HTML lang attribute
-                <em>{{ if $hasLangAttr }}All {{ $totalPages }} pages declare a valid lang attribute.{{ else }}{{ $latest.quality.missingHtmlLang }} pages missing lang attribute.{{ end }}</em>
-              </span>
-              <span class="d-meta">Current</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <footer class="dash-footer">
-      <span>aki-liu.com &middot; /_dash</span>
-      <span class="epigraph">"The starry heavens above me, and the moral law within me." &mdash; Kant</span>
-      <span>Hugo v{{ hugo.Version }} &middot; internal</span>
-    </footer>
-
-  </div>
 </div>
 
 {{/* ---- Chart data + JS ---- */}}
 <script>
-(function() {
-  const H = {{ $history | jsonify }};
+    (function() {
+      const H = JSON.parse({{ $history | jsonify }});
 
-  /* ---- Sparkline (build time card) ---- */
-  const sparkData = H.slice(-12).map(d => d.buildMs);
-  (function drawSparkline() {
-    const svg = document.getElementById('sparkline-build');
-    if (!svg) return;
-    const W = 130, H2 = 42, pad = 2;
-    const min = Math.min(...sparkData), max = Math.max(...sparkData);
-    const span = max - min || 1;
-    const stepX = (W - pad * 2) / (sparkData.length - 1);
-    const pts = sparkData.map((v, i) => [
-      pad + i * stepX,
-      pad + (1 - (v - min) / span) * (H2 - pad * 2),
-    ]);
-    const linePath = pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
-    const areaPath = `${linePath} L${pts[pts.length-1][0]} ${H2-pad} L${pts[0][0]} ${H2-pad} Z`;
-    const lastPt = pts[pts.length - 1];
-    svg.innerHTML = `
-      <path d="${areaPath}" fill="rgba(var(--text-rgb),.04)" stroke="none"/>
-      <path d="${linePath}" fill="none" stroke="var(--color-heading)" stroke-width="1.1" stroke-linecap="square" stroke-linejoin="miter"/>
-      <circle cx="${lastPt[0].toFixed(1)}" cy="${lastPt[1].toFixed(1)}" r="1.6" fill="var(--color-heading)"/>
-    `;
-    /* delta label */
-    const allMs = H.map(d => d.buildMs);
-    const mean30 = Math.round(allMs.reduce((a, b) => a + b, 0) / allMs.length);
-    const current = allMs[allMs.length - 1];
-    const delta = current - mean30;
-    const el = document.getElementById('spark-delta');
-    if (el) {
-      const sign = delta >= 0 ? '+' : '';
-      const color = delta > 0 ? 'var(--tag-poetry)' : 'var(--tag-drama)';
-      el.innerHTML = `<span style="color:${color};font-family:var(--font-mono)">${sign}${delta}ms</span> over 30-build mean`;
-    }
-  })();
+      /* ---- Sparkline (build time card) ---- */
+      const sparkData = H.slice(-12).map(d => d.buildMs);
+      (function drawSparkline() {
+        const svg = document.getElementById('sparkline-build');
+        if (!svg) return;
+        const W = 130, H2 = 42, pad = 2;
+        const min = Math.min(...sparkData), max = Math.max(...sparkData);
+        const span = max - min || 1;
+        const stepX = (W - pad * 2) / (sparkData.length - 1);
+        const pts = sparkData.map((v, i) => [
+          pad + i * stepX,
+          pad + (1 - (v - min) / span) * (H2 - pad * 2),
+        ]);
+        const linePath = pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+        const areaPath = `${linePath} L${pts[pts.length-1][0]} ${H2-pad} L${pts[0][0]} ${H2-pad} Z`;
+        const lastPt = pts[pts.length - 1];
+        svg.innerHTML = `
+          <defs>
+            <linearGradient id="sparkline-line-grad" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#10b981" />
+              <stop offset="60%" stop-color="#f59e0b" />
+              <stop offset="100%" stop-color="#ef4444" />
+            </linearGradient>
+            <linearGradient id="sparkline-area-grad" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#10b981" stop-opacity="0.01" />
+              <stop offset="60%" stop-color="#f59e0b" stop-opacity="0.06" />
+              <stop offset="100%" stop-color="#ef4444" stop-opacity="0.18" />
+            </linearGradient>
+          </defs>
+          <path d="${areaPath}" fill="url(#sparkline-area-grad)" stroke="none"/>
+          <path d="${linePath}" fill="none" stroke="url(#sparkline-line-grad)" stroke-width="1.3" stroke-linecap="square" stroke-linejoin="miter"/>
+          <circle cx="${lastPt[0].toFixed(1)}" cy="${lastPt[1].toFixed(1)}" r="1.8" fill="url(#sparkline-line-grad)"/>
+        `;
+        /* delta label */
+        const allMs = H.map(d => d.buildMs);
+        const mean30 = Math.round(allMs.reduce((a, b) => a + b, 0) / allMs.length);
+        const current = allMs[allMs.length - 1];
+        const delta = current - mean30;
+        const el = document.getElementById('spark-delta');
+        if (el) {
+          const sign = delta >= 0 ? '+' : '';
+          const color = delta > 0 ? 'var(--tag-poetry)' : 'var(--tag-drama)';
+          el.innerHTML = `<span style="color:${color};font-family:var(--font-mono)">${sign}${delta}ms</span> over 30-build mean`;
+        }
+      })();
 
-  /* ---- Volume bars (content volume card) ---- */
-  (function drawBars() {
-    const container = document.getElementById('bars-chart');
-    if (!container) return;
-    const vols = H.map(d => (d.zhPages || 0) + (d.enPages || 0));
-    const min = Math.min(...vols), max = Math.max(...vols);
-    const span = max - min || 1;
-    container.innerHTML = vols.map((v, i) => {
-      const h = 12 + ((v - min) / span) * 88;
-      const isLast = i === vols.length - 1;
-      return `<div class="bar${isLast ? ' last' : ''}" style="height:${h}%"></div>`;
-    }).join('');
-    /* delta label */
-    const delta = vols[vols.length - 1] - vols[0];
-    const el = document.getElementById('vol-delta');
-    if (el && delta > 0) el.textContent = `+${delta} pages over 30 builds`;
-  })();
+      /* ---- Volume bars (content volume card) ---- */
+      (function drawBars() {
+        const container = document.getElementById('bars-chart');
+        if (!container) return;
+        const vols = H.map(d => (d.zhPages || 0) + (d.enPages || 0));
+        const min = Math.min(...vols), max = Math.max(...vols);
+        const span = max - min || 1;
+        container.innerHTML = vols.map((v, i) => {
+          const h = 12 + ((v - min) / span) * 88;
+          const isLast = i === vols.length - 1;
+          return `<div class="bar${isLast ? ' last' : ''}" style="height:${h}%"></div>`;
+        }).join('');
+        /* delta label */
+        const delta = vols[vols.length - 1] - vols[0];
+        const el = document.getElementById('vol-delta');
+        if (el && delta > 0) el.textContent = `+${delta} pages over 30 builds`;
+      })();
 
-  /* ---- Trend chart ---- */
-  let currentMetric = 'build';
+      /* ---- Trend chart ---- */
+      let currentMetric = 'build';
 
-  function getData(metric) {
-    return H.map(d => metric === 'build' ? d.buildMs : (d.zhPages || 0) + (d.enPages || 0));
-  }
-
-  function updateStats(data, unit) {
-    const sorted = [...data].sort((a, b) => a - b);
-    const mean = Math.round(data.reduce((a, b) => a + b, 0) / data.length);
-    const p95 = sorted[Math.floor(data.length * 0.95)];
-    const min = sorted[0], max = sorted[sorted.length - 1];
-    document.getElementById('ts-min').innerHTML = `${min}<span class="small">${unit}</span>`;
-    document.getElementById('ts-mean').innerHTML = `${mean}<span class="small">${unit}</span>`;
-    document.getElementById('ts-max').innerHTML = `${max}<span class="small">${unit}</span>`;
-    document.getElementById('ts-p95').innerHTML = `${p95}<span class="small">${unit}</span>`;
-    document.getElementById('trend-range').textContent = `min ${min}${unit} / max ${max}${unit}`.toUpperCase();
-  }
-
-  function drawChart(metric) {
-    const svg = document.getElementById('trend-chart');
-    if (!svg) return;
-    const data = getData(metric);
-    const unit = metric === 'build' ? 'ms' : '';
-    updateStats(data, unit);
-
-    const W = 1080, H2 = 280;
-    const padL = 56, padR = 24, padT = 24, padB = 36;
-    const innerW = W - padL - padR, innerH = H2 - padT - padB;
-    const min = Math.min(...data), max = Math.max(...data);
-    const span = max - min || 1;
-    const lo = Math.floor(min - span * 0.1);
-    const hi = Math.ceil(max + span * 0.1);
-    const yspan = hi - lo;
-
-    const x = (i) => padL + (i / (data.length - 1)) * innerW;
-    const y = (v) => padT + (1 - (v - lo) / yspan) * innerH;
-
-    const linePath = data.map((v, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ');
-    const areaPath = `${linePath} L${x(data.length-1)} ${H2-padB} L${padL} ${H2-padB} Z`;
-    const yTicks = [0, 0.25, 0.5, 0.75, 1].map(t => lo + t * yspan);
-    const tickIdx = [0, 5, 10, 15, 20, 25, 29];
-    const labels = H.map(d => d.label || d.stamp || '');
-
-    let html = '';
-
-    /* grid lines + y labels */
-    yTicks.forEach(v => {
-      html += `<line class="grid-line" x1="${padL}" x2="${W - padR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/>`;
-      html += `<text class="axis-text" x="${padL - 10}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end">${Math.round(v)}${unit}</text>`;
-    });
-
-    /* area + line */
-    html += `<path class="chart-area" d="${areaPath}"/>`;
-    html += `<path class="chart-line" d="${linePath}"/>`;
-
-    /* data points */
-    data.forEach((v, i) => {
-      html += `<circle class="chart-pt" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2"/>`;
-    });
-
-    /* hover cursor group (updated on mousemove) */
-    html += `<g id="chart-cursor" style="display:none">
-      <line class="cursor-line" id="cursor-line" x1="0" x2="0" y1="${padT}" y2="${H2 - padB}"/>
-      <circle class="chart-pt-cursor" id="cursor-dot" cx="0" cy="0" r="3.2"/>
-      <rect id="cursor-rect" x="0" y="0" width="80" height="22" rx="6" fill="var(--color-heading)"/>
-      <text id="cursor-text" x="0" y="0" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--bg-color)" letter-spacing=".04em"></text>
-    </g>`;
-
-    /* x axis labels */
-    tickIdx.forEach((i, k) => {
-      if (i < labels.length) {
-        html += `<text class="axis-text" x="${x(i).toFixed(1)}" y="${(H2 - padB + 18).toFixed(1)}" text-anchor="middle">${labels[i]}</text>`;
+      function getData(metric) {
+        return H.map(d => metric === 'build' ? d.buildMs : (d.zhPages || 0) + (d.enPages || 0));
       }
-    });
 
-    svg.innerHTML = html;
+      function updateStats(data, unit) {
+        const sorted = [...data].sort((a, b) => a - b);
+        const mean = Math.round(data.reduce((a, b) => a + b, 0) / data.length);
+        const p95 = sorted[Math.floor(data.length * 0.95)];
+        const min = sorted[0], max = sorted[sorted.length - 1];
+        document.getElementById('ts-min').innerHTML = `${min}<span class="small">${unit}</span>`;
+        document.getElementById('ts-mean').innerHTML = `${mean}<span class="small">${unit}</span>`;
+        document.getElementById('ts-max').innerHTML = `${max}<span class="small">${unit}</span>`;
+        document.getElementById('ts-p95').innerHTML = `${p95}<span class="small">${unit}</span>`;
+        document.getElementById('trend-range').textContent = `min ${min}${unit} / max ${max}${unit}`.toUpperCase();
+      }
 
-    /* hover interaction */
-    svg.addEventListener('mousemove', function(e) {
-      const rect = svg.getBoundingClientRect();
-      const vbScale = W / rect.width;
-      const px = (e.clientX - rect.left) * vbScale;
-      const i = Math.round(((px - padL) / innerW) * (data.length - 1));
-      if (i < 0 || i >= data.length) return;
-      const cx = x(i), cy = y(data[i]);
-      const cursor = document.getElementById('chart-cursor');
-      const line = document.getElementById('cursor-line');
-      const dot = document.getElementById('cursor-dot');
-      const crect = document.getElementById('cursor-rect');
-      const ctext = document.getElementById('cursor-text');
-      if (!cursor) return;
-      cursor.style.display = '';
-      line.setAttribute('x1', cx.toFixed(1)); line.setAttribute('x2', cx.toFixed(1));
-      dot.setAttribute('cx', cx.toFixed(1)); dot.setAttribute('cy', cy.toFixed(1));
-      const tx = Math.min(W - padR - 80, Math.max(padL + 4, cx - 40));
-      const ty = Math.max(padT + 4, cy - 32);
-      crect.setAttribute('x', tx); crect.setAttribute('y', ty);
-      ctext.setAttribute('x', tx + 40); ctext.setAttribute('y', ty + 14);
-      ctext.textContent = `${data[i]}${unit}`;
-    });
-    svg.addEventListener('mouseleave', function() {
-      const cursor = document.getElementById('chart-cursor');
-      if (cursor) cursor.style.display = 'none';
-    });
-  }
+      function drawChart(metric) {
+        const svg = document.getElementById('trend-chart');
+        if (!svg) return;
+        const data = getData(metric);
+        const unit = metric === 'build' ? 'ms' : '';
+        updateStats(data, unit);
 
-  window.dashSwitchTab = function(metric) {
-    currentMetric = metric;
-    ['build', 'pages'].forEach(m => {
-      const btn = document.getElementById('tab-' + m);
-      if (btn) btn.classList.toggle('active', m === metric);
-    });
-    drawChart(metric);
-  };
+        const W = 1080, H2 = 280;
+        const padL = 56, padR = 24, padT = 24, padB = 36;
+        const innerW = W - padL - padR, innerH = H2 - padT - padB;
+        const min = Math.min(...data), max = Math.max(...data);
+        const span = max - min || 1;
+        const lo = Math.floor(min - span * 0.1);
+        const hi = Math.ceil(max + span * 0.1);
+        const yspan = hi - lo;
 
-  drawChart('build');
-})();
+        const x = (i) => padL + (i / (data.length - 1)) * innerW;
+        const y = (v) => padT + (1 - (v - lo) / yspan) * innerH;
+
+        const linePath = data.map((v, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ');
+        const areaPath = `${linePath} L${x(data.length-1)} ${H2-padB} L${padL} ${H2-padB} Z`;
+        const yTicks = [0, 0.25, 0.5, 0.75, 1].map(t => lo + t * yspan);
+        const tickIdx = [0, 5, 10, 15, 20, 25, 29];
+        const labels = H.map(d => d.label || d.stamp || '');
+
+        let html = `
+          <defs>
+            <!-- Build Duration Gradient (Red-Yellow-Green) -->
+            <linearGradient id="trend-line-grad-build" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#10b981" />
+              <stop offset="50%" stop-color="#f59e0b" />
+              <stop offset="100%" stop-color="#ef4444" />
+            </linearGradient>
+            <linearGradient id="trend-area-grad-build" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#10b981" stop-opacity="0.01" />
+              <stop offset="50%" stop-color="#f59e0b" stop-opacity="0.07" />
+              <stop offset="100%" stop-color="#ef4444" stop-opacity="0.2" />
+            </linearGradient>
+
+            <!-- Page Volume Gradient (Indigo-Cyan-Emerald) -->
+            <linearGradient id="trend-line-grad-pages" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#6366f1" />
+              <stop offset="50%" stop-color="#06b6d4" />
+              <stop offset="100%" stop-color="#10b981" />
+            </linearGradient>
+            <linearGradient id="trend-area-grad-pages" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="#6366f1" stop-opacity="0.01" />
+              <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.07" />
+              <stop offset="100%" stop-color="#10b981" stop-opacity="0.2" />
+            </linearGradient>
+          </defs>
+        `;
+
+        /* grid lines + y labels */
+        yTicks.forEach(v => {
+          html += `<line class="grid-line" x1="${padL}" x2="${W - padR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/>`;
+          html += `<text class="axis-text" x="${padL - 10}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end">${Math.round(v)}${unit}</text>`;
+        });
+
+        /* area + line */
+        html += `<path class="chart-area" d="${areaPath}" fill="url(#trend-area-grad-${metric})" stroke="none"/>`;
+        html += `<path class="chart-line" d="${linePath}" fill="none" stroke="url(#trend-line-grad-${metric})" stroke-width="1.5" stroke-linejoin="miter"/>`;
+
+        /* data points */
+        data.forEach((v, i) => {
+          html += `<circle class="chart-pt" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.2" stroke="url(#trend-line-grad-${metric})" fill="var(--bg-color)" stroke-width="1.3"/>`;
+        });
+
+        /* hover cursor group (updated on mousemove) */
+        html += `<g id="chart-cursor" style="display:none">
+          <line class="cursor-line" id="cursor-line" x1="0" x2="0" y1="${padT}" y2="${H2 - padB}"/>
+          <circle class="chart-pt-cursor" id="cursor-dot" cx="0" cy="0" r="3.6" fill="var(--bg-color)" stroke="url(#trend-line-grad-${metric})" stroke-width="1.8"/>
+          <rect id="cursor-rect" x="0" y="0" width="80" height="22" rx="6" fill="var(--color-heading)"/>
+          <text id="cursor-text" x="0" y="0" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--bg-color)" letter-spacing=".04em"></text>
+        </g>`;
+
+        /* x axis labels */
+        tickIdx.forEach((i, k) => {
+          if (i < labels.length) {
+            html += `<text class="axis-text" x="${x(i).toFixed(1)}" y="${(H2 - padB + 18).toFixed(1)}" text-anchor="middle">${labels[i]}</text>`;
+          }
+        });
+
+        svg.innerHTML = html;
+
+        /* hover interaction */
+        svg.addEventListener('mousemove', function(e) {
+          const rect = svg.getBoundingClientRect();
+          const vbScale = W / rect.width;
+          const px = (e.clientX - rect.left) * vbScale;
+          const i = Math.round(((px - padL) / innerW) * (data.length - 1));
+          if (i < 0 || i >= data.length) return;
+          const cx = x(i), cy = y(data[i]);
+          const cursor = document.getElementById('chart-cursor');
+          const line = document.getElementById('cursor-line');
+          const dot = document.getElementById('cursor-dot');
+          const crect = document.getElementById('cursor-rect');
+          const ctext = document.getElementById('cursor-text');
+          if (!cursor) return;
+          cursor.style.display = '';
+          line.setAttribute('x1', cx.toFixed(1)); line.setAttribute('x2', cx.toFixed(1));
+          dot.setAttribute('cx', cx.toFixed(1)); dot.setAttribute('cy', cy.toFixed(1));
+          const tx = Math.min(W - padR - 80, Math.max(padL + 4, cx - 40));
+          const ty = Math.max(padT + 4, cy - 32);
+          crect.setAttribute('x', tx); crect.setAttribute('y', ty);
+          ctext.setAttribute('x', tx + 40); ctext.setAttribute('y', ty + 14);
+          ctext.textContent = `${data[i]}${unit}`;
+        });
+        svg.addEventListener('mouseleave', function() {
+          const cursor = document.getElementById('chart-cursor');
+          if (cursor) cursor.style.display = 'none';
+        });
+      }
+
+      window.dashSwitchTab = function(metric) {
+        currentMetric = metric;
+        ['build', 'pages'].forEach(m => {
+          const btn = document.getElementById('tab-' + m);
+          if (btn) {
+            const active = m === metric;
+            btn.classList.toggle('active', active);
+            btn.setAttribute('aria-selected', active ? 'true' : 'false');
+          }
+        });
+        drawChart(metric);
+      };
+
+      drawChart('build');
+    })();
 </script>
 {{ end }}

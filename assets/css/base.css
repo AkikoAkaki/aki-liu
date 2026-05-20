@@ -5,7 +5,6 @@
 
 /* Switzer local font family (copy files into /static/fonts/switzer/) */
 
-
 @font-face {
     font-family: "Switzer";
     src: url("/fonts/switzer/Switzer-Light.woff2") format("woff2");
@@ -87,7 +86,8 @@
 }
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultralight.woff2") format("woff2");
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultralight.woff2")
+        format("woff2");
     font-weight: 200;
     font-style: normal;
     font-display: swap;
@@ -95,7 +95,8 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltralightItalic.woff2") format("woff2");
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltralightItalic.woff2")
+        format("woff2");
     font-weight: 200;
     font-style: italic;
     font-display: swap;
@@ -103,7 +104,8 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Regular.woff2") format("woff2");
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Regular.woff2")
+        format("woff2");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -111,7 +113,8 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Italic.woff2") format("woff2");
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Italic.woff2")
+        format("woff2");
     font-weight: 400;
     font-style: italic;
     font-display: swap;
@@ -119,7 +122,8 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultrabold.woff2") format("woff2");
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultrabold.woff2")
+        format("woff2");
     font-weight: 800;
     font-style: normal;
     font-display: swap;
@@ -127,21 +131,21 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltraboldItalic.woff2") format("woff2");
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltraboldItalic.woff2")
+        format("woff2");
     font-weight: 800;
     font-style: italic;
     font-display: swap;
 }
-
 
 /* 全局变量：字体、颜色、间距统一在这里配置 */
 :root {
     /* 字体栈 */
-    --font-serif: "Newsreader", "Playfair Display", "EB Garamond", "Source Han Serif SC", "Noto Serif SC", "SimSun", serif;
+    --font-serif: "Newsreader", serif;
     --font-editorial: "PP Editorial Old", var(--font-serif);
-    --font-mono: "JetBrains Mono", "Geist Mono", "Space Mono", "Consolas", monospace;
-    --font-sans: "Switzer", "Inter", "Source Han Sans SC", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-ui: "Switzer", "Inter", "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", -apple-system, sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+    --font-sans: "Switzer", sans-serif;
+    --font-ui: "Switzer", sans-serif;
 
     /* 排版预设 */
     --type-intro: 400 clamp(1.2rem, 2vw, 1.6rem)/1.6 var(--font-serif);
@@ -173,7 +177,6 @@
     --panel-shell-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
     --panel-shell-backdrop: blur(32px) saturate(180%);
     --panel-shell-radius: 16px;
-
 }
 
 @media (prefers-color-scheme: dark) {
@@ -278,7 +281,8 @@ a {
 }
 
 /* 斜体统一使用 Serif 字体栈 */
-em, i {
+em,
+i {
     font-family: var(--font-serif);
     font-style: normal;
     font-size: 1.1em;
@@ -292,7 +296,8 @@ body::after {
     left: 0;
     right: 0;
     height: 150px;
-    background: linear-gradient(to bottom,
+    background: linear-gradient(
+        to bottom,
         rgba(var(--bg-rgb), 1) 0%,
         rgba(var(--bg-rgb), 0.95) 15%,
         rgba(var(--bg-rgb), 0.85) 30%,
@@ -306,9 +311,6 @@ body::after {
     transform: translate3d(0, 0, 0);
     transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-
-
 
 /* ==========================================================================
    Expanding Menu Bar
@@ -466,18 +468,32 @@ body::after {
 .menu-icon-open,
 .menu-icon-close {
     position: absolute;
-    transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    transition:
+        opacity 0.22s ease,
+        transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Closed state: show hamburger, hide ×  */
-.menu-icon-open  { opacity: 1; transform: rotate(0deg); }
-.menu-icon-close { opacity: 0; transform: rotate(-45deg); }
+.menu-icon-open {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+.menu-icon-close {
+    opacity: 0;
+    transform: rotate(-45deg);
+}
 
 /* Open state: hide hamburger, show × */
 .menu-bar.is-open .menu-icon-open,
-.menu-bar.is-search .menu-icon-open  { opacity: 0; transform: rotate(45deg); }
+.menu-bar.is-search .menu-icon-open {
+    opacity: 0;
+    transform: rotate(45deg);
+}
 .menu-bar.is-open .menu-icon-close,
-.menu-bar.is-search .menu-icon-close { opacity: 1; transform: rotate(0deg); }
+.menu-bar.is-search .menu-icon-close {
+    opacity: 1;
+    transform: rotate(0deg);
+}
 
 /* Navigation panel — hidden until .is-open */
 .menu-panel {
@@ -589,7 +605,11 @@ body::after {
     color: var(--text-color);
     text-decoration: none;
     opacity: 0;
-    transform: translate3d(var(--menu-magnet-x), calc(var(--menu-stagger-y) + var(--menu-magnet-y)), 0);
+    transform: translate3d(
+        var(--menu-magnet-x),
+        calc(var(--menu-stagger-y) + var(--menu-magnet-y)),
+        0
+    );
     will-change: transform, opacity;
     transition:
         opacity 0.22s ease,
@@ -614,11 +634,12 @@ body::after {
     opacity: var(--menu-fill-opacity);
     transform: translate3d(-50%, -50%, 0) scale(var(--menu-fill-scale));
     transform-origin: center;
-    background:
-        radial-gradient(circle at center,
-            rgba(var(--text-rgb), 0.18) 0%,
-            rgba(var(--text-rgb), 0.13) 48%,
-            rgba(var(--text-rgb), 0.08) 100%);
+    background: radial-gradient(
+        circle at center,
+        rgba(var(--text-rgb), 0.18) 0%,
+        rgba(var(--text-rgb), 0.13) 48%,
+        rgba(var(--text-rgb), 0.08) 100%
+    );
     border: 1px solid rgba(255, 255, 255, 0.18);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.2),
@@ -689,8 +710,10 @@ body.menu-cursor-hidden * {
     will-change: transform;
 }
 
-.mb-tag-chip.is-magnetic,       .mb-tag-chip.is-settling,
-.mb-card-tag.is-magnetic,       .mb-card-tag.is-settling {
+.mb-tag-chip.is-magnetic,
+.mb-tag-chip.is-settling,
+.mb-card-tag.is-magnetic,
+.mb-card-tag.is-settling {
     transition: opacity 0.18s ease;
 }
 
@@ -707,10 +730,12 @@ body.menu-cursor-hidden * {
     opacity: var(--menu-fill-opacity);
     transform: translate3d(-50%, -50%, 0) scale(var(--menu-fill-scale));
     transform-origin: center;
-    background: radial-gradient(circle at center,
+    background: radial-gradient(
+        circle at center,
         rgba(var(--text-rgb), 0.15) 0%,
-        rgba(var(--text-rgb), 0.10) 48%,
-        rgba(var(--text-rgb), 0.05) 100%);
+        rgba(var(--text-rgb), 0.1) 48%,
+        rgba(var(--text-rgb), 0.05) 100%
+    );
     backdrop-filter: blur(16px) saturate(150%);
     -webkit-backdrop-filter: blur(16px) saturate(150%);
     pointer-events: none;
@@ -721,29 +746,69 @@ body.menu-cursor-hidden * {
 .mb-card-tag.is-magnetic {
     background-color: transparent;
     border-color: rgba(var(--text-rgb), 0.18);
-    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.18s ease;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        opacity 0.18s ease;
 }
 
 .mb-tag-chip.is-settling,
 .mb-card-tag.is-settling {
-    transition: background-color 0.25s ease, border-color 0.25s ease, opacity 0.18s ease;
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        opacity 0.18s ease;
 }
 
-.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(1) { transition-delay: 0.04s; }
-.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-group:nth-child(2) .menu-group-label { transition-delay: 0.08s; }
-.menu-bar.is-open:not(.is-search) .menu-submenu .menu-link:nth-child(1) { transition-delay: 0.12s; }
-.menu-bar.is-open:not(.is-search) .menu-submenu .menu-link:nth-child(2) { transition-delay: 0.16s; }
-.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(3) { transition-delay: 0.20s; }
-.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(4) { transition-delay: 0.24s; }
-.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(5) { transition-delay: 0.28s; }
+.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(1) {
+    transition-delay: 0.04s;
+}
+.menu-bar.is-open:not(.is-search)
+    .menu-panel-inner
+    > .menu-group:nth-child(2)
+    .menu-group-label {
+    transition-delay: 0.08s;
+}
+.menu-bar.is-open:not(.is-search) .menu-submenu .menu-link:nth-child(1) {
+    transition-delay: 0.12s;
+}
+.menu-bar.is-open:not(.is-search) .menu-submenu .menu-link:nth-child(2) {
+    transition-delay: 0.16s;
+}
+.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(3) {
+    transition-delay: 0.2s;
+}
+.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(4) {
+    transition-delay: 0.24s;
+}
+.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(5) {
+    transition-delay: 0.28s;
+}
 
-.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(1) { transition-delay: 0.28s; }
-.menu-bar:not(.is-open) .menu-panel-inner > .menu-group:nth-child(2) .menu-group-label { transition-delay: 0.24s; }
-.menu-bar:not(.is-open) .menu-submenu .menu-link:nth-child(1) { transition-delay: 0.20s; }
-.menu-bar:not(.is-open) .menu-submenu .menu-link:nth-child(2) { transition-delay: 0.16s; }
-.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(3) { transition-delay: 0.12s; }
-.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(4) { transition-delay: 0.08s; }
-.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(5) { transition-delay: 0.04s; }
+.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(1) {
+    transition-delay: 0.28s;
+}
+.menu-bar:not(.is-open)
+    .menu-panel-inner
+    > .menu-group:nth-child(2)
+    .menu-group-label {
+    transition-delay: 0.24s;
+}
+.menu-bar:not(.is-open) .menu-submenu .menu-link:nth-child(1) {
+    transition-delay: 0.2s;
+}
+.menu-bar:not(.is-open) .menu-submenu .menu-link:nth-child(2) {
+    transition-delay: 0.16s;
+}
+.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(3) {
+    transition-delay: 0.12s;
+}
+.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(4) {
+    transition-delay: 0.08s;
+}
+.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(5) {
+    transition-delay: 0.04s;
+}
 
 .menu-kbd {
     font-family: var(--font-sans);
