@@ -570,7 +570,7 @@ a.nav-panel-subitem:hover {
     transform: scale(1);
 }
 
-@media (hover: none), (pointer: coarse) {
+@media (any-hover: none) {
     .home-hover-preview {
         display: none;
     }
@@ -708,6 +708,7 @@ a.nav-panel-subitem:hover {
     display: grid;
     grid-template-rows: 0fr;
     transition: grid-template-rows 0.4s cubic-bezier(0.2, 0, 0, 1);
+    overflow: hidden; /* 确保折叠期间内容被完美裁剪，无任何溢出 */
 }
 
 .now-card-expandable.is-expanded .now-card-content-wrapper {
@@ -717,41 +718,34 @@ a.nav-panel-subitem:hover {
 .now-card-body {
     min-height: 0;
     overflow: hidden;
-    padding: 0 2rem; /* 閰嶅悎 header padding */
+    padding: 0 2rem 0 2rem; /* 配合 header padding */
     display: flex;
     flex-direction: column;
-    gap: 0.12rem; /* 杩涗竴姝ョ缉灏忎富鏍囬鍜屾鏂囧唴瀹逛箣闂寸殑闂磋窛 */
+    gap: 0.12rem; /* 进一步缩小主标题和正文内容之间的间距 */
 }
 
-.now-card-expandable.is-expanded .now-card-body {
-    padding-bottom: 2rem; /* adds padding only when opened */
+.now-card-body > *:last-child {
+    margin-bottom: 2rem; /* 用 margin-bottom 代替 padding-bottom，让容器能在折叠时完美收缩到 0 高度 */
 }
 
 /* Internal text styling */
 .nc-tagline {
-    font-family: var(--font-sans); /* 寮哄埗缁熶竴涓?Switzer */
-    font-size: 1.2rem; /* sans title 鍐嶅皬涓€鐐?*/
-    line-height: 1.34; /* sans title 琛岄珮鍐嶇揣涓€鐐?*/
-    margin: 0 0 0.9rem 0; /* 鎷夊紑鍜屾鏂囩殑闂磋窛锛屾帴杩?mono 涓?sans 鐨勮窛绂?*/
+    font-family: var(--font-sans); /* 强制统一为 Switzer */
+    font-size: 1.2rem; /* sans title 再小一点点 */
+    line-height: 1.34; /* sans title 行高再紧一点 */
+    margin: 0 0 0.9rem 0; /* 拉开和正文的间距，接近 mono 与 sans 的距离 */
     font-weight: 500;
     color: var(--color-heading);
 }
 
 .nc-paragraphs p {
-    font-family: var(--font-sans); /* 寮哄埗缁熶竴涓?Switzer */
-    font-size: 0.96rem; /* 鍐嶅皬涓€鐐圭偣 */
-    line-height: 1; /* 缁х画鍘嬬缉琛岄棿璺?*/
-    letter-spacing: -0.01em; /* 瀛楁瘝闂磋窛鍐嶆敹绱т竴鐐?*/
-    color: var(--color-secondary);
-    margin: 0 0 0.8rem 0; /* 鍘绘帀榛樿涓婅竟璺濆苟鏀剁揣娈甸棿璺?*/
-    font-weight: 400;
-}
-
-.now-card-expandable.is-expanded .nc-paragraphs p {
-    font-size: 0.94rem; /* 灞曞紑鎬佸啀灏忎竴鐐癸紝淇濊瘉鍙樺寲鍙 */
-    line-height: 1.15; /* 淇杩囩揣琛岄珮瀵艰嚧鐨勮鎰熷紓甯?*/
+    font-family: var(--font-sans); /* 强制统一为 Switzer */
+    font-size: 0.94rem;
+    line-height: 1.15;
     letter-spacing: -0.012em;
-    margin-bottom: 0.5rem;
+    color: var(--color-secondary);
+    margin: 0 0 0.5rem 0;
+    font-weight: 400;
 }
 
 .nc-paragraphs p:last-child {
@@ -768,8 +762,8 @@ a.nav-panel-subitem:hover {
 .nc-pillars {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem; /* 鍑忓皬姣忎釜鍒楄〃椤归棿璺?*/
-    margin-top: 0.5rem; /* 鍑忓皬鍒颁笂闈㈡枃瀛楃殑闂磋窛 */
+    gap: 1.25rem; /* 减小每个列表项间距 */
+    margin-top: 0.5rem; /* 减小到上面文字的间距 */
     position: relative;
 }
 
@@ -794,11 +788,7 @@ a.nav-panel-subitem:hover {
 
 .nc-pillar-indicator {
     flex-shrink: 0;
-    padding-top: 0.52rem; /* 璁╁簭鍙蜂笅绉伙紝钀藉湪鏍囬鍜屾弿杩颁箣闂?*/
-}
-
-.now-card-expandable.is-expanded .nc-pillar-indicator {
-    padding-top: 0.62rem; /* 灞曞紑鎬佽繘涓€姝ヤ笅绉伙紝瑙嗚涓婃洿鎺ヨ繎鏍囬涓庢鏂囦腑绾?*/
+    padding-top: 0.62rem; /* 视觉上更接近标题与正文中线 */
 }
 
 .nc-pillar-num {
@@ -859,11 +849,11 @@ a.nav-panel-subitem:hover {
     }
 
     .now-card-body {
-        padding: 0 1.25rem;
+        padding: 0 1.25rem 0 1.25rem;
     }
 
-    .now-card-expandable.is-expanded .now-card-body {
-        padding-bottom: 1.25rem;
+    .now-card-body > *:last-child {
+        margin-bottom: 1.25rem;
     }
 
     .nc-tagline {
@@ -918,11 +908,11 @@ a.nav-panel-subitem:hover {
     }
 
     .now-card-body {
-        padding: 0 1.1rem;
+        padding: 0 1.1rem 0 1.1rem;
     }
 
-    .now-card-expandable.is-expanded .now-card-body {
-        padding-bottom: 1.1rem;
+    .now-card-body > *:last-child {
+        margin-bottom: 1.1rem;
     }
 
     .nc-tagline {

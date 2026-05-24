@@ -30,6 +30,9 @@ import { initPrefetcher } from "./modules/prefetch.js";
     // --- About image sequence ---
     initAboutImageSequence();
 
+    // --- About/Home page preview ---
+    initPagePreview();
+
     // --- About flight + drag (Coordinates/Registration → pinboard) ---
     initAboutFlightAndDrag();
 
@@ -626,16 +629,17 @@ import { initPrefetcher } from "./modules/prefetch.js";
     if (!scope || !preview) return;
 
     const canHover = window.matchMedia(
-      "(hover: hover) and (pointer: fine)",
+      "(any-hover: hover)",
     ).matches;
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
     if (!canHover) return;
 
-    const items = Array.from(
-      scope.querySelectorAll(".work-item[data-preview]"),
+    const allItems = Array.from(
+      scope.querySelectorAll(".work-item"),
     );
+    const items = allItems.filter((item) => item.hasAttribute("data-preview"));
     const layers = Array.from(
       preview.querySelectorAll("[data-home-preview-layer]"),
     );
@@ -669,7 +673,7 @@ import { initPrefetcher } from "./modules/prefetch.js";
     }
 
     function setActiveItem(item) {
-      items.forEach((candidate) => {
+      allItems.forEach((candidate) => {
         candidate.classList.toggle("is-preview-active", candidate === item);
       });
       activeItem = item;
@@ -704,7 +708,7 @@ import { initPrefetcher } from "./modules/prefetch.js";
     function placePreview() {
       positionRaf = 0;
 
-      const gap = 18;
+      const gap = 8; // 缩小间距，让预览图更贴合鼠标，完美位于鼠标右上角
       const margin = 12;
       const maxX = window.innerWidth - previewWidth - margin;
       const x = Math.max(margin, Math.min(latestPointerX + gap, maxX));
@@ -752,6 +756,9 @@ import { initPrefetcher } from "./modules/prefetch.js";
 
       const url = item.getAttribute("data-preview");
       if (!url) return;
+
+      // 隐藏 Page Preview，避免重叠！
+      document.dispatchEvent(new CustomEvent("hide-page-preview"));
 
       if (url !== currentUrl) {
         const nextLayerIndex = activeLayerIndex === 0 ? 1 : 0;
@@ -806,19 +813,30 @@ import { initPrefetcher } from "./modules/prefetch.js";
       hoverToken++;
       activeItem = null;
       currentUrl = "";
-      items.forEach((item) => item.classList.remove("is-preview-active"));
+      allItems.forEach((item) => item.classList.remove("is-preview-active"));
       preview.classList.remove("is-visible");
     }
 
-    items.forEach((item) => {
+    allItems.forEach((item) => {
       item.addEventListener("mouseenter", (event) => {
         schedulePosition(event);
-        schedulePreview(item);
+        if (item.hasAttribute("data-preview")) {
+          schedulePreview(item);
+        } else {
+          hidePreview();
+        }
       });
       item.addEventListener("mousemove", schedulePosition);
-      item.addEventListener("focusin", () => schedulePreview(item));
+      item.addEventListener("focusin", () => {
+        if (item.hasAttribute("data-preview")) {
+          schedulePreview(item);
+        } else {
+          hidePreview();
+        }
+      });
     });
 
+    scope.addEventListener("mousemove", schedulePosition);
     scope.addEventListener("mouseleave", hidePreview);
     scope.addEventListener("focusout", (event) => {
       if (!scope.contains(event.relatedTarget)) hidePreview();
@@ -827,6 +845,7 @@ import { initPrefetcher } from "./modules/prefetch.js";
     document.addEventListener("pointermove", handleDocumentPointerMove, {
       passive: true,
     });
+    document.addEventListener("hide-home-preview", hidePreview);
     window.addEventListener(
       "resize",
       () => {
@@ -948,7 +967,9 @@ import { initPrefetcher } from "./modules/prefetch.js";
     let current = middleSet * sourceCount + anchorSourceIndex;
     let closeTimer = 0;
     let resetTimer = 0;
-    let wheelLock = 0;
+    let accumulatedDelta = 0;
+    let lastStepTime = 0;
+    let deltaClearTimer = 0;
 
     function setTransition(enabled) {
       track.style.transition = enabled && !reduceMotion ? "" : "none";
@@ -999,7 +1020,7 @@ import { initPrefetcher } from "./modules/prefetch.js";
         active = false;
         root.classList.remove("is-sequence-open");
         document.body.classList.remove("about-sequence-open");
-      }, 120);
+      }, 50);
     }
 
     function step(direction) {
@@ -1009,7 +1030,7 @@ import { initPrefetcher } from "./modules/prefetch.js";
 
       render(!reduceMotion);
       clearTimeout(resetTimer);
-      resetTimer = setTimeout(resetToMiddleIfNeeded, reduceMotion ? 0 : 560);
+      resetTimer = setTimeout(resetToMiddleIfNeeded, reduceMotion ? 0 : 300);
     }
 
     root.addEventListener("pointerenter", open);
@@ -1023,10 +1044,54 @@ import { initPrefetcher } from "./modules/prefetch.js";
 
         event.preventDefault();
         const now = performance.now();
-        if (!reduceMotion && now < wheelLock) return;
+        const delta = event.deltaY;
+        const absDelta = Math.abs(delta);
 
-        step(event.deltaY > 0 ? 1 : -1);
-        wheelLock = now + 260;
+        // Clear accumulated delta after a short pause of 150ms
+        clearTimeout(deltaClearTimer);
+        deltaClearTimer = setTimeout(() => {
+          accumulatedDelta = 0;
+        }, 150);
+
+        if (reduceMotion) {
+          if (now - lastStepTime < 100) return;
+          step(delta > 0 ? 1 : -1);
+          lastStepTime = now;
+          return;
+        }
+
+        // Heuristic: Is this a physical mouse wheel tick?
+        // Physical wheel ticks typically generate deltaY >= 100 or use non-pixel line/page delta modes,
+        // or have clean integer deltaY and are spaced out.
+        // A trackpad scroll generates a dense stream of very small fractional deltas (e.g. 1.5, 3.2, 8.0).
+        const isMouseWheel =
+          event.deltaMode !== 0 ||
+          absDelta >= 100 ||
+          (Number.isInteger(delta) && absDelta >= 50 && now - lastStepTime > 120);
+
+        if (isMouseWheel) {
+          // 1. Mouse wheel ticks: Step instantly with NO cooldown!
+          step(delta > 0 ? 1 : -1);
+          lastStepTime = now;
+          accumulatedDelta = 0;
+        } else {
+          // 2. Trackpad: Accumulate small events for smooth control
+          accumulatedDelta += delta;
+
+          // Introduce a short cooldown (90ms) ONLY for trackpads to keep scrolling smooth
+          const cooldown = 90;
+          if (now - lastStepTime < cooldown) {
+            return;
+          }
+
+          const threshold = 30;
+          if (Math.abs(accumulatedDelta) >= threshold) {
+            const direction = accumulatedDelta > 0 ? 1 : -1;
+            step(direction);
+            lastStepTime = now;
+            accumulatedDelta = 0;
+          }
+        }
       },
       { passive: false },
     );
@@ -1095,13 +1160,17 @@ import { initPrefetcher } from "./modules/prefetch.js";
     const FLIGHT_MS = 950;
     const FLIGHT_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
-    function mergeSummaryBlocks() {
-      if (summary.classList.contains("is-flown")) return;
+    function startFlight() {
+      if (landed) return;
+      landed = true;
 
-      if (reduceMotion) {
-        summary.classList.add("is-flown");
-        return;
-      }
+      // 1. MEASURE PHASE 1 (Initial states of elements)
+      const flierRects = fliers.map((f) => {
+        return {
+          f,
+          src: f.el.getBoundingClientRect()
+        };
+      });
 
       const blocks = [
         ...summary.querySelectorAll(
@@ -1113,93 +1182,47 @@ import { initPrefetcher } from "./modules/prefetch.js";
         blocks.map((block) => [block, block.getBoundingClientRect()]),
       );
 
-      summary.classList.add("is-flown");
-
-      const lastSummaryHeight = summary.getBoundingClientRect().height;
-      const heightDelta = Math.max(0, firstSummaryHeight - lastSummaryHeight);
-      let flowSpacer = null;
-
-      if (heightDelta > 1) {
-        flowSpacer = document.createElement("div");
-        flowSpacer.className = "af-summary-flow-spacer";
-        flowSpacer.setAttribute("aria-hidden", "true");
-        flowSpacer.style.height = `${heightDelta}px`;
-        flowSpacer.style.transition =
-          "height 680ms cubic-bezier(0.22, 1, 0.36, 1)";
-        summary.insertAdjacentElement("afterend", flowSpacer);
-
-        requestAnimationFrame(() => {
-          flowSpacer.style.height = "0px";
-        });
-
-        const removeFlowSpacer = () => {
-          flowSpacer?.remove();
-          flowSpacer = null;
-        };
-        flowSpacer.addEventListener("transitionend", removeFlowSpacer, {
-          once: true,
-        });
-        setTimeout(removeFlowSpacer, 760);
-      }
-
-      blocks.forEach((block) => {
-        const first = firstRects.get(block);
-        const last = block.getBoundingClientRect();
-        if (!first) return;
-
-        const dx = first.left - last.left;
-        const dy = first.top - last.top;
-
-        block.animate(
-          [
-            {
-              transform: `translate(${dx}px, ${dy}px)`,
-              opacity: 0.92,
-            },
-            {
-              transform: "translate(0, 0)",
-              opacity: 1,
-            },
-          ],
-          {
-            duration: 680,
-            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-            fill: "both",
-          },
-        );
-      });
-    }
-
-    function startFlight() {
-      if (landed) return;
-      landed = true;
-
-      const remaining = fliers.length;
-      let finished = 0;
-
-      fliers.forEach((f, i) => {
-        const stagger = i * 90;
-        const src = f.el.getBoundingClientRect();
-        const landTop = Number(f.target.dataset.landTop);
-        const landLeft = Number(f.target.dataset.landLeft);
-        const landRot = Number(f.target.dataset.landRot);
-
-        // Re-parent into the canvas and set the final absolute position
+      // 2. MUTATE PHASE 1 (Immediate DOM updates for new state)
+      // Reparent fliers into the canvas so they are in the target layer
+      flierRects.forEach(({ f }) => {
         canvas.appendChild(f.el);
         f.el.classList.add("is-landed");
         f.el.style.transition = "none";
         f.el.style.position = "absolute";
-        f.el.style.top = `${landTop}px`;
-        f.el.style.left = `${landLeft}px`;
+        f.el.style.top = `${Number(f.target.dataset.landTop)}px`;
+        f.el.style.left = `${Number(f.target.dataset.landLeft)}px`;
         f.el.style.width = `${f.width}px`;
+      });
 
-        // Compute the inverse translate so the card visually stays at its source position
-        const dst = f.el.getBoundingClientRect();
+      // Collapse the summary layout instantly
+      summary.classList.add("is-flown");
+      canvas.classList.add("is-loaded");
+
+      // 3. MEASURE PHASE 2 (Target/Final states of elements)
+      flierRects.forEach((fr) => {
+        fr.dst = fr.f.el.getBoundingClientRect();
+      });
+
+      const lastSummaryHeight = summary.getBoundingClientRect().height;
+      const heightDelta = Math.max(0, firstSummaryHeight - lastSummaryHeight);
+
+      const lastRects = new Map(
+        blocks.map((block) => [block, block.getBoundingClientRect()]),
+      );
+
+      // 4. ANIMATE PHASE (Apply GPU-accelerated transitions)
+
+      // A. Animate Fliers Flight
+      flierRects.forEach(({ f, src, dst }, i) => {
+        const stagger = i * 90;
         const dx = src.left - dst.left;
         const dy = src.top - dst.top;
+        const landRot = Number(f.target.dataset.landRot);
+
+        // Put flier back to its visual start position relative to the canvas
         f.el.style.transform = `translate(${dx}px, ${dy}px) rotate(${f.srcRot}deg)`;
 
-        // Force a reflow so the transition picks up the next change
+        // Force reflow for this element so starting transform is registered by the browser
         // eslint-disable-next-line no-unused-expressions
         f.el.offsetWidth;
 
@@ -1216,15 +1239,61 @@ import { initPrefetcher } from "./modules/prefetch.js";
           f.el.removeEventListener("transitionend", onEnd);
           f.el.style.transition = "";
           makeDraggable(f.el);
-          finished += 1;
-          if (finished === remaining) {
-            mergeSummaryBlocks();
-          }
         }
         f.el.addEventListener("transitionend", onEnd);
       });
 
-      canvas.classList.add("is-loaded");
+      // B. Animate Summary Text Blocks
+      if (!reduceMotion) {
+        blocks.forEach((block) => {
+          const first = firstRects.get(block);
+          const last = lastRects.get(block);
+          if (!first || !last) return;
+
+          const dx = first.left - last.left;
+          const dy = first.top - last.top;
+
+          block.animate(
+            [
+              {
+                transform: `translate(${dx}px, ${dy}px)`,
+                opacity: 0.92,
+              },
+              {
+                transform: "translate(0, 0)",
+                opacity: 1,
+              },
+            ],
+            {
+              duration: 680,
+              easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+              fill: "both",
+            },
+          );
+        });
+
+        // C. Animate Pinboard Section slide-up (instead of high-overhead height transitions)
+        if (heightDelta > 1) {
+          const pinboard = document.querySelector(".af-pinboard-section");
+          if (pinboard) {
+            pinboard.style.transform = `translateY(${heightDelta}px)`;
+            pinboard.style.transition = "none";
+
+            // eslint-disable-next-line no-unused-expressions
+            pinboard.offsetWidth;
+
+            pinboard.style.transition =
+              "transform 680ms cubic-bezier(0.22, 1, 0.36, 1)";
+            pinboard.style.transform = "translateY(0px)";
+
+            const cleanUp = () => {
+              pinboard.style.transform = "";
+              pinboard.style.transition = "";
+            };
+            pinboard.addEventListener("transitionend", cleanUp, { once: true });
+          }
+        }
+      }
     }
 
     const io = new IntersectionObserver(
@@ -1336,7 +1405,7 @@ import { initPrefetcher } from "./modules/prefetch.js";
 
   function initSlotLinks() {
     const canHover = window.matchMedia(
-      "(hover: hover) and (pointer: fine)",
+      "(any-hover: hover)",
     ).matches;
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -1386,7 +1455,7 @@ import { initPrefetcher } from "./modules/prefetch.js";
       "(prefers-reduced-motion: reduce)",
     ).matches;
     const canHover = window.matchMedia(
-      "(hover: hover) and (pointer: fine)",
+      "(any-hover: hover)",
     ).matches;
     if (!canHover || reduceMotion || !elements.length) return;
 
@@ -1655,7 +1724,7 @@ import { initPrefetcher } from "./modules/prefetch.js";
     if (!menuBar || !menuTrigger) return;
 
     const canHover = window.matchMedia(
-      "(hover: hover) and (pointer: fine)",
+      "(any-hover: hover)",
     ).matches;
     const magneticLinks = menuPanel
       ? [...menuPanel.querySelectorAll(".menu-link")]
@@ -2558,5 +2627,89 @@ import { initPrefetcher } from "./modules/prefetch.js";
     );
 
     updateLayout();
+  }
+
+  function initPagePreview() {
+    const links = document.querySelectorAll("[data-page-preview]");
+    const preview = document.getElementById("about-page-preview");
+    if (!links.length || !preview) return;
+
+    let positionRaf = 0;
+    let latestPointerX = 0;
+    let latestPointerY = 0;
+    let onEndCallback = null;
+
+    function placePreview() {
+      positionRaf = 0;
+      const gap = 12;
+      const margin = 16;
+      const previewWidth = 380;
+      const previewHeight = 280;
+
+      // Position snug in the top-right of the cursor
+      const maxX = window.innerWidth - previewWidth - margin;
+      const x = Math.max(margin, Math.min(latestPointerX + gap, maxX));
+      const y = Math.max(margin, latestPointerY - previewHeight - gap);
+
+      preview.style.left = `${Math.round(x)}px`;
+      preview.style.top = `${Math.round(y)}px`;
+    }
+
+    function schedulePosition(event) {
+      latestPointerX = event.clientX;
+      latestPointerY = event.clientY;
+      if (positionRaf) return;
+      positionRaf = requestAnimationFrame(placePreview);
+    }
+
+    function hidePagePreviewInstantly() {
+      if (onEndCallback) {
+        preview.removeEventListener("transitionend", onEndCallback);
+        onEndCallback = null;
+      }
+      preview.style.opacity = "0";
+      preview.style.transform = "scale(0.96)";
+      preview.style.display = "none";
+    }
+
+    links.forEach((link) => {
+      link.addEventListener("mouseenter", (event) => {
+        if (onEndCallback) {
+          preview.removeEventListener("transitionend", onEndCallback);
+          onEndCallback = null;
+        }
+        // 隐藏 Home Image Preview，避免重叠！
+        document.dispatchEvent(new CustomEvent("hide-home-preview"));
+
+        preview.style.display = "block";
+        // Force a reflow so transition works
+        // eslint-disable-next-line no-unused-expressions
+        preview.offsetWidth;
+        preview.style.opacity = "1";
+        preview.style.transform = "scale(1)";
+        schedulePosition(event);
+      });
+
+      link.addEventListener("mousemove", schedulePosition);
+
+      link.addEventListener("mouseleave", () => {
+        if (onEndCallback) {
+          preview.removeEventListener("transitionend", onEndCallback);
+        }
+        preview.style.opacity = "0";
+        preview.style.transform = "scale(0.96)";
+        
+        onEndCallback = (e) => {
+          if (e.propertyName === "opacity" && preview.style.opacity === "0") {
+            preview.style.display = "none";
+            preview.removeEventListener("transitionend", onEndCallback);
+            onEndCallback = null;
+          }
+        };
+        preview.addEventListener("transitionend", onEndCallback);
+      });
+    });
+
+    document.addEventListener("hide-page-preview", hidePagePreviewInstantly);
   }
 })();

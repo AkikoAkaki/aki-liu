@@ -65,7 +65,7 @@
                         <div class="work-item"{{ if .preview }} data-preview="{{ .preview | relURL }}"{{ end }}>
                             <div class="work-item-title-row">
                                 {{- if .link }}
-                                <a href="{{ .link | relLangURL }}" class="work-item-title">{{ .title }}</a>
+                                <a href="{{ .link | relLangURL }}" class="work-item-title"{{ if .page_preview }} data-page-preview{{ end }}>{{ .title }}</a>
                                 {{- else }}
                                 <span class="work-item-title">{{ .title }}</span>
                                 {{- end }}
@@ -168,10 +168,6 @@
                 });
             })();
             </script>
-        </div>
-        <div class="home-hover-preview" data-home-hover-preview aria-hidden="true">
-            <img class="home-hover-preview-img is-active" data-home-preview-layer="0" alt="">
-            <img class="home-hover-preview-img" data-home-preview-layer="1" alt="">
         </div>
     </section>
 

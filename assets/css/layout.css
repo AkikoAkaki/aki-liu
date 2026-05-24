@@ -567,3 +567,39 @@
 @media (max-width: 480px) {
     .footer-content { padding: 3rem 1rem 1.5rem; gap: 2.5rem; }
 }
+
+/* Iframe page preview specific layout overrides */
+.is-iframe body,
+.is-iframe .site-wrapper {
+    background-color: var(--bg-color) !important;
+}
+
+.is-iframe .menu-bar,
+.is-iframe .site-footer,
+.is-iframe .site-sidebar,
+.is-iframe .site-sidebar-right,
+.is-iframe .site-sidebar-bottom,
+.is-iframe .title-with-back,
+.is-iframe .skip-link,
+.is-iframe .post-header-redesigned,
+.is-iframe .post-toc {
+    display: none !important;
+}
+
+.is-iframe .site-container {
+    padding-top: 2rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+    gap: 0 !important;
+}
+
+.is-iframe .site-main {
+    grid-column: 1 !important;
+    padding-top: 0 !important;
+}
+
+.is-iframe .post-content {
+    font-size: 0.95rem !important;
+}

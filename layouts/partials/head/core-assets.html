@@ -1,7 +1,7 @@
 {{- /* Static head assets cached across pages in one build. */ -}}
 {{- /* Inline theme bootstrap: must run before first paint to avoid a
        light-to-dark snap when the visitor's stored preference is dark. */ -}}
-<script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(_){}}())</script>
+<script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(_){}if(window.self!==window.top){document.documentElement.classList.add('is-iframe');}}())</script>
 {{- /* Fonts */ -}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
