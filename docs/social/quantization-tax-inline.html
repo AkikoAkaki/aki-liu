@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quantization Tax Inline Figures</title>
+  <style>
+    @font-face {
+      font-family: "Switzer";
+      src: url("../../static/fonts/switzer/Switzer-Regular.woff2") format("woff2");
+      font-weight: 400;
+    }
+
+    @font-face {
+      font-family: "Switzer";
+      src: url("../../static/fonts/switzer/Switzer-Semibold.woff2") format("woff2");
+      font-weight: 650;
+    }
+
+    @font-face {
+      font-family: "Switzer";
+      src: url("../../static/fonts/switzer/Switzer-Bold.woff2") format("woff2");
+      font-weight: 750;
+    }
+
+    :root {
+      --bg: #f7f5ef;
+      --ink: #171717;
+      --muted: #68645c;
+      --line: #d8d3c8;
+      --panel: rgba(255,255,255,0.72);
+      --green: #159a73;
+      --red: #d94b3f;
+      --blue: #2368d8;
+      --amber: #f0ad3f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #d9d9d9;
+      color: var(--ink);
+      font-family: "Switzer", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+    }
+
+    body.export {
+      background: transparent;
+    }
+
+    .deck {
+      display: grid;
+      gap: 40px;
+      padding: 40px;
+    }
+
+    body.export .deck {
+      display: block;
+      padding: 0;
+    }
+
+    .fig {
+      position: relative;
+      width: 1600px;
+      height: 900px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 92% 6%, rgba(35,104,216,0.12), transparent 260px),
+        linear-gradient(180deg, #fbfaf7 0%, var(--bg) 100%);
+      border: 1px solid #ebe5d9;
+    }
+
+    .fig::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(23,23,23,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23,23,23,0.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.9;
+    }
+
+    .inner {
+      position: relative;
+      height: 100%;
+      padding: 76px 92px;
+    }
+
+    .kicker {
+      font-size: 28px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    h1 {
+      margin: 24px 0 0;
+      font-size: 76px;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 14px 0 0;
+      font-size: 52px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .note {
+      margin-top: 20px;
+      font-size: 27px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .accent-green { color: var(--green); }
+    .accent-red { color: var(--red); }
+    .accent-blue { color: var(--blue); }
+
+    .setup-grid {
+      margin-top: 62px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+    }
+
+    .setup-card,
+    .metric,
+    .node,
+    .side-card,
+    .kernel-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .setup-card {
+      min-height: 210px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .label {
+      font-size: 24px;
+      color: var(--muted);
+    }
+
+    .value {
+      font-size: 42px;
+      line-height: 1.08;
+      font-weight: 750;
+    }
+
+    .metric-row {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .metric {
+      padding: 34px;
+      min-height: 250px;
+    }
+
+    .metric-main {
+      margin-top: 20px;
+      font-size: 82px;
+      line-height: 0.95;
+      font-weight: 750;
+    }
+
+    .metric-sub {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 25px;
+      line-height: 1.35;
+    }
+
+    .bars {
+      margin-top: 42px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .bar {
+      display: grid;
+      grid-template-columns: 220px 1fr 130px;
+      align-items: center;
+      gap: 22px;
+      font-size: 26px;
+      font-weight: 650;
+    }
+
+    .track {
+      height: 28px;
+      border-radius: 99px;
+      background: #e2ddd3;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      border-radius: inherit;
+    }
+
+    .flow {
+      margin-top: 62px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .node {
+      min-height: 270px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .node-index {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      color: white;
+      font-size: 22px;
+      font-weight: 750;
+    }
+
+    .node-title {
+      font-size: 31px;
+      line-height: 1.18;
+      font-weight: 750;
+    }
+
+    .node-tag {
+      width: fit-content;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #eee9df;
+      color: var(--muted);
+      font-size: 21px;
+      font-weight: 650;
+    }
+
+    .byte-compare {
+      margin-top: 42px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .side-card {
+      padding: 28px 34px;
+      min-height: 150px;
+    }
+
+    .side-number {
+      margin-top: 10px;
+      font-size: 68px;
+      line-height: 0.95;
+      font-weight: 750;
+    }
+
+    .chart {
+      margin-top: 50px;
+      display: grid;
+      gap: 22px;
+      max-width: 1160px;
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: 220px 1fr 130px;
+      gap: 20px;
+      align-items: center;
+      font-size: 27px;
+      font-weight: 650;
+    }
+
+    .chart-track {
+      height: 42px;
+      border-radius: 999px;
+      background: #e2ddd3;
+      overflow: hidden;
+    }
+
+    .chart-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--amber), var(--red));
+    }
+
+    .kernel-layout {
+      margin-top: 58px;
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .kernel-card {
+      padding: 36px;
+    }
+
+    .kernel-dark {
+      background: var(--ink);
+      color: white;
+      border-color: var(--ink);
+    }
+
+    .kernel-title {
+      color: var(--muted);
+      font-size: 24px;
+      font-weight: 650;
+    }
+
+    .kernel-dark .kernel-title {
+      color: #bcbcbc;
+    }
+
+    .kernel-main {
+      margin-top: 20px;
+      font-size: 54px;
+      line-height: 1.08;
+      font-weight: 750;
+    }
+
+    .chips {
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .chip {
+      padding: 18px 16px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: 22px;
+      line-height: 1.25;
+      font-weight: 650;
+    }
+
+    .footer {
+      position: absolute;
+      left: 92px;
+      right: 92px;
+      bottom: 48px;
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 21px;
+      font-weight: 650;
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="fig" id="fig-1">
+      <div class="inner">
+        <div class="kicker">Experiment setup</div>
+        <h1>同一台 RTX 4060，<br>比较 FP16 与 4-bit decode。</h1>
+        <div class="setup-grid">
+          <div class="setup-card">
+            <div class="label">Model</div>
+            <div class="value">Qwen2.5<br>1.5B Instruct</div>
+          </div>
+          <div class="setup-card">
+            <div class="label">GPU</div>
+            <div class="value">RTX 4060<br>Laptop 8GB</div>
+          </div>
+          <div class="setup-card">
+            <div class="label">Workload</div>
+            <div class="value">512 prompt<br>128 decode</div>
+          </div>
+        </div>
+        <div class="footer"><span>LLM Quant Profiler</span><span>01</span></div>
+      </div>
+    </section>
+
+    <section class="fig" id="fig-2">
+      <div class="inner">
+        <div class="kicker">Measured result</div>
+        <h2>显存下降，但 decode 吞吐也下降。</h2>
+        <div class="metric-row">
+          <div class="metric">
+            <div class="label">VRAM</div>
+            <div class="metric-main accent-green">3.1 → 1.2GB</div>
+            <div class="metric-sub">约 60% 显存节省</div>
+          </div>
+          <div class="metric">
+            <div class="label">Decode throughput</div>
+            <div class="metric-main accent-red">7.4 → 5.8</div>
+            <div class="metric-sub">tok/s，约 27% 下降</div>
+          </div>
+        </div>
+        <div class="bars">
+          <div class="bar"><span>memory</span><div class="track"><div class="fill" style="width:39%;background:var(--green);"></div></div><span>-60%</span></div>
+          <div class="bar"><span>throughput</span><div class="track"><div class="fill" style="width:78%;background:var(--red);"></div></div><span>-27%</span></div>
+        </div>
+        <div class="footer"><span>FP16 baseline vs bitsandbytes 4-bit</span><span>02</span></div>
+      </div>
+    </section>
+
+    <section class="fig" id="fig-3">
+      <div class="inner">
+        <div class="kicker">Out-of-place dequant</div>
+        <h2>慢在中间的反量化路径：读、解压、写回、再读。</h2>
+        <div class="flow">
+          <div class="node">
+            <div class="node-index">1</div>
+            <div class="node-title">读取 packed<br>4-bit 权重</div>
+            <div class="node-tag">read</div>
+          </div>
+          <div class="node">
+            <div class="node-index">2</div>
+            <div class="node-title">反量化为<br>FP16 权重</div>
+            <div class="node-tag">dequant</div>
+          </div>
+          <div class="node">
+            <div class="node-index">3</div>
+            <div class="node-title">中间结果<br>写回显存</div>
+            <div class="node-tag">write</div>
+          </div>
+          <div class="node">
+            <div class="node-index">4</div>
+            <div class="node-title">GEMV 再读<br>FP16 权重</div>
+            <div class="node-tag">read again</div>
+          </div>
+        </div>
+        <div class="byte-compare">
+          <div class="side-card">
+            <div class="label">FP16 effective traffic</div>
+            <div class="side-number accent-blue">2B / weight</div>
+          </div>
+          <div class="side-card">
+            <div class="label">Non-fused 4-bit effective traffic</div>
+            <div class="side-number accent-red">~4.5B / weight</div>
+          </div>
+        </div>
+        <div class="footer"><span>quantization tax</span><span>03</span></div>
+      </div>
+    </section>
+
+    <section class="fig" id="fig-4">
+      <div class="inner">
+        <div class="kicker">Layer-wise profiling</div>
+        <h2>GQA 的 K/V projection 最容易暴露这笔开销。</h2>
+        <div class="chart">
+          <div class="chart-row"><span>K projection</span><div class="chart-track"><div class="chart-fill" style="width:100%;"></div></div><span>380%</span></div>
+          <div class="chart-row"><span>V projection</span><div class="chart-track"><div class="chart-fill" style="width:82%;"></div></div><span>310%</span></div>
+          <div class="chart-row"><span>O projection</span><div class="chart-track"><div class="chart-fill" style="width:52%;"></div></div><span>160%</span></div>
+          <div class="chart-row"><span>MLP down</span><div class="chart-track"><div class="chart-fill" style="width:39%;"></div></div><span>120%</span></div>
+          <div class="chart-row"><span>MLP gate</span><div class="chart-track"><div class="chart-fill" style="width:34%;"></div></div><span>105%</span></div>
+        </div>
+        <p class="note">较小矩阵里，反量化和显存往返的占比更高。</p>
+        <div class="footer"><span>relative slowdown by layer type</span><span>04</span></div>
+      </div>
+    </section>
+
+    <section class="fig" id="fig-5">
+      <div class="inner">
+        <div class="kicker">Fused kernel</div>
+        <h2>把反量化放到片上完成，跳过中间 FP16 写回。</h2>
+        <div class="kernel-layout">
+          <div class="kernel-card kernel-dark">
+            <div class="kernel-title">fused dequant-GEMV</div>
+            <div class="kernel-main">4-bit → codebook → scale → accumulate</div>
+            <div class="chips">
+              <div class="chip">SRAM 内<br>反量化</div>
+              <div class="chip">不写回<br>中间权重</div>
+              <div class="chip">优先替换<br>K/V 层</div>
+            </div>
+          </div>
+          <div class="kernel-card">
+            <div class="label">Decode throughput after patch</div>
+            <div class="metric-main accent-green">6.7 tok/s</div>
+            <div class="metric-sub">相对 4-bit baseline 追回约 16%</div>
+          </div>
+        </div>
+        <div class="footer"><span>github.com/AkikoAkaki/llm-quant-profiler</span><span>05</span></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const fig = new URLSearchParams(window.location.search).get("fig");
+    if (fig) {
+      document.body.classList.add("export");
+      document.querySelectorAll(".fig").forEach((node, index) => {
+        if (String(index + 1) !== fig) node.remove();
+      });
+    }
+  </script>
+</body>
+</html>

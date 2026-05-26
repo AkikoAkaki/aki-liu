@@ -271,7 +271,10 @@ body {
     color: var(--text-color);
     font-family: var(--font-sans);
     margin: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     -webkit-font-smoothing: subpixel-antialiased;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* 代码元素默认使用等宽字体 */
@@ -321,7 +324,7 @@ body::after {
     top: 0;
     left: 0;
     right: 0;
-    height: 150px;
+    height: calc(150px + env(safe-area-inset-top, 0px));
     background: linear-gradient(
         to bottom,
         rgba(var(--bg-rgb), 1) 0%,
@@ -859,6 +862,32 @@ body.menu-cursor-hidden * {
         --menu-search-width: min(92vw, 520px);
         --menu-search-height: min(680px, calc(100dvh - 80px));
         top: 40px;
+
+        /* Performance optimization for mobile: light frosted glass, higher opacity, snappier transitions */
+        background: rgba(var(--bg-rgb), 0.8) !important;
+        backdrop-filter: blur(16px) saturate(140%) !important;
+        -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        transition:
+            transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+            width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+            height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+            border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+            backdrop-filter 0.3s ease,
+            -webkit-backdrop-filter 0.3s ease !important;
+    }
+
+    .menu-bar.is-animating {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+
+    .menu-bar.is-open,
+    .menu-bar.is-search {
+        background: rgba(var(--bg-rgb), 0.8) !important;
+        backdrop-filter: blur(16px) saturate(140%) !important;
+        -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     }
 
     .menu-bar.is-scrolled-away {
@@ -872,6 +901,24 @@ body.menu-cursor-hidden * {
 
     .menu-panel {
         padding-top: 72px;
+        transition:
+            opacity 0.18s ease,
+            transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+            visibility 0s linear 0.35s !important;
+    }
+
+    .menu-link {
+        transition:
+            opacity 0.18s ease,
+            transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+            background-color 0.2s ease !important;
+    }
+
+    /* Completely disable unused hover-glow backdrop filters on mobile to eliminate severe layer rendering overhead */
+    .menu-link::before,
+    .mb-tag-chip::before,
+    .mb-card-tag::before {
+        display: none !important;
     }
 }
 

@@ -65,7 +65,7 @@
                         <div class="work-item"{{ if .preview }} data-preview="{{ .preview | relURL }}"{{ end }}>
                             <div class="work-item-title-row">
                                 {{- if .link }}
-                                <a href="{{ .link | relLangURL }}" class="work-item-title"{{ if .page_preview }} data-page-preview{{ end }}>{{ .title }}</a>
+                                <a href="{{ .link | relLangURL }}" class="work-item-title">{{ .title }}</a>
                                 {{- else }}
                                 <span class="work-item-title">{{ .title }}</span>
                                 {{- end }}

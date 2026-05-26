@@ -30,8 +30,6 @@ import { initPrefetcher } from "./modules/prefetch.js";
     // --- About image sequence ---
     initAboutImageSequence();
 
-    // --- About/Home page preview ---
-    initPagePreview();
 
     // --- About flight + drag (Coordinates/Registration → pinboard) ---
     initAboutFlightAndDrag();
@@ -47,6 +45,9 @@ import { initPrefetcher } from "./modules/prefetch.js";
 
     // --- Expanding Menu ---
     initExpandingMenu();
+
+    // --- Table wrapping for responsive tables ---
+    initTableWrapping();
 
     // --- Search placeholder animation ---
     const searchBar = document.querySelector(".archive-search");
@@ -867,11 +868,16 @@ import { initPrefetcher } from "./modules/prefetch.js";
     const engine = new FluidEngine(intro, wrapper);
     if (!engine.init()) return;
 
-    // Recalculate dimensions once all custom web fonts are fully loaded to prevent layout shift races
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(() => {
-        engine.doResize();
+    // Dynamic observer: handles Hero.svg load, web font loading, and responsive shifts
+    if (window.ResizeObserver) {
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+            engine.handleResize();
+          }
+        }
       });
+      resizeObserver.observe(wrapper);
     }
 
     // Throttle WebGL rendering based on viewport visibility
@@ -938,6 +944,9 @@ import { initPrefetcher } from "./modules/prefetch.js";
     const root = document.querySelector("[data-about-sequence]");
     const track = document.querySelector("[data-about-sequence-track]");
     if (!root || !track) return;
+
+    // Disable about image sequence on mobile
+    if (window.matchMedia("(max-width: 768px)").matches) return;
 
     const sourceItems = [...track.querySelectorAll(".af-sequence-item")];
     if (!sourceItems.length) return;
@@ -1717,6 +1726,16 @@ import { initPrefetcher } from "./modules/prefetch.js";
     });
   }
 
+  function initTableWrapping() {
+    document.querySelectorAll(".post-content table").forEach((table) => {
+      if (table.parentNode?.nodeType === Node.ELEMENT_NODE && table.parentNode.classList.contains("table-wrapper")) return;
+      const wrapper = document.createElement("div");
+      wrapper.className = "table-wrapper";
+      table.parentNode.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    });
+  }
+
   function initExpandingMenu() {
     const menuBar = document.getElementById("menu-bar");
     const menuTrigger = document.getElementById("menu-trigger");
@@ -1749,10 +1768,15 @@ import { initPrefetcher } from "./modules/prefetch.js";
 
     function open() {
       syncOpenHeight();
+      menuBar.classList.add("is-animating");
       menuBar.classList.add("is-open");
       menuBar.classList.remove("is-scrolled-away");
       menuTrigger.setAttribute("aria-expanded", "true");
       if (menuPanel) menuPanel.setAttribute("aria-hidden", "false");
+
+      setTimeout(() => {
+        menuBar.classList.remove("is-animating");
+      }, 420);
     }
 
     function close() {
@@ -1761,11 +1785,16 @@ import { initPrefetcher } from "./modules/prefetch.js";
         "--menu-open-height",
         `${menuBar.getBoundingClientRect().height}px`,
       );
+      menuBar.classList.add("is-animating");
       requestAnimationFrame(() => {
         menuBar.classList.remove("is-open");
       });
       menuTrigger.setAttribute("aria-expanded", "false");
       if (menuPanel) menuPanel.setAttribute("aria-hidden", "true");
+
+      setTimeout(() => {
+        menuBar.classList.remove("is-animating");
+      }, 420);
     }
 
     window.addEventListener("site:close-all", close);
@@ -2629,87 +2658,4 @@ import { initPrefetcher } from "./modules/prefetch.js";
     updateLayout();
   }
 
-  function initPagePreview() {
-    const links = document.querySelectorAll("[data-page-preview]");
-    const preview = document.getElementById("about-page-preview");
-    if (!links.length || !preview) return;
-
-    let positionRaf = 0;
-    let latestPointerX = 0;
-    let latestPointerY = 0;
-    let onEndCallback = null;
-
-    function placePreview() {
-      positionRaf = 0;
-      const gap = 12;
-      const margin = 16;
-      const previewWidth = 380;
-      const previewHeight = 280;
-
-      // Position snug in the top-right of the cursor
-      const maxX = window.innerWidth - previewWidth - margin;
-      const x = Math.max(margin, Math.min(latestPointerX + gap, maxX));
-      const y = Math.max(margin, latestPointerY - previewHeight - gap);
-
-      preview.style.left = `${Math.round(x)}px`;
-      preview.style.top = `${Math.round(y)}px`;
-    }
-
-    function schedulePosition(event) {
-      latestPointerX = event.clientX;
-      latestPointerY = event.clientY;
-      if (positionRaf) return;
-      positionRaf = requestAnimationFrame(placePreview);
-    }
-
-    function hidePagePreviewInstantly() {
-      if (onEndCallback) {
-        preview.removeEventListener("transitionend", onEndCallback);
-        onEndCallback = null;
-      }
-      preview.style.opacity = "0";
-      preview.style.transform = "scale(0.96)";
-      preview.style.display = "none";
-    }
-
-    links.forEach((link) => {
-      link.addEventListener("mouseenter", (event) => {
-        if (onEndCallback) {
-          preview.removeEventListener("transitionend", onEndCallback);
-          onEndCallback = null;
-        }
-        // 隐藏 Home Image Preview，避免重叠！
-        document.dispatchEvent(new CustomEvent("hide-home-preview"));
-
-        preview.style.display = "block";
-        // Force a reflow so transition works
-        // eslint-disable-next-line no-unused-expressions
-        preview.offsetWidth;
-        preview.style.opacity = "1";
-        preview.style.transform = "scale(1)";
-        schedulePosition(event);
-      });
-
-      link.addEventListener("mousemove", schedulePosition);
-
-      link.addEventListener("mouseleave", () => {
-        if (onEndCallback) {
-          preview.removeEventListener("transitionend", onEndCallback);
-        }
-        preview.style.opacity = "0";
-        preview.style.transform = "scale(0.96)";
-        
-        onEndCallback = (e) => {
-          if (e.propertyName === "opacity" && preview.style.opacity === "0") {
-            preview.style.display = "none";
-            preview.removeEventListener("transitionend", onEndCallback);
-            onEndCallback = null;
-          }
-        };
-        preview.addEventListener("transitionend", onEndCallback);
-      });
-    });
-
-    document.addEventListener("hide-page-preview", hidePagePreviewInstantly);
-  }
 })();

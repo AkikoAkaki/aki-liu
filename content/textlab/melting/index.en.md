@@ -1,0 +1,21 @@
+---
+title: "Notes on Melting"
+date: 2021-12-21
+tags: ["essay"]
+draft: false
+translationStatus: "ai"
+---
+
+### **2021-12-11**
+
+Cycling home to co shu nie's first album, *For Special You!*, the tears just wouldn't stop. Memories of my past and my endless fantasies came rushing back. I feel it, genuinely — this world is free but indifferent. Sometimes it's as if reality is being cruelly peeled away in front of me, and I go through my days on autopilot, my consciousness drifting away from the actual world and into my own absurd daydreams. I've lost count of how many times I've cycled through the ideal image of myself in my head. Can the version of me soaking in that fantasy still hold together? In the end, my body will never be worn into the shape I long for through dreams.
+
+Whenever I think about this, sadness rises in me for no particular reason, and sometimes I lose my sense of direction. Maybe my heart is too lonely, or maybe my life feels a little hollow — but when I settle down and really look, the world isn't so terrible. So is my sadness only a fantasy of mine? I keep turning it over: maybe in my future work, I can try to reconstruct a magical world where truth and illusion are indistinguishable. That evening while buying things, I spotted Fantianer spicy strips on the shelf, and suddenly thought of the days when my mother and I were always at war over my sneaking onto electronics. I know my stomach will definitely regret it, but I bought a pack anyway — is this some kind of yearning for the reckless enthusiasm I had for nightlife back when I was young and clueless? At checkout I caught the cashier girl's blank expression and the weary look on the employee counting notes beside her. Combined with what my Japanese teacher had described about the miserable lives and crushing pressure of Japanese salarymen — *"If you ever see someone in Tokyo walking down the street looking blank, wearing a suit, they've probably just failed an interview"* — that line burned itself into my memory again.
+
+---
+
+### **2021-12-31**
+
+This December 31st is nothing like last year's. Last year on this day, I rode home with my family from the apartment we were renting near XHW, and everything around me felt alive with emotion I couldn't help but notice. The sedan gradually pulling away from the school under a sunset sky was a vast, overwhelming sight. The colors back then hadn't yet taken on the complex and tangled vividness that makes things so hard to step away from now. My sensitivity then and my sensitivity a year later are simply not comparable. Nowadays I've lost whatever intensity I once felt around the new year; instead my attention is fixed on finals two weeks away. This isn't just a sign of inner disorder — it's a marker of how expectations and pressure have compounded. And yet this change doesn't feel particularly sad to me. What cries out somewhere deep in my heart is only the faint, torn version of myself from last year, already so distant. The moment I get caught up in immediate tasks, he starts to flicker and blur in my mind, unclear.
+
+Scrolling through my old Moments posts, I can't help but reflect on the gap between me standing here in 2021 looking back, and me in 2021 actually living through it, crying and laughing and obsessing. I'm glad I kept a record in Moments — it doesn't have much practical use, but at least it gives me some proof of existence in this society of simulacra. Eleventh grade. Academically, I genuinely made progress. But whether I was actually happier this year than last — I seriously doubt it. The anxiety of thirsting for knowledge, anxiety about future studies and quality of life, anxiety about my social life — all of it has embedded itself in my head, deepening by the day, especially when I compare myself to others. There's also the confusion I feel about studying life at Xinghewan, and my intense worry about my physical health. But at the same time I discovered so much — Vocaloid and Tsumiki, co shu nie and Hiromi Uehara, and a deepening love for literature, media studies, art, and ACGN culture. Writing that, I've stepped off the car and walked through the door. At the turn of 2020 to 2021 I stood in the cold wind, looking out at this glittering world. At the turn of 2021 to 2022, I'll sit beside the warm heater — resting, or making something.

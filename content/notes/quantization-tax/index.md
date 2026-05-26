@@ -11,12 +11,13 @@ cover: "cover.png"
 
 <aside>
 
-**TL;DR**
+#### 速览
 
-- **反直觉现象**：在 RTX 4060 上对 Qwen2.5-1.5B 做逐层评测，发现 4-bit 量化虽省了近 60% 显存，但 Decode 推理速度却比 FP16 慢了 27%（7.4 → 5.8 tok/s）。
-- **致命的量化税**：根源在于“非融合”的反量化路径（out-of-place dequant）。权重在显存中解压再写回，导致每次访存暴增至 4.5 字节（远高于 FP16 的 2 字节）。这在 GQA 架构的较小矩阵（如 K/V 投影层）中尤为明显，单层最高慢了 380%。
-- **片上融合算子**：用 Triton 实现了一个 fused dequant-GEMV 算子，把反量化完全放在片上 SRAM 完成，省去显存往返。替换 K/V 投影层后，Decode 吞吐量成功挽回 16%（至 6.7 tok/s）。
-- **GitHub 链接**：本项目（LLM Quant Profiler）的源代码已开源：[AkikoAkaki/llm-quant-profiler](https://github.com/AkikoAkaki/llm-quant-profiler)。
+- 在 RTX 4060 Laptop 上，Qwen2.5-1.5B 做 4-bit 量化后显存从 3.1GB 降到 1.2GB，但 decode 吞吐量从 7.4 降到 5.8 tok/s，反而慢了 27%。
+- 问题主要出在 bitsandbytes 的非融合反量化路径：权重先从 4-bit 解回 FP16、写回显存，再被 GEMV 读走。一次权重访问的有效流量从 FP16 的 2 字节涨到约 4.5 字节。
+- 这笔“量化税”在 GQA 的 K/V 投影层尤其明显；这些矩阵更小，反量化和访存开销占比更高，单层最差慢了 380%。
+- 我用 Triton 写了一个 fused dequant-GEMV kernel，把反量化放到片上完成。替换 K/V 投影层后，decode 吞吐量回升到 6.7 tok/s，追回了 16%。
+- 代码在这里：[AkikoAkaki/llm-quant-profiler](https://github.com/AkikoAkaki/llm-quant-profiler)。
 
 </aside>
 

@@ -42,7 +42,7 @@ grid:
         - title: LLM Quant Profiler
           date: "2024"
           link: "/notes/quantization-tax/"
-          page_preview: true
+          preview: "images/home/llm-quant-profiler.png"
         - title: MoodStream
           date: "2023"
           link: "https://github.com/AkikoAkaki/moodstream"

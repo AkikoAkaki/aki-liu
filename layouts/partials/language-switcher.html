@@ -1,0 +1,8 @@
+{{- if .IsTranslated -}}
+    {{- range .Translations -}}
+        <span class="metadata-separator">&middot;</span>
+        <a href="{{ .RelPermalink }}" class="metadata-item lang-switch" hreflang="{{ .Language.Lang }}">
+            {{- if eq .Language.Lang "zh" -}}中文{{- else -}}EN{{- end -}}
+        </a>
+    {{- end -}}
+{{- end -}}

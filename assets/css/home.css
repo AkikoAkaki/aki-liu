@@ -504,6 +504,17 @@ a.nav-panel-subitem:hover {
     .work-column {
         gap: 3.5rem;
     }
+
+    .work-grid .work-column:first-child {
+        padding-left: 0;
+    }
+
+    .nav-panel {
+        max-width: none;
+        height: auto;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
 }
 
 /* ==========================================================================

@@ -12,6 +12,7 @@ export class FluidEngine {
         this.resizeRafId = null;
         this.isDestroyed = false;
         this.isPaused = false;
+        this.isContextLost = false;
         
         this.mx = 0.5; this.my = 0.5; this.tmx = 0.5; this.tmy = 0.5;
         this.vx = 0; this.vy = 0;
@@ -145,10 +146,15 @@ export class FluidEngine {
     
     handleContextLost(e) {
         e.preventDefault();
-        this.pause();
+        this.isContextLost = true;
+        if (this.rafId) {
+            cancelAnimationFrame(this.rafId);
+            this.rafId = null;
+        }
     }
     
     handleContextRestored() {
+        this.isContextLost = false;
         this.setupWebGL();
         this.doResize();
         if (!this.isPaused && !this.isDestroyed) {
@@ -199,6 +205,8 @@ export class FluidEngine {
         const ir = this.intro.getBoundingClientRect();
         const cw = wr.width  * 1.55;
         const ch = wr.height * 1.05;
+        if (cw < 1 || ch < 1) return;
+        
         const cl = (wr.left - ir.left) + (wr.width - cw) / 2;
         const ct = (wr.top  - ir.top)  + (wr.height - ch) / 2;
         
@@ -226,7 +234,7 @@ export class FluidEngine {
             return;
         }
         
-        if (!this.rafId) {
+        if (!this.rafId && !this.isContextLost) {
             this.loop();
         }
     }
@@ -269,7 +277,7 @@ export class FluidEngine {
     }
     
     loop() {
-        if (this.isPaused || this.isDestroyed) {
+        if (this.isPaused || this.isDestroyed || this.isContextLost) {
             this.rafId = null;
             return;
         }

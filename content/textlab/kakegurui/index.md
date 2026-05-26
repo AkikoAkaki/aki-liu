@@ -9,11 +9,11 @@ draft: false
     src="1.png"
 >}}
 
-## Plot summary
+## 剧情简介
 
-The story of Kakegurui – Compulsive Gambler takes place at Hyakkaou Private Academy (私立百花王学園), one of Japan's most prestigious schools where, unlike normal schools, the hierarchy is determined by gambling. The main protagonist is Yumeko Jabami (蛇喰夢子), a transfer student whose beautiful, innocent facade hides a psychotic addiction to gambling and high-stakes situations. With a keen intellect able to pierce through the elaborate cheating methods used by the most powerful students to rig games in their favor, Yumeko threatens to destroy the twisted hierarchy of the school simply for the thrill of it.
+《狂赌之渊》的故事发生在日本私立名校"私立百花王学园"，这所学校与普通学校不同——学生的地位高低完全由赌博决定。主角蛇喰梦子是一名转学生，美丽清纯的外表之下隐藏着一颗对赌博和极端风险如痴如醉的疯狂内心。凭借能够洞穿权贵学生作弊手段的敏锐智力，她以纯粹追求快感的姿态，搅动了整个学校扭曲的权力格局。
 
-Source from [wikipedia](https://en.m.wikipedia.org/wiki/Kakegurui_-_Compulsive_Gambler)
+资料来源：[Wikipedia](https://en.m.wikipedia.org/wiki/Kakegurui_-_Compulsive_Gambler)
 
 {{< figure 
     src="2.png"
@@ -21,31 +21,31 @@ Source from [wikipedia](https://en.m.wikipedia.org/wiki/Kakegurui_-_Compulsive_G
 
 ---
 
-## OST
+## 配乐
 
-There are 61 soundtracks for the 12 episodes of TV anime. The styles for the soundtracks are mainly jazz and electronic music.
+全12集共收录了多达61首配乐，风格以爵士和电子音乐为主。
 
-**For jazz, it has these functions:**
+**爵士乐的作用：**
 
-- Creates not only a debauched atmosphere of the shedding of money and the indulgence in pleasures but also shows the conceit of characters. (賭ケグルイ、艶ヤカナ狂気、華ヒラク蛇、下卑タ笑ミ、变ヨウ) Display a silent, and nervous mood (兆シ)
+- 营造挥金如土、纵情声色的糜烂氛围，同时刻画人物的傲慢与骄矜（《賭ケグルイ》《艶ヤカナ狂気》《華ヒラク蛇》《下卑タ笑ミ》《变ヨウ》）；另有渲染沉默紧张气氛的段落（《兆シ》）
 
-**For electronic music, it has these functions:**
+**电子音乐的作用：**
 
-- Emphasize the overwhelming confidence in a character (昂ル)
+- 强调人物势不可挡的压倒性自信（《昂ル》）
 
-**Others:**
+**其他：**
 
-- Specific for the game with Mitari Yikishima (生志摩 妄): A tune for a woman who fearlessly pursuing death like a cowboy in the West, for the Russian Roulette which determines life or death, for the silent faith among Yumeko and Ryota. (妄二欲ス、生キ死ニノ際)
+- 专为蛇喰梦子与生志摩妄的决斗设计：一曲写尽如西部牛仔般无畏赴死的女人，写生死抉择的俄罗斯轮盘，写梦子与了也之间无声的信任（《妄二欲ス》《生キ死ニノ際》）
 
-**OP** (deal with the devil): Leaping tempo combines with 色気の声 expound why 肝心なの strong な mind, tally with the content of the TV anime.
+**OP**（deal with the devil）：律动跃升，配以充满魅惑感的声线，道出了何谓"心之所向"（肝心なの strong な mind），与整部作品的主题高度契合。
 
-**ED** (LAYon-theLINE): The chorus and the strings not only intertwine to form the triumphal song of the winner but also leave the opportunity for the next carnival.
+**ED**（LAYon-theLINE）：合唱与弦乐交织，既是胜者的凯歌，也为下一场狂欢留出余地。
 
 ---
 
-## Frame
+## 画面
 
-The overall quality of the frame is mediocre, especially for a MAPPA anime. Compares to the original manga, there is a significant reduction in aesthetic perception. 顔芸で強烈な impact is one of the highlights of this artwork.
+整体作画质量中规中矩，以 MAPPA 的标准来说尚有落差。与原著漫画相比，视觉冲击力明显削弱。不过，夸张的颜艺（顔芸）依然是本作的一大亮点。
 
 {{< figure 
     src="3.jpg"
@@ -53,45 +53,43 @@ The overall quality of the frame is mediocre, especially for a MAPPA anime. Comp
 
 ---
 
-# Yumeko's gambling notion
+# 梦子的赌博哲学
 
-### Variable Ratio schedule
+### 变动比率强化
 
-In order to discuss why Yumeko loves gambling in a psychotic way, we need to know what kind of reinforcement schedule gambling is.
+要理解梦子为何对赌博有着近乎病态的迷恋，首先需要了解赌博属于哪种强化模式。
 
-A **schedule of reinforcement** determines which occurrences of a specific response result in the presentation of a **reinforcer**. (Wayne Weiten, *Psychology Themes and Variations*, 245) In a casino game, the reinforcer might include the behavior of others, the degree of the risk of the game, one's own principal, etc. These factors, or reinforcers, will influence the occurrences of the response: the pleasure gained from gambling.
+**强化程序**（schedule of reinforcement）决定了特定反应在何种情况下能够引发**强化物**（reinforcer）的出现（Wayne Weiten，《心理学：主题与变式》，第245页）。在赌博场景中，强化物可能包括他人的反应、游戏风险的大小、本金的变动等。这些因素会影响反应的发生频率，即从赌博中获得的快感。
 
 {{< figure 
     src="4.jpg"
 >}}
 
-Since gambling has its own unique characteristic: unpredictability, it is a kind of variable-ratio (VR) schedule. People involved in gambling do not know when they can win the gamble and get pleasure, thus:
+由于赌博具有其独特属性——不可预测性——它属于一种**变动比率**（Variable Ratio，VR）强化程序。参与赌博的人无法预知何时能赢得赌局、获得快感，因此：
 
-> With a variable-ratio (VR) schedule, the reinforcer is given after a variable number of nonreinforced responses. The number of nonreinforced responses varies around a predetermined average. (Wayne Weiten, Psychology Themes and Variations, 246)
-> 
+> 在变动比率强化程序中，强化物在经历数量不等的非强化反应后出现，非强化反应的次数围绕某一预设平均值波动。（Wayne Weiten，《心理学：主题与变式》，第246页）
 
-> In comparison to fixed schedules, variable schedules tend to yield steadier responding and greater resistance to extinction. (Wayne Weiten, Psychology Themes and Variations, 246)
+> 相比固定程序，变动程序往往能产生更稳定的反应，且更不容易消退。（Wayne Weiten，《心理学：主题与变式》，第246页）
 
-Simply put, due to the variable-ratio schedule, all gamblers will **continue** to gamble steadily after they have engaged in the activity of gambling and the gambling behavior will **not easily disappear**.
+简而言之，正是由于变动比率强化的存在，赌徒一旦投身赌博，便会**持续**地进行下去，且这种行为**极难消退**。
 
-### Dopamine
+### 多巴胺
 
-In the schedule, dopamine plays a role as **positive reinforcement**, which serves as a reward and makes that behavior more likely to occur again in the future.
+在强化程序中，多巴胺扮演着**正强化物**的角色——它是一种奖励信号，令行为在未来更容易重复发生。
 
-The uncertainty of gambling allows dopamine to possess these properties:
+赌博的不确定性赋予了多巴胺以下特性：
 
-> According to this hypothesis proposed by Montague, Dayan, and Sejnowski, rewards that are expected do not produce a second phasic dopamine response in certain dopaminergic cells, but rewards that are unexpected, or greater than expected, produce a short-lasting increase in synaptic dopamine, whereas the omission of an expected reward actually causes dopamine release to drop below its background level (Schultz W, "Neuronal Reward and Decision Signals: From Theories to Data", 95 (3): 853–951. )
-> 
+> 根据 Montague、Dayan 和 Sejnowski 提出的假说：已预期到的奖励不会在特定多巴胺能细胞中引发第二次相位性多巴胺反应；而意外出现的奖励，或超出预期的奖励，会引发突触多巴胺的短暂升高；相反，预期中的奖励若未能出现，多巴胺释放量则会降至基线水平以下。（Schultz W，《神经元奖励与决策信号：从理论到数据》，第95卷第3期，第853—951页）
 
-Such a phenomenon explains why **Yumeko abhors any way of making the outcome of a gamble towards a definite answer**. In the duel with Mitari Yikishima (生志摩 妄), Yumeko senses that Mitari has no quest for gambling, but is purely bent on death. She expresses her utmost contempt for Mitari. In addition, Yumeko enjoys the process of gambling——either by pure luck or by her possibly higher cheating skill, either of which does not make the outcome certain. Her extreme risk-seeking may cause by some specific dopamine receptors or her age of adolescence. A study has shown that adolescents and young adults take more risks than any other age group (Joe Magliano, Why Are Teen Brains Designed for Risk-taking).
+这一机制解释了为何**梦子厌恶任何使赌局走向确定结果的方式**。在与生志摩妄的决斗中，梦子察觉到妄并不在乎赌博本身，她追求的只是死亡，梦子对此表达了极度的蔑视。梦子享受的正是赌博过程本身——无论是纯粹的运气，还是自身可能更胜一筹的欺骗技巧，两者都不能使结果变得确定。她极端的风险追求行为，可能源于某些特殊的多巴胺受体构型，也可能与青少年的年龄阶段有关。研究表明，青少年和年轻成人比其他任何年龄段的人都更倾向于冒险（Joe Magliano，《为什么青少年的大脑天生就爱冒险》）。
 
 {{< figure 
     src="5.jpg"
 >}}
 
-### Pain
+### 痛觉与内啡肽
 
-When people encounter pain, **endorphins** will be released from a person's pituitary gland from the central nervous system and inhibit the transmission of pain signals. For Yumeko, the anxiety and pain she gets from gambling are short-lived, but the endorphins then work to keep her joy and passionate mood. Thus, she might have **high endorphin levels.**
+当人遭受痛苦时，垂体和中枢神经系统会释放**内啡肽**，以抑制痛觉信号的传导。对梦子而言，赌博带来的焦虑与痛苦是短暂的，随后内啡肽发挥作用，维持住她的愉悦与亢奋状态。因此，她很可能天生拥有**较高的内啡肽水平**。
 
 {{< figure 
     src="7.jpg"
@@ -99,6 +97,6 @@ When people encounter pain, **endorphins** will be released from a person's pitu
 
 ---
 
-## Conclusion
+## 结语
 
-Yumeko Jabami may have a rare physique——having specific dopamine receptors and high levels of endorphins. In the pursuit of maximum joy, she even ignored all the risks. In combination with the system of gambling: variable ratio schedule, during each gambling session, Yumeko will experience the supreme pleasure of dopamine and endorphins being secreted in large quantities at the same time.
+蛇喰梦子或许拥有一种罕见的生理体质——特殊的多巴胺受体构型与高水平的内啡肽分泌。为了追求极致的快感，她将一切风险抛诸脑后。结合赌博本身的运作机制——变动比率强化程序，每一次赌局之中，梦子都将经历多巴胺与内啡肽大量同步分泌所带来的至高快感。

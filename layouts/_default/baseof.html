@@ -7,7 +7,9 @@
     {{- $notesPage := .Site.GetPage "section" "notes" -}}
     {{- $microblogPage := .Site.GetPage "section" "microblog" -}}
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)">
     {{ partial "head/seo.html" (dict "page" .) }}
     {{ partial "head/assets.html" . }}
     <link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
@@ -102,9 +104,5 @@
         <img class="home-hover-preview-img" data-home-preview-layer="1" alt="">
     </div>
 
-    <!-- About Page Preview Box placed at root body level to ensure true viewport-relative position: fixed positioning -->
-    <div class="about-page-preview" id="about-page-preview" aria-hidden="true" style="display: none; position: fixed; z-index: 9999; pointer-events: none; width: 380px; height: 280px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 18px 48px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; transform-origin: bottom left; transition: opacity 0.15s ease, transform 0.15s ease; opacity: 0; transform: scale(0.96);">
-        <iframe src="/notes/quantization-tax/" style="width: 142.85%; height: 142.85%; border: none; pointer-events: none; transform: scale(0.7); transform-origin: top left;"></iframe>
-    </div>
 </body>
 </html>

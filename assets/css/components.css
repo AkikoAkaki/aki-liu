@@ -266,7 +266,6 @@ body.section-about .site-main {
     letter-spacing: -0.015em;
     color: var(--color-heading);
     margin: 0;
-    clip-path: inset(-0.25em 100% -0.25em 0);
     animation: motion-sweep var(--motion-sweep-slow) var(--motion-ease-sweep)
         forwards;
 }

@@ -419,9 +419,22 @@
 }
 
 @media (max-width: 900px) {
+    html, body {
+        overflow-x: hidden !important;
+    }
+
+    .site-wrapper {
+        overflow: visible !important;
+    }
+
     .site-container {
         grid-template-columns: 1fr;
         padding: 2rem 1.5rem;
+    }
+    .home-page .site-container {
+        grid-template-columns: 1fr;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
     }
     .site-sidebar {
         justify-self: start;
@@ -451,9 +464,14 @@
         min-height: 100svh;
     }
 
-    /* 瑕嗙洊妗岄潰�?4vw 鐨勫乏鍙冲唴杈硅窛涓庝笁鍒楃綉鏍硷細鎵嬫満涓婇渶瑕佸崟�?+ 1.25rem 鍐呰竟璺濓紝
-       鐢变�?.home-page .site-container 鐨勭壒寮傚害(0,2,0)楂樹�?.site-container(0,1,0)�?
-       蹇呴』鍦ㄦ鏄惧紡瑕嗙洊 grid-template-columns锛屽惁鍒欐闈㈢�?3 鍒楀畾涔変細娉勯湶鍒版墜鏈虹�?*/
+    /* Prevent header/body overlap on single post/page views */
+    .kind-page .site-container {
+        grid-template-rows: auto;
+    }
+
+    /* 瑕嗙洊妗岄潰?4vw 鐨勫乏鍙冲唴杈硅窛涓庝笁鍒楃綉鏍硷細鎵嬫満涓婇渶瑕佸崟?+ 1.25rem 鍐呰竟璺濓紝
+       鐢变?.home-page .site-container 鐨勭壒寮傚害(0,2,0)楂樹?.site-container(0,1,0)?
+       蹇呴鬱鍦ㄦ鏄惧紡瑕嗙洊 grid-template-columns锛屽惁鍒欐闈㈢?3 鍒楀畾涔変細娉勯湶鍒版墜鏈虹?*/
     .home-page .site-container {
         grid-template-columns: 1fr;
         padding-left: 1.25rem;
@@ -465,9 +483,23 @@
         padding-bottom: 0;
     }
 
+    .kind-page .site-main {
+        grid-row: auto;
+    }
+
     .site-sidebar-right {
         display: none;
         margin-top: 0;
+    }
+
+    .kind-page .site-sidebar-right {
+        display: block !important;
+        position: static !important;
+        width: 0 !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
     }
 
     .site-footer {
@@ -504,29 +536,60 @@
         grid-template-columns: 1fr;
         grid-template-rows: auto;
         padding-top: 6rem;
-        gap: 3rem;
+        row-gap: 0.5rem; /* High-density vertical gap control */
     }
     
     .kind-section .site-sidebar,
-    .kind-term .site-sidebar {
-        display: block;
-        grid-row: auto;
-        margin-top: 0;
+    .kind-term .site-sidebar,
+    .kind-section .site-main,
+    .kind-term .site-main,
+    .kind-section .archive-left-col,
+    .kind-term .archive-left-col,
+    .kind-section .archive-main-col,
+    .kind-term .archive-main-col {
+        display: contents;
     }
 
-    .kind-section .site-main,
-    .kind-term .site-main {
-        grid-row: auto;
+    .kind-section .archive-logo-container,
+    .kind-term .archive-logo-container {
+        order: 1;
+        margin-bottom: 0.5rem; /* Extreme compact margin */
+    }
+
+    .kind-section .archive-intro-section,
+    .kind-term .archive-intro-section {
+        order: 2;
+        margin-top: 0;
+        margin-bottom: 0.25rem; /* Extreme compact margin */
+    }
+
+    .kind-section .archive-filter-section,
+    .kind-term .archive-filter-section {
+        order: 3;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .kind-section .archive-list-header,
+    .kind-term .archive-list-header {
+        order: 4;
+        margin-top: 1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .kind-section .archive-list,
+    .kind-term .archive-list {
+        order: 5;
     }
 
     .kind-section .site-sidebar-right,
     .kind-term .site-sidebar-right {
         display: none;
-        grid-row: auto;
     }
 
     .kind-section .site-sidebar-bottom,
     .kind-term .site-sidebar-bottom {
+        order: 6;
         grid-row: auto;
         position: static;
         margin-top: 2rem;
