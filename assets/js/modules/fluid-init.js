@@ -7,6 +7,20 @@ export function initFluidEngine() {
 
   const engine = new FluidEngine(intro, wrapper);
   if (!engine.init()) return;
+  let introVisible = false;
+
+  function startIfVisible() {
+    if (document.visibilityState === "hidden" || !introVisible) return;
+    engine.start();
+  }
+
+  function handleVisibilityChange() {
+    if (document.visibilityState === "hidden") {
+      engine.pause();
+      return;
+    }
+    startIfVisible();
+  }
 
   // Dynamic observer: handles Hero.svg load, web font loading, and responsive shifts
   if (window.ResizeObserver) {
@@ -25,8 +39,9 @@ export function initFluidEngine() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          introVisible = entry.isIntersecting;
           if (entry.isIntersecting) {
-            engine.start();
+            startIfVisible();
           } else {
             engine.pause();
           }
@@ -36,8 +51,11 @@ export function initFluidEngine() {
     );
     observer.observe(intro);
   } else {
-    engine.start();
+    introVisible = true;
+    startIfVisible();
   }
+
+  document.addEventListener("visibilitychange", handleVisibilityChange);
 
   // Smoothly interpolate background if data-theme toggles at runtime
   const themeObserver = new MutationObserver((mutations) => {

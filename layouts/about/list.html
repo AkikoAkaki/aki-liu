@@ -44,7 +44,7 @@
 
       <div class="af-photo-wrap" data-about-sequence style="{{ $random_style | safeCSS }}">
         <div class="ab-photo af-photo-base" style="width:100%;height:100%;">
-          <img src="/images/about/{{ $random_name | urlize | safeURL }}" alt="{{ $random_name }}" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <img src="/images/about/{{ $random_name | urlize | safeURL }}" alt="{{ $random_name }}" fetchpriority="high" style="width:100%;height:100%;object-fit:cover;display:block;">
           <div class="ab-photo-silhouette"></div>
           <div class="ab-photo-label">
             <span>LIU — STUDIO</span>
@@ -88,7 +88,7 @@
                 </figcaption>
                 <div class="af-sequence-photo" style="{{ $itemStyle | safeCSS }}">
                   <div class="ab-photo">
-                    <img src="/images/about/{{ $file_name | urlize | safeURL }}" alt="{{ $file_name }}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
+                    <img src="/images/about/{{ $file_name | urlize | safeURL }}" alt="{{ $file_name }}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
                     <div class="ab-photo-silhouette"></div>
                     {{ if $isAnchor }}
                     <div class="ab-photo-label">
