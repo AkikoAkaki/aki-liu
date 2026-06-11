@@ -12,11 +12,26 @@
 
     <div class="af-center-band reveal-on-scroll">
       <div></div>
-      {{ $images := readDir "static/images/about" }}
+      {{ $images := sort (resources.Match "images/about/*") "Name" }}
       {{ $valid_images := slice }}
       {{ range $images }}
-        {{ if not .IsDir }}
-          {{ $valid_images = $valid_images | append .Name }}
+        {{ $subType := lower .MediaType.SubType }}
+        {{ if in (slice "jpg" "jpeg" "png" "webp") $subType }}
+          {{ $processed := . }}
+          {{ $longEdge := .Height }}
+          {{ if gt .Width .Height }}
+            {{ $longEdge = .Width }}
+          {{ end }}
+          {{ if gt $longEdge 2000 }}
+            {{ if ge .Width .Height }}
+              {{ $processed = .Resize "2000x webp q82" }}
+            {{ else }}
+              {{ $processed = .Resize "x2000 webp q82" }}
+            {{ end }}
+          {{ else }}
+            {{ $processed = .Process "webp q82" }}
+          {{ end }}
+          {{ $valid_images = $valid_images | append (dict "name" (path.Base .Name) "image" $processed) }}
         {{ end }}
       {{ end }}
       {{ $random_name := index ($valid_images | shuffle) 0 }}
@@ -28,7 +43,7 @@
       {{ $captionR_note := slice "vertical frame" "square crop" "wide capture" "anchor frame" "tall ratio" "landscape frame" "loop sample" }}
       {{ $img_index := 0 }}
       {{ range $index, $name := $valid_images }}
-        {{ if eq $name $random_name }}
+        {{ if eq $name.name $random_name.name }}
           {{ $img_index = $index }}
         {{ end }}
       {{ end }}
@@ -39,12 +54,11 @@
       {{ $text_r := index $captionR_text $mod }}
       {{ $note_r := index $captionR_note $mod }}
 
-      {{ $random_config := imageConfig (printf "static/images/about/%s" $random_name) }}
-      {{ $random_style := printf "aspect-ratio: %d/%d;" $random_config.Width $random_config.Height }}
+      {{ $random_style := printf "aspect-ratio: %d/%d;" (int $random_name.image.Width) (int $random_name.image.Height) }}
 
       <div class="af-photo-wrap" data-about-sequence style="{{ $random_style | safeCSS }}">
         <div class="ab-photo af-photo-base" style="width:100%;height:100%;">
-          <img src="/images/about/{{ $random_name | urlize | safeURL }}" alt="{{ $random_name }}" fetchpriority="high" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <img src="{{ $random_name.image.RelPermalink }}" alt="{{ $random_name.name }}" fetchpriority="high" style="width:100%;height:100%;object-fit:cover;display:block;">
           <div class="ab-photo-silhouette"></div>
           <div class="ab-photo-label">
             <span>LIU — STUDIO</span>
@@ -78,8 +92,7 @@
                 {{ $isAnchor = true }}
               {{ end }}
 
-              {{ $config := imageConfig (printf "static/images/about/%s" $file_name) }}
-              {{ $itemStyle := printf "aspect-ratio: %d/%d;" $config.Width $config.Height }}
+              {{ $itemStyle := printf "aspect-ratio: %d/%d;" (int $file_name.image.Width) (int $file_name.image.Height) }}
 
               <figure class="af-sequence-item{{ if $isAnchor }} is-anchor{{ end }}">
                 <figcaption class="af-sequence-caption af-sequence-caption--left">
@@ -88,7 +101,7 @@
                 </figcaption>
                 <div class="af-sequence-photo" style="{{ $itemStyle | safeCSS }}">
                   <div class="ab-photo">
-                    <img src="/images/about/{{ $file_name | urlize | safeURL }}" alt="{{ $file_name }}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
+                    <img src="{{ $file_name.image.RelPermalink }}" alt="{{ $file_name.name }}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
                     <div class="ab-photo-silhouette"></div>
                     {{ if $isAnchor }}
                     <div class="ab-photo-label">
@@ -250,7 +263,7 @@
 
           <div class="af-polaroid reveal-pin" data-card-id="polaroid-desk" style="width:290px;height:214px;top:270px;left:-50px; --pin-rot:1.6deg; --reveal-delay: 240ms">
             <div class="ab-photo" style="width:100%;height:100%">
-              <img src="/images/about/polaroid-desk.webp" alt="Desk" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
+              {{/* Future desk image slot; keep silhouette fallback until the asset exists. */}}
               <div class="ab-photo-silhouette"></div>
             </div>
             <div class="af-polaroid-caption"><span>B · Desk</span><span>ROC</span></div>
