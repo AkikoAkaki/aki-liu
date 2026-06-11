@@ -1,5 +1,4 @@
 {{ define "sidebar-left" }}
-{{- $tagSlice := partialCached "tag-sidebar-data.html" . .Path -}}
 {{- $regularPages := where .Pages "Kind" "page" -}}
 {{- if and (eq .Language.Lang "en") (eq (len $regularPages) 0) -}}
     {{- $zhSection := .Sites.Default.GetPage "section" .Section -}}
@@ -8,6 +7,7 @@
     {{- end -}}
 {{- end -}}
 {{- .Store.Set "regularPages" $regularPages -}}
+{{- $tagSlice := partialCached "tag-sidebar-data.html" (dict "pages" $regularPages) (printf "%s|%s" .Path .Language.Lang) -}}
 {{ $years := slice }}
 {{ range $regularPages.GroupByPublishDate "2006" }}
     {{ $years = $years | append .Key }}

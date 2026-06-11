@@ -71,9 +71,8 @@ export function initPrefetcher() {
         }, 65); // 65ms hover threshold
     }, { passive: true });
 
-    document.body.addEventListener('mouseout', (e) => {
-        const link = e.target.closest('a');
-        if (link && hoverTimeout) {
+    document.body.addEventListener('mouseout', () => {
+        if (hoverTimeout) {
             clearTimeout(hoverTimeout);
         }
     }, { passive: true });

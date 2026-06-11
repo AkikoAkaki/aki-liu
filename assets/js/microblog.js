@@ -119,15 +119,17 @@
         if (!feedEl) return;
         const slice = entries.slice(startIdx, startIdx + PAGE_SIZE);
         const frag = document.createDocumentFragment();
+        const newCards = [];
         slice.forEach((entry, i) => {
             const card = renderCard(entry);
             card.style.setProperty('--mb-stagger-delay', `${i * STAGGER_MS}ms`);
             card.classList.add('is-entering');
             frag.appendChild(card);
+            newCards.push(card);
         });
         feedEl.appendChild(frag);
         requestAnimationFrame(() => {
-            feedEl.querySelectorAll('.mb-card.is-entering').forEach(c => {
+            newCards.forEach(c => {
                 c.classList.add('is-entered');
                 c.classList.remove('is-entering');
             });
@@ -448,7 +450,7 @@
 
     function bindCardTagClicks() {
         deck.addEventListener('click', e => {
-            const tag = e.target.closest('.mb-card-tag');
+            const tag = e.target.closest('.mb-card-tag-dot');
             if (!tag) return;
             e.preventDefault();
             openTagColumn(tag.dataset.mbTagLabel || tag.dataset.mbTag);

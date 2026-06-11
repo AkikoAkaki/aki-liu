@@ -1,5 +1,5 @@
 {{- /* Build sorted tag stats for the given page context. */ -}}
-{{- $pages := .Pages -}}
+{{- $pages := .pages | default .Pages -}}
 {{- $tagCounts := dict -}}
 {{- range $pages -}}
     {{- if eq .Kind "page" -}}

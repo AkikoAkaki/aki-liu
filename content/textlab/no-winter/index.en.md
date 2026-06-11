@@ -1,30 +1,26 @@
 ---
-title: "石枯れて水しぼめるや冬もなし"
+title: "鸟去鸟来山色里，人歌人哭水声中"
 date: 2023-01-23
 tags: ["poetry"]
 draft: false
 translationStatus: "ai"
 ---
 
-grey dusk, concrete road, tunnel light
-power lines, foggy county, a road sign
-roadside trees, turn signals, new year
-murky chimney, ink bloomed, old shrine
-sky clarity lost, pitch dropped, cloud
-road extends, black stones, pine blows
-tears blur sight, hills sleeping, gods
-nightfall, man-made starlight, elm row
-see the thousand-year amber waterfalls
-without bell the mute earth won't stir
-red lights, and beams from a far tower
-why do you pierce the hilltop fog now?
-long, long night: Minnan's faint music
-waiting for the ancient beast to waken
-late winter froze the shack's blossoms
-from outer space, sorrow falls as rain
-the moon appears slowly in deep sorrow
-lightly laced with coolness, a romance
-seas of forest and cloud, rushing life
-turning before me like a ceremony, now
-this is enough. it is. this is enough.
-you: the last iris in my dreamed world
+grey dusk, and the concrete road, the tunnel lights
+power lines, and the foggy county, a roadside signs
+roadside trees, the signal lights turn, a new years
+murky chimney smoke, the ink bloomed, an old shrine
+the sky's clarity gone, pitch lowered, stray clouds
+road extends, Gantang, the black stone, pine dreams
+tears blur sight, the hills asleep like bright gods
+nightfall, man-made starlight, the tremble elm rows
+see the wildly surging thousand-year brown falls so
+without a bell, the mute earth shall never yet stir
+red lights, and the beams from a far high tower now
+why must you pierce the circling mountain mist, so?
+long night now plays Minyue's most wistful old song
+waiting for the ancient beast and its gut to awaken
+late winter froze the shack's playsong and blossoms
+cold moon quietly rises behind the mountain's spine
+forest sea, cloud sea roll back the old rite's veil
+I'll never find this iris all soaked in blood again

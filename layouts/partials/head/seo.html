@@ -3,7 +3,7 @@
 {{- /* Microblog entries have no explicit title; synthesize from first line of plain text. */ -}}
 {{- $pageTitle := $page.Title -}}
 {{- if and (eq $page.Section "microblog") $page.IsPage -}}
-    {{- $first := $page.Plain | plainify | strings.TrimSpace -}}
+    {{- $first := $page.Plain | strings.TrimSpace -}}
     {{- if gt (len $first) 60 -}}
         {{- $first = printf "%s…" (substr $first 0 60) -}}
     {{- end -}}

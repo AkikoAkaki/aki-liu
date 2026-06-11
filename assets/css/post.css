@@ -824,7 +824,7 @@ body.post-short {
 .post-content pre code .kr,
 .post-content pre code .s,
 .post-content pre code .m {
-    color: var(--color-dim) !important;
+    /* Colors now handled by syntax-highlight.css */
 }
 
 .post-content code {

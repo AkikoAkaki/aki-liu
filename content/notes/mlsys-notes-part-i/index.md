@@ -1,5 +1,5 @@
 ---
-title: "MLSys 笔记 Part I：硬件、内存、并行与数据布局"
+title: "MLSys 1：硬件、内存、并行与数据布局"
 date: 2026-05-18
 tags: ["mlsys"]
 math: true
@@ -125,7 +125,7 @@ $$\text{Compression Ratio} = \frac{\text{uncompressed size}}{\text{compressed si
 
 **ISA** ：定义 CPU 规则，如：
 - 认识什么指令
-- 有那些寄存器
+- 有哪些寄存器
 - 内存怎么寻址
 - 函数调用怎么约定
 - 异常怎么处理
@@ -191,13 +191,13 @@ $$\text{Compression Ratio} = \frac{\text{uncompressed size}}{\text{compressed si
 
 ### 现代 CPU 执行优化
 
-#### 乱序执行（OoO，Out of Order  Execution）
+#### 乱序执行（OoO，Out of Order Execution）
 
 程序顺序负责定义语义，执行顺序可以由数据依赖决定，以提升性能。现代 CPU 每次 fetch 8-16 条指令，一般同时维护数百条 in-flight instructions。
 
 谁的数据准备好了，谁就先执行。
 
-#### 超标量执行 （Superscalar）
+#### 超标量执行（Superscalar）
 
 注意，superscalar 并不是 OoO 的一种，但高性能 OoO CPU 几乎一定是 superscalar
 
@@ -389,12 +389,12 @@ Union 的意义：共享同一块内存，不复制数据，只改变解释方�
 0  0  0  0
 ```
 
-优点：可以快速访问第 i 行的所有非零元素，按夯访问快，存的重复信息少
+优点：可以快速访问第 i 行的所有非零元素，按行访问快，存的重复信息少
 缺点：间接内存访问多（先加载 `row_start[i]`，再加载 `col[j]`，再加载 `data[j]` 可能有多次 Cache Miss），由于内存地址不连续所以难以向量化，修改结构困难
 
 #### 数据布局
 
-**AoS（Array of Structures）vs SOA（Structure of Arrays）**
+**AoS（Array of Structures）vs SoA（Structure of Arrays）**
 
 | 布局  | 访问模式                    | 向量化          | Cache 效率    |
 | --- | ----------------------- | ------------ | ----------- |
@@ -424,7 +424,7 @@ Union 的意义：共享同一块内存，不复制数据，只改变解释方�
 
 如果 request 总在同一个 bank，其他 bank 闲置，带宽利用率就低了。现代内存控制器会通过 interleaving，将连续地址分散到不同 bank，缓解这个问题。
 
-GPU shaerd memory 有 32 个 bank，对应 warp 上的 32 个 lane。所以 GPU kernel optimization 的核心也有让 warp 尽量访问不同的 bank，以最大化带宽。
+GPU shared memory 有 32 个 bank，对应 warp 上的 32 个 lane。所以 GPU kernel optimization 的核心也有让 warp 尽量访问不同的 bank，以最大化带宽。
 
 ---
 
@@ -440,7 +440,7 @@ CPU 快，DRAM 慢，于是要缓存。
 
 #### 局部性原理
 
-- **空间局部性**：访问一个地址后，附近地址很可能也被被访问
+- **空间局部性**：访问一个地址后，附近地址很可能也被访问
 - **时间局部性**：刚用过的数据，很可能马上又要用
 
 #### Cache 组织方式
@@ -462,7 +462,7 @@ CPU 快，DRAM 慢，于是要缓存。
 
 - **OPT（Optimal）**：踢掉未来最久不会用的行。问题是没人知道未来会怎样，所以它只是一个理论最优
 - **LRU（Least Recently Used）**：踢掉最少使用的行
-- **MRU（Most Recently Used）**：踢掉最近刚用行。常用于少数特殊模式，比如循环扫描超大数组
+- **MRU（Most Recently Used）**：踢掉最近刚用的行。常用于少数特殊模式，比如循环扫描超大数组
 - **Random/FIFO**：实现简单
 
 #### Cache 写策略
@@ -511,7 +511,7 @@ DMA（Direct Memory Access）是一个专门负责搬运数据的硬件。有 DM
 - TLB（Translation Lookaside Buffer）存储最近的地址映射结果，方便 reuse。
 
 Page Fault（缺页异常）的情况：
-- 页表还没建立映射（首次访问）：OS 从分配 page，建立映射
+- 页表还没建立映射（首次访问）：OS 分配 page，建立映射
 - RAM 不够，页被换到 disk：OS 从 disk 读回来，非常慢
 
 每个 Page Table 条目里还有权限位（Read/Write/Execute），每个进程只能看到自己的虚拟内存，防止程序互相篡改数据，偷密码，攻击系统等问题，保护内存，实现进程隔离和内存安全。

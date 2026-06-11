@@ -13,7 +13,7 @@
         {{- $entries := where .Site.RegularPages "Section" "microblog" }}
         {{- $entries = $entries.ByDate.Reverse }}
         {{- range first 30 $entries }}
-        {{- $plain := .Plain | plainify | strings.TrimSpace }}
+        {{- $plain := .Plain | strings.TrimSpace }}
         {{- $itemTitle := $plain }}
         {{- if gt (len $itemTitle) 80 }}
             {{- $itemTitle = printf "%s…" (substr $itemTitle 0 80) }}

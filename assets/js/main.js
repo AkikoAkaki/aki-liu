@@ -177,6 +177,19 @@ import { initPrefetcher } from "./modules/prefetch.js";
         previewContainer
           .querySelectorAll("figure.local-video, video, audio, iframe")
           .forEach((el) => el.remove());
+        if (typeof renderMathInElement === "function") {
+          try {
+            renderMathInElement(previewContainer, {
+              delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true },
+                { left: "$", right: "$", display: false },
+              ],
+              throwOnError: false,
+            });
+          } catch (e) {}
+        }
         return true;
       }
 
@@ -940,13 +953,81 @@ import { initPrefetcher } from "./modules/prefetch.js";
     targets.forEach((el) => observer.observe(el));
   }
 
+  // Apply one sequence item to the resting base layer: size the frame to the
+  // image's own aspect ratio (real proportions, no cropping), swap the image,
+  // and mirror its captions. Shared by the desktop sequence and the mobile
+  // tap gallery.
+  function applyAboutCover(root, item) {
+    if (!root || !item) return;
+
+    const photo = item.querySelector(".af-sequence-photo");
+    if (photo && photo.style.aspectRatio) {
+      root.style.aspectRatio = photo.style.aspectRatio;
+    }
+
+    const srcImg = item.querySelector("img");
+    const baseImg = root.querySelector(".af-photo-base img");
+    if (srcImg && baseImg) {
+      const nextSrc = srcImg.getAttribute("src");
+      if (nextSrc && baseImg.getAttribute("src") !== nextSrc) {
+        baseImg.src = nextSrc;
+        baseImg.alt = srcImg.getAttribute("alt") || "";
+      }
+    }
+
+    [
+      [
+        ".af-sequence-caption--left",
+        [".af-sequence-caption-kicker", ".af-sequence-caption-text"],
+      ],
+      [
+        ".af-sequence-caption--right",
+        [
+          ".af-sequence-caption-kicker",
+          ".af-sequence-caption-text",
+          ".af-sequence-caption-note",
+        ],
+      ],
+    ].forEach(([side, parts]) => {
+      const from = item.querySelector(side);
+      const to = root.querySelector(`.af-default-caption${side}`);
+      if (!from || !to) return;
+      parts.forEach((sel) => {
+        const a = from.querySelector(sel);
+        const b = to.querySelector(sel);
+        if (a && b) b.textContent = a.textContent;
+      });
+    });
+  }
+
+  // Mobile: tap the photo to advance to the next image. A random image is shown
+  // first, and each image keeps its own proportions, so the frame height changes
+  // as you cycle.
+  function initAboutImageTap(root, track) {
+    const items = [...track.querySelectorAll(".af-sequence-item")];
+    if (!items.length) return;
+
+    let current = Math.floor(Math.random() * items.length);
+    applyAboutCover(root, items[current]);
+
+    root.classList.add("is-tap-gallery");
+    root.addEventListener("click", () => {
+      current = (current + 1) % items.length;
+      applyAboutCover(root, items[current]);
+    });
+  }
+
   function initAboutImageSequence() {
     const root = document.querySelector("[data-about-sequence]");
     const track = document.querySelector("[data-about-sequence-track]");
     if (!root || !track) return;
 
-    // Disable about image sequence on mobile
-    if (window.matchMedia("(max-width: 768px)").matches) return;
+    // Mobile cannot hover, so use a tap-to-cycle gallery instead of the
+    // hover + wheel sequence.
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      initAboutImageTap(root, track);
+      return;
+    }
 
     const sourceItems = [...track.querySelectorAll(".af-sequence-item")];
     if (!sourceItems.length) return;
@@ -955,10 +1036,6 @@ import { initPrefetcher } from "./modules/prefetch.js";
       "(prefers-reduced-motion: reduce)",
     ).matches;
     const sourceCount = sourceItems.length;
-    const anchorSourceIndex = Math.max(
-      0,
-      sourceItems.findIndex((item) => item.classList.contains("is-anchor")),
-    );
     const repeatCount = 5;
     const middleSet = Math.floor(repeatCount / 2);
 
@@ -973,9 +1050,12 @@ import { initPrefetcher } from "./modules/prefetch.js";
 
     const items = [...track.querySelectorAll(".af-sequence-item")];
     let active = false;
-    let current = middleSet * sourceCount + anchorSourceIndex;
+    // Pick the cover on the client so every visitor (and every reload) gets a
+    // different first image. Hugo's build-time shuffle bakes a single image into
+    // the static HTML, so without this everyone would see the same cover.
+    const initialSourceIndex = Math.floor(Math.random() * sourceCount);
+    let current = middleSet * sourceCount + initialSourceIndex;
     let closeTimer = 0;
-    let resetTimer = 0;
     let accumulatedDelta = 0;
     let lastStepTime = 0;
     let deltaClearTimer = 0;
@@ -991,10 +1071,6 @@ import { initPrefetcher } from "./modules/prefetch.js";
       setTransition(animate);
       const itemCenter = target.offsetTop + target.offsetHeight / 2;
       track.style.setProperty("--sequence-y", `${-itemCenter}px`);
-
-      if (!animate) {
-        requestAnimationFrame(() => setTransition(true));
-      }
     }
 
     function render(animate = true) {
@@ -1004,13 +1080,15 @@ import { initPrefetcher } from "./modules/prefetch.js";
       centerCurrent(animate);
     }
 
-    function resetToMiddleIfNeeded() {
-      if (current >= sourceCount && current < sourceCount * (repeatCount - 1))
-        return;
-
+    // Silently jump back to the equivalent item in the middle copy. Because that
+    // item is a visually identical clone, the reposition is invisible. A forced
+    // reflow commits the jump instantly so the following animated step glides from
+    // the middle copy instead of animating across the whole track.
+    function recenterToMiddle() {
       const sequenceIndex = Number(items[current]?.dataset.sequenceIndex || 0);
       current = middleSet * sourceCount + sequenceIndex;
       render(false);
+      void track.offsetHeight;
     }
 
     function open() {
@@ -1033,14 +1111,19 @@ import { initPrefetcher } from "./modules/prefetch.js";
     }
 
     function step(direction) {
-      current += direction;
-      if (current < 0) current = items.length - 1;
-      if (current >= items.length) current = 0;
+      // If we've drifted into one of the edge copies, recenter to the middle copy
+      // first (invisibly). This keeps copies available in both directions at all
+      // times, so the sequence loops forever without ever wrapping to the start.
+      if (current < sourceCount || current >= sourceCount * (repeatCount - 1)) {
+        recenterToMiddle();
+      }
 
+      current += direction;
       render(!reduceMotion);
-      clearTimeout(resetTimer);
-      resetTimer = setTimeout(resetToMiddleIfNeeded, reduceMotion ? 0 : 300);
     }
+
+    // Apply the randomly chosen cover to the resting (pointer-away) state.
+    applyAboutCover(root, items[current]);
 
     root.addEventListener("pointerenter", open);
     root.addEventListener("click", open);
@@ -2562,9 +2645,9 @@ import { initPrefetcher } from "./modules/prefetch.js";
       menuTrigger.addEventListener(
         "click",
         (e) => {
-          const isMenuOpen = document
-            .getElementById("menu-bar")
-            .classList.contains("is-open");
+          const menuBarEl = document.getElementById("menu-bar");
+          if (!menuBarEl) return;
+          const isMenuOpen = menuBarEl.classList.contains("is-open");
           if (isOpen || isMenuOpen) {
             e.preventDefault();
             e.stopPropagation();

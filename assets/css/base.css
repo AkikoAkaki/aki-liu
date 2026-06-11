@@ -365,7 +365,6 @@ body::after {
     border-radius: 18px;
     background: rgba(236, 236, 236, 0.14);
     backdrop-filter: blur(32px) saturate(180%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%);
     overflow: hidden;
     will-change: transform, width, height, border-radius;
 
@@ -389,7 +388,6 @@ body::after {
     overflow: hidden;
     background: var(--panel-shell-bg);
     backdrop-filter: var(--panel-shell-backdrop);
-    -webkit-backdrop-filter: var(--panel-shell-backdrop);
     box-shadow: var(--panel-shell-shadow);
 }
 
@@ -400,7 +398,6 @@ body::after {
     overflow: hidden;
     background: var(--panel-shell-bg);
     backdrop-filter: var(--panel-shell-backdrop);
-    -webkit-backdrop-filter: var(--panel-shell-backdrop);
     box-shadow: var(--panel-shell-shadow);
 }
 
@@ -674,7 +671,6 @@ body::after {
         inset 0 1px 0 rgba(255, 255, 255, 0.2),
         inset 0 -18px 36px rgba(0, 0, 0, 0.08);
     backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
     pointer-events: none;
     will-change: transform, opacity, left, top;
     transition: opacity 0.16s ease;
@@ -766,7 +762,6 @@ body.menu-cursor-hidden * {
         rgba(var(--text-rgb), 0.05) 100%
     );
     backdrop-filter: blur(16px) saturate(150%);
-    -webkit-backdrop-filter: blur(16px) saturate(150%);
     pointer-events: none;
     will-change: transform, opacity, left, top;
 }
@@ -866,27 +861,23 @@ body.menu-cursor-hidden * {
         /* Performance optimization for mobile: light frosted glass, higher opacity, snappier transitions */
         background: rgba(var(--bg-rgb), 0.8) !important;
         backdrop-filter: blur(16px) saturate(140%) !important;
-        -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
         transition:
             transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
             width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
             height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
             border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-            backdrop-filter 0.3s ease,
-            -webkit-backdrop-filter 0.3s ease !important;
+            backdrop-filter 0.3s ease;
     }
 
     .menu-bar.is-animating {
         backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
     }
 
     .menu-bar.is-open,
     .menu-bar.is-search {
         background: rgba(var(--bg-rgb), 0.8) !important;
         backdrop-filter: blur(16px) saturate(140%) !important;
-        -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     }
 

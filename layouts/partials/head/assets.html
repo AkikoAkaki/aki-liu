@@ -1,11 +1,8 @@
 {{- $coreAssetsKey := printf "%s|%s|%s|%s|%t|%t" .Language.Lang .Kind .Section .Type .IsHome .IsPage -}}
 {{- partialCached "head/core-assets.html" . $coreAssetsKey -}}
 
-{{- /* KaTeX (page-level gating is handled in this partial) */ -}}
+{{- /* KaTeX (per-page gating is handled inside the partial) */ -}}
 {{- $siteKaTeX := or .Site.Params.enablekatex .Site.Params.enableKaTeX -}}
 {{- if $siteKaTeX -}}
-    {{- $katexOverride := or (isset .Params "enablekatex") (isset .Params "enableKaTeX") (isset .Params "math") -}}
-    {{- if or .IsPage $katexOverride -}}
-        {{- partial "head/katex.html" . -}}
-    {{- end -}}
+    {{- partial "head/katex.html" . -}}
 {{- end -}}

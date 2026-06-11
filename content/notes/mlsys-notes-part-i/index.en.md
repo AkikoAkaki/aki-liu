@@ -1,5 +1,5 @@
 ---
-title: "MLSys Notes Part I: Hardware, Memory, Parallelism, and Data Layout"
+title: "MLSys 1: Hardware, Memory, Parallelism, and Data Layout"
 date: 2026-05-18
 tags: ["mlsys"]
 math: true

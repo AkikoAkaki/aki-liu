@@ -12,139 +12,99 @@
 
     <div class="af-center-band reveal-on-scroll">
       <div></div>
-      <div class="af-photo-wrap" data-about-sequence>
-        <div class="ab-photo af-photo-base">
+      {{ $images := readDir "static/images/about" }}
+      {{ $valid_images := slice }}
+      {{ range $images }}
+        {{ if not .IsDir }}
+          {{ $valid_images = $valid_images | append .Name }}
+        {{ end }}
+      {{ end }}
+      {{ $random_name := index ($valid_images | shuffle) 0 }}
+
+      {{/* Original caption arrays to cycle through for placeholders */}}
+      {{ $captionL_kicker := slice "Portrait" "Desk" "Interface" "Studio" "Notes" "Place" "Archive" }}
+      {{ $captionL_text := slice "A blurred study of presence and distance." "Objects, notes, and unfinished interface sketches." "Systems become visible through small controls." "The default image remains part of the same sequence." "A narrow scan, closer to a page than a photograph." "Rochester appears as weather, light, and institutional texture." "A repeated fragment for testing the seamless scroll." }}
+      {{ $captionR_text := slice "Rochester / winter light" "Working surface" "Screen fragment" "LIU Studio" "Vertical note" "Campus light" "Returned image" }}
+      {{ $captionR_note := slice "vertical frame" "square crop" "wide capture" "anchor frame" "tall ratio" "landscape frame" "loop sample" }}
+      {{ $img_index := 0 }}
+      {{ range $index, $name := $valid_images }}
+        {{ if eq $name $random_name }}
+          {{ $img_index = $index }}
+        {{ end }}
+      {{ end }}
+      {{ $mod := mod $img_index 7 }}
+
+      {{ $kicker_l := index $captionL_kicker $mod }}
+      {{ $text_l := index $captionL_text $mod }}
+      {{ $text_r := index $captionR_text $mod }}
+      {{ $note_r := index $captionR_note $mod }}
+
+      {{ $random_config := imageConfig (printf "static/images/about/%s" $random_name) }}
+      {{ $random_style := printf "aspect-ratio: %d/%d;" $random_config.Width $random_config.Height }}
+
+      <div class="af-photo-wrap" data-about-sequence style="{{ $random_style | safeCSS }}">
+        <div class="ab-photo af-photo-base" style="width:100%;height:100%;">
+          <img src="/images/about/{{ $random_name | urlize | safeURL }}" alt="{{ $random_name }}" style="width:100%;height:100%;object-fit:cover;display:block;">
           <div class="ab-photo-silhouette"></div>
           <div class="ab-photo-label">
             <span>LIU — STUDIO</span>
             <span>2025</span>
           </div>
         </div>
+
+        {{/* Default Captions for the random image */}}
+        <figcaption class="af-sequence-caption af-sequence-caption--left af-default-caption" style="opacity: 1; pointer-events: auto;">
+          <span class="af-sequence-caption-kicker">{{ $kicker_l }}</span>
+          <span class="af-sequence-caption-text">{{ $text_l }}</span>
+        </figcaption>
+        <figcaption class="af-sequence-caption af-sequence-caption--right af-default-caption" style="opacity: 1; pointer-events: auto;">
+          <span class="af-sequence-caption-kicker">{{ printf "%02d" (add $img_index 1) }}</span>
+          <span class="af-sequence-caption-text">{{ $text_r }}</span>
+          <span class="af-sequence-caption-note">{{ $note_r }}</span>
+        </figcaption>
+
         <div class="af-sequence-layer" aria-hidden="true">
           <div class="af-sequence-track" data-about-sequence-track>
-            <figure class="af-sequence-item" data-ratio="portrait">
-              <figcaption class="af-sequence-caption af-sequence-caption--left">
-                <span class="af-sequence-caption-kicker">Portrait</span>
-                <span class="af-sequence-caption-text">A blurred study of presence and distance.</span>
-              </figcaption>
-              <div class="af-sequence-photo af-sequence-photo--portrait">
-                <div class="ab-photo">
-                  <img src="/images/about/01-portrait.webp" alt="Portrait" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
-                  <div class="ab-photo-silhouette"></div>
-                </div>
-              </div>
-              <figcaption class="af-sequence-caption af-sequence-caption--right">
-                <span class="af-sequence-caption-kicker">01</span>
-                <span class="af-sequence-caption-text">Rochester / winter light</span>
-                <span class="af-sequence-caption-note">vertical frame</span>
-              </figcaption>
-            </figure>
-            <figure class="af-sequence-item" data-ratio="square">
-              <figcaption class="af-sequence-caption af-sequence-caption--left">
-                <span class="af-sequence-caption-kicker">Desk</span>
-                <span class="af-sequence-caption-text">Objects, notes, and unfinished interface sketches.</span>
-              </figcaption>
-              <div class="af-sequence-photo af-sequence-photo--square">
-                <div class="ab-photo">
-                  <img src="/images/about/02-desk.webp" alt="Desk" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
-                  <div class="ab-photo-silhouette"></div>
-                </div>
-              </div>
-              <figcaption class="af-sequence-caption af-sequence-caption--right">
-                <span class="af-sequence-caption-kicker">02</span>
-                <span class="af-sequence-caption-text">Working surface</span>
-                <span class="af-sequence-caption-note">square crop</span>
-              </figcaption>
-            </figure>
-            <figure class="af-sequence-item" data-ratio="cinema">
-              <figcaption class="af-sequence-caption af-sequence-caption--left">
-                <span class="af-sequence-caption-kicker">Interface</span>
-                <span class="af-sequence-caption-text">Systems become visible through small controls.</span>
-              </figcaption>
-              <div class="af-sequence-photo af-sequence-photo--cinema">
-                <div class="ab-photo">
-                  <img src="/images/about/03-interface.webp" alt="Interface" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
-                  <div class="ab-photo-silhouette"></div>
-                </div>
-              </div>
-              <figcaption class="af-sequence-caption af-sequence-caption--right">
-                <span class="af-sequence-caption-kicker">03</span>
-                <span class="af-sequence-caption-text">Screen fragment</span>
-                <span class="af-sequence-caption-note">wide capture</span>
-              </figcaption>
-            </figure>
-            <figure class="af-sequence-item is-anchor" data-ratio="wide">
-              <figcaption class="af-sequence-caption af-sequence-caption--left">
-                <span class="af-sequence-caption-kicker">Studio</span>
-                <span class="af-sequence-caption-text">The default image remains part of the same sequence.</span>
-              </figcaption>
-              <div class="af-sequence-photo af-sequence-photo--anchor">
-                <div class="ab-photo">
-                  <img src="/images/about/04-studio.webp" alt="Studio" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
-                  <div class="ab-photo-silhouette"></div>
-                  <div class="ab-photo-label">
-                    <span>LIU — STUDIO</span>
-                    <span>2025</span>
+            {{ range $index, $file_name := $valid_images }}
+              {{ $m := mod $index 7 }}
+              
+              {{ $kl := index $captionL_kicker $m }}
+              {{ $tl := index $captionL_text $m }}
+              {{ $tr := index $captionR_text $m }}
+              {{ $nr := index $captionR_note $m }}
+
+              {{ $isAnchor := false }}
+              {{ if eq $index $img_index }}
+                {{ $isAnchor = true }}
+              {{ end }}
+
+              {{ $config := imageConfig (printf "static/images/about/%s" $file_name) }}
+              {{ $itemStyle := printf "aspect-ratio: %d/%d;" $config.Width $config.Height }}
+
+              <figure class="af-sequence-item{{ if $isAnchor }} is-anchor{{ end }}">
+                <figcaption class="af-sequence-caption af-sequence-caption--left">
+                  <span class="af-sequence-caption-kicker">{{ $kl }}</span>
+                  <span class="af-sequence-caption-text">{{ $tl }}</span>
+                </figcaption>
+                <div class="af-sequence-photo" style="{{ $itemStyle | safeCSS }}">
+                  <div class="ab-photo">
+                    <img src="/images/about/{{ $file_name | urlize | safeURL }}" alt="{{ $file_name }}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
+                    <div class="ab-photo-silhouette"></div>
+                    {{ if $isAnchor }}
+                    <div class="ab-photo-label">
+                      <span>LIU — STUDIO</span>
+                      <span>2025</span>
+                    </div>
+                    {{ end }}
                   </div>
                 </div>
-              </div>
-              <figcaption class="af-sequence-caption af-sequence-caption--right">
-                <span class="af-sequence-caption-kicker">04</span>
-                <span class="af-sequence-caption-text">LIU Studio</span>
-                <span class="af-sequence-caption-note">anchor frame</span>
-              </figcaption>
-            </figure>
-            <figure class="af-sequence-item" data-ratio="tall">
-              <figcaption class="af-sequence-caption af-sequence-caption--left">
-                <span class="af-sequence-caption-kicker">Notes</span>
-                <span class="af-sequence-caption-text">A narrow scan, closer to a page than a photograph.</span>
-              </figcaption>
-              <div class="af-sequence-photo af-sequence-photo--tall">
-                <div class="ab-photo">
-                  <img src="/images/about/05-notes.webp" alt="Notes" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
-                  <div class="ab-photo-silhouette"></div>
-                </div>
-              </div>
-              <figcaption class="af-sequence-caption af-sequence-caption--right">
-                <span class="af-sequence-caption-kicker">05</span>
-                <span class="af-sequence-caption-text">Vertical note</span>
-                <span class="af-sequence-caption-note">tall ratio</span>
-              </figcaption>
-            </figure>
-            <figure class="af-sequence-item" data-ratio="wide">
-              <figcaption class="af-sequence-caption af-sequence-caption--left">
-                <span class="af-sequence-caption-kicker">Place</span>
-                <span class="af-sequence-caption-text">Rochester appears as weather, light, and institutional texture.</span>
-              </figcaption>
-              <div class="af-sequence-photo af-sequence-photo--landscape">
-                <div class="ab-photo">
-                  <img src="/images/about/06-place.webp" alt="Place" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
-                  <div class="ab-photo-silhouette"></div>
-                </div>
-              </div>
-              <figcaption class="af-sequence-caption af-sequence-caption--right">
-                <span class="af-sequence-caption-kicker">06</span>
-                <span class="af-sequence-caption-text">Campus light</span>
-                <span class="af-sequence-caption-note">landscape frame</span>
-              </figcaption>
-            </figure>
-            <figure class="af-sequence-item" data-ratio="portrait">
-              <figcaption class="af-sequence-caption af-sequence-caption--left">
-                <span class="af-sequence-caption-kicker">Archive</span>
-                <span class="af-sequence-caption-text">A repeated fragment for testing the seamless scroll.</span>
-              </figcaption>
-              <div class="af-sequence-photo af-sequence-photo--archive">
-                <div class="ab-photo">
-                  <img src="/images/about/07-archive.webp" alt="Archive" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
-                  <div class="ab-photo-silhouette"></div>
-                </div>
-              </div>
-              <figcaption class="af-sequence-caption af-sequence-caption--right">
-                <span class="af-sequence-caption-kicker">07</span>
-                <span class="af-sequence-caption-text">Returned image</span>
-                <span class="af-sequence-caption-note">loop sample</span>
-              </figcaption>
-            </figure>
+                <figcaption class="af-sequence-caption af-sequence-caption--right">
+                  <span class="af-sequence-caption-kicker">{{ printf "%02d" (add $index 1) }}</span>
+                  <span class="af-sequence-caption-text">{{ $tr }}</span>
+                  <span class="af-sequence-caption-note">{{ $nr }}</span>
+                </figcaption>
+              </figure>
+            {{ end }}
           </div>
         </div>
       </div>
