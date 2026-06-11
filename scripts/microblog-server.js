@@ -8,6 +8,7 @@ const url = require('url');
 const PORT = 3737;
 const ROOT = path.join(__dirname, '..');
 const CONTENT_ROOT = path.resolve(ROOT, 'content');
+const ARTICLE_SECTIONS = new Set(['ideas', 'notes', 'textlab', 'influences']);
 const UI_FILE = path.join(__dirname, 'microblog-ui.html');
 const TEMP_DIR = path.join(__dirname, '.temp-uploads');
 
@@ -333,6 +334,9 @@ const server = http.createServer(async (req, res) => {
             slug = `post-${Date.now()}`;
           }
           const sec = section || 'ideas';
+          if (!ARTICLE_SECTIONS.has(sec)) {
+            return sendJSON(res, { ok: false, error: 'Invalid section' }, 400);
+          }
           targetDir = path.join(ROOT, 'content', sec, slug);
           finalRelPath = `content/${sec}/${slug}`;
           finalSlug = slug;
