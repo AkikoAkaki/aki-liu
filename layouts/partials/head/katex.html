@@ -20,12 +20,18 @@
         {{- $raw := .RawContent -}}
         {{- $maybeMath := or (in $raw "$") (in $raw "\\(") (in $raw "\\[") -}}
         {{- if $maybeMath -}}
-            {{- $hasMathDelimiters = or
-                (gt (len (findRE `\$\$[\s\S]*?\$\$` $raw 1)) 0)
-                (gt (len (findRE `\\\([\s\S]*?\\\)` $raw 1)) 0)
-                (gt (len (findRE `\\\[[\s\S]*?\\\]` $raw 1)) 0)
-                (gt (len (findRE `(^|[^\\])\$[^$\n]+\$` $raw 1)) 0)
-            -}}
+            {{- $hasMathDelimiters = gt (len (findRE `\$\$[\s\S]*?\$\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]|(^|[^\\])\$[^$\n]+\$` $raw 1)) 0 -}}
+        {{- end -}}
+    {{- else if (not $hasOverride) -}}
+        {{- /* List pages (sections/taxonomy terms): scan child pages'
+               RawContent so the hover preview can render embedded math. */ -}}
+        {{- range .Pages -}}
+            {{- if not $hasMathDelimiters -}}
+                {{- $childRaw := .RawContent -}}
+                {{- if or (in $childRaw "$") (in $childRaw "\\(") (in $childRaw "\\[") -}}
+                    {{- $hasMathDelimiters = true -}}
+                {{- end -}}
+            {{- end -}}
         {{- end -}}
     {{- end -}}
 
@@ -44,6 +50,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             if (typeof renderMathInElement === 'function') {
                 renderMathInElement(document.body, {
+                    // Keep delimiters aligned with assets/js/modules/archive-filter.js.
                     delimiters: [
                         {left: '$$', right: '$$', display: true},
                         {left: '\\(', right: '\\)', display: false},

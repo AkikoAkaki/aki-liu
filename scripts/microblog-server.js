@@ -7,6 +7,8 @@ const url = require('url');
 
 const PORT = 3737;
 const ROOT = path.join(__dirname, '..');
+const CONTENT_ROOT = path.resolve(ROOT, 'content');
+const ARTICLE_SECTIONS = new Set(['ideas', 'notes', 'textlab', 'influences']);
 const UI_FILE = path.join(__dirname, 'microblog-ui.html');
 const TEMP_DIR = path.join(__dirname, '.temp-uploads');
 
@@ -23,6 +25,36 @@ function getLocalISO(customDate) {
     `T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${sign}${oh}:${om}`;
 }
 
+function parseFrontMatterValue(key, rawValue) {
+  let val = rawValue.trim();
+  if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
+  if (val.startsWith("'") && val.endsWith("'")) val = val.slice(1, -1);
+  if (key === 'tags' && val.startsWith('[') && val.endsWith(']')) {
+    val = val.slice(1, -1).split(',').map(t => t.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
+  } else if (val === 'true') {
+    val = true;
+  } else if (val === 'false') {
+    val = false;
+  }
+  return val;
+}
+
+function parseFrontMatterLine(line) {
+  const parts = line.split(':');
+  if (parts.length >= 2) {
+    const key = parts[0].trim();
+    return [key, parseFrontMatterValue(key, parts.slice(1).join(':'))];
+  }
+
+  const eqParts = line.split('=');
+  if (eqParts.length >= 2) {
+    const key = eqParts[0].trim();
+    return [key, parseFrontMatterValue(key, eqParts.slice(1).join('='))];
+  }
+
+  return null;
+}
+
 function parseFrontMatter(text) {
   const data = {};
   let content = text;
@@ -37,41 +69,29 @@ function parseFrontMatter(text) {
       content = rest.slice(endIdx + delim.length).trim();
       
       fmText.split(/\r?\n/).forEach(line => {
-        const parts = line.split(':');
-        if (parts.length >= 2) {
-          const key = parts[0].trim();
-          let val = parts.slice(1).join(':').trim();
-          if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
-          if (val.startsWith("'") && val.endsWith("'")) val = val.slice(1, -1);
-          if (key === 'tags' && val.startsWith('[') && val.endsWith(']')) {
-            val = val.slice(1, -1).split(',').map(t => t.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
-          } else if (val === 'true') {
-            val = true;
-          } else if (val === 'false') {
-            val = false;
-          }
-          data[key] = val;
-        } else {
-          const eqParts = line.split('=');
-          if (eqParts.length >= 2) {
-            const key = eqParts[0].trim();
-            let val = eqParts.slice(1).join('=').trim();
-            if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
-            if (val.startsWith("'") && val.endsWith("'")) val = val.slice(1, -1);
-            if (key === 'tags' && val.startsWith('[') && val.endsWith(']')) {
-              val = val.slice(1, -1).split(',').map(t => t.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
-            } else if (val === 'true') {
-              val = true;
-            } else if (val === 'false') {
-              val = false;
-            }
-            data[key] = val;
-          }
-        }
+        const parsed = parseFrontMatterLine(line);
+        if (parsed) data[parsed[0]] = parsed[1];
       });
     }
   }
   return { data, content };
+}
+
+function resolveContentPath(relPath) {
+  if (typeof relPath !== 'string' || !relPath.trim()) {
+    throw new Error('Invalid path');
+  }
+
+  const targetPath = path.resolve(ROOT, relPath);
+  const relativeToContent = path.relative(CONTENT_ROOT, targetPath);
+  if (relativeToContent === '' || relativeToContent.startsWith('..') || path.isAbsolute(relativeToContent)) {
+    throw new Error('Invalid path');
+  }
+
+  return {
+    absPath: targetPath,
+    relPath: path.relative(ROOT, targetPath).replace(/\\/g, '/'),
+  };
 }
 
 function scanTags() {
@@ -100,6 +120,7 @@ function scanTags() {
 
 function scanAllPosts() {
   const posts = [];
+  // Keep in sync with layouts/_default/searchindex.json and search palette commands.
   const sections = ['microblog', 'ideas', 'notes', 'textlab', 'influences'];
   
   function walk(dir, section) {
@@ -270,13 +291,19 @@ const server = http.createServer(async (req, res) => {
 
       if (relPath) {
         // Edit existing post
-        targetDir = path.join(ROOT, relPath);
+        let resolvedPath;
+        try {
+          resolvedPath = resolveContentPath(relPath);
+        } catch (_) {
+          return sendJSON(res, { ok: false, error: 'Invalid path' }, 400);
+        }
+        targetDir = resolvedPath.absPath;
         if (!fs.existsSync(targetDir)) {
           return sendJSON(res, { ok: false, error: 'Target directory not found for editing' }, 400);
         }
         isEdit = true;
-        finalRelPath = relPath;
-        const parts = relPath.split('/');
+        finalRelPath = resolvedPath.relPath;
+        const parts = finalRelPath.split('/');
         finalSlug = parts[parts.length - 1];
         if (type === 'microblog' && finalSlug.includes('-')) {
           finalSlug = finalSlug.split('-')[1];
@@ -307,6 +334,9 @@ const server = http.createServer(async (req, res) => {
             slug = `post-${Date.now()}`;
           }
           const sec = section || 'ideas';
+          if (!ARTICLE_SECTIONS.has(sec)) {
+            return sendJSON(res, { ok: false, error: 'Invalid section' }, 400);
+          }
           targetDir = path.join(ROOT, 'content', sec, slug);
           finalRelPath = `content/${sec}/${slug}`;
           finalSlug = slug;
@@ -379,11 +409,15 @@ const server = http.createServer(async (req, res) => {
       const body = await readBody(req);
       const { relPath } = JSON.parse(body);
 
-      if (!relPath || !relPath.startsWith('content/')) {
+      let resolvedPath;
+      try {
+        resolvedPath = resolveContentPath(relPath);
+      } catch (_) {
         return sendJSON(res, { ok: false, error: 'Invalid path' }, 400);
       }
 
-      const targetDir = path.join(ROOT, relPath);
+      const targetDir = resolvedPath.absPath;
+      const finalRelPath = resolvedPath.relPath;
       if (!fs.existsSync(targetDir)) {
         return sendJSON(res, { ok: false, error: 'Path not found' }, 404);
       }
@@ -392,11 +426,11 @@ const server = http.createServer(async (req, res) => {
       fs.rmSync(targetDir, { recursive: true, force: true });
 
       // Git add -A to track deletion, commit, push
-      gitRun(['add', '-A', relPath], ROOT);
-      gitRun(['commit', '-m', `delete: ${path.basename(relPath)}`], ROOT);
+      gitRun(['add', '-A', finalRelPath], ROOT);
+      gitRun(['commit', '-m', `delete: ${path.basename(finalRelPath)}`], ROOT);
       gitRun(['push'], ROOT);
 
-      console.log(`[OK] Deleted ${relPath}`);
+      console.log(`[OK] Deleted ${finalRelPath}`);
       return sendJSON(res, { ok: true });
     } catch (e) {
       console.error('[FAIL]', e.message);

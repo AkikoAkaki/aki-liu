@@ -26,8 +26,9 @@
 
 {{- if .IsPage -}}
     {{- $post := resources.Get "css/post.css" -}}
-    {{- $postStyle := $post | resources.Minify | fingerprint -}}
-    <link rel="stylesheet" href="{{ $postStyle.RelPermalink }}" integrity="{{ $postStyle.Data.Integrity }}">
+    {{- $syntax := resources.Get "css/syntax-highlight.css" -}}
+    {{- $pageStyle := slice $post $syntax | resources.Concat "css/page.css" | resources.Minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $pageStyle.RelPermalink }}" integrity="{{ $pageStyle.Data.Integrity }}">
 {{- end -}}
 
 {{- if eq .Section "microblog" -}}
@@ -42,6 +43,7 @@
     <link rel="stylesheet" href="{{ $dashboardStyle.RelPermalink }}" integrity="{{ $dashboardStyle.Data.Integrity }}">
 {{- end -}}
 
+{{- /* JS entrypoints use ES module imports; keep them behind Hugo js.Build. */ -}}
 {{- $mainJS := resources.Get "js/main.js" | js.Build (dict "targetPath" "js/main.js") | resources.Minify | fingerprint -}}
 <script defer src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}"></script>
 

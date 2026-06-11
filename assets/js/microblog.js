@@ -1,3 +1,5 @@
+import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
+
 (function () {
     const root = document.querySelector('.microblog-page');
     if (!root) return;
@@ -29,10 +31,6 @@
                 return feedData;
             });
         return feedPromise;
-    }
-
-    function escapeHtml(s) {
-        return String(s == null ? '' : s).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
     }
 
     function formatDate(iso) {
@@ -87,7 +85,7 @@
     function renderTagDots(tags) {
         if (!tags || !tags.length) return '';
         const dots = tags.map(t => {
-            const slug = String(t).toLowerCase().replace(/\s+/g, '-');
+            const slug = tagToSlug(t);
             return `<a class="mb-card-tag-dot" href="?cols=${encodeURIComponent(slug)}" data-mb-tag="${escapeHtml(slug)}" data-mb-tag-label="${escapeHtml(t)}" title="${escapeHtml(t)}">
                 <span class="item-dot" data-tag="${escapeHtml(slug)}"></span>
             </a>`;
@@ -119,15 +117,17 @@
         if (!feedEl) return;
         const slice = entries.slice(startIdx, startIdx + PAGE_SIZE);
         const frag = document.createDocumentFragment();
+        const newCards = [];
         slice.forEach((entry, i) => {
             const card = renderCard(entry);
             card.style.setProperty('--mb-stagger-delay', `${i * STAGGER_MS}ms`);
             card.classList.add('is-entering');
             frag.appendChild(card);
+            newCards.push(card);
         });
         feedEl.appendChild(frag);
         requestAnimationFrame(() => {
-            feedEl.querySelectorAll('.mb-card.is-entering').forEach(c => {
+            newCards.forEach(c => {
                 c.classList.add('is-entered');
                 c.classList.remove('is-entering');
             });
@@ -321,7 +321,7 @@
     }
 
     function openTagColumn(tagLabel) {
-        const slug = String(tagLabel || '').toLowerCase().replace(/\s+/g, '-');
+        const slug = tagToSlug(tagLabel || '');
         if (!slug) return;
         const existing = deck.querySelector(`.mb-column[data-mb-tag="${CSS.escape(slug)}"]`);
         if (existing) {
@@ -416,7 +416,7 @@
         const years = (params.get('years') || '').split(',').map(s => s.trim()).filter(Boolean);
         const tags = feedData.tags || [];
         cols.forEach(slug => {
-            const label = tags.find(t => String(t).toLowerCase().replace(/\s+/g, '-') === slug) || slug;
+            const label = tags.find(t => tagToSlug(t) === slug) || slug;
             openTagColumn(label);
         });
         years.forEach(year => openYearColumn(year));
@@ -448,7 +448,7 @@
 
     function bindCardTagClicks() {
         deck.addEventListener('click', e => {
-            const tag = e.target.closest('.mb-card-tag');
+            const tag = e.target.closest('.mb-card-tag-dot');
             if (!tag) return;
             e.preventDefault();
             openTagColumn(tag.dataset.mbTagLabel || tag.dataset.mbTag);

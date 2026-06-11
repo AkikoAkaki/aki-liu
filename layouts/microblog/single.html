@@ -7,23 +7,8 @@
     {{- end -}}
 {{- end -}}
 
-{{- /* Build prev/next within the microblog section */ -}}
-{{- $allEntries := where .Site.RegularPages "Section" "microblog" -}}
-{{- $currentIndex := -1 -}}
-{{- range $i, $p := $allEntries -}}
-    {{- if eq $p.RelPermalink $.RelPermalink -}}
-        {{- $currentIndex = $i -}}
-    {{- end -}}
-{{- end -}}
-{{- $newer := "" -}}{{- $older := "" -}}
-{{- if ge $currentIndex 0 -}}
-    {{- if gt $currentIndex 0 -}}
-        {{- $newer = index $allEntries (sub $currentIndex 1) -}}
-    {{- end -}}
-    {{- if lt $currentIndex (sub (len $allEntries) 1) -}}
-        {{- $older = index $allEntries (add $currentIndex 1) -}}
-    {{- end -}}
-{{- end -}}
+{{- $newer := .PrevInSection -}}
+{{- $older := .NextInSection -}}
 
 <article class="microblog-single">
     <div class="microblog-single-back">
@@ -63,7 +48,7 @@
                 <span class="ms-nav-arrow">{{ partialCached "icons/back-arrow.html" "back-arrow" }}</span>
                 <span class="ms-nav-text">
                     <span class="ms-nav-meta">{{ $newer.Date.Format "2006-01-02 · 15:04" }} <em>newer</em></span>
-                    <span class="ms-nav-preview">{{ $newer.Plain | plainify | truncate 60 }}</span>
+                    <span class="ms-nav-preview">{{ $newer.Plain | truncate 60 }}</span>
                 </span>
             </a>
             {{- else }}
@@ -79,7 +64,7 @@
             <a class="ms-nav-link" href="{{ $older.RelPermalink }}">
                 <span class="ms-nav-text">
                     <span class="ms-nav-meta"><em>older</em> {{ $older.Date.Format "2006-01-02 · 15:04" }}</span>
-                    <span class="ms-nav-preview">{{ $older.Plain | plainify | truncate 60 }}</span>
+                    <span class="ms-nav-preview">{{ $older.Plain | truncate 60 }}</span>
                 </span>
                 <span class="ms-nav-arrow">{{ partialCached "icons/forward-arrow.html" "forward-arrow" }}</span>
             </a>

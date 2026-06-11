@@ -316,7 +316,6 @@ body.section-about.about-sequence-open .site-wrapper {
     position: relative;
     z-index: 20;
     width: 380px;
-    height: 260px;
     flex-shrink: 0;
     overflow: visible;
     cursor: ns-resize;
@@ -326,12 +325,21 @@ body.section-about.about-sequence-open .site-wrapper {
     z-index: 4100;
 }
 
+.af-photo-wrap.is-tap-gallery {
+    cursor: pointer;
+    transition: aspect-ratio 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .af-photo-base {
     transition: opacity 120ms ease;
 }
 
 .af-photo-wrap.is-sequence-open .af-photo-base {
     opacity: 0;
+}
+
+.af-photo-wrap.is-sequence-open .af-default-caption {
+    opacity: 0 !important;
 }
 
 .af-sequence-layer {
@@ -393,42 +401,8 @@ body.section-about.about-sequence-open .site-wrapper {
     height: auto;
 }
 
-.af-sequence-item[data-ratio="wide"] .af-sequence-photo {
-    aspect-ratio: 1.4615;
-}
-.af-sequence-item[data-ratio="portrait"] .af-sequence-photo {
-    aspect-ratio: 0.76;
-}
-.af-sequence-item[data-ratio="square"] .af-sequence-photo {
-    aspect-ratio: 1;
-}
-.af-sequence-item[data-ratio="cinema"] .af-sequence-photo {
-    aspect-ratio: 1.92;
-}
-.af-sequence-item[data-ratio="tall"] .af-sequence-photo {
-    aspect-ratio: 0.62;
-}
-
-.af-sequence-photo--portrait .ab-photo {
-    background: linear-gradient(180deg, #d7d4cf, #bebab5);
-}
-.af-sequence-photo--square .ab-photo {
-    background: linear-gradient(120deg, #dcd9d2, #bab9b3);
-}
-.af-sequence-photo--cinema .ab-photo {
-    background: linear-gradient(180deg, #cfcfc9, #e0ddd6);
-}
-.af-sequence-photo--anchor .ab-photo {
-    background: linear-gradient(180deg, #d8d6d2 0%, #c4c2be 100%);
-}
-.af-sequence-photo--tall .ab-photo {
-    background: linear-gradient(90deg, #d8d4cc, #b7b8b3);
-}
-.af-sequence-photo--landscape .ab-photo {
-    background: radial-gradient(circle at 52% 28%, #bebdb6, #dedbd3);
-}
-.af-sequence-photo--archive .ab-photo {
-    background: linear-gradient(135deg, #e1ded8, #bebcb7);
+.af-sequence-photo .ab-photo {
+    background: transparent;
 }
 
 .af-sequence-caption {
@@ -1655,43 +1629,16 @@ body.section-about.about-sequence-open .site-wrapper {
 /* Photo placeholder */
 .ab-photo {
     position: relative;
-    background: linear-gradient(180deg, #d8d6d2 0%, #c4c2be 100%);
+    background: transparent;
     overflow: hidden;
     width: 100%;
     height: 100%;
 }
 .ab-photo::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image:
-        radial-gradient(rgba(0, 0, 0, 0.12) 1px, transparent 1px),
-        radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-    background-size:
-        3px 3px,
-        5px 5px;
-    background-position:
-        0 0,
-        1px 2px;
-    mix-blend-mode: multiply;
-    opacity: 0.6;
+    display: none;
 }
 .ab-photo-silhouette {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 64%;
-    height: 88%;
-    background:
-        radial-gradient(
-            ellipse 48% 22% at 50% 18%,
-            #6e6c68 0%,
-            transparent 65%
-        ),
-        radial-gradient(ellipse 55% 55% at 50% 70%, #4a4844 0%, transparent 70%);
-    filter: blur(1px);
-    opacity: 0.7;
+    display: none;
 }
 .ab-photo-label {
     position: absolute;
@@ -1771,7 +1718,6 @@ body.section-about.about-sequence-open .site-wrapper {
     }
     .af-photo-wrap {
         width: 100%;
-        height: 240px;
     }
     .af-center-meta--right {
         text-align: left;
@@ -2070,7 +2016,6 @@ body.section-about.about-sequence-open .site-wrapper {
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.05s;
     will-change: transform;
     backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -2376,7 +2321,6 @@ body.section-about.about-sequence-open .site-wrapper {
     z-index: 1;
     will-change: transform;
     backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -2404,7 +2348,6 @@ body.section-about.about-sequence-open .site-wrapper {
     z-index: 1;
     transform: translateZ(0);
     backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
 }
 

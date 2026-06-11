@@ -6,7 +6,7 @@
 {{- end -}}
 {{- $entries = $entries.ByDate.Reverse -}}
 {{- .Store.Set "entries" $entries -}}
-{{- $tagSlice := partialCached "tag-sidebar-data.html" . .Path -}}
+{{- $tagSlice := partialCached "tag-sidebar-data.html" (dict "pages" $entries) (printf "%s|%s" .Path .Language.Lang) -}}
 {{ $years := slice }}
 {{ range $entries.GroupByPublishDate "2006" }}
     {{ $years = $years | append .Key }}
@@ -56,7 +56,7 @@
                     <li>
                         <a href="{{ .RelPermalink }}">
                             <time>{{ .Date.Format "2006-01-02 · 15:04" }}</time>
-                            <span class="mb-noscript-text">{{ .Plain | plainify | truncate 200 }}</span>
+                            <span class="mb-noscript-text">{{ .Plain | truncate 200 }}</span>
                         </a>
                     </li>
                     {{- end }}

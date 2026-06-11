@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Syntax Highlight Palette Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #ffffff;
+            color: #333;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 40px;
+            font-size: 32px;
+            color: #222;
+        }
+
+        .schemes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .scheme {
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .scheme-header {
+            padding: 16px;
+            background: #f9f9f9;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .scheme-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .scheme-desc {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .code-block {
+            padding: 16px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: #f0f0f0;
+        }
+
+        /* Scheme A: Bright Pastel */
+        /* Scheme A: Bright Pastel (基准) */
+        .scheme-a .code-block {
+            color: #484848;
+        }
+        .scheme-a .kw { color: #5b8dd1; font-weight: 600; }      /* 亮蓝 */
+        .scheme-a .str { color: #c47d5f; }                       /* 暖橙 */
+        .scheme-a .cmt { color: #a0a8b0; }                       /* 浅灰蓝 */
+        .scheme-a .num { color: #6eb570; }                       /* 亮绿 */
+        .scheme-a .fn { color: #9b7bc4; font-weight: 600; }      /* 浅紫 */
+        .scheme-a .op { color: #636363; }
+
+        /* Variant 1: Brighter */
+        .scheme-b .code-block {
+            color: #484848;
+        }
+        .scheme-b .kw { color: #6a9de8; font-weight: 600; }      /* 更亮蓝 */
+        .scheme-b .str { color: #d48d7f; }                       /* 更亮橙 */
+        .scheme-b .cmt { color: #b0b8c0; }                       /* 稍浅灰 */
+        .scheme-b .num { color: #7ec584; }                       /* 更亮绿 */
+        .scheme-b .fn { color: #ab8bd4; font-weight: 600; }      /* 更亮紫 */
+        .scheme-b .op { color: #707070; }
+
+        /* Variant 2: Softer */
+        .scheme-c .code-block {
+            color: #484848;
+        }
+        .scheme-c .kw { color: #4d7dbe; font-weight: 600; }      /* 更柔蓝 */
+        .scheme-c .str { color: #b86d50; }                       /* 更柔橙 */
+        .scheme-c .cmt { color: #989fa7; }                       /* 更灰 */
+        .scheme-c .num { color: #629565; }                       /* 更柔绿 */
+        .scheme-c .fn { color: #8d6bb4; font-weight: 600; }      /* 更柔紫 */
+        .scheme-c .op { color: #5c5c5c; }
+
+        /* Variant 3: Deeper */
+        .scheme-d .code-block {
+            color: #484848;
+        }
+        .scheme-d .kw { color: #4b7cbd; font-weight: 600; }      /* 更深蓝 */
+        .scheme-d .str { color: #a86945; }                       /* 更深橙 */
+        .scheme-d .cmt { color: #8a92a0; }                       /* 更深灰 */
+        .scheme-d .num { color: #5a9560; }                       /* 更深绿 */
+        .scheme-d .fn { color: #7b6db5; font-weight: 600; }      /* 更深紫 */
+        .scheme-d .op { color: #525252; }
+
+        /* Variant 4: Saturated */
+        .scheme-e .code-block {
+            color: #484848;
+        }
+        .scheme-e .kw { color: #5b8dd1; font-weight: 600; }      /* 同基准 */
+        .scheme-e .str { color: #d87c5a; }                       /* 更饱橙 */
+        .scheme-e .cmt { color: #a0a8b0; }                       /* 同基准 */
+        .scheme-e .num { color: #74c57d; }                       /* 更饱绿 */
+        .scheme-e .fn { color: #a38dce; font-weight: 600; }      /* 更饱紫 */
+        .scheme-e .op { color: #636363; }
+
+        /* Variant 5: Muted */
+        .scheme-f .code-block {
+            color: #484848;
+        }
+        .scheme-f .kw { color: #5a7cb8; font-weight: 600; }      /* 柔和蓝 */
+        .scheme-f .str { color: #b46d45; }                       /* 柔和橙 */
+        .scheme-f .cmt { color: #979faa; }                       /* 柔和灰 */
+        .scheme-f .num { color: #5f8a54; }                       /* 柔和绿 */
+        .scheme-f .fn { color: #8b71b0; font-weight: 600; }      /* 柔和紫 */
+        .scheme-f .op { color: #5f5f5f; }
+
+        /* Variant 6: Crisp */
+        .scheme-g .code-block {
+            color: #484848;
+        }
+        .scheme-g .kw { color: #5b8dd1; font-weight: 600; }      /* A 基准 */
+        .scheme-g .str { color: #c47d5f; }                       /* A 基准 */
+        .scheme-g .cmt { color: #a0a8b0; }                       /* A 基准 */
+        .scheme-g .num { color: #6eb570; }                       /* A 基准 */
+        .scheme-g .fn { color: #9b7bc4; font-weight: 600; }      /* A 基准 */
+        .scheme-g .op { color: #636363; }
+
+        .code-line {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* Info section */
+        .info {
+            background: #f9f9f9;
+            border-left: 4px solid #ddd;
+            padding: 16px;
+            margin-top: 40px;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .info strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Code Syntax Highlight Palette Preview</h1>
+
+        <div class="schemes">
+            <!-- Scheme A -->
+            <div class="scheme scheme-a">
+                <div class="scheme-header">
+                    <div class="scheme-title">A. Bright Pastel</div>
+                    <div class="scheme-desc">明快柔和，彩虹但不跳跃</div>
+                </div>
+                <div class="code-block">
+                    <span class="code-line"><span class="kw">def</span> <span class="fn">transformer_forward</span>(x, mask<span class="op">=</span><span class="kw">None</span>):</span>
+                    <span class="code-line">    <span class="cmt"># Multi-head attention</span></span>
+                    <span class="code-line">    Q <span class="op">=</span> x <span class="op">@</span> W_q  <span class="cmt"># Query projection</span></span>
+                    <span class="code-line">    K <span class="op">=</span> x <span class="op">@</span> W_k  <span class="cmt"># Key projection</span></span>
+                    <span class="code-line">    attn <span class="op">=</span> softmax(Q <span class="op">@</span> K.T <span class="op">/</span> sqrt(<span class="num">64</span>))</span>
+                    <span class="code-line">    <span class="kw">return</span> attn <span class="op">@</span> x</span>
+                </div>
+            </div>
+
+            <!-- Scheme B - Variant 1 -->
+            <div class="scheme scheme-b">
+                <div class="scheme-header">
+                    <div class="scheme-title">A - Variant 1: Brighter</div>
+                    <div class="scheme-desc">基于 A 的更亮调版本</div>
+                </div>
+                <div class="code-block">
+                    <span class="code-line"><span class="kw">const</span> config <span class="op">=</span> {</span>
+                    <span class="code-line">  model: <span class="str">"gpt-4"</span>,</span>
+                    <span class="code-line">  temperature: <span class="num">0.7</span>,  <span class="cmt">// Control randomness</span></span>
+                    <span class="code-line">  maxTokens: <span class="num">2048</span>,</span>
+                    <span class="code-line">  topP: <span class="num">0.95</span>,  <span class="cmt">// Nucleus sampling</span></span>
+                    <span class="code-line">  <span class="fn">onStream</span>: (chunk) <span class="op">=></span> handle(chunk)</span>
+                    <span class="code-line">};</span>
+                </div>
+            </div>
+
+            <!-- Scheme C - Variant 2 -->
+            <div class="scheme scheme-c">
+                <div class="scheme-header">
+                    <div class="scheme-title">A - Variant 2: Softer</div>
+                    <div class="scheme-desc">基于 A 的更柔和版本</div>
+                </div>
+                <div class="code-block">
+                    <span class="code-line"><span class="kw">SELECT</span> u.id, u.name, COUNT(p.id) <span class="kw">AS</span> posts</span>
+                    <span class="code-line"><span class="kw">FROM</span> users u</span>
+                    <span class="code-line"><span class="kw">LEFT JOIN</span> posts p <span class="kw">ON</span> u.id <span class="op">=</span> p.user_id</span>
+                    <span class="code-line"><span class="kw">WHERE</span> u.created_at <span class="op">></span> <span class="str">'2024-01-01'</span></span>
+                    <span class="code-line"><span class="kw">GROUP BY</span> u.id <span class="kw">ORDER BY</span> posts <span class="kw">DESC</span></span>
+                    <span class="code-line"><span class="kw">LIMIT</span> <span class="num">10</span>;</span>
+                </div>
+            </div>
+
+            <!-- Scheme D - Variant 3 -->
+            <div class="scheme scheme-d">
+                <div class="scheme-header">
+                    <div class="scheme-title">A - Variant 3: Deeper</div>
+                    <div class="scheme-desc">基于 A 的更深调版本</div>
+                </div>
+                <div class="code-block">
+                    <span class="code-line"><span class="op">.</span>btn-primary {</span>
+                    <span class="code-line">  background<span class="op">:</span> <span class="str">#5b8dd1</span>;  <span class="cmt">/* Primary blue */</span></span>
+                    <span class="code-line">  color<span class="op">:</span> <span class="str">#ffffff</span>;</span>
+                    <span class="code-line">  padding<span class="op">:</span> <span class="num">12</span>px <span class="num">24</span>px;</span>
+                    <span class="code-line">  border-radius<span class="op">:</span> <span class="num">8</span>px;</span>
+                    <span class="code-line">  transition<span class="op">:</span> all <span class="num">0.3</span>s ease;</span>
+                    <span class="code-line">}</span>
+                </div>
+            </div>
+
+            <!-- Scheme E - Variant 4 -->
+            <div class="scheme scheme-e">
+                <div class="scheme-header">
+                    <div class="scheme-title">A - Variant 4: Saturated</div>
+                    <div class="scheme-desc">基于 A 的更饱和版本</div>
+                </div>
+                <div class="code-block">
+                    <span class="code-line"><span class="op">&lt;</span><span class="kw">template</span><span class="op">&gt;</span></span>
+                    <span class="code-line">  <span class="op">&lt;</span><span class="kw">div</span> class<span class="op">=</span><span class="str">"container"</span><span class="op">&gt;</span></span>
+                    <span class="code-line">    <span class="op">&lt;</span><span class="kw">h1</span><span class="op">&gt;</span>{{ title }}<span class="op">&lt;/</span><span class="kw">h1</span><span class="op">&gt;</span></span>
+                    <span class="code-line">    <span class="op">&lt;</span><span class="kw">p</span> v-if<span class="op">=</span><span class="str">"loading"</span><span class="op">&gt;</span>Loading...</span>
+                    <span class="code-line">    <span class="op">&lt;</span><span class="kw">button</span> @click<span class="op">=</span><span class="str">"fetch"</span><span class="op">&gt;</span>Fetch<span class="op">&lt;/</span><span class="kw">button</span><span class="op">&gt;</span></span>
+                    <span class="code-line">  <span class="op">&lt;/</span><span class="kw">div</span><span class="op">&gt;</span></span>
+                    <span class="code-line"><span class="op">&lt;/</span><span class="kw">template</span><span class="op">&gt;</span></span>
+                </div>
+            </div>
+
+            <!-- Scheme F - Variant 5 -->
+            <div class="scheme scheme-f">
+                <div class="scheme-header">
+                    <div class="scheme-title">A - Variant 5: Muted</div>
+                    <div class="scheme-desc">基于 A 的更柔和版本</div>
+                </div>
+                <div class="code-block">
+                    <span class="code-line"><span class="kw">class</span> <span class="fn">NeuralNetwork</span>:</span>
+                    <span class="code-line">    <span class="kw">def</span> <span class="fn">__init__</span>(self, layers<span class="op">=[</span><span class="num">784</span>, <span class="num">128</span>, <span class="num">10</span><span class="op">]):</span></span>
+                    <span class="code-line">        self.layers <span class="op">=</span> layers</span>
+                    <span class="code-line">        self.weights <span class="op">=</span> [randn(l, layers[i<span class="op">+</span><span class="num">1</span>]) </span>
+                    <span class="code-line">                         <span class="kw">for</span> i, l <span class="kw">in</span> enumerate(layers[:<span class="op">-</span><span class="num">1</span>])]</span>
+                    <span class="code-line">    <span class="kw">def</span> <span class="fn">forward</span>(self, x):  <span class="cmt"># Forward pass</span></span>
+                    <span class="code-line">        <span class="kw">return</span> relu(x) <span class="op">@</span> self.weights</span>
+                </div>
+            </div>
+
+            <!-- Scheme G - Variant 6 -->
+            <div class="scheme scheme-g">
+                <div class="scheme-header">
+                    <div class="scheme-title">A - Variant 6: Crisp</div>
+                    <div class="scheme-desc">A 的完全复制版本（参考对比）</div>
+                </div>
+                <div class="code-block">
+                    <span class="code-line">training:</span>
+                    <span class="code-line">  batch_size: <span class="num">32</span></span>
+                    <span class="code-line">  learning_rate: <span class="num">0.001</span>  <span class="cmt"># Start from</span></span>
+                    <span class="code-line">  epochs: <span class="num">100</span></span>
+                    <span class="code-line">  optimizer: <span class="str">"adam"</span></span>
+                    <span class="code-line">  <span class="fn">callbacks</span>:</span>
+                    <span class="code-line">    - name: <span class="str">"checkpoint"</span></span>
+                    <span class="code-line">      save_best: <span class="kw">true</span></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info">
+            <strong>预览说明：</strong><br>
+            这些都是基于方案 A 的微调版本。每个版本展示了不同代码语言的实际效果（Python、JavaScript、SQL、CSS、Vue、Python 类、YAML），背景保持 #f0f0f0 浅灰色。<br><br>
+            <strong>方案总览：</strong><br>
+            • <strong>A - 基准版</strong>：原始版本，多彩平衡<br>
+            • <strong>Variant 1: Brighter</strong>：更亮调，色彩更活泼<br>
+            • <strong>Variant 2: Softer</strong>：更柔和，饱和度降低<br>
+            • <strong>Variant 3: Deeper</strong>：更深调，对比度提升<br>
+            • <strong>Variant 4: Saturated</strong>：更饱和，色彩更鲜艳<br>
+            • <strong>Variant 5: Muted</strong>：更低调，偏克制<br>
+            • <strong>Variant 6: Crisp</strong>：A 的完整复制（参考对比）<br><br>
+            <strong>操作说明：</strong><br>
+            从上面的版本中选择一个你最喜欢的。选中后，我可以根据你的反馈再继续调整所有版本，直到找到完美的方案。
+        </div>
+    </div>
+</body>
+</html>

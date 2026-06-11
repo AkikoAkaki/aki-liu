@@ -70,6 +70,12 @@ mainSections = ["ideas", "notes", "textlab"]
       unsafe = true
       hardWraps = true
 
+  [markup.goldmark.extensions.passthrough]
+    enable = true
+    [markup.goldmark.extensions.passthrough.delimiters]
+      inline = [['$', '$'], ['\(', '\)']]
+      block = [['$$', '$$'], ['\[', '\]']]
+
   [markup.highlight]
     noClasses = false
     style = "monokai"
