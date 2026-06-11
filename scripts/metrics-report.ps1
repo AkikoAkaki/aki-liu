@@ -678,6 +678,7 @@ function Write-ReportHtml {
 }
 $reportsDir = Join-Path $ProjectRoot "reports\metrics"
 $historyDir = Join-Path $reportsDir "history"
+$assetAuditJsonPath = Join-Path $reportsDir "public-assets.json"
 New-Item -ItemType Directory -Path $reportsDir -Force | Out-Null
 New-Item -ItemType Directory -Path $historyDir -Force | Out-Null
 
@@ -690,6 +691,7 @@ New-Item -ItemType Directory -Path $tempDest -Force | Out-Null
 try {
     $buildOutput = Invoke-HugoCapture -Args @("--gc", "--minify", "--destination", $tempDest) -Root $ProjectRoot
     $quality = Analyze-BuiltHtml -DestRoot $tempDest
+    & (Join-Path $ProjectRoot "scripts\public-asset-audit.ps1") -PublicDir $tempDest -JsonOut $assetAuditJsonPath -Quiet
 }
 finally {
     if (Test-Path $tempDest) {
@@ -764,6 +766,7 @@ $historyJson = $historyPoints | ConvertTo-Json -Depth 8
 Write-Host "Metrics report generated:"
 Write-Host "  JSON        $latestJsonPath"
 Write-Host "  HTML        $latestHtmlPath"
+Write-Host "  Asset audit $assetAuditJsonPath"
 Write-Host "  History     $historyJsonPath"
 Write-Host "  Hugo latest $dataLatestJsonPath"
 Write-Host "  Hugo series $dataHistoryJsonPath"
