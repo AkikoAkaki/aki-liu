@@ -12,10 +12,10 @@ No `npm`, `Node.js`, or package manager needed. Hugo handles CSS/JS bundling int
 ## Project structure
 
 - **Multilingual**: Chinese is default (`zh`), English uses `index.en.md` alongside `index.md`. Content filenames are always Chinese; English translations live in the same directory.
-- **Content sections** (`content/`): `ideas/`, `technical/`, `textlab/`, `influences/`. All use the same `list.html` template with the 3-column archive layout (sidebar-left → main → sidebar-right with hover preview).
+- **Content sections** (`content/`): `ideas/`, `notes/`, `textlab/`, `influences/`. All use the same `list.html` template with the 3-column archive layout (sidebar-left → main → sidebar-right with hover preview).
 - **Homepage**: Driven by `data/homepage.yaml`, not markdown. Template: `layouts/index.html`.
-- **CSS pipeline**: `base.css` → `layout.css` → `components.css` are concatenated into one bundle. `home.css` and `post.css` are separate bundles loaded conditionally on homepage and single pages. All processed via Hugo `resources.Concat` + `resources.Minify`.
-- **JS**: Single `assets/js/main.js` built via Hugo's `js.Build`. No external bundler.
+- **CSS pipeline**: Global bundle concatenates `base.css` → `layout.css` → `components.css` → `motion.css` → `search.css`. Homepage loads `home.css`; single pages load a `post.css` + `syntax-highlight.css` page bundle; microblog and dashboard CSS are route-conditional. All are processed via Hugo Pipes (`resources.Concat` + `resources.Minify` where applicable).
+- **JS**: `assets/js/main.js` is the global entrypoint built via Hugo's `js.Build`; `assets/js/microblog.js` is a second entrypoint loaded only on the microblog section list. No external bundler.
 
 ## Conventions
 
@@ -47,7 +47,7 @@ Vercel — configured in `vercel.json`. Build command sets `--baseURL` from the 
 | Hugo config | `hugo.toml` |
 | Homepage data | `data/homepage.yaml` |
 | Base layout | `layouts/_default/baseof.html` |
-| CSS bundle entrypoints | `assets/css/base.css`, `layout.css`, `components.css` |
-| JS entrypoint | `assets/js/main.js` |
+| CSS bundle entrypoints | `layouts/partials/head/core-assets.html`, `assets/css/base.css`, `layout.css`, `components.css`, `motion.css`, `search.css` |
+| JS entrypoints | `assets/js/main.js`, `assets/js/microblog.js` |
 | Deferred decisions | `deferred_optimizations.md` |
 | Claude local config | `.claude/settings.local.json` |

@@ -2220,12 +2220,12 @@ import { initPrefetcher } from "./modules/prefetch.js";
           action: () => navigate(lang === "en" ? "/en/textlab/" : "/textlab/"),
         },
         {
-          id: "go-technical",
-          label: lang === "en" ? "Go to Technical" : "前往 Technical",
-          hint: "/technical",
+          id: "go-notes",
+          label: lang === "en" ? "Go to Notes" : "前往 Notes",
+          hint: "/notes",
           icon: "arrow",
           action: () =>
-            navigate(lang === "en" ? "/en/technical/" : "/technical/"),
+            navigate(lang === "en" ? "/en/notes/" : "/notes/"),
         },
         {
           id: "go-microblog",
