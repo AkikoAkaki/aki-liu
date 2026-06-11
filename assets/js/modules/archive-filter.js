@@ -30,6 +30,7 @@ export function initArchiveFilter() {
         if (typeof renderMathInElement === "function") {
           try {
             renderMathInElement(previewContainer, {
+              // Keep delimiters aligned with layouts/partials/head/katex.html.
               delimiters: [
                 { left: "$$", right: "$$", display: true },
                 { left: "\\(", right: "\\)", display: false },

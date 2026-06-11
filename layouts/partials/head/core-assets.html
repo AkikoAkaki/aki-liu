@@ -43,6 +43,7 @@
     <link rel="stylesheet" href="{{ $dashboardStyle.RelPermalink }}" integrity="{{ $dashboardStyle.Data.Integrity }}">
 {{- end -}}
 
+{{- /* JS entrypoints use ES module imports; keep them behind Hugo js.Build. */ -}}
 {{- $mainJS := resources.Get "js/main.js" | js.Build (dict "targetPath" "js/main.js") | resources.Minify | fingerprint -}}
 <script defer src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}"></script>
 

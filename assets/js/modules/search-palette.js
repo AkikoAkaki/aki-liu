@@ -194,6 +194,7 @@ export function initSearchPalette() {
   function buildCommands(query) {
     const otherLang = lang === "zh" ? "en" : "zh";
     const list = [
+      // Section commands must stay in sync with searchindex.json and microblog-server.js.
       {
         id: "go-home",
         label: lang === "en" ? "Go to Home" : "回到首页",

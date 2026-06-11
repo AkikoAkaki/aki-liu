@@ -1,4 +1,5 @@
 {{- /* Per-language site search index. Hugo emits one file per language. */ -}}
+{{- /* Keep sections in sync with search-palette commands and scripts/microblog-server.js. */ -}}
 {{- $sections := slice "ideas" "notes" "textlab" "influences" "microblog" -}}
 {{- $pages := where site.RegularPages "Section" "in" $sections -}}
 {{- $items := slice -}}

@@ -50,6 +50,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             if (typeof renderMathInElement === 'function') {
                 renderMathInElement(document.body, {
+                    // Keep delimiters aligned with assets/js/modules/archive-filter.js.
                     delimiters: [
                         {left: '$$', right: '$$', display: true},
                         {left: '\\(', right: '\\)', display: false},
