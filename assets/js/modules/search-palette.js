@@ -50,6 +50,10 @@ export function initSearchPalette() {
     return indexPromise;
   }
 
+  function warmIndex() {
+    loadIndex();
+  }
+
   // ---------- Tokenization ----------
   function isCJK(s) {
     return /[㐀-鿿豈-﫿]/.test(s);
@@ -629,6 +633,10 @@ export function initSearchPalette() {
   });
 
   triggers.forEach((t) => {
+    t.addEventListener("pointerenter", warmIndex, { passive: true });
+    t.addEventListener("pointerdown", warmIndex, { passive: true });
+    t.addEventListener("focus", warmIndex);
+
     t.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
