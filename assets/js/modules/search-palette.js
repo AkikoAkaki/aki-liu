@@ -1,3 +1,5 @@
+import { escapeHtml, tagToSlug } from "./dom-utils.js";
+
 export function initSearchPalette() {
   const root = document.getElementById("menu-search-panel");
   const triggers = document.querySelectorAll("[data-search-trigger]");
@@ -118,20 +120,6 @@ export function initSearchPalette() {
   }
 
   // ---------- Snippet + highlight ----------
-  function escapeHtml(s) {
-    return String(s).replace(
-      /[<>&"']/g,
-      (c) =>
-        ({
-          "<": "&lt;",
-          ">": "&gt;",
-          "&": "&amp;",
-          '"': "&quot;",
-          "'": "&#39;",
-        })[c],
-    );
-  }
-
   function highlight(text, tokens) {
     const escaped = escapeHtml(text);
     if (!tokens.length) return escaped;
@@ -305,7 +293,7 @@ export function initSearchPalette() {
         action: () =>
           navigate(
             "/tags/" +
-              encodeURIComponent(tag.toLowerCase().replace(/\s+/g, "-")) +
+              encodeURIComponent(tagToSlug(tag)) +
               "/",
           ),
       }));
