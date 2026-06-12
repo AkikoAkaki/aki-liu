@@ -15,7 +15,7 @@
 date: {{ printf "%s-%s-%sT%s:%s:%s+08:00" $year $month $day (substr $time 0 2) (substr $time 2 2) (substr $time 4 2) }}
 # 时间约定为 Asia/Shanghai +08:00。
 # slug 会生成 /microblog/HHMMSS/。
-slug: {{ $time }}
+slug: "{{ $time }}"
 # 标签：按需添加。
 tags: []
 # 设为 true 可暂缓发布。
