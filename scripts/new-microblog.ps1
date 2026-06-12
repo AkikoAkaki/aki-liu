@@ -113,7 +113,7 @@ $content = @(
     ""
 ) -join [System.Environment]::NewLine
 
-New-Item -ItemType Directory -Path $bundlePath | Out-Null
+New-Item -ItemType Directory -Path $bundlePath -Force | Out-Null
 [System.IO.File]::WriteAllText($indexPath, $content, [System.Text.UTF8Encoding]::new($false))
 
 $relativePath = $indexPath.Substring($repoRoot.Length).TrimStart([char[]]@("\", "/"))
