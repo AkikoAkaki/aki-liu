@@ -58,9 +58,10 @@ See `WORKFLOW.md` for the human authoring, preview, microblog, media, metrics, a
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\metrics-report.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check.ps1
 ```
 
-Generates build timing, template performance, broken link checks, and HTML quality reports in `reports/metrics/`.
+Generates build timing, template performance, broken link checks, and HTML quality reports in `reports/metrics/`. The check script runs a local pre-push smoke check against `public_test/`.
 
 ## Deployment
 
