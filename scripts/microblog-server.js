@@ -738,13 +738,94 @@ const MIME = {
   '.webp': 'image/webp', '.svg': 'image/svg+xml',
 };
 
+function formatFrontmatterValue(key, value, delimiter) {
+  if (delimiter === 'toml') {
+    if (key === 'tags') {
+      const arr = Array.isArray(value) ? value : normalizeTags(value);
+      return `[${arr.map(t => `"${String(t).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`).join(', ')}]`;
+    }
+    if (typeof value === 'boolean') return String(value);
+    const str = String(value);
+    return `"${str.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+  }
+  if (key === 'tags') {
+    const arr = Array.isArray(value) ? value : normalizeTags(value);
+    if (!arr.length) return '[]';
+    return `[${arr.map(t => `"${String(t).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`).join(', ')}]`;
+  }
+  if (typeof value === 'boolean') return String(value);
+  if (typeof value === 'number') return String(value);
+  const str = String(value);
+  if (!str) return '""';
+  const needsQuoting = (
+    /^[\s]/.test(str) || /[\s]$/.test(str) ||
+    /^[{[\]!|>'"%@`]/.test(str) ||
+    /:\s/.test(str) ||
+    str === 'true' || str === 'false' || str === 'null' || str === '~'
+  );
+  if (key === 'title' || needsQuoting) {
+    return `"${str.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+  }
+  return str;
+}
+
+function applyFrontmatterUpdates(rawFm, delimiter, updates) {
+  if (!rawFm || !updates || !Object.keys(updates).length) return rawFm;
+  const handled = new Set();
+  let result = rawFm;
+  for (const [key, value] of Object.entries(updates)) {
+    if (value === undefined) continue;
+    const isTOML = delimiter === 'toml';
+    const formatted = formatFrontmatterValue(key, value, delimiter);
+    const newLine = isTOML ? `${key} = ${formatted}` : `${key}: ${formatted}`;
+    let matched = false;
+    if (!isTOML) {
+      const blockRe = new RegExp(`^${key}:[ \\t]*\\r?\\n(?:[ \\t]+-[^\\r\\n]*\\r?\\n)+`, 'm');
+      if (blockRe.test(result)) {
+        result = result.replace(blockRe, newLine + '\n');
+        matched = true;
+      }
+    }
+    if (!matched) {
+      const inlineRe = isTOML
+        ? new RegExp(`^${key}[ \\t]*=[ \\t]*[^\\r\\n]*$`, 'm')
+        : new RegExp(`^${key}:[ \\t]*[^\\r\\n]*$`, 'm');
+      if (inlineRe.test(result)) {
+        result = result.replace(inlineRe, newLine);
+        matched = true;
+      }
+    }
+    if (matched) handled.add(key);
+  }
+  const sep = delimiter === 'toml' ? ' = ' : ': ';
+  const toAppend = Object.entries(updates)
+    .filter(([k, v]) => v !== undefined && !handled.has(k))
+    .map(([k, v]) => `${k}${sep}${formatFrontmatterValue(k, v, delimiter)}`);
+  if (toAppend.length) {
+    if (!result.match(/[\r\n]$/)) result += '\n';
+    result += toAppend.join('\n') + '\n';
+  }
+  return result;
+}
+
+function atomicWriteFile(filePath, content) {
+  const tmpPath = filePath + '.tmp';
+  try {
+    fs.writeFileSync(tmpPath, content, 'utf8');
+    fs.renameSync(tmpPath, filePath);
+  } catch (err) {
+    try { fs.unlinkSync(tmpPath); } catch (_) {}
+    throw err;
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   const { pathname } = url.parse(req.url);
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,POST',
+      'Access-Control-Allow-Methods': 'GET,POST,PUT',
       'Access-Control-Allow-Headers': 'Content-Type',
     });
     return res.end();
@@ -788,6 +869,105 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, getContentDetail(id));
     } catch (e) {
       return sendJSON(res, { error: e.message }, e.statusCode || 500);
+    }
+  }
+
+  if (req.method === 'PUT' && pathname.startsWith('/api/content/')) {
+    try {
+      let id;
+      try {
+        id = decodeURIComponent(pathname.slice('/api/content/'.length));
+      } catch (_) {
+        return sendJSON(res, { ok: false, error: 'Invalid content id' }, 400);
+      }
+      const bodyBuf = await readBody(req);
+      let payload;
+      try { payload = JSON.parse(bodyBuf.toString('utf8')); } catch (_) {
+        return sendJSON(res, { ok: false, error: 'Invalid JSON' }, 400);
+      }
+
+      const { item, bundleDir } = resolveContentItem(id);
+      const kind = item.kind;
+      const zhPath = path.join(bundleDir, 'index.md');
+      const enPath = path.join(bundleDir, 'index.en.md');
+      const enExists = fs.existsSync(enPath);
+      const baseMtime = payload.baseMtime || {};
+      const filesPayload = payload.files || {};
+      const zhPayload = filesPayload.zh || {};
+      const enPayload = filesPayload.en || {};
+      const zhFmPayload = zhPayload.frontmatter || {};
+
+      // Require base mtimes before any file I/O
+      if (!baseMtime.zh) {
+        return sendJSON(res, { ok: false, state: 'missing_base_mtime', error: 'Missing base mtime for zh file' }, 400);
+      }
+      if (enExists && !baseMtime.en) {
+        return sendJSON(res, { ok: false, state: 'missing_base_mtime', error: 'Missing base mtime for en file' }, 400);
+      }
+
+      // Read zh file + mtime conflict check
+      if (!fs.existsSync(zhPath)) {
+        return sendJSON(res, { ok: false, error: 'Content file not found' }, 404);
+      }
+      const zhStat = fs.statSync(zhPath);
+      if (zhStat.mtime.toISOString() !== baseMtime.zh) {
+        return sendJSON(res, { ok: false, state: 'conflict', error: 'File changed outside Content Studio' }, 409);
+      }
+      const zhParsed = parseFrontMatter(fs.readFileSync(zhPath, 'utf8'));
+
+      // Read en file + mtime conflict check
+      let enParsed = null;
+      if (enExists) {
+        const enStat = fs.statSync(enPath);
+        if (enStat.mtime.toISOString() !== baseMtime.en) {
+          return sendJSON(res, { ok: false, state: 'conflict', error: 'File changed outside Content Studio' }, 409);
+        }
+        enParsed = parseFrontMatter(fs.readFileSync(enPath, 'utf8'));
+      }
+
+      // Build zh frontmatter updates
+      const zhUpdates = {};
+      if (kind === 'article' && typeof zhFmPayload.title === 'string') zhUpdates.title = zhFmPayload.title;
+      if (kind === 'article' && typeof zhFmPayload.date === 'string' && zhFmPayload.date) zhUpdates.date = zhFmPayload.date;
+      if (zhFmPayload.tags !== undefined) zhUpdates.tags = normalizeTags(zhFmPayload.tags);
+      if (typeof zhFmPayload.draft === 'boolean') zhUpdates.draft = zhFmPayload.draft;
+      if (kind === 'article' && typeof zhFmPayload.math === 'boolean') {
+        zhUpdates['enableKaTeX' in zhParsed.data ? 'enableKaTeX' : 'math'] = zhFmPayload.math;
+      }
+
+      const newZhBody = typeof zhPayload.body === 'string' ? zhPayload.body : zhParsed.body;
+      const newZhRawFm = applyFrontmatterUpdates(zhParsed.rawFrontmatter, zhParsed.delimiter, zhUpdates);
+      const newZhContent = reconstructFrontMatter({ ...zhParsed, rawFrontmatter: newZhRawFm, body: newZhBody });
+
+      // Build en file update if it exists
+      let newEnContent = null;
+      if (enExists && enParsed) {
+        const enFmPayload = enPayload.frontmatter || {};
+        const enUpdates = {};
+        if (kind === 'article' && typeof enFmPayload.title === 'string') enUpdates.title = enFmPayload.title;
+        if ('date' in enParsed.data && kind === 'article' && typeof zhFmPayload.date === 'string' && zhFmPayload.date) enUpdates.date = zhFmPayload.date;
+        if ('tags' in enParsed.data && zhFmPayload.tags !== undefined) enUpdates.tags = normalizeTags(zhFmPayload.tags);
+        if ('draft' in enParsed.data && typeof zhFmPayload.draft === 'boolean') enUpdates.draft = zhFmPayload.draft;
+        if (kind === 'article' && typeof zhFmPayload.math === 'boolean') {
+          if ('enableKaTeX' in enParsed.data) enUpdates.enableKaTeX = zhFmPayload.math;
+          else if ('math' in enParsed.data) enUpdates.math = zhFmPayload.math;
+        }
+        const newEnBody = typeof enPayload.body === 'string' ? enPayload.body : enParsed.body;
+        const newEnRawFm = applyFrontmatterUpdates(enParsed.rawFrontmatter, enParsed.delimiter, enUpdates);
+        newEnContent = reconstructFrontMatter({ ...enParsed, rawFrontmatter: newEnRawFm, body: newEnBody });
+      }
+
+      // Atomic writes
+      atomicWriteFile(zhPath, newZhContent);
+      if (newEnContent !== null) atomicWriteFile(enPath, newEnContent);
+
+      const refreshed = getContentDetail(id);
+      console.log(`[SAVE] ${id}`);
+      return sendJSON(res, { ok: true, state: 'saved', item: refreshed.item, files: refreshed.files, message: 'Saved locally. Not committed or pushed.' });
+    } catch (e) {
+      if (e.statusCode === 409) return sendJSON(res, { ok: false, state: 'conflict', error: e.message }, 409);
+      console.error('[SAVE FAIL]', e.message);
+      return sendJSON(res, { ok: false, error: e.message }, e.statusCode || 500);
     }
   }
 
