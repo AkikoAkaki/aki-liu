@@ -52,6 +52,8 @@ Microblog directories must be `YYYY/MM/DD-HHMMSS`; the slug and public URL deriv
 
 Use `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-microblog.ps1` as the safe file-only microblog alternative with no commit or push.
 
+See `WORKFLOW.md` for the human authoring, preview, microblog, media, metrics, and publishing workflow.
+
 ## Quality & metrics
 
 ```powershell
