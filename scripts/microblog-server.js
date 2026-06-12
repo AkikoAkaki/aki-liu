@@ -9,10 +9,10 @@ const PORT = 3737;
 const ROOT = path.join(__dirname, '..');
 const CONTENT_ROOT = path.resolve(ROOT, 'content');
 const ARTICLE_SECTIONS = new Set(['ideas', 'notes', 'textlab', 'influences']);
+const CONTENT_SECTIONS = ['ideas', 'notes', 'textlab', 'influences', 'microblog'];
+const KNOWN_FRONTMATTER_FIELDS = new Set(['title', 'date', 'slug', 'tags', 'draft', 'math', 'enableKaTeX']);
 const UI_FILE = path.join(__dirname, 'microblog-ui.html');
 const TEMP_DIR = path.join(__dirname, '.temp-uploads');
-
-fs.mkdirSync(TEMP_DIR, { recursive: true });
 
 function getLocalISO(customDate) {
   const now = customDate ? new Date(customDate) : new Date();
@@ -25,56 +25,228 @@ function getLocalISO(customDate) {
     `T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${sign}${oh}:${om}`;
 }
 
-function parseFrontMatterValue(key, rawValue) {
-  let val = rawValue.trim();
-  if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
-  if (val.startsWith("'") && val.endsWith("'")) val = val.slice(1, -1);
-  if (key === 'tags' && val.startsWith('[') && val.endsWith(']')) {
-    val = val.slice(1, -1).split(',').map(t => t.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
-  } else if (val === 'true') {
-    val = true;
-  } else if (val === 'false') {
-    val = false;
+function unquoteFrontMatterString(value) {
+  if (value.length < 2) return value;
+  const first = value[0];
+  const last = value[value.length - 1];
+
+  if (first === '"' && last === '"') {
+    try {
+      return JSON.parse(value);
+    } catch (_) {
+      return value.slice(1, -1).replace(/\\"/g, '"');
+    }
   }
-  return val;
+
+  if (first === "'" && last === "'") {
+    return value.slice(1, -1).replace(/''/g, "'");
+  }
+
+  return value;
 }
 
-function parseFrontMatterLine(line) {
-  const parts = line.split(':');
-  if (parts.length >= 2) {
-    const key = parts[0].trim();
-    return [key, parseFrontMatterValue(key, parts.slice(1).join(':'))];
+function splitInlineArray(value) {
+  const inner = value.slice(1, -1).trim();
+  if (!inner) return [];
+
+  const items = [];
+  let current = '';
+  let quote = '';
+  let escaping = false;
+
+  for (const char of inner) {
+    if (escaping) {
+      current += char;
+      escaping = false;
+      continue;
+    }
+
+    if (quote === '"' && char === '\\') {
+      current += char;
+      escaping = true;
+      continue;
+    }
+
+    if ((char === '"' || char === "'") && !quote) {
+      quote = char;
+      current += char;
+      continue;
+    }
+
+    if (char === quote) {
+      quote = '';
+      current += char;
+      continue;
+    }
+
+    if (char === ',' && !quote) {
+      items.push(current.trim());
+      current = '';
+      continue;
+    }
+
+    current += char;
   }
 
-  const eqParts = line.split('=');
-  if (eqParts.length >= 2) {
-    const key = eqParts[0].trim();
-    return [key, parseFrontMatterValue(key, eqParts.slice(1).join('='))];
+  if (current.trim()) {
+    items.push(current.trim());
   }
 
-  return null;
+  return items.map(item => parseFrontMatterValue('', item)).filter(item => item !== '');
+}
+
+function parseFrontMatterValue(_key, rawValue) {
+  const value = rawValue.trim();
+  if (!value) return '';
+  if (value.startsWith('[') && value.endsWith(']')) return splitInlineArray(value);
+  if (/^(true|false)$/i.test(value)) return /^true$/i.test(value);
+  return unquoteFrontMatterString(value);
+}
+
+function parseYamlFrontMatter(rawFrontmatter) {
+  const data = {};
+  let pendingArrayKey = null;
+
+  rawFrontmatter.split(/\r\n|\n|\r/).forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) return;
+
+    if (pendingArrayKey && /^\s*-\s+/.test(line)) {
+      data[pendingArrayKey].push(parseFrontMatterValue(pendingArrayKey, line.replace(/^\s*-\s+/, '')));
+      return;
+    }
+
+    pendingArrayKey = null;
+    if (/^\s/.test(line)) return;
+
+    const separatorIndex = line.indexOf(':');
+    if (separatorIndex === -1) return;
+
+    const key = line.slice(0, separatorIndex).trim();
+    if (!KNOWN_FRONTMATTER_FIELDS.has(key)) return;
+
+    const rawValue = line.slice(separatorIndex + 1);
+    if (!rawValue.trim() && key === 'tags') {
+      data[key] = [];
+      pendingArrayKey = key;
+      return;
+    }
+
+    data[key] = parseFrontMatterValue(key, rawValue);
+  });
+
+  return data;
+}
+
+function parseTomlFrontMatter(rawFrontmatter) {
+  const data = {};
+
+  rawFrontmatter.split(/\r\n|\n|\r/).forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) return;
+
+    const separatorIndex = line.indexOf('=');
+    if (separatorIndex === -1) return;
+
+    const key = line.slice(0, separatorIndex).trim();
+    if (!KNOWN_FRONTMATTER_FIELDS.has(key)) return;
+
+    data[key] = parseFrontMatterValue(key, line.slice(separatorIndex + 1));
+  });
+
+  return data;
+}
+
+function parseKnownFrontMatter(rawFrontmatter, delimiter) {
+  return delimiter === 'toml'
+    ? parseTomlFrontMatter(rawFrontmatter)
+    : parseYamlFrontMatter(rawFrontmatter);
+}
+
+function readLineAt(text, offset) {
+  if (offset >= text.length) return null;
+
+  for (let index = offset; index < text.length; index += 1) {
+    const char = text[index];
+    if (char === '\r' || char === '\n') {
+      const newline = char === '\r' && text[index + 1] === '\n' ? '\r\n' : char;
+      return {
+        text: text.slice(offset, index),
+        newline,
+        end: index + newline.length,
+      };
+    }
+  }
+
+  return {
+    text: text.slice(offset),
+    newline: '',
+    end: text.length,
+  };
+}
+
+function emptyFrontMatterResult(text) {
+  return {
+    delimiter: null,
+    delimiterType: null,
+    openingDelimiter: null,
+    closingDelimiter: null,
+    openingLine: '',
+    openingNewline: '',
+    closingLine: '',
+    closingNewline: '',
+    rawFrontmatter: '',
+    data: {},
+    body: text,
+    content: text.trim(),
+  };
 }
 
 function parseFrontMatter(text) {
-  const data = {};
-  let content = text;
-  
-  const delimiterMatch = text.match(/^(---\r?\n|\+\+\+\r?\n)/);
-  if (delimiterMatch) {
-    const delim = delimiterMatch[1];
-    const rest = text.slice(delim.length);
-    const endIdx = rest.indexOf(delim);
-    if (endIdx !== -1) {
-      const fmText = rest.slice(0, endIdx);
-      content = rest.slice(endIdx + delim.length).trim();
-      
-      fmText.split(/\r?\n/).forEach(line => {
-        const parsed = parseFrontMatterLine(line);
-        if (parsed) data[parsed[0]] = parsed[1];
-      });
+  const openingMatch = text.match(/^((?:---|\+\+\+)[ \t]*)(\r\n|\n|\r)/);
+  if (!openingMatch) return emptyFrontMatterResult(text);
+
+  const openingLine = openingMatch[1];
+  const marker = openingLine.trim();
+  const openingNewline = openingMatch[2];
+  const delimiter = marker === '+++' ? 'toml' : 'yaml';
+  const frontmatterStart = openingMatch[0].length;
+  let offset = frontmatterStart;
+
+  while (offset <= text.length) {
+    const line = readLineAt(text, offset);
+    if (!line) break;
+
+    if (line.text.trim() === marker) {
+      const rawFrontmatter = text.slice(frontmatterStart, offset);
+      const body = text.slice(line.end);
+
+      return {
+        delimiter,
+        delimiterType: delimiter,
+        openingDelimiter: marker,
+        closingDelimiter: marker,
+        openingLine,
+        openingNewline,
+        closingLine: line.text,
+        closingNewline: line.newline,
+        rawFrontmatter,
+        data: parseKnownFrontMatter(rawFrontmatter, delimiter),
+        body,
+        content: body.trim(),
+      };
     }
+
+    offset = line.end;
   }
-  return { data, content };
+
+  return emptyFrontMatterResult(text);
+}
+
+function reconstructFrontMatter(parsed) {
+  if (!parsed.delimiter) return parsed.body;
+  return `${parsed.openingLine}${parsed.openingNewline}${parsed.rawFrontmatter}` +
+    `${parsed.closingLine}${parsed.closingNewline}${parsed.body}`;
 }
 
 function resolveContentPath(relPath) {
@@ -94,6 +266,78 @@ function resolveContentPath(relPath) {
   };
 }
 
+function toRepoPath(absPath) {
+  return path.relative(ROOT, absPath).replace(/\\/g, '/');
+}
+
+function asString(value) {
+  return value === undefined || value === null ? '' : String(value);
+}
+
+function isTruthyValue(value) {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') return /^(true|yes|1)$/i.test(value.trim());
+  return false;
+}
+
+function normalizeTags(value) {
+  if (Array.isArray(value)) {
+    return value.map(tag => asString(tag).trim()).filter(Boolean);
+  }
+
+  if (typeof value === 'string') {
+    return value.split(',').map(tag => tag.trim()).filter(Boolean);
+  }
+
+  return [];
+}
+
+function collapseWhitespace(text) {
+  return asString(text).replace(/\s+/g, ' ').trim();
+}
+
+function stripMarkdownForPreview(text) {
+  return collapseWhitespace(text)
+    .replace(/!\[[^\]]*]\([^)]+\)/g, '')
+    .replace(/\[([^\]]+)]\([^)]+\)/g, '$1')
+    .replace(/[`*_>#-]/g, '')
+    .trim();
+}
+
+function truncateText(text, maxLength = 240) {
+  const clean = stripMarkdownForPreview(text);
+  if (clean.length <= maxLength) return clean;
+  return `${clean.slice(0, maxLength - 3).trim()}...`;
+}
+
+function firstNonEmptyLine(text) {
+  return asString(text).split(/\r\n|\n|\r/).map(line => line.trim()).find(Boolean) || '';
+}
+
+function maxMtimeIso(filePaths) {
+  const mtimes = filePaths
+    .filter(filePath => fs.existsSync(filePath))
+    .map(filePath => fs.statSync(filePath).mtimeMs);
+
+  if (!mtimes.length) return null;
+  return new Date(Math.max(...mtimes)).toISOString();
+}
+
+function readParsedContentFile(filePath) {
+  const raw = fs.readFileSync(filePath, 'utf8');
+  const parsed = parseFrontMatter(raw);
+  const stat = fs.statSync(filePath);
+
+  return {
+    path: toRepoPath(filePath),
+    delimiter: parsed.delimiter,
+    frontmatter: parsed.data,
+    rawFrontmatter: parsed.rawFrontmatter,
+    body: parsed.body,
+    mtime: stat.mtime.toISOString(),
+  };
+}
+
 function scanTags() {
   const tags = new Set();
   function walk(dir) {
@@ -104,13 +348,7 @@ function scanTags() {
         walk(full);
       } else if (entry.name === 'index.md' || entry.name === 'index.en.md') {
         const content = fs.readFileSync(full, 'utf8');
-        const m = content.match(/^tags:\s*\[(.*?)\]/m);
-        if (m) {
-          m[1].split(',').forEach(t => {
-            const clean = t.trim().replace(/^["']|["']$/g, '');
-            if (clean) tags.add(clean);
-          });
-        }
+        normalizeTags(parseFrontMatter(content).data.tags).forEach(tag => tags.add(tag));
       }
     }
   }
@@ -177,6 +415,196 @@ function scanAllPosts() {
   });
 }
 
+function getArticleUrl(section, bundleSlug, frontmatter) {
+  const slug = asString(frontmatter.slug).trim() || bundleSlug;
+  if (bundleSlug === section) return `/${section}/`;
+  return `/${section}/${slug}/`;
+}
+
+function getMicroblogParts(dir) {
+  const relative = path.relative(path.join(CONTENT_ROOT, 'microblog'), dir).replace(/\\/g, '/');
+  const match = relative.match(/^(\d{4})\/(\d{2})\/(\d{2}-\d{6})$/);
+  if (!match) return null;
+
+  return {
+    year: match[1],
+    month: match[2],
+    bundleName: match[3],
+    time: match[3].slice(3),
+  };
+}
+
+function buildContentItem(section, dir) {
+  const zhPath = path.join(dir, 'index.md');
+  if (!fs.existsSync(zhPath)) return null;
+
+  const enPath = path.join(dir, 'index.en.md');
+  const hasEnglish = fs.existsSync(enPath);
+  const zhFile = readParsedContentFile(zhPath);
+  const enFile = hasEnglish ? readParsedContentFile(enPath) : null;
+  const zh = zhFile.frontmatter;
+  const en = enFile ? enFile.frontmatter : {};
+  const bundleSlug = path.basename(dir);
+  const kind = section === 'microblog' ? 'microblog' : 'article';
+  const tags = normalizeTags(zh.tags).length ? normalizeTags(zh.tags) : normalizeTags(en.tags);
+  const draft = isTruthyValue(zh.draft) || isTruthyValue(en.draft);
+  const math = isTruthyValue(zh.math) || isTruthyValue(zh.enableKaTeX) ||
+    isTruthyValue(en.math) || isTruthyValue(en.enableKaTeX);
+  const date = asString(zh.date || en.date);
+  let id;
+  let itemUrl;
+  let titleZh;
+  let titleEn;
+  let excerpt;
+
+  if (kind === 'microblog') {
+    const parts = getMicroblogParts(dir);
+    if (!parts) return null;
+
+    const slug = asString(zh.slug).trim() || parts.time;
+    const zhFirstLine = truncateText(firstNonEmptyLine(zhFile.body), 160);
+    const enFirstLine = enFile ? truncateText(firstNonEmptyLine(enFile.body), 160) : '';
+    const fallbackTitle = `(no text) · ${parts.time}`;
+
+    id = `microblog/${parts.year}/${parts.month}/${parts.bundleName}`;
+    itemUrl = `/microblog/${slug}/`;
+    titleZh = zhFirstLine || fallbackTitle;
+    titleEn = enFirstLine;
+    excerpt = titleZh;
+  } else {
+    id = `${section}/${bundleSlug}`;
+    itemUrl = getArticleUrl(section, bundleSlug, zh);
+    titleZh = asString(zh.title);
+    titleEn = asString(en.title);
+    excerpt = truncateText(firstNonEmptyLine(zhFile.body)) || titleZh || titleEn || '';
+  }
+
+  return {
+    id,
+    section,
+    kind,
+    path: toRepoPath(dir),
+    url: itemUrl,
+    date,
+    draft,
+    math,
+    tags,
+    title: {
+      zh: titleZh,
+      en: titleEn,
+    },
+    hasEnglish,
+    excerpt,
+    searchText: collapseWhitespace([
+      titleZh,
+      titleEn,
+      zhFile.body,
+      enFile ? enFile.body : '',
+      tags.join(' '),
+    ].filter(Boolean).join('\n')),
+    mtime: maxMtimeIso([zhPath, enPath]),
+  };
+}
+
+function walkContentBundles(section, visitor) {
+  const sectionDir = path.join(CONTENT_ROOT, section);
+  if (!fs.existsSync(sectionDir)) return;
+
+  function walk(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    const hasIndexMd = entries.some(entry => entry.isFile() && entry.name === 'index.md');
+
+    if (hasIndexMd) {
+      visitor(dir);
+      return;
+    }
+
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        walk(path.join(dir, entry.name));
+      }
+    }
+  }
+
+  walk(sectionDir);
+}
+
+function scanContentItems() {
+  const items = [];
+
+  CONTENT_SECTIONS.forEach(section => {
+    walkContentBundles(section, dir => {
+      const item = buildContentItem(section, dir);
+      if (item) items.push(item);
+    });
+  });
+
+  return items.sort((a, b) => {
+    const timeA = Date.parse(a.date) || 0;
+    const timeB = Date.parse(b.date) || 0;
+    if (timeA !== timeB) return timeB - timeA;
+    return a.id.localeCompare(b.id);
+  });
+}
+
+function isSafeContentId(id) {
+  if (typeof id !== 'string' || !id.trim()) return false;
+  if (id.includes('\\') || id.includes('..') || id.includes(':')) return false;
+  if (path.isAbsolute(id) || id.startsWith('/')) return false;
+
+  const parts = id.split('/');
+  if (parts[0] === 'microblog') {
+    return parts.length === 4 &&
+      /^\d{4}$/.test(parts[1]) &&
+      /^\d{2}$/.test(parts[2]) &&
+      /^\d{2}-\d{6}$/.test(parts[3]);
+  }
+
+  return parts.length === 2 &&
+    ARTICLE_SECTIONS.has(parts[0]) &&
+    /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(parts[1]);
+}
+
+function resolveContentItem(id) {
+  if (!isSafeContentId(id)) {
+    const error = new Error('Invalid content id');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const item = scanContentItems().find(candidate => candidate.id === id);
+  if (!item) {
+    const error = new Error('Content item not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const bundleDir = path.resolve(ROOT, item.path);
+  const relativeToContent = path.relative(CONTENT_ROOT, bundleDir);
+  if (relativeToContent.startsWith('..') || path.isAbsolute(relativeToContent)) {
+    const error = new Error('Invalid content path');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  return { item, bundleDir };
+}
+
+function getContentDetail(id) {
+  const { item, bundleDir } = resolveContentItem(id);
+  const zhPath = path.join(bundleDir, 'index.md');
+  const enPath = path.join(bundleDir, 'index.en.md');
+  const files = {
+    zh: readParsedContentFile(zhPath),
+  };
+
+  if (fs.existsSync(enPath)) {
+    files.en = readParsedContentFile(enPath);
+  }
+
+  return { item, files };
+}
+
 function readBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -207,8 +635,30 @@ function gitRun(args, cwd) {
   return result.stdout;
 }
 
+function gitRead(args) {
+  const result = spawnSync('git', args, { cwd: ROOT, encoding: 'utf8', shell: false });
+  if (result.status !== 0) {
+    throw new Error((result.stderr || result.stdout || 'git failed').trim());
+  }
+  return result.stdout.trim();
+}
+
 function isEnvEnabled(name) {
   return /^(1|true|yes)$/i.test(process.env[name] || '');
+}
+
+function getRepoStatus() {
+  const branch = process.env.TEST_MODE === 'true' && process.env.MICROBLOG_TEST_BRANCH
+    ? process.env.MICROBLOG_TEST_BRANCH
+    : gitRead(['rev-parse', '--abbrev-ref', 'HEAD']);
+
+  return {
+    branch,
+    isMain: branch === 'main',
+    noPush: isEnvEnabled('MICROBLOG_NO_PUSH'),
+    dirty: gitRead(['status', '--porcelain']).length > 0,
+    lastCommit: gitRead(['log', '-1', '--pretty=format:%h %s']),
+  };
 }
 
 function getCurrentBranch() {
@@ -303,6 +753,42 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && pathname === '/') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     return res.end(fs.readFileSync(UI_FILE));
+  }
+
+  if (req.method === 'GET' && pathname === '/api/health') {
+    return sendJSON(res, { ok: true, version: 'content-studio-v1' });
+  }
+
+  if (req.method === 'GET' && pathname === '/api/status') {
+    try {
+      return sendJSON(res, getRepoStatus());
+    } catch (e) {
+      return sendJSON(res, { error: e.message }, 500);
+    }
+  }
+
+  if (req.method === 'GET' && pathname === '/api/content') {
+    try {
+      return sendJSON(res, scanContentItems());
+    } catch (e) {
+      return sendJSON(res, { error: e.message }, 500);
+    }
+  }
+
+  if (req.method === 'GET' && pathname.startsWith('/api/content/')) {
+    try {
+      let id;
+      try {
+        id = decodeURIComponent(pathname.slice('/api/content/'.length));
+      } catch (_) {
+        const error = new Error('Invalid content id');
+        error.statusCode = 400;
+        throw error;
+      }
+      return sendJSON(res, getContentDetail(id));
+    } catch (e) {
+      return sendJSON(res, { error: e.message }, e.statusCode || 500);
+    }
   }
 
   if (req.method === 'GET' && pathname === '/api/tags') {
@@ -520,9 +1006,25 @@ const server = http.createServer(async (req, res) => {
   res.end('Not found');
 });
 
-server.listen(PORT, '127.0.0.1', () => {
-  console.log(`Microblog Console running at http://localhost:${PORT}`);
-  if (process.env.TEST_MODE !== 'true') {
-    exec(`start http://localhost:${PORT}`);
-  }
-});
+function startServer() {
+  fs.mkdirSync(TEMP_DIR, { recursive: true });
+  return server.listen(PORT, '127.0.0.1', () => {
+    console.log(`Microblog Console running at http://localhost:${PORT}`);
+    if (process.env.TEST_MODE !== 'true') {
+      exec(`start http://localhost:${PORT}`);
+    }
+  });
+}
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = {
+  parseFrontMatter,
+  reconstructFrontMatter,
+  scanContentItems,
+  getContentDetail,
+  getRepoStatus,
+  startServer,
+};
