@@ -529,6 +529,12 @@ body {
   border: 1px solid #fecaca;
   color: #dc2626;
 }
+#status-msg.success {
+  display: block;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
 </style>
 </head>
 <body>
@@ -1195,6 +1201,7 @@ mgrBtnDelete.addEventListener('click', async () => {
       selectedPost = null;
       loadManagerPosts();
       loadTags();
+      if (data.message) alert(data.message);
     } else {
       alert('删除失败: ' + data.error);
     }
@@ -1212,6 +1219,10 @@ const statusMsg  = document.getElementById('status-msg');
 function showError(msg) {
   statusMsg.textContent = msg;
   statusMsg.className = 'error';
+}
+function showSuccess(msg) {
+  statusMsg.textContent = msg;
+  statusMsg.className = 'success';
 }
 function clearStatus() {
   statusMsg.className = '';
@@ -1275,6 +1286,7 @@ publishBtn.addEventListener('click', async () => {
     if (data.ok) {
       publishBtn.textContent = '成功';
       publishBtn.classList.add('success');
+      if (data.message) showSuccess(data.message);
       setTimeout(() => {
         resetEditors();
         publishBtn.disabled = false;
