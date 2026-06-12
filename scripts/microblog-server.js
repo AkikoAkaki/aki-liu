@@ -207,6 +207,81 @@ function gitRun(args, cwd) {
   return result.stdout;
 }
 
+function isEnvEnabled(name) {
+  return /^(1|true|yes)$/i.test(process.env[name] || '');
+}
+
+function getCurrentBranch() {
+  if (process.env.TEST_MODE === 'true' && process.env.MICROBLOG_TEST_BRANCH) {
+    return process.env.MICROBLOG_TEST_BRANCH;
+  }
+
+  return gitRun(['rev-parse', '--abbrev-ref', 'HEAD'], ROOT).trim();
+}
+
+function getPublishSafety() {
+  const branch = getCurrentBranch();
+  if (branch === 'main') {
+    throw new Error('Console publish is blocked on main. Switch to a branch or use scripts/new-microblog.ps1 for file-only drafting.');
+  }
+
+  return {
+    branch,
+    noPush: isEnvEnabled('MICROBLOG_NO_PUSH'),
+  };
+}
+
+function runPrePushCheck() {
+  if (process.env.TEST_MODE === 'true') {
+    if (isEnvEnabled('MICROBLOG_TEST_CHECK_FAIL')) {
+      throw new Error('TEST_MODE pre-push check failed');
+    }
+    console.log('[TEST MOCK CHECK] powershell -NoProfile -ExecutionPolicy Bypass -File scripts/check.ps1');
+    return 'mock check output';
+  }
+
+  const checkScript = path.join(ROOT, 'scripts', 'check.ps1');
+  const shellCandidates = process.platform === 'win32' ? ['powershell', 'pwsh'] : ['pwsh', 'powershell'];
+
+  for (const shellName of shellCandidates) {
+    const result = spawnSync(shellName, [
+      '-NoProfile',
+      '-ExecutionPolicy',
+      'Bypass',
+      '-File',
+      checkScript,
+    ], { cwd: ROOT, encoding: 'utf8', shell: false });
+
+    if (result.error && result.error.code === 'ENOENT') {
+      continue;
+    }
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    if (result.status !== 0) {
+      throw new Error((result.stderr || result.stdout || 'pre-push check failed').trim());
+    }
+
+    return result.stdout;
+  }
+
+  throw new Error('Unable to run scripts/check.ps1: PowerShell was not found.');
+}
+
+function pushWithSafety(policy) {
+  if (policy.noPush) {
+    const message = `Push skipped because MICROBLOG_NO_PUSH=1 on branch ${policy.branch}.`;
+    console.log(`[SKIP] ${message}`);
+    return { pushed: false, message };
+  }
+
+  runPrePushCheck();
+  gitRun(['push'], ROOT);
+  return { pushed: true, message: `Pushed branch ${policy.branch}.` };
+}
+
 const MIME = {
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
   '.png': 'image/png', '.gif': 'image/gif',
@@ -283,6 +358,8 @@ const server = http.createServer(async (req, res) => {
         math,
         date
       } = JSON.parse(body);
+
+      const publishPolicy = getPublishSafety();
 
       let targetDir = '';
       let isEdit = false;
@@ -394,10 +471,10 @@ const server = http.createServer(async (req, res) => {
 
       gitRun(['add', finalRelPath], ROOT);
       gitRun(['commit', '-m', commitMsg], ROOT);
-      gitRun(['push'], ROOT);
+      const pushResult = pushWithSafety(publishPolicy);
 
       console.log(`[OK] ${finalRelPath}`);
-      return sendJSON(res, { ok: true, slug: finalSlug, dir: finalRelPath });
+      return sendJSON(res, { ok: true, slug: finalSlug, dir: finalRelPath, branch: publishPolicy.branch, pushed: pushResult.pushed, message: pushResult.message });
     } catch (e) {
       console.error('[FAIL]', e.message);
       return sendJSON(res, { ok: false, error: e.message }, 500);
@@ -408,6 +485,7 @@ const server = http.createServer(async (req, res) => {
     try {
       const body = await readBody(req);
       const { relPath } = JSON.parse(body);
+      const publishPolicy = getPublishSafety();
 
       let resolvedPath;
       try {
@@ -428,10 +506,10 @@ const server = http.createServer(async (req, res) => {
       // Git add -A to track deletion, commit, push
       gitRun(['add', '-A', finalRelPath], ROOT);
       gitRun(['commit', '-m', `delete: ${path.basename(finalRelPath)}`], ROOT);
-      gitRun(['push'], ROOT);
+      const pushResult = pushWithSafety(publishPolicy);
 
       console.log(`[OK] Deleted ${finalRelPath}`);
-      return sendJSON(res, { ok: true });
+      return sendJSON(res, { ok: true, branch: publishPolicy.branch, pushed: pushResult.pushed, message: pushResult.message });
     } catch (e) {
       console.error('[FAIL]', e.message);
       return sendJSON(res, { ok: false, error: e.message }, 500);

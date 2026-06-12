@@ -99,7 +99,9 @@ Either way, no git operations are performed.
 .\microblog.cmd
 ```
 
-Opens a local composer console. **Caution: publishing from this console commits and pushes to the current branch immediately.** It does not stage for review. Do not use this on `main` unless you intend to push directly.
+Opens a local composer console. **Caution: publishing from this console commits and pushes to the current branch by default.** It does not stage for review, and direct publishing on `main` is blocked.
+
+For a safer console session that commits locally but skips `git push`, run `$env:MICROBLOG_NO_PUSH='1'; .\microblog.cmd` in PowerShell. The console publish flow also rejects direct publishing on `main`.
 
 Use the script in section 5 when you want to write, review, and commit on your own schedule.
 
