@@ -897,12 +897,20 @@ const server = http.createServer(async (req, res) => {
       const enPayload = filesPayload.en || {};
       const zhFmPayload = zhPayload.frontmatter || {};
 
+      // Require base mtimes before any file I/O
+      if (!baseMtime.zh) {
+        return sendJSON(res, { ok: false, state: 'missing_base_mtime', error: 'Missing base mtime for zh file' }, 400);
+      }
+      if (enExists && !baseMtime.en) {
+        return sendJSON(res, { ok: false, state: 'missing_base_mtime', error: 'Missing base mtime for en file' }, 400);
+      }
+
       // Read zh file + mtime conflict check
       if (!fs.existsSync(zhPath)) {
         return sendJSON(res, { ok: false, error: 'Content file not found' }, 404);
       }
       const zhStat = fs.statSync(zhPath);
-      if (baseMtime.zh && zhStat.mtime.toISOString() !== baseMtime.zh) {
+      if (zhStat.mtime.toISOString() !== baseMtime.zh) {
         return sendJSON(res, { ok: false, state: 'conflict', error: 'File changed outside Content Studio' }, 409);
       }
       const zhParsed = parseFrontMatter(fs.readFileSync(zhPath, 'utf8'));
@@ -911,7 +919,7 @@ const server = http.createServer(async (req, res) => {
       let enParsed = null;
       if (enExists) {
         const enStat = fs.statSync(enPath);
-        if (baseMtime.en && enStat.mtime.toISOString() !== baseMtime.en) {
+        if (enStat.mtime.toISOString() !== baseMtime.en) {
           return sendJSON(res, { ok: false, state: 'conflict', error: 'File changed outside Content Studio' }, 409);
         }
         enParsed = parseFrontMatter(fs.readFileSync(enPath, 'utf8'));
