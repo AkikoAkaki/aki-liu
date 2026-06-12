@@ -792,6 +792,165 @@ body {
   word-break: break-all;
 }
 
+/* -- Content Studio Editor View -- */
+.editor-view-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 650px;
+}
+.editor-view-header {
+  padding: 26px 30px 20px;
+  border-bottom: 1px solid #e6ecef;
+  background: #fff;
+  flex-shrink: 0;
+}
+.editor-back {
+  display: none;
+  margin-bottom: 14px;
+}
+.editor-back-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #7a9aaa;
+  font-size: 11.5px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color .15s;
+}
+.editor-back-btn:hover {
+  color: #2e6478;
+}
+.editor-view-title {
+  font-size: 22px;
+  line-height: 1.3;
+  color: #18242c;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+.editor-view-subtitle {
+  margin-top: 5px;
+  color: #6b7c86;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.editor-view-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 13px;
+}
+.editor-view-tabs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px 0 12px;
+  background: #fafbfc;
+  border-bottom: 1px solid #e6ecef;
+  flex-shrink: 0;
+  min-height: 36px;
+}
+.editor-lang-tabs {
+  display: flex;
+}
+.editor-lang-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  outline: none;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #8a9aa5;
+  cursor: pointer;
+  padding: 0 12px;
+  height: 36px;
+  letter-spacing: .02em;
+  transition: color .15s, border-color .15s;
+}
+.editor-lang-tab:hover {
+  color: #3a6070;
+}
+.editor-lang-tab.active {
+  color: #2e6478;
+  border-bottom-color: #5e8fa3;
+}
+.editor-mode-toggle {
+  display: flex;
+  align-items: center;
+  border: 1px solid #dbe3e7;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 6px 0;
+}
+.editor-mode-btn {
+  background: none;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #8a9aa5;
+  cursor: pointer;
+  padding: 4px 9px;
+  letter-spacing: .03em;
+  transition: background .12s, color .12s;
+  line-height: 1.4;
+}
+.editor-mode-btn:hover {
+  color: #3a6070;
+}
+.editor-mode-btn.active {
+  background: #edf4f7;
+  color: #2e6478;
+}
+.editor-mode-btn + .editor-mode-btn {
+  border-left: 1px solid #dbe3e7;
+}
+.editor-view-body {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 480px;
+  padding: 24px 30px 28px;
+}
+.editor-body-empty {
+  color: #9aa7af;
+  font-size: 13px;
+  font-style: italic;
+  padding: 12px 0;
+}
+.editor-body-raw {
+  font-family: 'Menlo', 'Consolas', monospace;
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: #4a5568;
+  background: #f7f9fa;
+  border: 1px solid #e6ecef;
+  border-radius: 7px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+.editor-view-caveat {
+  margin-top: 20px;
+  color: #b0bec5;
+  font-size: 10.5px;
+  font-style: italic;
+  border-top: 1px dashed #dfe8ec;
+  padding-top: 10px;
+}
+.editor-view-path {
+  margin-top: 12px;
+  color: #9aa7af;
+  font-size: 11px;
+  font-family: 'Menlo', 'Consolas', monospace;
+  word-break: break-all;
+}
+
 @media (max-width: 900px) {
   body {
     padding: 16px 10px 28px;
@@ -826,12 +985,17 @@ body {
   .library-controls {
     grid-template-columns: 1fr;
   }
+  .editor-back {
+    display: block;
+  }
   .library-list,
-  .detail-body {
+  .detail-body,
+  .editor-view-body {
     max-height: none;
   }
   .detail-empty,
   .detail-shell,
+  .editor-view-shell,
   #library-container {
     min-height: auto;
   }
@@ -1139,6 +1303,9 @@ let editingRelPath = null; // null if creating new, string if editing
 let contentItems = [];
 let filteredContentItems = [];
 let selectedContentItemId = null;
+let selectedDetail = null;
+let selectedLanguage = 'zh';
+let selectedViewMode = 'preview';
 
 // -- Markdown renderer with image proxy --
 function setupMarked() {
@@ -1368,67 +1535,180 @@ async function loadContentLibrary(force = false) {
   }
 }
 
-function renderDetailLoading(item) {
-  document.getElementById('library-detail').innerHTML = `
-    <div class="detail-shell">
-      <div class="detail-header">
-        <div class="detail-title">${escHtml(itemTitle(item))}</div>
-        ${itemTitleEn(item) ? `<div class="detail-title-en">${escHtml(itemTitleEn(item))}</div>` : ''}
-        <div class="detail-meta">${renderContentBadges(item)}</div>
+function isMicroblog(item) {
+  return item.kind === 'microblog';
+}
+
+function renderEditorMeta(item) {
+  const mb = isMicroblog(item);
+  const parts = [
+    `<span class="cs-badge">${escHtml(item.section)}</span>`,
+    !mb ? `<span class="cs-badge kind">${escHtml(item.kind)}</span>` : '',
+    item.draft ? '<span class="cs-badge draft">draft</span>' : '',
+    !mb && item.hasEnglish ? '<span class="cs-badge en">EN</span>' : '',
+    item.date ? `<span class="cs-badge">${escHtml(itemDate(item))}</span>` : '',
+  ].filter(Boolean);
+  return parts.join('') + renderLibraryTags(item.tags || [], 8);
+}
+
+function renderEditorHeader(detail) {
+  const item = detail.item;
+  const mb = isMicroblog(item);
+  const zhTitle = itemTitle(item);
+  const enTitle = itemTitleEn(item);
+  return `
+    <div class="editor-view-header">
+      <div class="editor-back">
+        <button class="editor-back-btn" type="button" id="editor-back-btn">← Library</button>
       </div>
-      <div class="detail-body">
-        <div class="library-loading">Loading preview...</div>
+      <div class="editor-view-title">${escHtml(zhTitle)}</div>
+      ${!mb && enTitle ? `<div class="editor-view-subtitle">${escHtml(enTitle)}</div>` : ''}
+      <div class="editor-view-meta">${renderEditorMeta(item)}</div>
+      ${item.url ? `
+        <div class="detail-url-row">
+          <div class="detail-url">${escHtml(item.url)}</div>
+          <button class="copy-url-btn" type="button" id="copy-url-btn" data-url="${escAttr(item.url)}">Copy URL</button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function renderEditorTabs(detail) {
+  const item = detail.item;
+  const files = detail.files || {};
+  const mb = isMicroblog(item);
+  const showEnTab = !mb || !!files.en;
+  const zhActive = selectedLanguage === 'zh' ? ' active' : '';
+  const enActive = selectedLanguage === 'en' ? ' active' : '';
+  const previewActive = selectedViewMode === 'preview' ? ' active' : '';
+  const markdownActive = selectedViewMode === 'markdown' ? ' active' : '';
+  return `
+    <div class="editor-view-tabs-row">
+      <div class="editor-lang-tabs">
+        <button class="editor-lang-tab${zhActive}" type="button" data-lang="zh">中文</button>
+        ${showEnTab ? `<button class="editor-lang-tab${enActive}" type="button" data-lang="en">English</button>` : ''}
+      </div>
+      <div class="editor-mode-toggle">
+        <button class="editor-mode-btn${previewActive}" type="button" data-mode="preview">Preview</button>
+        <button class="editor-mode-btn${markdownActive}" type="button" data-mode="markdown">Markdown</button>
       </div>
     </div>
   `;
 }
 
-function renderContentDetail(detail) {
+function renderEditorBody(detail) {
   const item = detail.item;
   const files = detail.files || {};
-  const zh = files.zh || {};
-  const en = files.en || null;
-  const enBody = en && en.body ? en.body : '';
+  const zhFile = files.zh || {};
+  const enFile = files.en || null;
+  let bodyHtml = '';
+  let showCaveat = false;
 
+  if (selectedLanguage === 'en') {
+    if (!enFile || !enFile.body) {
+      bodyHtml = '<div class="editor-body-empty">No English version yet.</div>';
+    } else if (selectedViewMode === 'preview') {
+      bodyHtml = `<div class="editor-body-content detail-markdown">${renderMarkdown(enFile.body)}</div>`;
+      showCaveat = true;
+    } else {
+      bodyHtml = `<pre class="editor-body-raw">${escHtml(enFile.body)}</pre>`;
+    }
+  } else {
+    const body = zhFile.body || '';
+    if (!body.trim()) {
+      bodyHtml = '<div class="editor-body-empty">(empty)</div>';
+    } else if (selectedViewMode === 'preview') {
+      bodyHtml = `<div class="editor-body-content detail-markdown">${renderMarkdown(body)}</div>`;
+      showCaveat = true;
+    } else {
+      bodyHtml = `<pre class="editor-body-raw">${escHtml(body)}</pre>`;
+    }
+  }
+
+  const pathStr = item.path || zhFile.path || '';
+  return `
+    <div class="editor-view-body">
+      ${bodyHtml}
+      ${showCaveat ? '<p class="editor-view-caveat">Approximate preview; Hugo shortcodes may render differently.</p>' : ''}
+      ${pathStr ? `<div class="editor-view-path">${escHtml(pathStr)}</div>` : ''}
+    </div>
+  `;
+}
+
+function renderEditorShell(detail) {
+  return `
+    <div class="editor-view-shell">
+      ${renderEditorHeader(detail)}
+      ${renderEditorTabs(detail)}
+      ${renderEditorBody(detail)}
+    </div>
+  `;
+}
+
+function attachEditorListeners() {
+  const copyBtn = document.getElementById('copy-url-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(copyBtn.dataset.url || '');
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => { copyBtn.textContent = 'Copy URL'; }, 1200);
+      } catch (_) {
+        copyBtn.textContent = 'Copy failed';
+        setTimeout(() => { copyBtn.textContent = 'Copy URL'; }, 1200);
+      }
+    });
+  }
+  document.querySelectorAll('.editor-lang-tab').forEach(btn => {
+    btn.addEventListener('click', () => selectEditorLanguage(btn.dataset.lang));
+  });
+  document.querySelectorAll('.editor-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => selectEditorViewMode(btn.dataset.mode));
+  });
+  const backBtn = document.getElementById('editor-back-btn');
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      document.getElementById('library-pane').scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+}
+
+function selectEditorLanguage(lang) {
+  if (selectedLanguage === lang || !selectedDetail) return;
+  selectedLanguage = lang;
+  renderContentDetail(selectedDetail);
+}
+
+function selectEditorViewMode(mode) {
+  if (selectedViewMode === mode || !selectedDetail) return;
+  selectedViewMode = mode;
+  renderContentDetail(selectedDetail);
+}
+
+function renderDetailLoading(item) {
   document.getElementById('library-detail').innerHTML = `
-    <div class="detail-shell">
-      <div class="detail-header">
-        <div class="detail-title">${escHtml(itemTitle(item))}</div>
-        ${itemTitleEn(item) ? `<div class="detail-title-en">${escHtml(itemTitleEn(item))}</div>` : ''}
-        <div class="detail-meta">
-          ${renderContentBadges(item)}
-          ${item.date ? `<span class="cs-badge">${escHtml(itemDate(item))}</span>` : ''}
-          ${renderLibraryTags(item.tags || [], 8)}
+    <div class="editor-view-shell">
+      <div class="editor-view-header">
+        <div class="editor-back">
+          <button class="editor-back-btn" type="button" id="editor-back-btn">← Library</button>
         </div>
-        <div class="detail-url-row">
-          <div class="detail-url">${escHtml(item.url || '')}</div>
-          <button class="copy-url-btn" type="button" id="copy-url-btn" data-url="${escAttr(item.url || '')}">Copy URL</button>
-        </div>
+        <div class="editor-view-title">${escHtml(itemTitle(item))}</div>
+        ${!isMicroblog(item) && itemTitleEn(item) ? `<div class="editor-view-subtitle">${escHtml(itemTitleEn(item))}</div>` : ''}
+        <div class="editor-view-meta">${renderEditorMeta(item)}</div>
       </div>
-      <div class="detail-body">
-        <div class="detail-section-label">Chinese</div>
-        <div class="detail-markdown">${zh.body ? renderMarkdown(zh.body) : '<p>(empty)</p>'}</div>
-        ${enBody ? `
-          <hr class="detail-divider">
-          <div class="detail-section-label">English</div>
-          <div class="detail-markdown">${renderMarkdown(enBody)}</div>
-        ` : ''}
-        <div class="detail-path">${escHtml(item.path || zh.path || '')}</div>
+      <div class="editor-view-body">
+        <div class="library-loading">Loading...</div>
       </div>
     </div>
   `;
+  attachEditorListeners();
+}
 
-  const copyBtn = document.getElementById('copy-url-btn');
-  copyBtn.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(copyBtn.dataset.url || '');
-      copyBtn.textContent = 'Copied';
-      setTimeout(() => { copyBtn.textContent = 'Copy URL'; }, 1200);
-    } catch (_) {
-      copyBtn.textContent = 'Copy failed';
-      setTimeout(() => { copyBtn.textContent = 'Copy URL'; }, 1200);
-    }
-  });
+function renderContentDetail(detail) {
+  selectedDetail = detail;
+  document.getElementById('library-detail').innerHTML = renderEditorShell(detail);
+  attachEditorListeners();
 }
 
 async function selectContentItem(id) {
@@ -1436,6 +1716,9 @@ async function selectContentItem(id) {
   if (!item) return;
 
   selectedContentItemId = id;
+  selectedLanguage = 'zh';
+  selectedViewMode = 'preview';
+  selectedDetail = null;
   renderLibraryList();
   renderDetailLoading(item);
 
@@ -1446,12 +1729,12 @@ async function selectContentItem(id) {
     renderContentDetail(detail);
   } catch (err) {
     document.getElementById('library-detail').innerHTML = `
-      <div class="detail-shell">
-        <div class="detail-header">
-          <div class="detail-title">${escHtml(itemTitle(item))}</div>
-          <div class="detail-meta">${renderContentBadges(item)}</div>
+      <div class="editor-view-shell">
+        <div class="editor-view-header">
+          <div class="editor-view-title">${escHtml(itemTitle(item))}</div>
+          <div class="editor-view-meta">${renderEditorMeta(item)}</div>
         </div>
-        <div class="detail-body">
+        <div class="editor-view-body">
           <div class="library-error">Preview unavailable: ${escHtml(err.message)}</div>
         </div>
       </div>
