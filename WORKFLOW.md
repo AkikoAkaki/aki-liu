@@ -158,6 +158,14 @@ To publish: change `draft: false` (or remove the field) before committing.
 hugo --gc --minify
 ```
 
+- Or run the local pre-push smoke check:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check.ps1
+```
+
+Add `-Audit` for a heavier media/asset check. The script builds `public_test/`, which is generated output and should not be committed.
+
 - Check the Vercel preview deployment before merging a PR. Vercel generates a preview URL for every push to a branch. Review it before hitting merge.
 
 ---
