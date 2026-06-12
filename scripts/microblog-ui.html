@@ -951,6 +951,217 @@ body {
   word-break: break-all;
 }
 
+/* -- Content Studio Edit Mode -- */
+.editor-view-header {
+  position: relative;
+}
+.editor-edit-btn {
+  position: absolute;
+  top: 26px;
+  right: 30px;
+  background: none;
+  border: 1px solid #dbe3e7;
+  border-radius: 6px;
+  color: #6b7c86;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 10px;
+  letter-spacing: .02em;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.editor-edit-btn:hover {
+  background: #f0f6f9;
+  border-color: #bfd0d9;
+  color: #2e6478;
+}
+.editor-editing-label {
+  position: absolute;
+  top: 26px;
+  right: 30px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #7a9aaa;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.editor-edit-title-zh {
+  display: block;
+  width: 100%;
+  font-size: 22px;
+  font-weight: 650;
+  color: #18242c;
+  border: none;
+  border-bottom: 1px solid #dbe3e7;
+  outline: none;
+  padding: 4px 0;
+  font-family: inherit;
+  background: transparent;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.editor-edit-title-zh:focus { border-bottom-color: #5e8fa3; }
+.editor-edit-title-en {
+  display: block;
+  width: 100%;
+  font-size: 13px;
+  color: #6b7c86;
+  border: none;
+  border-bottom: 1px solid #e6ecef;
+  outline: none;
+  padding: 4px 0;
+  font-family: inherit;
+  background: transparent;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+.editor-edit-title-en:focus { border-bottom-color: #5e8fa3; }
+.editor-edit-meta-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.editor-edit-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.editor-edit-field-group--tags {
+  flex: 1;
+  min-width: 120px;
+}
+.editor-edit-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #8a9aa5;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.editor-edit-date,
+.editor-edit-tags {
+  border: 1px solid #dbe3e7;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+  font-size: 12.5px;
+  font-family: inherit;
+  outline: none;
+  padding: 5px 8px;
+  transition: border-color .15s;
+}
+.editor-edit-date { width: 134px; }
+.editor-edit-date:focus, .editor-edit-tags:focus { border-color: #9fb8c5; }
+.editor-edit-checkboxes {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding-bottom: 6px;
+}
+.editor-edit-check-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  color: #4a5568;
+  cursor: pointer;
+  user-select: none;
+}
+.editor-edit-check-label input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #5e8fa3;
+  cursor: pointer;
+}
+.editor-view-body--editing { padding: 20px 30px 16px; }
+.editor-edit-textarea {
+  display: block;
+  width: 100%;
+  min-height: 280px;
+  border: 1px solid #e6ecef;
+  border-radius: 7px;
+  outline: none;
+  resize: vertical;
+  font-family: 'Menlo', 'Consolas', monospace;
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: #334155;
+  background: #f8fafc;
+  padding: 14px 16px;
+  transition: border-color .15s;
+}
+.editor-edit-textarea:focus {
+  border-color: #9fb8c5;
+  box-shadow: 0 0 0 2px rgba(100, 132, 149, .08);
+}
+.editor-edit-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 30px 18px;
+  border-top: 1px solid #e6ecef;
+  background: #fafbfc;
+  flex-shrink: 0;
+  gap: 12px;
+}
+.editor-edit-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.editor-save-btn {
+  background: #edf4f7;
+  border: 1px solid #bfd0d9;
+  border-radius: 6px;
+  color: #2e6478;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 16px;
+  transition: background .15s, border-color .15s;
+}
+.editor-save-btn:hover:not(:disabled) { background: #d9e9f0; border-color: #a5c0cc; }
+.editor-save-btn:disabled { opacity: .6; cursor: not-allowed; }
+.editor-cancel-btn {
+  background: none;
+  border: 1px solid #e2eaee;
+  border-radius: 6px;
+  color: #7a9aaa;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 6px 12px;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.editor-cancel-btn:hover { background: #f0f4f6; color: #3a6070; border-color: #c8d8df; }
+.editor-save-status {
+  font-size: 11.5px;
+  color: #9aa7af;
+  min-height: 18px;
+  flex: 1;
+}
+.editor-save-status--success { color: #3d7a5a; }
+.editor-save-status--error { color: #9a4a1a; }
+.editor-save-status--saving { color: #8a9aa5; font-style: italic; }
+.editor-reload-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #5e8fa3;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: underline;
+  margin-left: 6px;
+}
+.editor-reload-btn:hover { color: #2e6478; }
+
 @media (max-width: 900px) {
   body {
     padding: 16px 10px 28px;
@@ -1306,6 +1517,10 @@ let selectedContentItemId = null;
 let selectedDetail = null;
 let selectedLanguage = 'zh';
 let selectedViewMode = 'preview';
+let isEditing = false;
+let isDirty = false;
+let editViewMode = 'write';
+let editFields = null;
 
 // -- Markdown renderer with image proxy --
 function setupMarked() {
@@ -1561,6 +1776,7 @@ function renderEditorHeader(detail) {
       <div class="editor-back">
         <button class="editor-back-btn" type="button" id="editor-back-btn">← Library</button>
       </div>
+      <button class="editor-edit-btn" type="button" id="editor-edit-btn">Edit</button>
       <div class="editor-view-title">${escHtml(zhTitle)}</div>
       ${!mb && enTitle ? `<div class="editor-view-subtitle">${escHtml(enTitle)}</div>` : ''}
       <div class="editor-view-meta">${renderEditorMeta(item)}</div>
@@ -1570,6 +1786,68 @@ function renderEditorHeader(detail) {
           <button class="copy-url-btn" type="button" id="copy-url-btn" data-url="${escAttr(item.url)}">Copy URL</button>
         </div>
       ` : ''}
+    </div>
+  `;
+}
+
+function renderEditorEditHeader(detail) {
+  const item = detail.item;
+  const files = detail.files || {};
+  const mb = isMicroblog(item);
+  const ef = editFields;
+  const enExists = !!files.en;
+
+  if (mb) {
+    return `
+      <div class="editor-view-header">
+        <div class="editor-back">
+          <button class="editor-back-btn" type="button" id="editor-back-btn">← Library</button>
+        </div>
+        <span class="editor-editing-label">Editing</span>
+        <div class="editor-view-title">${escHtml(itemTitle(item))}</div>
+        <div class="editor-edit-meta-row">
+          <div class="editor-edit-field-group editor-edit-field-group--tags">
+            <label class="editor-edit-label">Tags</label>
+            <input class="editor-edit-tags" id="edit-tags" type="text" value="${escAttr(ef.tags)}" placeholder="tag1, tag2" autocomplete="off">
+          </div>
+          <div class="editor-edit-checkboxes">
+            <label class="editor-edit-check-label">
+              <input type="checkbox" id="edit-draft"${ef.draft ? ' checked' : ''}> Draft
+            </label>
+          </div>
+        </div>
+        ${item.url ? `<div class="detail-url-row"><div class="detail-url">${escHtml(item.url)}</div></div>` : ''}
+      </div>
+    `;
+  }
+
+  return `
+    <div class="editor-view-header">
+      <div class="editor-back">
+        <button class="editor-back-btn" type="button" id="editor-back-btn">← Library</button>
+      </div>
+      <span class="editor-editing-label">Editing</span>
+      <input class="editor-edit-title-zh" id="edit-title-zh" type="text" value="${escAttr(ef.titleZh)}" placeholder="Chinese title..." autocomplete="off">
+      ${enExists ? `<input class="editor-edit-title-en" id="edit-title-en" type="text" value="${escAttr(ef.titleEn)}" placeholder="English title..." autocomplete="off">` : ''}
+      <div class="editor-edit-meta-row">
+        <div class="editor-edit-field-group">
+          <label class="editor-edit-label">Date</label>
+          <input class="editor-edit-date" id="edit-date" type="date" value="${escAttr(ef.date)}">
+        </div>
+        <div class="editor-edit-field-group editor-edit-field-group--tags">
+          <label class="editor-edit-label">Tags</label>
+          <input class="editor-edit-tags" id="edit-tags" type="text" value="${escAttr(ef.tags)}" placeholder="tag1, tag2" autocomplete="off">
+        </div>
+        <div class="editor-edit-checkboxes">
+          <label class="editor-edit-check-label">
+            <input type="checkbox" id="edit-draft"${ef.draft ? ' checked' : ''}> Draft
+          </label>
+          <label class="editor-edit-check-label">
+            <input type="checkbox" id="edit-math"${ef.math ? ' checked' : ''}> Math
+          </label>
+        </div>
+      </div>
+      ${item.url ? `<div class="detail-url-row"><div class="detail-url">${escHtml(item.url)}</div></div>` : ''}
     </div>
   `;
 }
@@ -1592,6 +1870,79 @@ function renderEditorTabs(detail) {
       <div class="editor-mode-toggle">
         <button class="editor-mode-btn${previewActive}" type="button" data-mode="preview">Preview</button>
         <button class="editor-mode-btn${markdownActive}" type="button" data-mode="markdown">Markdown</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderEditorEditTabs(detail) {
+  const item = detail.item;
+  const files = detail.files || {};
+  const mb = isMicroblog(item);
+  const showEnTab = !mb || !!files.en;
+  const zhActive = selectedLanguage === 'zh' ? ' active' : '';
+  const enActive = selectedLanguage === 'en' ? ' active' : '';
+  const writeActive = editViewMode === 'write' ? ' active' : '';
+  const previewActive = editViewMode === 'preview' ? ' active' : '';
+  return `
+    <div class="editor-view-tabs-row">
+      <div class="editor-lang-tabs">
+        <button class="editor-lang-tab${zhActive}" type="button" data-lang="zh">中文</button>
+        ${showEnTab ? `<button class="editor-lang-tab${enActive}" type="button" data-lang="en">English</button>` : ''}
+      </div>
+      <div class="editor-mode-toggle">
+        <button class="editor-mode-btn${writeActive}" type="button" data-editmode="write">Write</button>
+        <button class="editor-mode-btn${previewActive}" type="button" data-editmode="preview">Preview</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderEditorEditBody(detail) {
+  const files = detail.files || {};
+  const ef = editFields;
+  const pathStr = files.zh ? (files.zh.path || '') : '';
+
+  if (selectedLanguage === 'en') {
+    if (!files.en) {
+      return `<div class="editor-view-body"><div class="editor-body-empty">No English version yet.</div></div>`;
+    }
+    if (editViewMode === 'preview') {
+      return `
+        <div class="editor-view-body">
+          <div class="editor-body-content detail-markdown">${renderMarkdown(ef.enBody || '')}</div>
+        </div>
+      `;
+    }
+    return `
+      <div class="editor-view-body editor-view-body--editing">
+        <textarea class="editor-edit-textarea" id="edit-en-body" spellcheck="false">${escHtml(ef.enBody || '')}</textarea>
+      </div>
+    `;
+  }
+
+  if (editViewMode === 'preview') {
+    return `
+      <div class="editor-view-body">
+        <div class="editor-body-content detail-markdown">${renderMarkdown(ef.zhBody || '')}</div>
+        ${pathStr ? `<div class="editor-view-path">${escHtml(pathStr)}</div>` : ''}
+      </div>
+    `;
+  }
+  return `
+    <div class="editor-view-body editor-view-body--editing">
+      <textarea class="editor-edit-textarea" id="edit-zh-body" spellcheck="false">${escHtml(ef.zhBody || '')}</textarea>
+    </div>
+  `;
+}
+
+function renderEditorEditActions() {
+  return `
+    <div class="editor-edit-actions">
+      <div class="editor-save-status" id="editor-save-status"></div>
+      <div class="editor-edit-buttons">
+        <button class="editor-cancel-btn" type="button" id="editor-cancel-btn">Cancel</button>
+        <button class="editor-save-btn" type="button" id="editor-save-btn">Save</button>
       </div>
     </div>
   `;
@@ -1637,6 +1988,16 @@ function renderEditorBody(detail) {
 }
 
 function renderEditorShell(detail) {
+  if (isEditing) {
+    return `
+      <div class="editor-view-shell">
+        ${renderEditorEditHeader(detail)}
+        ${renderEditorEditTabs(detail)}
+        ${renderEditorEditBody(detail)}
+        ${renderEditorEditActions()}
+      </div>
+    `;
+  }
   return `
     <div class="editor-view-shell">
       ${renderEditorHeader(detail)}
@@ -1660,22 +2021,60 @@ function attachEditorListeners() {
       }
     });
   }
-  document.querySelectorAll('.editor-lang-tab').forEach(btn => {
-    btn.addEventListener('click', () => selectEditorLanguage(btn.dataset.lang));
-  });
-  document.querySelectorAll('.editor-mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => selectEditorViewMode(btn.dataset.mode));
-  });
+
   const backBtn = document.getElementById('editor-back-btn');
   if (backBtn) {
     backBtn.addEventListener('click', () => {
+      if (isEditing && isDirty && !confirm('Discard unsaved changes?')) return;
+      if (isEditing) exitEditMode();
       document.getElementById('library-pane').scrollIntoView({ behavior: 'smooth' });
     });
+  }
+
+  if (isEditing) {
+    document.querySelectorAll('.editor-lang-tab').forEach(btn => {
+      btn.addEventListener('click', () => selectEditorLanguage(btn.dataset.lang));
+    });
+    document.querySelectorAll('[data-editmode]').forEach(btn => {
+      btn.addEventListener('click', () => selectEditViewMode(btn.dataset.editmode));
+    });
+
+    const markDirty = () => { isDirty = true; };
+    ['edit-title-zh', 'edit-title-en', 'edit-date', 'edit-tags', 'edit-zh-body', 'edit-en-body'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', markDirty);
+    });
+    ['edit-draft', 'edit-math'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', markDirty);
+    });
+
+    const cancelBtn = document.getElementById('editor-cancel-btn');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => {
+        if (isDirty && !confirm('Discard unsaved changes?')) return;
+        exitEditMode();
+      });
+    }
+
+    const saveBtn = document.getElementById('editor-save-btn');
+    if (saveBtn) saveBtn.addEventListener('click', () => handleSave());
+  } else {
+    document.querySelectorAll('.editor-lang-tab').forEach(btn => {
+      btn.addEventListener('click', () => selectEditorLanguage(btn.dataset.lang));
+    });
+    document.querySelectorAll('.editor-mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => selectEditorViewMode(btn.dataset.mode));
+    });
+
+    const editBtn = document.getElementById('editor-edit-btn');
+    if (editBtn) editBtn.addEventListener('click', () => { if (selectedDetail) enterEditMode(selectedDetail); });
   }
 }
 
 function selectEditorLanguage(lang) {
   if (selectedLanguage === lang || !selectedDetail) return;
+  if (isEditing) collectAllEditFields();
   selectedLanguage = lang;
   renderContentDetail(selectedDetail);
 }
@@ -1684,6 +2083,135 @@ function selectEditorViewMode(mode) {
   if (selectedViewMode === mode || !selectedDetail) return;
   selectedViewMode = mode;
   renderContentDetail(selectedDetail);
+}
+
+function selectEditViewMode(mode) {
+  if (editViewMode === mode || !selectedDetail) return;
+  collectAllEditFields();
+  editViewMode = mode;
+  renderContentDetail(selectedDetail);
+}
+
+function collectAllEditFields() {
+  if (!editFields) return;
+  const ids = {
+    zhBody: 'edit-zh-body', enBody: 'edit-en-body',
+    titleZh: 'edit-title-zh', titleEn: 'edit-title-en',
+    date: 'edit-date', tags: 'edit-tags',
+  };
+  for (const [field, id] of Object.entries(ids)) {
+    const el = document.getElementById(id);
+    if (el) editFields[field] = el.value;
+  }
+  const draftEl = document.getElementById('edit-draft');
+  const mathEl = document.getElementById('edit-math');
+  if (draftEl) editFields.draft = draftEl.checked;
+  if (mathEl) editFields.math = mathEl.checked;
+}
+
+function enterEditMode(detail) {
+  const item = detail.item;
+  const files = detail.files || {};
+  const zh = files.zh || {};
+  const en = files.en || null;
+
+  isEditing = true;
+  isDirty = false;
+  editViewMode = 'write';
+  editFields = {
+    titleZh: (item.title && item.title.zh) || '',
+    titleEn: (item.title && item.title.en) || '',
+    date: (item.date || '').split('T')[0] || '',
+    tags: (item.tags || []).join(', '),
+    draft: !!item.draft,
+    math: !!item.math,
+    zhBody: zh.body || '',
+    enBody: en ? (en.body || '') : null,
+  };
+
+  renderContentDetail(detail);
+}
+
+function exitEditMode() {
+  isEditing = false;
+  isDirty = false;
+  editFields = null;
+  editViewMode = 'write';
+  if (selectedDetail) renderContentDetail(selectedDetail);
+}
+
+async function handleSave() {
+  if (!selectedDetail || !editFields) return;
+  collectAllEditFields();
+
+  const item = selectedDetail.item;
+  const files = selectedDetail.files || {};
+  const mb = isMicroblog(item);
+
+  const tagsArray = editFields.tags.split(',').map(t => t.trim()).filter(Boolean);
+  const zhFm = { tags: tagsArray, draft: editFields.draft };
+  if (!mb) {
+    zhFm.title = editFields.titleZh;
+    zhFm.date = editFields.date;
+    zhFm.math = editFields.math;
+  }
+
+  const payload = {
+    baseMtime: {
+      zh: files.zh ? files.zh.mtime : undefined,
+      en: files.en ? files.en.mtime : undefined,
+    },
+    files: { zh: { body: editFields.zhBody, frontmatter: zhFm } },
+  };
+
+  if (files.en && editFields.enBody !== null) {
+    const enFm = {};
+    if (!mb) enFm.title = editFields.titleEn;
+    payload.files.en = { body: editFields.enBody, frontmatter: enFm };
+  }
+
+  const statusEl = document.getElementById('editor-save-status');
+  const saveBtn = document.getElementById('editor-save-btn');
+  if (statusEl) { statusEl.textContent = 'Saving...'; statusEl.className = 'editor-save-status editor-save-status--saving'; }
+  if (saveBtn) saveBtn.disabled = true;
+
+  try {
+    const res = await fetch(`/api/content/${encodeURIComponent(item.id)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      isDirty = false;
+      selectedDetail = { item: data.item, files: data.files };
+      const idx = contentItems.findIndex(ci => ci.id === item.id);
+      if (idx !== -1) contentItems[idx] = data.item;
+      filteredContentItems = filteredContentItems.map(ci => ci.id === item.id ? data.item : ci);
+      renderLibraryList();
+      if (statusEl) { statusEl.textContent = data.message || 'Saved.'; statusEl.className = 'editor-save-status editor-save-status--success'; }
+      setTimeout(() => exitEditMode(), 1500);
+    } else if (data.state === 'conflict') {
+      if (statusEl) {
+        statusEl.className = 'editor-save-status editor-save-status--error';
+        statusEl.innerHTML = `File changed externally. <button class="editor-reload-btn" type="button" id="editor-reload-btn">Reload</button>`;
+        const reloadBtn = document.getElementById('editor-reload-btn');
+        if (reloadBtn) {
+          reloadBtn.addEventListener('click', () => {
+            isEditing = false; isDirty = false; editFields = null; editViewMode = 'write';
+            selectContentItem(item.id);
+          });
+        }
+      }
+    } else {
+      if (statusEl) { statusEl.textContent = data.error || 'Save failed.'; statusEl.className = 'editor-save-status editor-save-status--error'; }
+    }
+  } catch (err) {
+    if (statusEl) { statusEl.textContent = 'Network error: ' + err.message; statusEl.className = 'editor-save-status editor-save-status--error'; }
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
+  }
 }
 
 function renderDetailLoading(item) {
@@ -1714,6 +2242,15 @@ function renderContentDetail(detail) {
 async function selectContentItem(id) {
   const item = contentItems.find(candidate => candidate.id === id);
   if (!item) return;
+
+  if (isEditing && isDirty && id !== selectedContentItemId) {
+    if (!confirm('You have unsaved changes. Leave this item?')) return;
+  }
+
+  isEditing = false;
+  isDirty = false;
+  editFields = null;
+  editViewMode = 'write';
 
   selectedContentItemId = id;
   selectedLanguage = 'zh';
@@ -1897,8 +2434,19 @@ function resetEditors() {
 }
 
 function switchTab(tab) {
+  if (isEditing && isDirty && currentTab !== tab) {
+    if (!confirm('You have unsaved changes. Leave this item?')) return;
+  }
+  if (isEditing && currentTab !== tab) {
+    isEditing = false;
+    isDirty = false;
+    editFields = null;
+    editViewMode = 'write';
+    if (selectedDetail) renderContentDetail(selectedDetail);
+  }
+
   currentTab = tab;
-  
+
   // Update button states
   btnLibrary.classList.remove('active');
   btnMicroblog.classList.remove('active');
