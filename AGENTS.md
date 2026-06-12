@@ -28,6 +28,28 @@ No `npm`, `Node.js`, or package manager needed. Hugo handles CSS/JS bundling int
 - **Goldmark**: `unsafe = true` (HTML in markdown), `hardLineBreak = true`.
 - **Drafts**: Set `draft: true` in frontmatter; Hugo only publishes them with `--buildDrafts`.
 
+## Creating content
+
+```powershell
+hugo new content ideas/my-slug/index.md
+```
+
+Use the same leaf-bundle pattern for `notes/`, `textlab/`, and `influences/`.
+
+```powershell
+hugo new content ideas/my-slug/index.en.md
+```
+
+Create the English translation in the same bundle by using the filename suffix.
+
+```powershell
+hugo new content microblog/2026/06/12-101010
+```
+
+Microblog directories must be `YYYY/MM/DD-HHMMSS`; the slug and public URL derive from that directory.
+
+`microblog.cmd` opens the local composer console; publishing from that console commits and pushes to the current branch.
+
 ## Quality & metrics
 
 ```powershell
