@@ -1,8 +1,16 @@
-+++
-# 文章创建日期，Hugo 会自动填充
-date = '{{ .Date }}'
-# 是否为草稿，设置为 true 则默认不会发布
-draft = true
-# 文章标题，默认取文件名并将连字符替换为空格，首字母大写
-title = '{{ replace .File.ContentBaseName "-" " " | title }}'
-+++
+{{- $base := .File.ContentBaseName -}}
+{{- if eq $base "index" -}}
+{{- $dir := strings.TrimSuffix "/" (replace .File.Dir "\\" "/") -}}
+{{- $base = path.Base $dir -}}
+{{- end -}}
+---
+# 标题：普通文件取文件名，叶子包取父目录名。
+title: "{{ replace $base "-" " " | title }}"
+# 日期：Hugo 按创建时间填充。
+date: {{ .Date }}
+# 标签：按需添加。
+tags: []
+# 草稿：true 表示默认不发布。
+draft: true
+# 如需 KaTeX 数学公式，可添加 math: true。
+---
