@@ -50,6 +50,8 @@ Microblog directories must be `YYYY/MM/DD-HHMMSS`; the slug and public URL deriv
 
 `microblog.cmd` opens the local composer console; publishing from that console commits and pushes to the current branch.
 
+Use `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-microblog.ps1` as the safe file-only microblog alternative with no commit or push.
+
 ## Quality & metrics
 
 ```powershell
