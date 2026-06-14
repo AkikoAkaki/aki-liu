@@ -1083,7 +1083,8 @@ body {
   border: 1px solid #e6ecef;
   border-radius: 7px;
   outline: none;
-  resize: vertical;
+  resize: none;
+  overflow: hidden;
   font-family: 'Menlo', 'Consolas', monospace;
   font-size: 12.5px;
   line-height: 1.8;
@@ -1148,6 +1149,7 @@ body {
 .editor-save-status--success { color: #3d7a5a; }
 .editor-save-status--error { color: #9a4a1a; }
 .editor-save-status--saving { color: #8a9aa5; font-style: italic; }
+.editor-save-status--dirty { color: #8a6a00; }
 .editor-reload-btn {
   background: none;
   border: none;
@@ -1519,6 +1521,8 @@ let selectedLanguage = 'zh';
 let selectedViewMode = 'preview';
 let isEditing = false;
 let isDirty = false;
+let isSaving = false;
+let saveState = 'clean'; // 'clean' | 'dirty' | 'saved'
 let editViewMode = 'write';
 let editFields = null;
 
@@ -1626,6 +1630,12 @@ function escHtml(s) {
 
 function escAttr(s) {
   return escHtml(s).replace(/'/g, '&#39;');
+}
+
+function autoResizeTextarea(ta) {
+  if (!ta) return;
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
 }
 
 function itemTitle(item) {
@@ -1776,7 +1786,7 @@ function renderEditorHeader(detail) {
       <div class="editor-back">
         <button class="editor-back-btn" type="button" id="editor-back-btn">← Library</button>
       </div>
-      <button class="editor-edit-btn" type="button" id="editor-edit-btn">Edit</button>
+      <button class="editor-edit-btn" type="button" id="editor-edit-btn">Edit locally</button>
       <div class="editor-view-title">${escHtml(zhTitle)}</div>
       ${!mb && enTitle ? `<div class="editor-view-subtitle">${escHtml(enTitle)}</div>` : ''}
       <div class="editor-view-meta">${renderEditorMeta(item)}</div>
@@ -2039,7 +2049,17 @@ function attachEditorListeners() {
       btn.addEventListener('click', () => selectEditViewMode(btn.dataset.editmode));
     });
 
-    const markDirty = () => { isDirty = true; };
+    const markDirty = () => {
+      isDirty = true;
+      saveState = 'dirty';
+      if (!isSaving) {
+        const statusEl = document.getElementById('editor-save-status');
+        if (statusEl) {
+          statusEl.textContent = 'Unsaved changes';
+          statusEl.className = 'editor-save-status editor-save-status--dirty';
+        }
+      }
+    };
     ['edit-title-zh', 'edit-title-en', 'edit-date', 'edit-tags', 'edit-zh-body', 'edit-en-body'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', markDirty);
@@ -2059,6 +2079,27 @@ function attachEditorListeners() {
 
     const saveBtn = document.getElementById('editor-save-btn');
     if (saveBtn) saveBtn.addEventListener('click', () => handleSave());
+
+    // Restore status text after re-render (lang/mode switch rebuilds the DOM)
+    const statusEl = document.getElementById('editor-save-status');
+    if (statusEl) {
+      if (saveState === 'dirty') {
+        statusEl.textContent = 'Unsaved changes';
+        statusEl.className = 'editor-save-status editor-save-status--dirty';
+      } else if (saveState === 'saved') {
+        statusEl.textContent = 'Saved locally. Not committed or pushed.';
+        statusEl.className = 'editor-save-status editor-save-status--success';
+      }
+    }
+
+    // Auto-resize edit textareas on input and on initial render
+    ['edit-zh-body', 'edit-en-body'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => autoResizeTextarea(el));
+        autoResizeTextarea(el);
+      }
+    });
   } else {
     document.querySelectorAll('.editor-lang-tab').forEach(btn => {
       btn.addEventListener('click', () => selectEditorLanguage(btn.dataset.lang));
@@ -2117,6 +2158,7 @@ function enterEditMode(detail) {
 
   isEditing = true;
   isDirty = false;
+  saveState = 'clean';
   editViewMode = 'write';
   editFields = {
     titleZh: (item.title && item.title.zh) || '',
@@ -2135,13 +2177,15 @@ function enterEditMode(detail) {
 function exitEditMode() {
   isEditing = false;
   isDirty = false;
+  saveState = 'clean';
   editFields = null;
   editViewMode = 'write';
   if (selectedDetail) renderContentDetail(selectedDetail);
 }
 
 async function handleSave() {
-  if (!selectedDetail || !editFields) return;
+  if (!selectedDetail || !editFields || isSaving) return;
+  isSaving = true;
   collectAllEditFields();
 
   const item = selectedDetail.item;
@@ -2185,21 +2229,22 @@ async function handleSave() {
 
     if (data.ok) {
       isDirty = false;
+      saveState = 'saved';
       selectedDetail = { item: data.item, files: data.files };
       const idx = contentItems.findIndex(ci => ci.id === item.id);
       if (idx !== -1) contentItems[idx] = data.item;
       filteredContentItems = filteredContentItems.map(ci => ci.id === item.id ? data.item : ci);
       renderLibraryList();
-      if (statusEl) { statusEl.textContent = data.message || 'Saved.'; statusEl.className = 'editor-save-status editor-save-status--success'; }
-      setTimeout(() => exitEditMode(), 1500);
+      loadRepoStatus();
+      if (statusEl) { statusEl.textContent = 'Saved locally. Not committed or pushed.'; statusEl.className = 'editor-save-status editor-save-status--success'; }
     } else if (data.state === 'conflict') {
       if (statusEl) {
         statusEl.className = 'editor-save-status editor-save-status--error';
-        statusEl.innerHTML = `File changed externally. <button class="editor-reload-btn" type="button" id="editor-reload-btn">Reload</button>`;
+        statusEl.innerHTML = `This file changed outside Content Studio. Reload before saving. <button class="editor-reload-btn" type="button" id="editor-reload-btn">Reload</button>`;
         const reloadBtn = document.getElementById('editor-reload-btn');
         if (reloadBtn) {
           reloadBtn.addEventListener('click', () => {
-            isEditing = false; isDirty = false; editFields = null; editViewMode = 'write';
+            isEditing = false; isDirty = false; editFields = null; editViewMode = 'write'; saveState = 'clean';
             selectContentItem(item.id);
           });
         }
@@ -2210,6 +2255,7 @@ async function handleSave() {
   } catch (err) {
     if (statusEl) { statusEl.textContent = 'Network error: ' + err.message; statusEl.className = 'editor-save-status editor-save-status--error'; }
   } finally {
+    isSaving = false;
     if (saveBtn) saveBtn.disabled = false;
   }
 }
@@ -2866,12 +2912,29 @@ publishBtn.addEventListener('click', async () => {
   }
 });
 
-// Shortcuts
+// Shortcuts (classic tabs)
 editor.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') publishBtn.click();
 });
 editorEn.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') publishBtn.click();
+});
+
+// Ctrl+S / Cmd+S in Content Studio edit mode (attached once, safe to re-render)
+document.addEventListener('keydown', e => {
+  if (!isEditing || currentTab !== 'library') return;
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    handleSave();
+  }
+});
+
+// Warn before tab close / reload when there are unsaved edits
+window.addEventListener('beforeunload', e => {
+  if (isEditing && isDirty) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
 });
 
 switchTab('library');
