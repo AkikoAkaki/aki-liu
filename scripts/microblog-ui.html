@@ -994,6 +994,50 @@ body {
 .editor-commit-inline--error   { color: #9a4a1a; }
 .editor-commit-inline--info    { color: #5b7d8e; }
 .editor-save-status--info      { color: #5b7d8e; }
+.editor-push-btn {
+  background: none;
+  border: 1px solid #a8c0cc;
+  border-radius: 6px;
+  color: #2e6478;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 10px;
+  letter-spacing: .02em;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.editor-push-btn:hover:not(:disabled) {
+  background: #e8f2f7;
+  border-color: #7ba8bc;
+  color: #1a4f63;
+}
+.editor-push-btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+.editor-push-inline {
+  font-size: 11px;
+  color: #9aa7af;
+  white-space: nowrap;
+}
+.editor-push-inline--success { color: #3d7a5a; }
+.editor-push-inline--error   { color: #9a4a1a; }
+.editor-push-inline--info    { color: #5b7d8e; }
+.editor-check-output {
+  display: block;
+  font-family: monospace;
+  font-size: 10px;
+  background: #f5f5f5;
+  border: 1px solid #dde4e8;
+  border-radius: 3px;
+  padding: 4px 6px;
+  margin: 4px 0 0;
+  max-height: 110px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
 .editor-edit-btn {
   background: none;
   border: 1px solid #dbe3e7;
@@ -1563,6 +1607,8 @@ let editViewMode = 'write';
 let editFields = null;
 let isCommitting = false;
 let commitFeedback = null; // { text, cls } — persists across re-renders
+let isPushing = false;
+let pushFeedback = null; // { text, cls, checkOutput? } — persists across re-renders
 
 // -- Markdown renderer with image proxy --
 function setupMarked() {
@@ -1825,8 +1871,10 @@ function renderEditorHeader(detail) {
         <button class="editor-back-btn" type="button" id="editor-back-btn">← Library</button>
       </div>
       <div class="editor-header-actions">
+        <span class="editor-push-inline" id="editor-push-status-ro"></span>
         <span class="editor-commit-inline" id="editor-commit-status-ro"></span>
         <button class="editor-commit-btn" type="button" id="editor-commit-btn"${isCommitting ? ' disabled' : ''}>Commit locally</button>
+        <button class="editor-push-btn" type="button" id="editor-push-btn"${isPushing ? ' disabled' : ''}>Check &amp; Push</button>
         <button class="editor-edit-btn" type="button" id="editor-edit-btn">Edit locally</button>
       </div>
       <div class="editor-view-title">${escHtml(zhTitle)}</div>
@@ -1990,6 +2038,7 @@ function renderEditorEditBody(detail) {
 
 function renderEditorEditActions() {
   const commitDisabled = isDirty || isSaving || isCommitting ? ' disabled' : '';
+  const pushDisabled = isDirty || isSaving || isCommitting || isPushing ? ' disabled' : '';
   return `
     <div class="editor-edit-actions">
       <div class="editor-save-status" id="editor-save-status"></div>
@@ -1997,6 +2046,7 @@ function renderEditorEditActions() {
         <button class="editor-cancel-btn" type="button" id="editor-cancel-btn">Cancel</button>
         <button class="editor-save-btn" type="button" id="editor-save-btn">Save</button>
         <button class="editor-commit-btn" type="button" id="editor-commit-btn"${commitDisabled}>Commit locally</button>
+        <button class="editor-push-btn" type="button" id="editor-push-btn"${pushDisabled}>Check &amp; Push</button>
       </div>
     </div>
   `;
@@ -2097,6 +2147,7 @@ function attachEditorListeners() {
       isDirty = true;
       saveState = 'dirty';
       commitFeedback = null;
+      pushFeedback = null;
       if (!isSaving) {
         const statusEl = document.getElementById('editor-save-status');
         if (statusEl) {
@@ -2128,12 +2179,22 @@ function attachEditorListeners() {
     const commitBtnEdit = document.getElementById('editor-commit-btn');
     if (commitBtnEdit) commitBtnEdit.addEventListener('click', () => handleCommit());
 
+    const pushBtnEdit = document.getElementById('editor-push-btn');
+    if (pushBtnEdit) pushBtnEdit.addEventListener('click', () => handlePush());
+
     // Restore status text after re-render (lang/mode switch rebuilds the DOM)
     const statusEl = document.getElementById('editor-save-status');
     if (statusEl) {
       if (saveState === 'dirty') {
         statusEl.textContent = 'Unsaved changes';
         statusEl.className = 'editor-save-status editor-save-status--dirty';
+      } else if (pushFeedback) {
+        if (pushFeedback.checkOutput) {
+          statusEl.innerHTML = escHtml(pushFeedback.text) + '<pre class="editor-check-output">' + escHtml(pushFeedback.checkOutput.slice(0, 800)) + '</pre>';
+        } else {
+          statusEl.textContent = pushFeedback.text;
+        }
+        statusEl.className = 'editor-save-status editor-save-status--' + pushFeedback.cls;
       } else if (commitFeedback) {
         statusEl.textContent = commitFeedback.text;
         statusEl.className = 'editor-save-status editor-save-status--' + commitFeedback.cls;
@@ -2165,11 +2226,26 @@ function attachEditorListeners() {
     const commitBtnRo = document.getElementById('editor-commit-btn');
     if (commitBtnRo) commitBtnRo.addEventListener('click', () => handleCommit());
 
+    const pushBtnRo = document.getElementById('editor-push-btn');
+    if (pushBtnRo) pushBtnRo.addEventListener('click', () => handlePush());
+
     if (commitFeedback) {
       const statusRo = document.getElementById('editor-commit-status-ro');
       if (statusRo) {
         statusRo.textContent = commitFeedback.text;
         statusRo.className = 'editor-commit-inline editor-commit-inline--' + commitFeedback.cls;
+      }
+    }
+
+    if (pushFeedback) {
+      const statusPushRo = document.getElementById('editor-push-status-ro');
+      if (statusPushRo) {
+        if (pushFeedback.checkOutput) {
+          statusPushRo.innerHTML = escHtml(pushFeedback.text) + '<pre class="editor-check-output">' + escHtml(pushFeedback.checkOutput.slice(0, 800)) + '</pre>';
+        } else {
+          statusPushRo.textContent = pushFeedback.text;
+        }
+        statusPushRo.className = 'editor-push-inline editor-push-inline--' + pushFeedback.cls;
       }
     }
   }
@@ -2244,6 +2320,7 @@ function exitEditMode() {
   editFields = null;
   editViewMode = 'write';
   commitFeedback = null;
+  pushFeedback = null;
   if (selectedDetail) renderContentDetail(selectedDetail);
 }
 
@@ -2397,6 +2474,88 @@ async function handleCommit() {
   }
 }
 
+async function handlePush() {
+  if (!selectedContentItemId || isPushing || isCommitting) return;
+  if (isEditing && (isDirty || isSaving)) return;
+
+  isPushing = true;
+  pushFeedback = null;
+
+  const pushBtnEl = document.getElementById('editor-push-btn');
+  const statusRoEl = document.getElementById('editor-push-status-ro');
+  const statusEditEl = document.getElementById('editor-save-status');
+
+  if (pushBtnEl) { pushBtnEl.disabled = true; pushBtnEl.textContent = 'Running checks...'; }
+  if (isEditing) {
+    if (statusEditEl) { statusEditEl.textContent = 'Running checks...'; statusEditEl.className = 'editor-save-status editor-save-status--saving'; }
+  } else {
+    if (statusRoEl) { statusRoEl.textContent = 'Running checks...'; statusRoEl.className = 'editor-push-inline'; }
+  }
+
+  try {
+    const res = await fetch('/api/push', { method: 'POST' });
+    const data = await res.json();
+
+    let text, cls, checkOutput;
+    if (data.ok && data.state === 'pushed') {
+      text = 'Checks passed. Pushed current branch.';
+      cls = 'success';
+    } else if (data.state === 'main_blocked') {
+      text = 'Push is blocked on main. Switch to a feature branch first.';
+      cls = 'error';
+    } else if (data.state === 'no_push') {
+      text = 'Push skipped because MICROBLOG_NO_PUSH=1.';
+      cls = 'info';
+    } else if (data.state === 'dirty_worktree') {
+      text = 'Commit or discard local changes before pushing.';
+      cls = 'error';
+    } else if (data.state === 'check_failed') {
+      text = 'Checks failed. Fix issues before pushing.';
+      cls = 'error';
+      checkOutput = data.checkOutput || '';
+    } else {
+      text = data.error || 'Push failed.';
+      cls = 'error';
+    }
+
+    pushFeedback = { text, cls, checkOutput: checkOutput || null };
+
+    const applyStatus = (el, isDiv) => {
+      if (!el) return;
+      el.className = (isDiv ? 'editor-save-status editor-save-status--' : 'editor-push-inline editor-push-inline--') + cls;
+      if (checkOutput) {
+        el.innerHTML = escHtml(text) + '<pre class="editor-check-output">' + escHtml(checkOutput.slice(0, 800)) + '</pre>';
+      } else {
+        el.textContent = text;
+      }
+    };
+
+    if (isEditing) {
+      applyStatus(statusEditEl, true);
+    } else {
+      applyStatus(statusRoEl, false);
+    }
+
+    loadRepoStatus();
+  } catch (err) {
+    const text = 'Network error: ' + err.message;
+    pushFeedback = { text, cls: 'error', checkOutput: null };
+    if (isEditing) {
+      if (statusEditEl) { statusEditEl.textContent = text; statusEditEl.className = 'editor-save-status editor-save-status--error'; }
+    } else {
+      if (statusRoEl) { statusRoEl.textContent = text; statusRoEl.className = 'editor-push-inline editor-push-inline--error'; }
+    }
+    loadRepoStatus();
+  } finally {
+    isPushing = false;
+    const freshBtn = document.getElementById('editor-push-btn');
+    if (freshBtn) {
+      freshBtn.textContent = 'Check & Push';
+      freshBtn.disabled = isEditing && (isDirty || isSaving || isCommitting);
+    }
+  }
+}
+
 function renderDetailLoading(item) {
   document.getElementById('library-detail').innerHTML = `
     <div class="editor-view-shell">
@@ -2436,6 +2595,8 @@ async function selectContentItem(id) {
   editViewMode = 'write';
   isCommitting = false;
   commitFeedback = null;
+  isPushing = false;
+  pushFeedback = null;
 
   selectedContentItemId = id;
   selectedLanguage = 'zh';

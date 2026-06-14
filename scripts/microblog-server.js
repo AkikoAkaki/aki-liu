@@ -1247,6 +1247,68 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  if (req.method === 'POST' && pathname === '/api/push') {
+    try {
+      const branch = getCurrentBranch();
+      if (branch === 'main') {
+        return sendJSON(res, {
+          ok: false,
+          state: 'main_blocked',
+          error: 'Push is blocked on main. Switch to a feature branch first.',
+        }, 400);
+      }
+
+      if (isEnvEnabled('MICROBLOG_NO_PUSH')) {
+        return sendJSON(res, {
+          ok: false,
+          state: 'no_push',
+          error: 'Push skipped because MICROBLOG_NO_PUSH=1.',
+        });
+      }
+
+      let dirty;
+      if (process.env.TEST_MODE === 'true') {
+        dirty = isEnvEnabled('MICROBLOG_TEST_DIRTY');
+      } else {
+        dirty = gitRead(['status', '--porcelain']).trim().length > 0;
+      }
+      if (dirty) {
+        return sendJSON(res, {
+          ok: false,
+          state: 'dirty_worktree',
+          error: 'Commit or discard local changes before pushing.',
+        }, 400);
+      }
+
+      let checkOutput;
+      try {
+        checkOutput = runPrePushCheck();
+      } catch (checkErr) {
+        return sendJSON(res, {
+          ok: false,
+          state: 'check_failed',
+          error: 'Checks failed. Fix issues before pushing.',
+          checkOutput: String(checkErr.message).slice(0, 2000),
+        }, 400);
+      }
+
+      gitRun(['push', '-u', 'origin', branch], ROOT);
+      const status = getRepoStatus();
+
+      console.log(`[PUSH] branch ${branch}`);
+      return sendJSON(res, {
+        ok: true,
+        state: 'pushed',
+        branch,
+        message: 'Checks passed. Pushed current branch.',
+        status,
+      });
+    } catch (e) {
+      console.error('[PUSH FAIL]', e.message);
+      return sendJSON(res, { ok: false, error: e.message }, 500);
+    }
+  }
+
   res.writeHead(404);
   res.end('Not found');
 });
