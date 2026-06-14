@@ -1665,19 +1665,22 @@ loadTags();
 // -- Read-only repository status strip --
 const gitStatusEl = document.getElementById('git-status');
 
+function renderRepoStatus(status) {
+  const pills = [
+    `<span class="status-pill">branch ${escHtml(status.branch || 'unknown')}</span>`,
+    status.isMain ? '<span class="status-pill is-main">main</span>' : '',
+    status.dirty ? '<span class="status-pill is-dirty">dirty</span>' : '<span class="status-pill is-clean">clean</span>',
+    status.noPush ? '<span class="status-pill is-nopush">no-push</span>' : '',
+    status.lastCommit ? `<span class="status-pill">${escHtml(status.lastCommit)}</span>` : '',
+  ].filter(Boolean);
+  gitStatusEl.innerHTML = `<span class="status-strip">${pills.join('')}</span>`;
+}
+
 async function loadRepoStatus() {
   try {
     const res = await fetch('/api/status');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const status = await res.json();
-    const pills = [
-      `<span class="status-pill">branch ${escHtml(status.branch || 'unknown')}</span>`,
-      status.isMain ? '<span class="status-pill is-main">main</span>' : '',
-      status.dirty ? '<span class="status-pill is-dirty">dirty</span>' : '<span class="status-pill is-clean">clean</span>',
-      status.noPush ? '<span class="status-pill is-nopush">no-push</span>' : '',
-      status.lastCommit ? `<span class="status-pill">${escHtml(status.lastCommit)}</span>` : '',
-    ].filter(Boolean);
-    gitStatusEl.innerHTML = `<span class="status-strip">${pills.join('')}</span>`;
+    renderRepoStatus(await res.json());
   } catch (_) {
     gitStatusEl.innerHTML = '<span class="status-strip"><span class="status-pill">status unavailable</span></span>';
   }
@@ -2482,69 +2485,47 @@ async function handlePush() {
   pushFeedback = null;
 
   const pushBtnEl = document.getElementById('editor-push-btn');
-  const statusRoEl = document.getElementById('editor-push-status-ro');
-  const statusEditEl = document.getElementById('editor-save-status');
+  const statusEl = isEditing
+    ? document.getElementById('editor-save-status')
+    : document.getElementById('editor-push-status-ro');
+  const prefix = isEditing ? 'editor-save-status editor-save-status' : 'editor-push-inline editor-push-inline';
+
+  const applyStatus = (text, cls, checkOutput) => {
+    if (!statusEl) return;
+    statusEl.className = `${prefix}--${cls}`;
+    if (checkOutput) {
+      statusEl.innerHTML = escHtml(text) + '<pre class="editor-check-output">' + escHtml(checkOutput.slice(0, 800)) + '</pre>';
+    } else {
+      statusEl.textContent = text;
+    }
+  };
 
   if (pushBtnEl) { pushBtnEl.disabled = true; pushBtnEl.textContent = 'Running checks...'; }
-  if (isEditing) {
-    if (statusEditEl) { statusEditEl.textContent = 'Running checks...'; statusEditEl.className = 'editor-save-status editor-save-status--saving'; }
-  } else {
-    if (statusRoEl) { statusRoEl.textContent = 'Running checks...'; statusRoEl.className = 'editor-push-inline'; }
+  if (statusEl) {
+    statusEl.textContent = 'Running checks...';
+    statusEl.className = isEditing ? 'editor-save-status editor-save-status--saving' : 'editor-push-inline';
   }
 
   try {
     const res = await fetch('/api/push', { method: 'POST' });
     const data = await res.json();
 
-    let text, cls, checkOutput;
-    if (data.ok && data.state === 'pushed') {
-      text = 'Checks passed. Pushed current branch.';
-      cls = 'success';
-    } else if (data.state === 'main_blocked') {
-      text = 'Push is blocked on main. Switch to a feature branch first.';
-      cls = 'error';
-    } else if (data.state === 'no_push') {
-      text = 'Push skipped because MICROBLOG_NO_PUSH=1.';
-      cls = 'info';
-    } else if (data.state === 'dirty_worktree') {
-      text = 'Commit or discard local changes before pushing.';
-      cls = 'error';
-    } else if (data.state === 'check_failed') {
-      text = 'Checks failed. Fix issues before pushing.';
-      cls = 'error';
-      checkOutput = data.checkOutput || '';
+    const cls = data.ok ? 'success' : (data.state === 'no_push' ? 'info' : 'error');
+    const text = data.message || data.error || 'Push failed.';
+    const checkOutput = data.checkOutput || null;
+
+    pushFeedback = { text, cls, checkOutput };
+    applyStatus(text, cls, checkOutput);
+
+    if (data.ok && data.status) {
+      renderRepoStatus(data.status);
     } else {
-      text = data.error || 'Push failed.';
-      cls = 'error';
+      loadRepoStatus();
     }
-
-    pushFeedback = { text, cls, checkOutput: checkOutput || null };
-
-    const applyStatus = (el, isDiv) => {
-      if (!el) return;
-      el.className = (isDiv ? 'editor-save-status editor-save-status--' : 'editor-push-inline editor-push-inline--') + cls;
-      if (checkOutput) {
-        el.innerHTML = escHtml(text) + '<pre class="editor-check-output">' + escHtml(checkOutput.slice(0, 800)) + '</pre>';
-      } else {
-        el.textContent = text;
-      }
-    };
-
-    if (isEditing) {
-      applyStatus(statusEditEl, true);
-    } else {
-      applyStatus(statusRoEl, false);
-    }
-
-    loadRepoStatus();
   } catch (err) {
     const text = 'Network error: ' + err.message;
     pushFeedback = { text, cls: 'error', checkOutput: null };
-    if (isEditing) {
-      if (statusEditEl) { statusEditEl.textContent = text; statusEditEl.className = 'editor-save-status editor-save-status--error'; }
-    } else {
-      if (statusRoEl) { statusRoEl.textContent = text; statusRoEl.className = 'editor-push-inline editor-push-inline--error'; }
-    }
+    applyStatus(text, 'error', null);
     loadRepoStatus();
   } finally {
     isPushing = false;
