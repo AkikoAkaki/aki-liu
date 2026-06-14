@@ -2361,6 +2361,9 @@ async function handleCommit() {
     } else if (data.state === 'main_blocked') {
       text = 'Commit is blocked on main. Switch to a branch first.';
       cls = 'error';
+    } else if (data.state === 'unrelated_staged_changes') {
+      text = data.error || 'Unrelated staged changes exist. Commit or unstage them first.';
+      cls = 'error';
     } else if (data.state === 'nothing_to_commit') {
       text = 'No local changes to commit for this item.';
       cls = 'info';
