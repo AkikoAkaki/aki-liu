@@ -1293,7 +1293,8 @@ const server = http.createServer(async (req, res) => {
       }
 
       gitRun(['push', '-u', 'origin', branch], ROOT);
-      const status = getRepoStatus();
+      const lastCommit = gitRead(['log', '-1', '--pretty=format:%h %s']);
+      const status = { branch, isMain: false, noPush: false, dirty: false, lastCommit };
 
       console.log(`[PUSH] branch ${branch}`);
       return sendJSON(res, {
