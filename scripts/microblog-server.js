@@ -971,6 +971,71 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  if (req.method === 'POST' && pathname.startsWith('/api/content/') && pathname.slice('/api/content/'.length).endsWith('/commit')) {
+    try {
+      let id;
+      try {
+        const rawSuffix = decodeURIComponent(pathname.slice('/api/content/'.length));
+        id = rawSuffix.slice(0, -'/commit'.length);
+      } catch (_) {
+        return sendJSON(res, { ok: false, error: 'Invalid content id' }, 400);
+      }
+
+      const { item } = resolveContentItem(id);
+
+      const branch = getCurrentBranch();
+      if (branch === 'main') {
+        return sendJSON(res, { ok: false, state: 'main_blocked', error: 'Local commit is blocked on main. Switch to a branch first.' }, 400);
+      }
+
+      const itemPath = item.path;
+      const statusOut = gitRun(['status', '--porcelain', '--', itemPath], ROOT);
+      if (!statusOut.trim()) {
+        return sendJSON(res, { ok: false, state: 'nothing_to_commit', error: 'No local changes to commit for this item.' });
+      }
+
+      // Guard: reject if any already-staged files fall outside the selected item bundle.
+      // Skipped in TEST_MODE because gitRun is fully mocked there.
+      if (process.env.TEST_MODE !== 'true') {
+        const cachedOut = gitRun(['diff', '--cached', '--name-only', '--', '.'], ROOT);
+        if (cachedOut.trim()) {
+          const cachedPaths = cachedOut.trim().split(/\r\n|\n|\r/)
+            .map(p => p.trim().replace(/\\/g, '/'))
+            .filter(Boolean);
+          const hasUnrelated = cachedPaths.some(p => p !== itemPath && !p.startsWith(itemPath + '/'));
+          if (hasUnrelated) {
+            return sendJSON(res, {
+              ok: false,
+              state: 'unrelated_staged_changes',
+              error: 'Unrelated staged changes exist. Commit or unstage them before committing this item.',
+            }, 400);
+          }
+        }
+      }
+
+      const bodyBuf = await readBody(req);
+      let commitMsg = `content: update ${item.id}`;
+      try {
+        const payload = JSON.parse(bodyBuf.toString('utf8'));
+        if (payload.message && typeof payload.message === 'string' && payload.message.trim()) {
+          commitMsg = payload.message.trim().slice(0, 200);
+        }
+      } catch (_) { /* use default */ }
+
+      gitRun(['add', '--', itemPath], ROOT);
+      gitRun(['commit', '-m', commitMsg, '--', itemPath], ROOT);
+
+      const commit = gitRead(['rev-parse', '--short', 'HEAD']);
+      const repoStatus = getRepoStatus();
+
+      console.log(`[COMMIT LOCAL] ${item.id} → ${commit} on ${branch}`);
+      return sendJSON(res, { ok: true, state: 'committed', branch, commit, message: 'Committed locally. Not pushed.', status: repoStatus });
+    } catch (e) {
+      console.error('[COMMIT FAIL]', e.message);
+      return sendJSON(res, { ok: false, error: e.message }, e.statusCode || 500);
+    }
+  }
+
   if (req.method === 'GET' && pathname === '/api/tags') {
     return sendJSON(res, { tags: scanTags() });
   }
