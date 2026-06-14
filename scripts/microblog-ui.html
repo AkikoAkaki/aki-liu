@@ -955,10 +955,46 @@ body {
 .editor-view-header {
   position: relative;
 }
-.editor-edit-btn {
+.editor-header-actions {
   position: absolute;
   top: 26px;
   right: 30px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.editor-commit-btn {
+  background: none;
+  border: 1px solid #c8d8df;
+  border-radius: 6px;
+  color: #5b7d8e;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 10px;
+  letter-spacing: .02em;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.editor-commit-btn:hover:not(:disabled) {
+  background: #f0f6f9;
+  border-color: #a8c0cc;
+  color: #2e6478;
+}
+.editor-commit-btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+.editor-commit-inline {
+  font-size: 11px;
+  color: #9aa7af;
+  white-space: nowrap;
+}
+.editor-commit-inline--success { color: #3d7a5a; }
+.editor-commit-inline--error   { color: #9a4a1a; }
+.editor-commit-inline--info    { color: #5b7d8e; }
+.editor-save-status--info      { color: #5b7d8e; }
+.editor-edit-btn {
   background: none;
   border: 1px solid #dbe3e7;
   border-radius: 6px;
@@ -1525,6 +1561,8 @@ let isSaving = false;
 let saveState = 'clean'; // 'clean' | 'dirty' | 'saved'
 let editViewMode = 'write';
 let editFields = null;
+let isCommitting = false;
+let commitFeedback = null; // { text, cls } — persists across re-renders
 
 // -- Markdown renderer with image proxy --
 function setupMarked() {
@@ -1786,7 +1824,11 @@ function renderEditorHeader(detail) {
       <div class="editor-back">
         <button class="editor-back-btn" type="button" id="editor-back-btn">← Library</button>
       </div>
-      <button class="editor-edit-btn" type="button" id="editor-edit-btn">Edit locally</button>
+      <div class="editor-header-actions">
+        <span class="editor-commit-inline" id="editor-commit-status-ro"></span>
+        <button class="editor-commit-btn" type="button" id="editor-commit-btn"${isCommitting ? ' disabled' : ''}>Commit locally</button>
+        <button class="editor-edit-btn" type="button" id="editor-edit-btn">Edit locally</button>
+      </div>
       <div class="editor-view-title">${escHtml(zhTitle)}</div>
       ${!mb && enTitle ? `<div class="editor-view-subtitle">${escHtml(enTitle)}</div>` : ''}
       <div class="editor-view-meta">${renderEditorMeta(item)}</div>
@@ -1947,12 +1989,14 @@ function renderEditorEditBody(detail) {
 }
 
 function renderEditorEditActions() {
+  const commitDisabled = isDirty || isSaving || isCommitting ? ' disabled' : '';
   return `
     <div class="editor-edit-actions">
       <div class="editor-save-status" id="editor-save-status"></div>
       <div class="editor-edit-buttons">
         <button class="editor-cancel-btn" type="button" id="editor-cancel-btn">Cancel</button>
         <button class="editor-save-btn" type="button" id="editor-save-btn">Save</button>
+        <button class="editor-commit-btn" type="button" id="editor-commit-btn"${commitDisabled}>Commit locally</button>
       </div>
     </div>
   `;
@@ -2052,6 +2096,7 @@ function attachEditorListeners() {
     const markDirty = () => {
       isDirty = true;
       saveState = 'dirty';
+      commitFeedback = null;
       if (!isSaving) {
         const statusEl = document.getElementById('editor-save-status');
         if (statusEl) {
@@ -2080,12 +2125,18 @@ function attachEditorListeners() {
     const saveBtn = document.getElementById('editor-save-btn');
     if (saveBtn) saveBtn.addEventListener('click', () => handleSave());
 
+    const commitBtnEdit = document.getElementById('editor-commit-btn');
+    if (commitBtnEdit) commitBtnEdit.addEventListener('click', () => handleCommit());
+
     // Restore status text after re-render (lang/mode switch rebuilds the DOM)
     const statusEl = document.getElementById('editor-save-status');
     if (statusEl) {
       if (saveState === 'dirty') {
         statusEl.textContent = 'Unsaved changes';
         statusEl.className = 'editor-save-status editor-save-status--dirty';
+      } else if (commitFeedback) {
+        statusEl.textContent = commitFeedback.text;
+        statusEl.className = 'editor-save-status editor-save-status--' + commitFeedback.cls;
       } else if (saveState === 'saved') {
         statusEl.textContent = 'Saved locally. Not committed or pushed.';
         statusEl.className = 'editor-save-status editor-save-status--success';
@@ -2110,6 +2161,17 @@ function attachEditorListeners() {
 
     const editBtn = document.getElementById('editor-edit-btn');
     if (editBtn) editBtn.addEventListener('click', () => { if (selectedDetail) enterEditMode(selectedDetail); });
+
+    const commitBtnRo = document.getElementById('editor-commit-btn');
+    if (commitBtnRo) commitBtnRo.addEventListener('click', () => handleCommit());
+
+    if (commitFeedback) {
+      const statusRo = document.getElementById('editor-commit-status-ro');
+      if (statusRo) {
+        statusRo.textContent = commitFeedback.text;
+        statusRo.className = 'editor-commit-inline editor-commit-inline--' + commitFeedback.cls;
+      }
+    }
   }
 }
 
@@ -2160,6 +2222,7 @@ function enterEditMode(detail) {
   isDirty = false;
   saveState = 'clean';
   editViewMode = 'write';
+  commitFeedback = null;
   editFields = {
     titleZh: (item.title && item.title.zh) || '',
     titleEn: (item.title && item.title.en) || '',
@@ -2180,6 +2243,7 @@ function exitEditMode() {
   saveState = 'clean';
   editFields = null;
   editViewMode = 'write';
+  commitFeedback = null;
   if (selectedDetail) renderContentDetail(selectedDetail);
 }
 
@@ -2216,8 +2280,10 @@ async function handleSave() {
 
   const statusEl = document.getElementById('editor-save-status');
   const saveBtn = document.getElementById('editor-save-btn');
+  const commitBtnDuringSave = document.getElementById('editor-commit-btn');
   if (statusEl) { statusEl.textContent = 'Saving...'; statusEl.className = 'editor-save-status editor-save-status--saving'; }
   if (saveBtn) saveBtn.disabled = true;
+  if (commitBtnDuringSave) commitBtnDuringSave.disabled = true;
 
   try {
     const res = await fetch(`/api/content/${encodeURIComponent(item.id)}`, {
@@ -2257,6 +2323,74 @@ async function handleSave() {
   } finally {
     isSaving = false;
     if (saveBtn) saveBtn.disabled = false;
+    if (commitBtnDuringSave) commitBtnDuringSave.disabled = isDirty || isCommitting;
+  }
+}
+
+async function handleCommit() {
+  if (!selectedContentItemId || isCommitting) return;
+  if (isEditing && (isDirty || isSaving)) return;
+
+  isCommitting = true;
+  commitFeedback = null;
+
+  const commitBtnEl = document.getElementById('editor-commit-btn');
+  const statusRoEl = document.getElementById('editor-commit-status-ro');
+  const statusEditEl = document.getElementById('editor-save-status');
+
+  if (commitBtnEl) { commitBtnEl.disabled = true; commitBtnEl.textContent = 'Committing...'; }
+  if (isEditing) {
+    if (statusEditEl) { statusEditEl.textContent = 'Committing...'; statusEditEl.className = 'editor-save-status editor-save-status--saving'; }
+  } else {
+    if (statusRoEl) { statusRoEl.textContent = 'Committing...'; statusRoEl.className = 'editor-commit-inline'; }
+  }
+
+  try {
+    const res = await fetch(`/api/content/${encodeURIComponent(selectedContentItemId)}/commit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    const data = await res.json();
+
+    let text, cls;
+    if (data.ok && data.state === 'committed') {
+      text = 'Committed locally. Not pushed.';
+      cls = 'success';
+      loadRepoStatus();
+    } else if (data.state === 'main_blocked') {
+      text = 'Commit is blocked on main. Switch to a branch first.';
+      cls = 'error';
+    } else if (data.state === 'nothing_to_commit') {
+      text = 'No local changes to commit for this item.';
+      cls = 'info';
+    } else {
+      text = data.error || 'Commit failed.';
+      cls = 'error';
+    }
+
+    commitFeedback = { text, cls };
+
+    if (isEditing) {
+      if (statusEditEl) { statusEditEl.textContent = text; statusEditEl.className = `editor-save-status editor-save-status--${cls}`; }
+    } else {
+      if (statusRoEl) { statusRoEl.textContent = text; statusRoEl.className = `editor-commit-inline editor-commit-inline--${cls}`; }
+    }
+  } catch (err) {
+    const text = 'Network error: ' + err.message;
+    commitFeedback = { text, cls: 'error' };
+    if (isEditing) {
+      if (statusEditEl) { statusEditEl.textContent = text; statusEditEl.className = 'editor-save-status editor-save-status--error'; }
+    } else {
+      if (statusRoEl) { statusRoEl.textContent = text; statusRoEl.className = 'editor-commit-inline editor-commit-inline--error'; }
+    }
+  } finally {
+    isCommitting = false;
+    const freshBtn = document.getElementById('editor-commit-btn');
+    if (freshBtn) {
+      freshBtn.textContent = 'Commit locally';
+      freshBtn.disabled = isEditing && isDirty;
+    }
   }
 }
 
@@ -2297,6 +2431,8 @@ async function selectContentItem(id) {
   isDirty = false;
   editFields = null;
   editViewMode = 'write';
+  isCommitting = false;
+  commitFeedback = null;
 
   selectedContentItemId = id;
   selectedLanguage = 'zh';
