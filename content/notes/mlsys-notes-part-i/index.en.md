@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "MLSys 1: Hardware, Memory, Parallelism, and Data Layout"
 date: 2026-05-18
 tags: ["mlsys"]

@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "复分析 3：复积分、路径无关与 Cauchy Theory"
 date: 2026-05-04
 tags: ["complex-analysis", "mathematics"]

@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "MLSys 1：硬件、内存、并行与数据布局"
 date: 2026-05-18
 tags: ["mlsys"]

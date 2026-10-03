@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "算法分析 1：算法设计、正确性与复杂度分析"
 date: 2026-05-06
 tags: ["algorithms", "computer-science"]

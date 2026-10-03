@@ -1,5 +1,6 @@
 ---
-title: "03 子程序与控制抽象"
+hidden: true
+title: "PLP 2：子程序与控制抽象"
 date: 2026-04-23
 tags: ["programming-languages"]
 draft: false
@@ -891,3 +892,4 @@ Subroutines and Control Abstraction 这一章可以用几组问题串起来：
 10. Async programming 如何避免等待时阻塞程序？
 
 这一章的重点是看到"函数"并不是一个纯粹的语法单位。每次调用背后都有 calling convention、stack layout、register discipline、parameter mode 和 control-flow protocol。语言把这些细节包装起来，让程序员可以写 `f(x)`，但实现层面必须精确处理进入、返回、异常、暂停和恢复。
+

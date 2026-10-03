@@ -1,5 +1,6 @@
 ---
-title: "03 Subroutines and Control Abstraction"
+hidden: true
+title: "PLP 2: Subroutines and Control Abstraction"
 date: 2026-04-23
 tags: ["programming-languages"]
 draft: false
@@ -891,3 +892,4 @@ The Subroutines and Control Abstraction chapter can be threaded together with se
 10. How does async programming avoid blocking while waiting?
 
 The key point of this chapter is seeing that a "function" is not a purely syntactic unit. Behind every call are calling conventions, stack layout, register discipline, parameter modes, and control-flow protocols. The language wraps these details so programmers can write `f(x)`, but at the implementation level, entry, return, exceptions, suspension, and resumption must all be precisely handled.
+

@@ -21,6 +21,7 @@ export function initHomeHoverPreview() {
   if (!items.length || layers.length < 2) return;
 
   const intentDelayMs = reduceMotion ? 0 : 35;
+  const boundary = scope.querySelector(".work-grid") || scope;
   let intentTimer = 0;
   let hoverToken = 0;
   let activeItem = null;
@@ -102,7 +103,6 @@ export function initHomeHoverPreview() {
 
   function isClearlyOutsideScope(event) {
     const tolerance = 36;
-    const boundary = scope.querySelector(".work-grid") || scope;
     const rect = boundary.getBoundingClientRect();
     return (
       event.clientX < rect.left - tolerance ||
@@ -131,9 +131,6 @@ export function initHomeHoverPreview() {
 
     const url = item.getAttribute("data-preview");
     if (!url) return;
-
-    // 隐藏 Page Preview，避免重叠！
-    document.dispatchEvent(new CustomEvent("hide-page-preview"));
 
     if (url !== currentUrl) {
       const nextLayerIndex = activeLayerIndex === 0 ? 1 : 0;
@@ -201,7 +198,6 @@ export function initHomeHoverPreview() {
         hidePreview();
       }
     });
-    item.addEventListener("mousemove", schedulePosition);
     item.addEventListener("focusin", () => {
       if (item.hasAttribute("data-preview")) {
         schedulePreview(item);
@@ -220,7 +216,6 @@ export function initHomeHoverPreview() {
   document.addEventListener("pointermove", handleDocumentPointerMove, {
     passive: true,
   });
-  document.addEventListener("hide-home-preview", hidePreview);
   window.addEventListener(
     "resize",
     () => {

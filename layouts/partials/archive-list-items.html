@@ -10,6 +10,10 @@
                     {{- $tagSlugs = $tagSlugs | append (printf "%v" . | urlize) -}}
                 {{- end -}}
             {{- end -}}
+            {{- $firstTag := "" -}}
+            {{- if gt (len $tagSlugs) 0 -}}
+                {{- $firstTag = index $tagSlugs 0 -}}
+            {{- end -}}
             <article class="archive-item" data-archive-year="{{ .Date.Format "2006" }}" data-archive-tags="{{ delimit $tagSlugs "," }}">
                 <div class="item-hover-arrow">
                     {{ partialCached "icons/hover-arrow.html" "hover-arrow" }}

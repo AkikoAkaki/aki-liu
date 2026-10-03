@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "计算理论 1：自动机、语言层级与有限记忆"
 date: 2026-05-05
 tags: ["theory-of-computation", "computer-science"]

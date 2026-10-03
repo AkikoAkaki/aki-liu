@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "复分析 4：Taylor、Laurent Series 与奇点分类"
 date: 2026-05-03
 tags: ["complex-analysis", "mathematics"]

@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "计算理论 5：P、NP 与复杂性类"
 date: 2026-05-01
 tags: ["theory-of-computation", "computer-science"]

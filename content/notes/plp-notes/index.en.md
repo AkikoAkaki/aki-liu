@@ -3,6 +3,7 @@ title: "Notes on Programming Language Design and Implementation"
 date: 2026-04-28
 tags: ["programming-languages"]
 draft: false
+is_series_root: true
 ---
 
 This set of notes is compiled from *Programming Language Pragmatics* course review material, covering type systems, composite types, subroutines, object orientation, functional languages, concurrency, compilation and runtime systems, and other topics.
@@ -21,7 +22,7 @@ Programming language concepts may initially seem abstract, but most are closely 
 
 The goal of these notes is to connect these concepts and reveal the tradeoffs behind language design.
 
-## [01 Type Systems](../plp-notes-01-types/)
+## [01 Type Systems](../plp-notes-part-i/)
 
 Types discusses how a language understands "what" a value is.
 
@@ -37,7 +38,7 @@ Core questions include:
 
 The key point: types are not just variable labels. They simultaneously affect legal operations, error checking, memory representation, code reuse, and abstraction boundaries.
 
-## [02 Composite Types and Memory Layout](../plp-notes-02-composite-types/)
+## [02 Composite Types and Memory Layout](../plp-notes-part-i/)
 
 Composite Types discusses how multiple values are organized into more complex data structures, and how those structures are represented in memory.
 
@@ -54,7 +55,7 @@ Core questions include:
 
 The key point: composite types are language abstractions on the surface, but at the bottom they boil down to object layout, addressing, copying, comparison, and reclamation.
 
-## [03 Subroutines and Control Abstraction](../plp-notes-03-subroutines/)
+## [03 Subroutines and Control Abstraction](../plp-notes-part-ii/)
 
 Subroutines discusses how function calls encapsulate a block of code into a control structure that can be entered, returned from, and nested.
 
@@ -71,7 +72,7 @@ Core questions include:
 
 The key point: function calls are not mere syntactic sugar. Behind every call are stack frames, registers, parameter passing, return addresses, and exception handling protocols.
 
-## [04 Object Orientation and Dynamic Dispatch](../plp-notes-04-oo/)
+## [04 Object Orientation and Dynamic Dispatch](../plp-notes-part-iii/)
 
 Object Orientation discusses how objects encapsulate state and behavior together, and how the runtime selects method implementations based on an object's actual type.
 
@@ -90,7 +91,7 @@ Core questions include:
 
 The key point: OOP is not just class syntax, but an entire object model, abstraction boundaries, and runtime dispatch mechanism.
 
-## [05 Functional Languages](../plp-notes-05-functional/)
+## [05 Functional Languages](../plp-notes-part-iii/)
 
 Functional Languages discusses how programs are organized when functions, expressions, and value transformations are placed at the center of the language.
 
@@ -108,7 +109,7 @@ Core questions include:
 
 The key point: functional languages organize computation as expressions and function composition, and make programs easier to reason about, test, and execute concurrently by reducing mutable state.
 
-## [06 Concurrency](../plp-notes-06-concurrency/)
+## [06 Concurrency](../plp-notes-part-iv/)
 
 Concurrency discusses how language and runtime schedule multiple simultaneously advancing control flows within a program and protect shared state.
 
@@ -127,7 +128,7 @@ Core questions include:
 
 The key point: the difficulty of concurrent programming is not just doing many things at once, but that multiple control flows share resources, interleave execution, wait for conditions, and compete for CPU.
 
-## [07 Building and Running Programs](../plp-notes-07-building/)
+## [07 Building and Running Programs](../plp-notes-part-iv/)
 
 Building and Running Programs examines compile-time and runtime together, discussing how source code becomes executable programs, and how runtimes, VMs, and JITs continue to support language semantics.
 

@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "计算理论 2：CFG、PDA 与结构化语言"
 date: 2026-05-04
 tags: ["theory-of-computation", "computer-science"]

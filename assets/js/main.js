@@ -6,13 +6,8 @@ import { initExpandingMenu, initMagneticHover, initSlotLinks } from "./modules/m
 import { initExpandableCards, initFooterReveal, initTableWrapping } from "./modules/post-enhancements.js";
 import { initPrefetcher } from "./modules/prefetch.js";
 import { initSearchPalette } from "./modules/search-palette.js";
-import { initSearchPlaceholder } from "./modules/search-placeholder.js";
-import { initThemePersistence } from "./modules/theme.js";
-
-initThemePersistence();
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Initialization order mirrors the former single-file DOMContentLoaded sequence.
   initScrollReveal();
   initAboutImageSequence();
   initAboutFlightAndDrag();
@@ -27,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initExpandingMenu();
   initTableWrapping();
-  initSearchPlaceholder();
   initArchiveFilter();
   initExpandableCards();
   initHomeHoverPreview();

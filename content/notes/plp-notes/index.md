@@ -3,6 +3,7 @@ title: "Programming Language Design and Implementation 笔记"
 date: 2026-04-28
 tags: ["programming-languages"]
 draft: false
+is_series_root: true
 ---
 
 这组 notes 整理自 *Programming Language Pragmatics* 课程复习内容，覆盖类型系统、复合类型、子程序、面向对象、函数式语言、并发、编译与运行时系统等主题。
@@ -21,7 +22,7 @@ draft: false
 
 这组 notes 的目标是把这些概念串起来，看清语言设计背后的 tradeoffs。
 
-## [01 类型系统](../plp-notes-01-types/)
+## [01 类型系统](../plp-notes-part-i/)
 
 Types 这一篇讨论语言如何理解一个值"是什么"。
 
@@ -37,7 +38,7 @@ Types 这一篇讨论语言如何理解一个值"是什么"。
 
 这一篇的重点是：类型不只是变量标签。它同时影响合法操作、错误检查、内存表示、代码复用和抽象边界。
 
-## [02 复合类型与内存布局](../plp-notes-02-composite-types/)
+## [02 复合类型与内存布局](../plp-notes-part-i/)
 
 Composite Types 这一篇讨论多个值如何被组织成更复杂的数据结构，以及这些结构在内存中如何表示。
 
@@ -54,7 +55,7 @@ Composite Types 这一篇讨论多个值如何被组织成更复杂的数据结�
 
 这一篇的重点是：复合类型表面上是语言抽象，底层则会落到对象布局、寻址、复制、比较和回收。
 
-## [03 子程序与控制抽象](../plp-notes-03-subroutines/)
+## [03 子程序与控制抽象](../plp-notes-part-ii/)
 
 Subroutines 这一篇讨论函数调用如何把一段代码封装成可进入、可返回、可嵌套的控制结构。
 
@@ -71,7 +72,7 @@ Subroutines 这一篇讨论函数调用如何把一段代码封装成可进入�
 
 这一篇的重点是：函数调用不是单纯的语法糖。每次调用背后都有栈帧、寄存器、参数传递、返回地址和异常处理协议。
 
-## [04 面向对象与动态分派](../plp-notes-04-oo/)
+## [04 面向对象与动态分派](../plp-notes-part-iii/)
 
 Object Orientation 这一篇讨论对象如何把状态和行为封装在一起，以及运行时如何根据对象真实类型选择方法实现。
 
@@ -90,7 +91,7 @@ Object Orientation 这一篇讨论对象如何把状态和行为封装在一起�
 
 这一篇的重点是：OOP 不只是 class 语法，而是一整套对象模型、抽象边界和运行时分派机制。
 
-## [05 函数式语言](../plp-notes-05-functional/)
+## [05 函数式语言](../plp-notes-part-iii/)
 
 Functional Languages 这一篇讨论如果把函数、表达式和值的变换放在语言中心，程序会如何组织。
 
@@ -108,7 +109,7 @@ Functional Languages 这一篇讨论如果把函数、表达式和值的变换�
 
 这一篇的重点是：函数式语言把计算组织成表达式和函数组合，并通过减少可变状态让程序更容易推理、测试和并发执行。
 
-## [06 并发](../plp-notes-06-concurrency/)
+## [06 并发](../plp-notes-part-iv/)
 
 Concurrency 这一篇讨论当程序中有多个控制流同时推进时，语言和运行时如何调度它们，并保护共享状态。
 
@@ -127,7 +128,7 @@ Concurrency 这一篇讨论当程序中有多个控制流同时推进时，语�
 
 这一篇的重点是：并发编程的难点不只是同时做很多事，而是多个控制流会共享资源、交错执行、等待条件并争夺 CPU。
 
-## [07 构建与运行程序](../plp-notes-07-building/)
+## [07 构建与运行程序](../plp-notes-part-iv/)
 
 Building and Running Programs 这一篇把编译期和运行期放在一起看，讨论源代码如何变成可执行程序，以及 runtime / VM / JIT 如何继续支撑语言语义。
 

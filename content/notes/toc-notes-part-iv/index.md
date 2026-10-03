@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "计算理论 4：不可判定性、对角化与归约"
 date: 2026-05-02
 tags: ["theory-of-computation", "computer-science"]

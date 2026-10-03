@@ -14,6 +14,7 @@ export function initArchiveFilter() {
 
       let currentHoverNode = null;
       let leaveTimeout = null;
+      let hoverTimeout = null;
       let renderToken = 0;
       let filterToken = 0;
 
@@ -92,6 +93,7 @@ export function initArchiveFilter() {
 
       function clearPreview() {
         if (leaveTimeout) clearTimeout(leaveTimeout);
+        if (hoverTimeout) clearTimeout(hoverTimeout);
         currentHoverNode = null;
         renderToken++;
         if (!previewContainer) return;
@@ -107,7 +109,9 @@ export function initArchiveFilter() {
           if (!currentHoverNode) return;
           if (resizeRaf) cancelAnimationFrame(resizeRaf);
           resizeRaf = requestAnimationFrame(() => {
-            if (currentHoverNode) renderForItem(currentHoverNode);
+            if (currentHoverNode) {
+              fitPreview(renderToken);
+            }
           });
         });
         const rightCols = document.querySelector(".archive-right-cols");
@@ -118,6 +122,7 @@ export function initArchiveFilter() {
         item.addEventListener("mouseenter", () => {
           if (item.hidden || !previewContainer) return;
           if (leaveTimeout) clearTimeout(leaveTimeout);
+          if (hoverTimeout) clearTimeout(hoverTimeout);
 
           if (currentHoverNode === item) {
             previewContainer.style.opacity = "1";
@@ -126,12 +131,17 @@ export function initArchiveFilter() {
 
           currentHoverNode = item;
           previewContainer.style.opacity = "0";
-          setTimeout(() => {
+          hoverTimeout = setTimeout(() => {
+            hoverTimeout = null;
             if (currentHoverNode === item) renderForItem(item);
           }, 100);
         });
 
         item.addEventListener("mouseleave", () => {
+          if (hoverTimeout) {
+            clearTimeout(hoverTimeout);
+            hoverTimeout = null;
+          }
           if (currentHoverNode === item) {
             leaveTimeout = setTimeout(() => {
               previewContainer.style.opacity = "0";
@@ -179,7 +189,8 @@ export function initArchiveFilter() {
         );
         const initialTags = parseList(archiveList.dataset.archiveInitialTags)
           .map(normalizeToken)
-          .filter((tag) => validTags.has(tag));
+          .filter(Boolean);
+        const allowedURLTags = new Set([...validTags, ...initialTags]);
 
         function normalizeToken(value) {
           return String(value || "")
@@ -211,7 +222,7 @@ export function initArchiveFilter() {
           const params = new URLSearchParams(window.location.search);
           const urlTags = parseList(params.get("tags"))
             .map(normalizeToken)
-            .filter((tag) => validTags.has(tag));
+            .filter((tag) => allowedURLTags.has(tag));
           const urlYears = parseList(params.get("years"))
             .map(normalizeYear)
             .filter((year) => validYears.has(year));

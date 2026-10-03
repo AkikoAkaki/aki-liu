@@ -25,7 +25,6 @@ export function initSearchPalette() {
   let selectedIdx = 0;
   let currentItems = [];
   let currentTokens = [];
-  let lastQuery = "";
 
   // ---------- Index loading ----------
   function loadIndex() {
@@ -50,10 +49,6 @@ export function initSearchPalette() {
     return indexPromise;
   }
 
-  function warmIndex() {
-    loadIndex();
-  }
-
   // ---------- Tokenization ----------
   function isCJK(s) {
     return /[㐀-鿿豈-﫿]/.test(s);
@@ -70,9 +65,7 @@ export function initSearchPalette() {
         else
           for (let i = 0; i < part.length - 1; i++)
             tokens.push(part.substring(i, i + 2));
-      } else if (part.length >= 2) {
-        tokens.push(part);
-      } else if (part.length === 1) {
+      } else {
         tokens.push(part);
       }
     }
@@ -106,9 +99,8 @@ export function initSearchPalette() {
     return total;
   }
 
-  function searchRecords(query) {
+  function searchRecords(tokens) {
     if (!indexCache) return [];
-    const tokens = tokenize(query);
     if (!tokens.length) return [];
     const hits = [];
     for (const rec of indexCache) {
@@ -319,7 +311,6 @@ export function initSearchPalette() {
   };
 
   function render(query) {
-    lastQuery = query;
     const trimmed = (query || "").trim();
     currentTokens = [];
     let mode = "search";
@@ -341,7 +332,7 @@ export function initSearchPalette() {
     } else {
       mode = "search";
       currentTokens = tokenize(trimmed);
-      const recs = searchRecords(trimmed);
+      const recs = searchRecords(currentTokens);
       items = recs.map((r) => ({ type: "result", record: r }));
       const ctxCmds = buildCommands(trimmed).slice(0, 1);
       if (ctxCmds.length && items.length) {
@@ -502,9 +493,7 @@ export function initSearchPalette() {
       if (!li) return;
       const idx = parseInt(li.dataset.idx, 10);
       if (Number.isFinite(idx) && idx !== selectedIdx) {
-        selectedIdx = idx;
-        renderList();
-        renderPreview();
+        selectItem(idx);
       }
     });
 
@@ -528,9 +517,13 @@ export function initSearchPalette() {
     }
   }
 
-  function scrollSelectedIntoView() {
-    const el = listEl.querySelector(".search-result.is-selected");
-    if (el) el.scrollIntoView({ block: "nearest" });
+  function selectItem(idx, scroll = false) {
+    listEl.children[selectedIdx]?.classList.remove("is-selected");
+    selectedIdx = idx;
+    const el = listEl.children[selectedIdx];
+    el.classList.add("is-selected");
+    renderPreview();
+    if (scroll) el.scrollIntoView({ block: "nearest" });
   }
 
   // ---------- Open / close ----------
@@ -603,18 +596,12 @@ export function initSearchPalette() {
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       if (currentItems.length && selectedIdx < currentItems.length - 1) {
-        selectedIdx++;
-        renderList();
-        renderPreview();
-        scrollSelectedIntoView();
+        selectItem(selectedIdx + 1, true);
       }
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (selectedIdx > 0) {
-        selectedIdx--;
-        renderList();
-        renderPreview();
-        scrollSelectedIntoView();
+        selectItem(selectedIdx - 1, true);
       }
     } else if (e.key === "Enter") {
       e.preventDefault();
@@ -633,9 +620,9 @@ export function initSearchPalette() {
   });
 
   triggers.forEach((t) => {
-    t.addEventListener("pointerenter", warmIndex, { passive: true });
-    t.addEventListener("pointerdown", warmIndex, { passive: true });
-    t.addEventListener("focus", warmIndex);
+    t.addEventListener("pointerenter", loadIndex, { passive: true });
+    t.addEventListener("pointerdown", loadIndex, { passive: true });
+    t.addEventListener("focus", loadIndex);
 
     t.addEventListener("click", (e) => {
       e.preventDefault();

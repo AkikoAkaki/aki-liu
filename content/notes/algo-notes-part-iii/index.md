@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "算法分析 3：Greedy、局部选择与正确性证明"
 date: 2026-05-04
 tags: ["algorithms", "greedy"]

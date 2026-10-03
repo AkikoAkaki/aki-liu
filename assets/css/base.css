@@ -264,6 +264,7 @@
 /* 基础重置 */
 html {
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
 }
 
 body {

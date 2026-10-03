@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "复分析 5：Residue Theorem 与复积分降维"
 date: 2026-05-02
 tags: ["complex-analysis", "mathematics"]

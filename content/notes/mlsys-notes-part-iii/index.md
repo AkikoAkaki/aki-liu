@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "MLSys 3：编译器栈、推理引擎、量化与系统前沿"
 date: 2026-06-07
 tags: ["mlsys"]

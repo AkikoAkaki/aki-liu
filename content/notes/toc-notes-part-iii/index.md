@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "计算理论 3：图灵机、可判定性与计算边界"
 date: 2026-05-03
 tags: ["theory-of-computation", "computer-science"]

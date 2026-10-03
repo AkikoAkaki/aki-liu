@@ -9,16 +9,6 @@ $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $Warnings = New-Object System.Collections.Generic.List[string]
 $Failures = New-Object System.Collections.Generic.List[string]
 
-function Add-Warning {
-    param([string]$Message)
-    $Warnings.Add($Message) | Out-Null
-}
-
-function Add-Failure {
-    param([string]$Message)
-    $Failures.Add($Message) | Out-Null
-}
-
 function Get-RelativePath {
     param(
         [string]$Root,
@@ -94,7 +84,7 @@ function Get-StagedPaths {
     try {
         $output = & git diff --cached --name-only 2>&1 | ForEach-Object { "$_" }
         if ($LASTEXITCODE -ne 0) {
-            Add-Warning ("Could not inspect staged files: {0}" -f (($output -join " ").Trim()))
+            $Warnings.Add(("Could not inspect staged files: {0}" -f (($output -join " ").Trim())))
             return @()
         }
 
@@ -117,7 +107,7 @@ function Test-StagedPaths {
     foreach ($path in $stagedPaths) {
         foreach ($prefix in $generatedPrefixes) {
             if ($path.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase) -or $path.Equals($prefix.TrimEnd("/"), [System.StringComparison]::OrdinalIgnoreCase)) {
-                Add-Warning "Generated path is staged: $path"
+                $Warnings.Add("Generated path is staged: $path")
                 break
             }
         }
@@ -160,7 +150,7 @@ function Get-FrontMatter {
 function Test-MicroblogFrontMatter {
     $microblogRoot = Join-Path $ProjectRoot "content\microblog"
     if (-not (Test-Path -LiteralPath $microblogRoot)) {
-        Add-Failure "Missing content/microblog directory."
+        $Failures.Add("Missing content/microblog directory.")
         return 0
     }
 
@@ -168,7 +158,7 @@ function Test-MicroblogFrontMatter {
     foreach ($file in $files) {
         $relativePath = Normalize-RepoPath (Get-RelativePath -Root $ProjectRoot -Path $file.FullName)
         if ($relativePath -notmatch "^content/microblog/(\d{4})/(\d{2})/(\d{2})-(\d{6})/index\.md$") {
-            Add-Failure "Invalid microblog path shape: $relativePath"
+            $Failures.Add("Invalid microblog path shape: $relativePath")
             continue
         }
 
@@ -178,30 +168,30 @@ function Test-MicroblogFrontMatter {
             $frontMatter = Get-FrontMatter -Path $file.FullName
         }
         catch {
-            Add-Failure ("{0}: {1}" -f $relativePath, $_.Exception.Message)
+            $Failures.Add(("{0}: {1}" -f $relativePath, $_.Exception.Message))
             continue
         }
 
         foreach ($requiredField in @("date", "slug", "draft")) {
             if (-not $frontMatter.ContainsKey($requiredField) -or [string]::IsNullOrWhiteSpace([string]$frontMatter[$requiredField])) {
-                Add-Failure "$relativePath missing required frontmatter field: $requiredField"
+                $Failures.Add("$relativePath missing required frontmatter field: $requiredField")
             }
         }
 
         if ($frontMatter.ContainsKey("slug")) {
             $slug = Normalize-YamlScalar ([string]$frontMatter["slug"])
             if ($slug -ne $expectedSlug) {
-                Add-Failure "$relativePath slug '$slug' does not match directory time '$expectedSlug'"
+                $Failures.Add("$relativePath slug '$slug' does not match directory time '$expectedSlug'")
             }
         }
 
         if ($frontMatter.ContainsKey("date")) {
             $date = Normalize-YamlScalar ([string]$frontMatter["date"])
             if ($date -notmatch "(Z|[+-]\d{2}:\d{2})$") {
-                Add-Failure "$relativePath date is missing a timezone offset: $date"
+                $Failures.Add("$relativePath date is missing a timezone offset: $date")
             }
             elseif ($date -notmatch "\+08:00$") {
-                Add-Failure "$relativePath date offset is not +08:00: $date"
+                $Failures.Add("$relativePath date offset is not +08:00: $date")
             }
         }
     }

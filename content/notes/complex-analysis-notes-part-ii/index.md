@@ -1,4 +1,5 @@
 ---
+hidden: true
 title: "复分析 2：解析函数、C-R 方程与调和函数"
 date: 2026-05-05
 tags: ["complex-analysis", "mathematics"]

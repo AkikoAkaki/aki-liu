@@ -92,10 +92,10 @@ function splitInlineArray(value) {
     items.push(current.trim());
   }
 
-  return items.map(item => parseFrontMatterValue('', item)).filter(item => item !== '');
+  return items.map(parseFrontMatterValue).filter(item => item !== '');
 }
 
-function parseFrontMatterValue(_key, rawValue) {
+function parseFrontMatterValue(rawValue) {
   const value = rawValue.trim();
   if (!value) return '';
   if (value.startsWith('[') && value.endsWith(']')) return splitInlineArray(value);
@@ -112,7 +112,7 @@ function parseYamlFrontMatter(rawFrontmatter) {
     if (!trimmed || trimmed.startsWith('#')) return;
 
     if (pendingArrayKey && /^\s*-\s+/.test(line)) {
-      data[pendingArrayKey].push(parseFrontMatterValue(pendingArrayKey, line.replace(/^\s*-\s+/, '')));
+      data[pendingArrayKey].push(parseFrontMatterValue(line.replace(/^\s*-\s+/, '')));
       return;
     }
 
@@ -132,7 +132,7 @@ function parseYamlFrontMatter(rawFrontmatter) {
       return;
     }
 
-    data[key] = parseFrontMatterValue(key, rawValue);
+    data[key] = parseFrontMatterValue(rawValue);
   });
 
   return data;
@@ -151,7 +151,7 @@ function parseTomlFrontMatter(rawFrontmatter) {
     const key = line.slice(0, separatorIndex).trim();
     if (!KNOWN_FRONTMATTER_FIELDS.has(key)) return;
 
-    data[key] = parseFrontMatterValue(key, line.slice(separatorIndex + 1));
+    data[key] = parseFrontMatterValue(line.slice(separatorIndex + 1));
   });
 
   return data;

@@ -1,9 +1,11 @@
 {{ define "sidebar-left" }}
 {{- $regularPages := where .Pages "Kind" "page" -}}
+{{- $regularPages = where $regularPages "Params.hidden" "!=" true -}}
 {{- if and (eq .Language.Lang "en") (eq (len $regularPages) 0) -}}
     {{- $zhSection := .Sites.Default.GetPage "section" .Section -}}
     {{- if $zhSection -}}
         {{- $regularPages = where $zhSection.Pages "Kind" "page" -}}
+        {{- $regularPages = where $regularPages "Params.hidden" "!=" true -}}
     {{- end -}}
 {{- end -}}
 {{- .Store.Set "regularPages" $regularPages -}}
