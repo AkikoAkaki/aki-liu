@@ -8,7 +8,7 @@ export function initSlotLinks() {
   if (!canHover || reduceMotion) return;
 
   const links = document.querySelectorAll(
-    ".bio-text a, .now-section a, .connect-section a:not(.connect-pill), .af-now-prose a",
+    ".bio-text a, .now-section a, .af-now-prose a",
   );
 
   links.forEach((link) => {
@@ -31,16 +31,11 @@ export function initSlotLinks() {
     s2.setAttribute("aria-hidden", "true");
 
     link.innerHTML = "";
-    if (link.matches(".bio-text a, .now-section a, .af-now-prose a")) {
-      const mask = document.createElement("span");
-      mask.className = "link-slot-mask";
-      mask.appendChild(s1);
-      mask.appendChild(s2);
-      link.appendChild(mask);
-    } else {
-      link.appendChild(s1);
-      link.appendChild(s2);
-    }
+    const mask = document.createElement("span");
+    mask.className = "link-slot-mask";
+    mask.appendChild(s1);
+    mask.appendChild(s2);
+    link.appendChild(mask);
     link.classList.add("link-slot");
   });
 }
@@ -62,7 +57,6 @@ export function initMagneticHover(elements, opts) {
   elements.forEach((el) => {
     const state = {
       active: false,
-      settling: false,
       rect: null,
       rafId: 0,
       current: {
@@ -215,7 +209,6 @@ export function initMagneticHover(elements, opts) {
 
       state.rafId = 0;
       if (!state.active) {
-        state.settling = false;
         el.classList.remove("is-settling");
         resetVars();
       }
@@ -238,7 +231,6 @@ export function initMagneticHover(elements, opts) {
         return;
 
       state.active = true;
-      state.settling = false;
       state.rect = el.getBoundingClientRect();
       updateTarget(event);
 
@@ -264,7 +256,6 @@ export function initMagneticHover(elements, opts) {
 
     el.addEventListener("pointerleave", () => {
       state.active = false;
-      state.settling = true;
       state.rect = null;
       state.target.x = 0;
       state.target.y = 0;
@@ -291,7 +282,6 @@ export function resetMagneticHover(elements) {
     }
     if (state) {
       state.active = false;
-      state.settling = false;
       state.rect = null;
       Object.keys(state.current).forEach((key) => {
         state.current[key] = 0;

@@ -10,10 +10,6 @@
                     {{- $tagSlugs = $tagSlugs | append (printf "%v" . | urlize) -}}
                 {{- end -}}
             {{- end -}}
-            {{- $firstTag := "" -}}
-            {{- if gt (len $tagSlugs) 0 -}}
-                {{- $firstTag = index $tagSlugs 0 -}}
-            {{- end -}}
             <article class="archive-item" data-archive-year="{{ .Date.Format "2006" }}" data-archive-tags="{{ delimit $tagSlugs "," }}">
                 <div class="item-hover-arrow">
                     {{ partialCached "icons/hover-arrow.html" "hover-arrow" }}
@@ -36,7 +32,7 @@
                 </div>
 
                 {{/* Consumed verbatim by assets/js/modules/archive-filter.js hover preview. */}}
-                <div class="item-preview-data" data-href="{{ .RelPermalink }}" style="display: none;">
+                <div class="item-preview-data" style="display: none;">
                     <h4 class="preview-title">{{ .Title }}</h4>
                     <div class="preview-summary raw-content-preview">
                         {{ .Content | safeHTML | truncate 800 }}

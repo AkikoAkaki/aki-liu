@@ -3,19 +3,7 @@
 {{- $regularPages := where .Site.RegularPages "Section" "in" $mainSections -}}
 {{- $regularPages = where $regularPages "Params.hidden" "!=" true -}}
 {{- .Store.Set "regularPages" $regularPages -}}
-{{- $tagCounts := dict -}}
-{{- range $regularPages -}}
-    {{- range .Params.tags -}}
-        {{- $name := printf "%v" . -}}
-        {{- $current := index $tagCounts $name | default 0 -}}
-        {{- $tagCounts = merge $tagCounts (dict $name (add $current 1)) -}}
-    {{- end -}}
-{{- end -}}
-{{- $tagSlice := slice -}}
-{{- range $name, $count := $tagCounts -}}
-    {{- $tagSlice = $tagSlice | append (dict "name" $name "count" $count) -}}
-{{- end -}}
-{{- $tagSlice = sort $tagSlice "count" "desc" -}}
+{{- $tagSlice := partial "tag-sidebar-data.html" (dict "pages" $regularPages) -}}
 {{- $years := slice -}}
 {{- range $regularPages.GroupByPublishDate "2006" -}}
     {{- $years = $years | append .Key -}}

@@ -669,36 +669,6 @@ body {
   font-size: 13px;
   padding: 24px;
 }
-.detail-shell {
-  min-height: 650px;
-  display: flex;
-  flex-direction: column;
-}
-.detail-header {
-  padding: 28px 30px 20px;
-  border-bottom: 1px solid #e6ecef;
-  background: #fff;
-}
-.detail-title {
-  font-size: 22px;
-  line-height: 1.3;
-  color: #18242c;
-  font-weight: 650;
-  letter-spacing: 0;
-}
-.detail-title-en {
-  margin-top: 5px;
-  color: #6b7c86;
-  font-size: 13px;
-  line-height: 1.5;
-}
-.detail-meta {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  flex-wrap: wrap;
-  margin-top: 13px;
-}
 .detail-url-row {
   margin-top: 14px;
   display: flex;
@@ -733,19 +703,6 @@ body {
   background: #f4f8fa;
   border-color: #bfd0d9;
 }
-.detail-body {
-  overflow-y: auto;
-  max-height: 475px;
-  padding: 24px 30px 30px;
-}
-.detail-section-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .14em;
-  color: #9aa7af;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
 .detail-markdown {
   color: #334155;
   font-size: 14px;
@@ -779,19 +736,6 @@ body {
   border-radius: 7px;
   margin: 10px 0;
 }
-.detail-divider {
-  border: none;
-  border-top: 1px dashed #dbe3e7;
-  margin: 24px 0;
-}
-.detail-path {
-  margin-top: 18px;
-  color: #9aa7af;
-  font-size: 11px;
-  font-family: 'Menlo', 'Consolas', monospace;
-  word-break: break-all;
-}
-
 /* -- Content Studio Editor View -- */
 .editor-view-shell {
   display: flex;
@@ -1282,12 +1226,10 @@ body {
     display: block;
   }
   .library-list,
-  .detail-body,
   .editor-view-body {
     max-height: none;
   }
   .detail-empty,
-  .detail-shell,
   .editor-view-shell,
   #library-container {
     min-height: auto;
@@ -1614,7 +1556,6 @@ let pushFeedback = null; // { text, cls, checkOutput? } — persists across re-r
 function setupMarked() {
   if (typeof marked === 'undefined') return;
   const renderer = new marked.Renderer();
-  const origImage = renderer.image.bind(renderer);
   renderer.image = function(href, title, text) {
     const src = /^https?:\/\//.test(href) ? href : `/uploads/${href}`;
     return `<img src="${src}" alt="${text || ''}" title="${title || ''}">`;
@@ -3102,6 +3043,7 @@ function clearStatus() {
 }
 
 publishBtn.addEventListener('click', async () => {
+  const wasEditing = Boolean(editingRelPath);
   const content = editor.value.trim();
   if (currentTab === 'microblog' && !content) {
     editor.focus();
@@ -3156,6 +3098,12 @@ publishBtn.addEventListener('click', async () => {
     const data = await res.json();
 
     if (data.ok) {
+      if (wasEditing && selectedPost?.relPath === payload.relPath) {
+        selectedPost = null;
+        mPlaceholder.style.display = 'block';
+        mContent.style.display = 'none';
+        mActions.style.display = 'none';
+      }
       publishBtn.textContent = '成功';
       publishBtn.classList.add('success');
       if (data.message) showSuccess(data.message);
@@ -3165,7 +3113,7 @@ publishBtn.addEventListener('click', async () => {
         publishBtn.textContent = '发布 ↑';
         publishBtn.className = '';
         loadTags();
-        if (editingRelPath) {
+        if (wasEditing && currentTab === payload.type) {
           switchTab('manager');
         } else {
           switchTab(currentTab);

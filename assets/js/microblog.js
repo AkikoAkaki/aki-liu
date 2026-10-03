@@ -137,7 +137,6 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         const done = nextIdx >= entries.length;
         const sentinel = column.querySelector('[data-mb-sentinel]');
         if (sentinel) sentinel.dataset.mbDone = done ? 'true' : 'false';
-        return done;
     }
 
     function hydrateColumn(column, tag) {

@@ -1,12 +1,5 @@
 {{ define "main" }}
 {{- $section := .Site.GetPage "section" "microblog" -}}
-{{- $images := slice -}}
-{{- with .Resources.ByType "image" -}}
-    {{- range .ByName -}}
-        {{- $images = $images | append . -}}
-    {{- end -}}
-{{- end -}}
-
 {{- $newer := .PrevInSection -}}
 {{- $older := .NextInSection -}}
 

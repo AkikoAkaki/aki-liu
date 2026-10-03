@@ -56,17 +56,4 @@ export function initFluidEngine() {
   }
 
   document.addEventListener("visibilitychange", handleVisibilityChange);
-
-  // Smoothly interpolate background if data-theme toggles at runtime
-  const themeObserver = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.attributeName === "data-theme") {
-        engine.updateThemeColor();
-      }
-    });
-  });
-  themeObserver.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-theme"],
-  });
 }

@@ -18,7 +18,6 @@ export class FluidEngine {
         this.vx = 0; this.vy = 0;
         this.tx = 0; this.ty = 0; this.cx = 0; this.cy = 0;
         this.hover = 0; this.targetHover = 0;
-        this.bg = [250 / 255, 250 / 255, 250 / 255];
         
         this.startPerf = performance.now();
         
@@ -60,6 +59,7 @@ export class FluidEngine {
     setupWebGL() {
         this.gl = this.canvas.getContext('webgl');
         if (!this.gl) return;
+        this.gl.clearColor(0, 0, 0, 0);
         
         const vert = [
             'attribute vec2 a_pos;',
@@ -73,7 +73,6 @@ export class FluidEngine {
             'uniform vec2  u_mouse;',
             'uniform vec2  u_vel;',
             'uniform float u_hover;',
-            'uniform vec3  u_bg;',
             
             'vec2 hash(vec2 p){',
             '  p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));',
@@ -141,7 +140,6 @@ export class FluidEngine {
         this.uMouse = this.gl.getUniformLocation(this.prog, 'u_mouse');
         this.uVel   = this.gl.getUniformLocation(this.prog, 'u_vel');
         this.uHover = this.gl.getUniformLocation(this.prog, 'u_hover');
-        this.uBg    = this.gl.getUniformLocation(this.prog, 'u_bg');
     }
     
     handleContextLost(e) {
@@ -160,15 +158,6 @@ export class FluidEngine {
         if (!this.isPaused && !this.isDestroyed) {
             this.start();
         }
-    }
-    
-    updateThemeColor() {
-        const raw = getComputedStyle(document.documentElement).getPropertyValue('--bg-rgb').trim();
-        const parts = raw.split(',').map(val => Number(val.trim()));
-        if (parts.length >= 3 && parts.every(val => Number.isFinite(val))) {
-            this.bg = [parts[0] / 255, parts[1] / 255, parts[2] / 255];
-        }
-        if (this.gl) this.gl.clearColor(0, 0, 0, 0);
     }
     
     handleMouseMove(e) {
@@ -200,7 +189,6 @@ export class FluidEngine {
     
     doResize() {
         if (!this.gl || !this.canvas || !this.wrapper || !this.intro) return;
-        this.updateThemeColor();
         const wr = this.wrapper.getBoundingClientRect();
         const ir = this.intro.getBoundingClientRect();
         const cw = wr.width  * 1.55;
@@ -270,7 +258,6 @@ export class FluidEngine {
         this.gl.uniform2f(this.uMouse, this.mx, this.my);
         this.gl.uniform2f(this.uVel,   this.vx, this.vy);
         this.gl.uniform1f(this.uHover, this.hover);
-        this.gl.uniform3f(this.uBg,    this.bg[0], this.bg[1], this.bg[2]);
         
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);

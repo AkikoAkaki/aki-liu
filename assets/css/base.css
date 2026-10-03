@@ -722,8 +722,7 @@ body.menu-cursor-hidden * {
    Shared magnetic hover: tag chips & cards
    ========================================================================== */
 
-.mb-tag-chip,
-.mb-card-tag {
+.mb-tag-chip {
     position: relative;
     overflow: hidden;
     --menu-magnet-x: 0px;
@@ -737,14 +736,11 @@ body.menu-cursor-hidden * {
 }
 
 .mb-tag-chip.is-magnetic,
-.mb-tag-chip.is-settling,
-.mb-card-tag.is-magnetic,
-.mb-card-tag.is-settling {
+.mb-tag-chip.is-settling {
     transition: opacity 0.18s ease;
 }
 
-.mb-tag-chip::before,
-.mb-card-tag::before {
+.mb-tag-chip::before {
     content: "";
     position: absolute;
     z-index: -1;
@@ -767,8 +763,7 @@ body.menu-cursor-hidden * {
     will-change: transform, opacity, left, top;
 }
 
-.mb-tag-chip.is-magnetic,
-.mb-card-tag.is-magnetic {
+.mb-tag-chip.is-magnetic {
     background-color: transparent;
     border-color: rgba(var(--text-rgb), 0.18);
     transition:
@@ -777,8 +772,7 @@ body.menu-cursor-hidden * {
         opacity 0.18s ease;
 }
 
-.mb-tag-chip.is-settling,
-.mb-card-tag.is-settling {
+.mb-tag-chip.is-settling {
     transition:
         background-color 0.25s ease,
         border-color 0.25s ease,
@@ -908,8 +902,7 @@ body.menu-cursor-hidden * {
 
     /* Completely disable unused hover-glow backdrop filters on mobile to eliminate severe layer rendering overhead */
     .menu-link::before,
-    .mb-tag-chip::before,
-    .mb-card-tag::before {
+    .mb-tag-chip::before {
         display: none !important;
     }
 }

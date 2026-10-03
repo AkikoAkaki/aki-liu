@@ -10,8 +10,7 @@ add $latest.build.zhPages $latest.build.enPages }} {{ $zhPct := printf "%.1f"
 $latest.build.enPages) (float $totalPages)) 100) }} {{ $cssBundleKB := printf
 "%.1f" (div (float $latest.quality.cssBundleBytes) 1024.0) }} {{ $cacheRatio :=
 $lastBuild.cacheRatio }} {{ $cacheRatioStr := printf "%.2f" $cacheRatio }} {{
-$totalCacheCalls := math.Round (div (mul (float
-$latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
+$totalCacheCalls := $latest.templates.aggregateCalls }} {{ $ringCirc := 163.36
 }} {{ $ringOffset := printf "%.2f" (mul $ringCirc (sub 1.0 (div $cacheRatio
 100.0))) }}
 
@@ -768,13 +767,12 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
                             <span class="d-text">
                                 Internal link audit
                                 <span class="desc"
-                                    >{{ if $hasBroken }}{{
+                                    >{{
                                     $latest.quality.brokenRootRelativeLinkCount
                                     }} broken root-relative {{ if eq
                                     $latest.quality.brokenRootRelativeLinkCount
                                     1 }}reference{{ else }}references{{ end }}
-                                    found.{{ else }}All root-relative links
-                                    resolve cleanly.{{ end }}</span
+                                    found.</span
                                 >
                             </span>
                             <span class="d-meta">Current</span>
@@ -1164,8 +1162,6 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
       })();
 
       /* ---- Trend chart ---- */
-      let currentMetric = 'build';
-
       function getData(metric) {
         return H.map(d => metric === 'build' ? d.buildMs : (d.zhPages || 0) + (d.enPages || 0));
       }
@@ -1182,9 +1178,15 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
         document.getElementById('trend-range').textContent = `min ${min}${unit} / max ${max}${unit}`.toUpperCase();
       }
 
+      let chartInteractionCleanup = null;
+
       function drawChart(metric) {
         const svg = document.getElementById('trend-chart');
         if (!svg) return;
+        if (chartInteractionCleanup) {
+          chartInteractionCleanup();
+          chartInteractionCleanup = null;
+        }
         const data = getData(metric);
         const unit = metric === 'build' ? 'ms' : '';
         updateStats(data, unit);
@@ -1260,7 +1262,7 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
         </g>`;
 
         /* x axis labels */
-        tickIdx.forEach((i, k) => {
+        tickIdx.forEach(i => {
           if (i < labels.length) {
             html += `<text class="axis-text" x="${x(i).toFixed(1)}" y="${(H2 - padB + 18).toFixed(1)}" text-anchor="middle">${labels[i]}</text>`;
           }
@@ -1323,7 +1325,7 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
           }
         }
 
-        svg.addEventListener('mousemove', function(e) {
+        const onMouseMove = function(e) {
           const rect = svg.getBoundingClientRect();
           const vbScale = W / rect.width;
           const px = (e.clientX - rect.left) * vbScale;
@@ -1343,25 +1345,35 @@ $latest.templates.aggregateCached) 100.0) $cacheRatio) }} {{ $ringCirc := 163.36
             updateCursorPositions(curX, curY, curTx, curTy, curVal);
           }
           
-          if (!animFrameId) {
+          if (animFrameId === null) {
             animFrameId = requestAnimationFrame(animateCursor);
           }
-        });
+        };
 
-        svg.addEventListener('mouseleave', function() {
+        const onMouseLeave = function() {
           activeIdx = -1;
           firstMove = true;
-          if (animFrameId) {
+          if (animFrameId !== null) {
             cancelAnimationFrame(animFrameId);
             animFrameId = null;
           }
           const cursor = document.getElementById('chart-cursor');
           if (cursor) cursor.classList.remove('active');
-        });
+        };
+
+        svg.addEventListener('mousemove', onMouseMove);
+        svg.addEventListener('mouseleave', onMouseLeave);
+        chartInteractionCleanup = function() {
+          svg.removeEventListener('mousemove', onMouseMove);
+          svg.removeEventListener('mouseleave', onMouseLeave);
+          if (animFrameId !== null) {
+            cancelAnimationFrame(animFrameId);
+            animFrameId = null;
+          }
+        };
       }
 
       window.dashSwitchTab = function(metric) {
-        currentMetric = metric;
         ['build', 'pages'].forEach(m => {
           const btn = document.getElementById('tab-' + m);
           if (btn) {

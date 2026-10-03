@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const generalMagnetEls = [
     ...document.querySelectorAll(
-      ".bio-text a, .now-section a, .connect-section a:not(.connect-pill), .data-link, " +
-        ".mb-tag-chip, .mb-card-tag, .menu-trigger, .af-now-prose a",
+      ".bio-text a, .now-section a, .data-link, " +
+        ".mb-tag-chip, .menu-trigger, .af-now-prose a",
     ),
   ];
   initMagneticHover(generalMagnetEls, { magnetX: 4, magnetY: 3 });

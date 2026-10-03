@@ -439,10 +439,6 @@ body.post-short {
     background-color: var(--active-dot-color);
 }
 
-.post-toc--inline {
-    display: none;
-}
-
 .post-toc--sidebar {
     display: block;
     margin-top: 1.5rem; /* Aligns with the visual top of the article text */
@@ -466,10 +462,6 @@ body.post-short {
 }
 
 @media (max-width: 900px) {
-    .post-toc--inline {
-        display: none !important;
-    }
-
     .post-toc--sidebar {
         display: block !important;
         position: fixed !important;
@@ -814,17 +806,6 @@ body.post-short {
     .post-content pre code {
         color: #eee;
     }
-}
-
-.post-content pre code .p,
-.post-content pre code .o,
-.post-content pre code .k,
-.post-content pre code .kc,
-.post-content pre code .kd,
-.post-content pre code .kr,
-.post-content pre code .s,
-.post-content pre code .m {
-    /* Colors now handled by syntax-highlight.css */
 }
 
 .post-content code {

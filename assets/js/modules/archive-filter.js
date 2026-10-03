@@ -24,7 +24,6 @@ export function initArchiveFilter() {
         if (!previewData) return false;
         previewContainer.classList.remove("is-truncated");
         previewContainer.innerHTML = previewData.innerHTML;
-        previewContainer.dataset.href = previewData.dataset.href || "";
         previewContainer
           .querySelectorAll("figure.local-video, video, audio, iframe")
           .forEach((el) => el.remove());
@@ -100,7 +99,6 @@ export function initArchiveFilter() {
         previewContainer.style.opacity = "0";
         previewContainer.classList.remove("is-truncated");
         previewContainer.innerHTML = "";
-        delete previewContainer.dataset.href;
       }
 
       if (previewContainer) {
@@ -141,6 +139,8 @@ export function initArchiveFilter() {
           if (hoverTimeout) {
             clearTimeout(hoverTimeout);
             hoverTimeout = null;
+            // A cancelled render must be scheduled again on re-entry.
+            if (currentHoverNode === item) currentHoverNode = null;
           }
           if (currentHoverNode === item) {
             leaveTimeout = setTimeout(() => {
@@ -151,7 +151,6 @@ export function initArchiveFilter() {
                 if (!currentHoverNode) {
                   previewContainer.classList.remove("is-truncated");
                   previewContainer.innerHTML = "";
-                  delete previewContainer.dataset.href;
                 }
               }, 200);
             }, 150);

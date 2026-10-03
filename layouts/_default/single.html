@@ -39,25 +39,7 @@
     {{ if and .Params.tags (gt (len .Params.tags) 0) }}
         {{ $firstTag = index .Params.tags 0 | urlize }}
     {{ end }}
-    {{ $allTags := "" }}
-    {{ if .Params.tags }}
-        {{ $urlizedTags := slice }}
-        {{ range .Params.tags }}
-            {{ $urlizedTags = $urlizedTags | append (urlize .) }}
-        {{ end }}
-        {{ $allTags = delimit $urlizedTags "," }}
-    {{ end }}
     {{ .Store.Set "firstTag" $firstTag }}
-    {{ .Store.Set "allTags" $allTags }}
-
-    {{ if $hasTOC }}
-    <aside class="post-toc post-toc--inline" data-tag="{{ $firstTag }}" data-all-tags="{{ $allTags }}" aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
-        <div class="post-toc-content">
-            <div class="post-toc-header">{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}</div>
-            {{ $toc }}
-        </div>
-    </aside>
-    {{ end }}
 
     <div class="post-content">
         {{ .Content }}
@@ -71,7 +53,7 @@
 
 {{ define "sidebar-right" }}
     {{ if .Store.Get "hasTOC" }}
-    <aside class="post-toc post-toc--sidebar" data-tag="{{ .Store.Get "firstTag" }}" data-all-tags="{{ .Store.Get "allTags" }}" aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
+    <aside class="post-toc post-toc--sidebar" data-tag="{{ .Store.Get "firstTag" }}" aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
         <div class="post-toc-content">
             <div class="post-toc-header">{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}</div>
             {{ .Store.Get "toc" }}

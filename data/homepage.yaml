@@ -1,5 +1,5 @@
 # Homepage content data.
-# Edit this file to update homepage sections (footer excluded).
+# Homepage sections and footer contact data.
 
 # -----------------------------------------------------------------------------
 # Intro
@@ -77,7 +77,6 @@ grid:
 # Now
 # -----------------------------------------------------------------------------
 now:
-  title: "More about me"
   cards:
     - title: "Focusing Now"
       tagline: "LLM inference systems and quantization. Working toward operator-level GPU optimization and distributed ML infrastructure."
@@ -127,25 +126,19 @@ connect:
   items:
     - platform: "Email"
       value: "aki.f.liu2004@gmail.com"
-      action: "Write"
       link: "mailto:aki.f.liu2004@gmail.com"
     - platform: "GitHub"
       value: "@AkikoAkaki"
-      action: "Follow"
       link: "https://github.com/AkikoAkaki"
     - platform: "Twitter"
       value: "@ikakoikika"
-      action: "Follow"
       link: "https://twitter.com/ikakoikika"
     - platform: "Instagram"
       value: "@__akikoakaki__"
-      action: "Follow"
       link: "https://instagram.com/__akikoakaki__"
     - platform: "Threads"
       value: "@__akikoakaki__"
-      action: "Follow"
       link: "https://www.threads.com/@__akikoakaki__"
     - platform: "LinkedIn"
       value: "@Aki Liu"
-      action: "Connect"
       link: "https://www.linkedin.com/in/aki-liu-10ba4b363/"
