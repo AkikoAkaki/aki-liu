@@ -10,8 +10,7 @@ export function initSearchPalette() {
     .startsWith("en")
     ? "en"
     : "zh";
-  const indexUrl =
-    lang === "en" ? "/en/search-index.json" : "/search-index.json";
+  const indexUrl = root.dataset.indexUrl;
   const isMac = /Mac|iPhone|iPad/i.test(navigator.userAgent || "");
 
   let panel = null;
@@ -21,7 +20,9 @@ export function initSearchPalette() {
   let modeHintEl = null;
   let indexCache = null;
   let indexPromise = null;
+  let indexError = false;
   let isOpen = false;
+  let returnFocus = null;
   let selectedIdx = 0;
   let currentItems = [];
   let currentTokens = [];
@@ -30,8 +31,12 @@ export function initSearchPalette() {
   function loadIndex() {
     if (indexCache) return Promise.resolve(indexCache);
     if (indexPromise) return indexPromise;
+    indexError = false;
     indexPromise = fetch(indexUrl, { credentials: "same-origin" })
-      .then((r) => (r.ok ? r.json() : []))
+      .then((r) => {
+        if (!r.ok) throw new Error(`Search index: HTTP ${r.status}`);
+        return r.json();
+      })
       .then((records) => {
         indexCache = records.map((r) => ({
           ...r,
@@ -43,8 +48,12 @@ export function initSearchPalette() {
         return indexCache;
       })
       .catch(() => {
-        indexCache = [];
-        return indexCache;
+        indexError = true;
+        return [];
+      })
+      .finally(() => {
+        indexPromise = null;
+        if (isOpen) render(inputEl.value);
       });
     return indexPromise;
   }
@@ -173,18 +182,8 @@ export function initSearchPalette() {
     close();
   }
 
-  function switchLang(target) {
-    const path = location.pathname || "/";
-    let newPath;
-    if (target === "en") {
-      newPath =
-        path.startsWith("/en/") || path === "/en"
-          ? path
-          : "/en" + (path.startsWith("/") ? path : "/" + path);
-    } else {
-      newPath = path.replace(/^\/en(\/|$)/, "/");
-    }
-    navigate(newPath + (location.hash || ""));
+  function switchLang() {
+    navigate(root.dataset.languageUrl);
   }
 
   function buildCommands(query) {
@@ -194,9 +193,9 @@ export function initSearchPalette() {
       {
         id: "go-home",
         label: lang === "en" ? "Go to Home" : "回到首页",
-        hint: "/",
+        hint: root.dataset.homeUrl,
         icon: "home",
-        action: () => navigate("/"),
+        action: () => navigate(root.dataset.homeUrl),
       },
       {
         id: "go-ideas",
@@ -248,7 +247,7 @@ export function initSearchPalette() {
         label: otherLang === "en" ? "Switch to English" : "切换到中文",
         hint: "lang",
         icon: "lang",
-        action: () => switchLang(otherLang),
+        action: switchLang,
       },
       {
         id: "tags",
@@ -289,7 +288,7 @@ export function initSearchPalette() {
         count,
         action: () =>
           navigate(
-            "/tags/" +
+            root.dataset.tagsUrl +
               encodeURIComponent(tagToSlug(tag)) +
               "/",
           ),
@@ -354,11 +353,19 @@ export function initSearchPalette() {
             ? "START"
             : "SEARCH";
     renderList();
+    syncSelection();
     renderPreview();
   }
 
   function renderList() {
     if (!currentItems.length) {
+      inputEl.removeAttribute("aria-activedescendant");
+      if (!indexCache && !inputEl.value.trim().startsWith(">")) {
+        listEl.innerHTML = indexError
+          ? `<li class="search-empty">${lang === "en" ? "Search could not load." : "搜索加载失败。"} <button type="button" data-search-retry>${lang === "en" ? "Retry" : "重试"}</button></li>`
+          : `<li class="search-empty" role="status">${lang === "en" ? "Loading search…" : "正在加载搜索…"}</li>`;
+        return;
+      }
       listEl.innerHTML =
         '<li class="search-empty">' +
         (lang === "en"
@@ -375,7 +382,7 @@ export function initSearchPalette() {
           const title = highlight(r.title || "(untitled)", currentTokens);
           const meta = `${escapeHtml(r.section || "")} · ${escapeHtml(r.date || "")}`;
           const snip = makeSnippet(r, currentTokens, 120);
-          return `<li class="search-result${sel}" data-idx="${idx}">
+          return `<li class="search-result${sel}" data-idx="${idx}" id="search-result-${idx}" role="option" aria-selected="${idx === selectedIdx}">
                       ${ICONS.doc}
                       <div class="sr-body">
                           <div class="sr-title">${title}</div>
@@ -387,7 +394,7 @@ export function initSearchPalette() {
         }
         if (item.type === "command") {
           const c = item.cmd;
-          return `<li class="search-result is-command${sel}" data-idx="${idx}">
+          return `<li class="search-result is-command${sel}" data-idx="${idx}" id="search-result-${idx}" role="option" aria-selected="${idx === selectedIdx}">
                       ${ICONS[c.icon] || ICONS.arrow}
                       <div class="sr-body">
                           <div class="sr-title">${escapeHtml(c.label)}</div>
@@ -397,7 +404,7 @@ export function initSearchPalette() {
                   </li>`;
         }
         if (item.type === "tag") {
-          return `<li class="search-result is-tag${sel}" data-idx="${idx}">
+          return `<li class="search-result is-tag${sel}" data-idx="${idx}" id="search-result-${idx}" role="option" aria-selected="${idx === selectedIdx}">
                       ${ICONS.tag}
                       <div class="sr-body">
                           <div class="sr-title">#${escapeHtml(item.label)}</div>
@@ -457,12 +464,13 @@ export function initSearchPalette() {
                       <div class="search-inputbar">
                           ${ICONS.search}
                           <input class="search-input" type="text"
+                                 role="combobox" aria-label="${lang === "en" ? "Search" : "搜索"}" aria-autocomplete="list" aria-controls="search-results" aria-expanded="false"
                                  placeholder="${lang === "en" ? "Search posts, > for commands, # for tags" : "搜索文章, > 输入命令, # 浏览标签"}"
                                  autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                           <span class="search-mode-hint" data-mode-hint>START</span>
                           <kbd class="search-esc">esc</kbd>
                       </div>
-                      <ul class="search-results" role="listbox"></ul>
+                      <ul class="search-results" id="search-results" role="listbox" aria-label="${lang === "en" ? "Search results" : "搜索结果"}"></ul>
                       <div class="search-foot">
                           <span><kbd>↑↓</kbd>${lang === "en" ? "navigate" : "导航"}</span>
                           <span><kbd>↩</kbd>${lang === "en" ? "open" : "打开"}</span>
@@ -498,6 +506,12 @@ export function initSearchPalette() {
     });
 
     listEl.addEventListener("click", (e) => {
+      if (e.target.closest("[data-search-retry]")) {
+        loadIndex();
+        render(inputEl.value);
+        inputEl.focus();
+        return;
+      }
       const li = e.target.closest(".search-result");
       if (!li) return;
       const idx = parseInt(li.dataset.idx, 10);
@@ -518,19 +532,30 @@ export function initSearchPalette() {
   }
 
   function selectItem(idx, scroll = false) {
-    listEl.children[selectedIdx]?.classList.remove("is-selected");
     selectedIdx = idx;
     const el = listEl.children[selectedIdx];
-    el.classList.add("is-selected");
+    syncSelection();
     renderPreview();
     if (scroll) el.scrollIntoView({ block: "nearest" });
+  }
+
+  function syncSelection() {
+    listEl.querySelectorAll("[role='option']").forEach((el, idx) => {
+      const selected = idx === selectedIdx;
+      el.classList.toggle("is-selected", selected);
+      el.setAttribute("aria-selected", String(selected));
+      if (selected) inputEl.setAttribute("aria-activedescendant", el.id);
+    });
   }
 
   // ---------- Open / close ----------
   function open() {
     if (isOpen) return;
     if (!panel) buildPanel();
+    returnFocus = document.activeElement;
     isOpen = true;
+    root.setAttribute("aria-hidden", "false");
+    inputEl.setAttribute("aria-expanded", "true");
 
     const menuBar = document.getElementById("menu-bar");
     if (menuBar) menuBar.classList.add("is-search");
@@ -541,10 +566,10 @@ export function initSearchPalette() {
 
     document.body.classList.add("search-open");
     inputEl.value = "";
+    loadIndex();
     render("");
-    requestAnimationFrame(() => inputEl.focus());
-    loadIndex().then(() => {
-      if (isOpen) render(inputEl.value);
+    requestAnimationFrame(() => {
+      if (isOpen) inputEl.focus();
     });
   }
 
@@ -556,7 +581,14 @@ export function initSearchPalette() {
     if (menuBar) menuBar.classList.remove("is-search");
 
     document.body.classList.remove("search-open");
-    if (inputEl) inputEl.blur();
+    inputEl.setAttribute("aria-expanded", "false");
+    const target = returnFocus instanceof HTMLElement &&
+      returnFocus !== document.body && !returnFocus.closest("#menu-panel") &&
+      returnFocus.checkVisibility({ visibilityProperty: true })
+      ? returnFocus
+      : document.getElementById("menu-trigger");
+    target?.focus({ preventScroll: true });
+    root.setAttribute("aria-hidden", "true");
   }
 
   window.addEventListener("site:close-all", close);
@@ -567,6 +599,7 @@ export function initSearchPalette() {
 
   // ---------- Global keys ----------
   document.addEventListener("keydown", (e) => {
+    if (e.isComposing || e.keyCode === 229) return;
     const mod = e.metaKey || e.ctrlKey;
     if (mod && (e.key === "k" || e.key === "K")) {
       e.preventDefault();
@@ -604,6 +637,7 @@ export function initSearchPalette() {
         selectItem(selectedIdx - 1, true);
       }
     } else if (e.key === "Enter") {
+      if (e.target.closest("[data-search-retry]")) return;
       e.preventDefault();
       activate(selectedIdx);
     }
@@ -614,7 +648,7 @@ export function initSearchPalette() {
     if (!isOpen) return;
     const menuBar = document.getElementById("menu-bar");
     // If click is outside menu bar, close search
-    if (menuBar && !menuBar.contains(e.target)) {
+    if (menuBar && !e.composedPath().includes(menuBar)) {
       close();
     }
   });

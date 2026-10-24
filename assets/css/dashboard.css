@@ -1136,6 +1136,17 @@
     .build-chip {
         width: 100%;
         justify-content: space-between;
+        white-space: normal;
+        padding-block: 0.6rem;
+    }
+    .build-chip .chip-label {
+        flex-shrink: 0;
+    }
+    .build-chip .chip-value {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        text-align: right;
+        line-height: 1.4;
     }
     .trend-head {
         flex-direction: column;

@@ -291,7 +291,7 @@ export function initAboutFlightAndDrag() {
   const summary = document.getElementById("about-summary");
   if (!canvas || !summary) return;
 
-  if (!window.matchMedia("(min-width: 881px)").matches) return;
+  const desktop = window.matchMedia("(min-width: 881px)");
 
   const reduceMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
@@ -307,26 +307,27 @@ export function initAboutFlightAndDrag() {
     const slot = document.querySelector(`[data-slot-for="${cfg.name}"]`);
     const target = document.querySelector(`[data-target-for="${cfg.name}"]`);
     if (!el || !slot || !target) return null;
-    return { ...cfg, el, slot, target };
+    return { ...cfg, el, slot, target, originalStyle: el.getAttribute("style") };
   }).filter(Boolean);
 
   if (!fliers.length) return;
 
-  // Freeze slot size so layout above doesn't reflow until landing completes
-  fliers.forEach((f) => {
-    const r = f.el.getBoundingClientRect();
-    f.slot.style.minHeight = r.height + "px";
-    f.width = r.width;
-  });
-
   let landed = false;
-  let topZ = 10;
+  let topZ = 40;
   const FLIGHT_MS = 950;
   const FLIGHT_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
   function startFlight() {
-    if (landed) return;
+    if (landed || !desktop.matches) return;
     landed = true;
+
+    fliers.forEach((f) => {
+      f.slot.style.minHeight = `${f.el.offsetHeight}px`;
+      f.width = f.el.offsetWidth;
+    });
+    const canvasRect = canvas.getBoundingClientRect();
+    const scaleX = canvasRect.width / canvas.offsetWidth;
+    const scaleY = canvasRect.height / canvas.offsetHeight;
 
     // 1. MEASURE PHASE 1 (Initial states of elements)
     const flierRects = fliers.map((f) => {
@@ -379,8 +380,8 @@ export function initAboutFlightAndDrag() {
     // A. Animate Fliers Flight
     flierRects.forEach(({ f, src, dst }, i) => {
       const stagger = i * 90;
-      const dx = src.left - dst.left;
-      const dy = src.top - dst.top;
+      const dx = (src.left - dst.left) / scaleX;
+      const dy = (src.top - dst.top) / scaleY;
       const landRot = Number(f.target.dataset.landRot);
 
       // Put flier back to its visual start position relative to the canvas
@@ -390,7 +391,14 @@ export function initAboutFlightAndDrag() {
       // eslint-disable-next-line no-unused-expressions
       f.el.offsetWidth;
 
-      setTimeout(
+      if (reduceMotion) {
+        f.el.style.transform = `rotate(${landRot}deg)`;
+        f.el.style.transition = "";
+        makeDraggable(f.el);
+        return;
+      }
+
+      f.timer = setTimeout(
         () => {
           f.el.style.transition = `transform ${FLIGHT_MS}ms ${FLIGHT_EASE}`;
           f.el.style.transform = `rotate(${landRot}deg)`;
@@ -401,9 +409,11 @@ export function initAboutFlightAndDrag() {
       function onEnd(e) {
         if (e.propertyName !== "transform") return;
         f.el.removeEventListener("transitionend", onEnd);
+        f.onEnd = null;
         f.el.style.transition = "";
         makeDraggable(f.el);
       }
+      f.onEnd = onEnd;
       f.el.addEventListener("transitionend", onEnd);
     });
 
@@ -472,7 +482,31 @@ export function initAboutFlightAndDrag() {
     },
     { threshold: [0, 0.15, 0.3] },
   );
-  io.observe(canvas);
+  function syncLayout() {
+    if (desktop.matches) {
+      io.observe(canvas);
+      return;
+    }
+    io.unobserve(canvas);
+    landed = false;
+    fliers.forEach((f) => {
+      clearTimeout(f.timer);
+      if (f.onEnd) f.el.removeEventListener("transitionend", f.onEnd);
+      f.onEnd = null;
+      f.slot.appendChild(f.el);
+      f.el.classList.remove("is-landed");
+      f.el.setAttribute("style", f.originalStyle);
+      delete f.el.dataset.dragging;
+      f.slot.style.minHeight = "";
+    });
+    summary.classList.remove("is-flown");
+    canvas.classList.remove("is-loaded");
+    summary.querySelectorAll(".af-now-block").forEach((block) => {
+      block.getAnimations().forEach((animation) => animation.cancel());
+    });
+  }
+  desktop.addEventListener("change", syncLayout);
+  syncLayout();
 
   // === Drag ===
   function makeDraggable(el) {
@@ -489,17 +523,21 @@ export function initAboutFlightAndDrag() {
       originTop = 0;
     let pointerId = -1;
     let moved = false;
+    let scaleX = 1,
+      scaleY = 1;
 
     el.addEventListener("pointerdown", (e) => {
+      if (!desktop.matches || !canvas.contains(el)) return;
       if (e.button !== undefined && e.button !== 0) return;
       // Lift to the top of the stack immediately
       topZ += 1;
       el.style.zIndex = String(topZ);
 
-      const r = el.getBoundingClientRect();
       const cr = canvas.getBoundingClientRect();
-      originLeft = r.left - cr.left;
-      originTop = r.top - cr.top;
+      scaleX = cr.width / canvas.offsetWidth;
+      scaleY = cr.height / canvas.offsetHeight;
+      originLeft = el.offsetLeft;
+      originTop = el.offsetTop;
       startX = e.clientX;
       startY = e.clientY;
       pointerId = e.pointerId;
@@ -508,16 +546,16 @@ export function initAboutFlightAndDrag() {
       try {
         el.setPointerCapture(e.pointerId);
       } catch (_) {}
-      if (!el.style.width) el.style.width = r.width + "px";
       e.preventDefault();
     });
 
     el.addEventListener("pointermove", (e) => {
       if (el.dataset.dragging !== "true") return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      if (!moved && Math.hypot(dx, dy) > 4) moved = true;
-      const cr = canvas.getBoundingClientRect();
+      const screenDx = e.clientX - startX;
+      const screenDy = e.clientY - startY;
+      const dx = screenDx / scaleX;
+      const dy = screenDy / scaleY;
+      if (!moved && Math.hypot(screenDx, screenDy) > 4) moved = true;
       const w = el.offsetWidth,
         h = el.offsetHeight;
       // Generous bounds: allow card to extend beyond canvas by up to half its size.
@@ -525,12 +563,18 @@ export function initAboutFlightAndDrag() {
       const overX = w * 0.6;
       const overY = h * 0.6;
       const nl = Math.max(
-        -overX,
-        Math.min(cr.width - w + overX, originLeft + dx),
+        Math.min(-overX, originLeft),
+        Math.min(
+          Math.max(canvas.offsetWidth - w + overX, originLeft),
+          originLeft + dx,
+        ),
       );
       const nt = Math.max(
-        -overY,
-        Math.min(cr.height - h + overY, originTop + dy),
+        Math.min(-overY, originTop),
+        Math.min(
+          Math.max(canvas.offsetHeight - h + overY, originTop),
+          originTop + dy,
+        ),
       );
       el.style.left = `${nl}px`;
       el.style.top = `${nt}px`;

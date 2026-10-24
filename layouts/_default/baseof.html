@@ -95,7 +95,25 @@
                 <a href="#search" class="menu-link menu-link--search" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
             </div>
         </nav>
-        <div class="menu-search-panel" id="menu-search-panel" aria-hidden="true"></div>
+        {{- $otherLang := cond (eq .Language.Lang "en") "zh" "en" -}}
+        {{- $languageURL := "" -}}
+        {{- range .Translations -}}
+            {{- if eq .Language.Lang $otherLang -}}{{- $languageURL = .RelPermalink -}}{{- end -}}
+        {{- end -}}
+        {{- if not $languageURL -}}
+            {{- $section := .Section -}}
+            {{- range .Sites -}}
+                {{- if eq .Language.Lang $otherLang -}}
+                    {{- $languageURL = .Home.RelPermalink -}}
+                    {{- with .GetPage "section" $section -}}{{- $languageURL = .RelPermalink -}}{{- end -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+        <div class="menu-search-panel" id="menu-search-panel" aria-hidden="true"
+             data-index-url="{{ "search-index.json" | relLangURL }}"
+             data-home-url="{{ $homePage.RelPermalink }}"
+             data-tags-url="{{ "tags/" | relLangURL }}"
+             data-language-url="{{ $languageURL }}"></div>
     </div>
 
     <!-- Home Hover Preview Box placed at root body level to ensure true viewport-relative position: fixed positioning -->

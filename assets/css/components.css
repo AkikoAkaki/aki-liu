@@ -1113,6 +1113,7 @@ body.section-about.about-sequence-open .site-wrapper {
 
 /* CV preview card */
 .af-cv-card {
+    text-decoration: none;
     position: absolute;
     width: 170px;
     height: 210px;

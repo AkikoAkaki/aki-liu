@@ -275,6 +275,8 @@ function Analyze-BuiltHtml {
 
     $cssBundle = Get-ChildItem -Path (Join-Path $DestRoot "css") -Filter "bundle*.css" -File -ErrorAction SilentlyContinue | Select-Object -First 1
     $cssBytes = if ($cssBundle) { [int64]$cssBundle.Length } else { 0 }
+    $jsBundle = Get-ChildItem -LiteralPath (Join-Path $DestRoot "js") -Filter "main*.js" -File | Select-Object -First 1
+    $jsBytes = if ($jsBundle) { [int64]$jsBundle.Length } else { 0 }
 
     $homeFile = Join-Path $DestRoot "index.html"
     $homeExternalHosts = @()
@@ -307,6 +309,7 @@ function Analyze-BuiltHtml {
         brokenRootRelativeLinkCount  = $brokenLinks.Count
         brokenRootRelativeLinkTop    = @($brokenLinks | Select-Object -First 20)
         cssBundleBytes               = $cssBytes
+        jsBundleBytes                = $jsBytes
         homeExternalHosts            = @($homeExternalHosts)
     }
 }
@@ -705,9 +708,11 @@ $unusedTemplates = Parse-UnusedTemplates -Output $unusedOutput
 
 $metrics = @{
     generatedAt     = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ssK")
+    hugoVersion     = (& hugo version) -replace '^hugo (v[0-9]+\.[0-9]+\.[0-9]+).*', '$1'
     git             = @{
         commit = Invoke-GitSafe -Args @("rev-parse", "--short", "HEAD") -Root $ProjectRoot
         branch = Invoke-GitSafe -Args @("rev-parse", "--abbrev-ref", "HEAD") -Root $ProjectRoot
+        dirty = (Invoke-GitSafe -Args @("status", "--porcelain", "--untracked-files=no") -Root $ProjectRoot) -ne "unknown"
     }
     build           = @{
         totalMs   = Parse-TotalBuildMs -Output $buildOutput
@@ -760,7 +765,7 @@ $dataLatestJsonPath = Join-Path $dataMetricsDir "latest.json"
 $dataHistoryJsonPath = Join-Path $dataMetricsDir "history_timeline.json"
 
 [System.IO.File]::WriteAllText($dataLatestJsonPath, $json, $utf8NoBom)
-$historyJson = $historyPoints | ConvertTo-Json -Depth 8
+$historyJson = ConvertTo-Json -InputObject @($historyPoints) -Depth 8
 [System.IO.File]::WriteAllText($dataHistoryJsonPath, $historyJson, $utf8NoBom)
 
 Write-Host "Metrics report generated:"

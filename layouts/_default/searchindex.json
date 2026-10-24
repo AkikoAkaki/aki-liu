@@ -5,9 +5,6 @@
 {{- $items := slice -}}
 {{- range $pages -}}
     {{- $body := .Plain | strings.TrimSpace -}}
-    {{- if gt (len $body) 800 -}}
-        {{- $body = substr $body 0 800 -}}
-    {{- end -}}
     {{- $summary := "" -}}
     {{- with .Description -}}{{- $summary = . -}}{{- end -}}
     {{- if eq $summary "" -}}
