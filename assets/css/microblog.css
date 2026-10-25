@@ -245,6 +245,16 @@
     flex: 1 1 auto;
 }
 
+.mb-feed-retry {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .mb-column-empty {
     padding: 40px 12px;
     text-align: center;

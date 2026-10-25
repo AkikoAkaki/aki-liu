@@ -573,16 +573,10 @@ body.post-short {
 
 /* Aside blocks */
 .post-content aside {
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: var(--post-aside-bg);
     padding: 1.5rem;
     border-radius: 8px;
     margin: 2.25rem 0;
-}
-
-@media (prefers-color-scheme: dark) {
-    .post-content aside {
-        background-color: rgba(255, 255, 255, 0.04);
-    }
 }
 
 @media (max-width: 768px) {
@@ -699,7 +693,7 @@ body.post-short {
     margin: 3.5rem auto;
     border-radius: 0;
     box-shadow: none;
-    border: 1px solid rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--post-image-border);
 }
 
 .post-content img[width] {
@@ -748,20 +742,8 @@ body.post-short {
     max-width: 100%;
     margin: 2.5rem 0;
     border-radius: 0;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--post-media-border);
     box-shadow: none;
-}
-
-@media (prefers-color-scheme: dark) {
-    .post-content img,
-    .post-content picture,
-    .post-content svg,
-    .post-content video,
-    .post-content audio,
-    .post-content iframe {
-        box-shadow: none;
-        border-color: rgba(255, 255, 255, 0.08);
-    }
 }
 
 .post-content p.html-note {
@@ -789,37 +771,18 @@ body.post-short {
     word-wrap: normal;
 }
 
-@media (prefers-color-scheme: dark) {
-    .post-content pre {
-        background-color: #0d0d0d;
-        color: #ccc;
-    }
-}
-
 .post-content pre code {
     color: inherit;
     background-color: transparent;
     padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-    .post-content pre code {
-        color: #eee;
-    }
-}
-
 .post-content code {
     font-family: var(--font-mono);
     font-size: 0.85em;
-    background-color: var(--color-bg-muted);
+    background-color: var(--post-inline-code-bg);
     padding: 0.2rem 0.4rem;
     border-radius: 6px;
-}
-
-@media (prefers-color-scheme: dark) {
-    .post-content code {
-        background-color: #1a1a1a;
-    }
 }
 
 /* ==========================================================================
@@ -949,17 +912,11 @@ body.post-short {
 }
 
 .post-content tbody tr:hover {
-    background-color: rgba(0, 0, 0, 0.025);
+    background-color: var(--post-table-hover);
 }
 
 .post-content td {
     vertical-align: top;
-}
-
-@media (prefers-color-scheme: dark) {
-    .post-content tbody tr:hover {
-        background-color: rgba(255, 255, 255, 0.03);
-    }
 }
 
 /* KaTeX Equations mobile-safety */

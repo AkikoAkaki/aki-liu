@@ -11,17 +11,6 @@
     color: #484848;
 }
 
-@media (prefers-color-scheme: dark) {
-    .post-content pre {
-        background-color: #f0f0f0;
-        color: #484848;
-    }
-    
-    .post-content pre code {
-        color: #484848;
-    }
-}
-
 /* Chroma 关键字类 */
 .post-content pre code .k,   /* Keyword */
 .post-content pre code .kc,  /* Keyword.Constant */
@@ -115,16 +104,4 @@
 /* 特殊元素 */
 .post-content pre code .x {  /* Other */
     color: #484848;
-}
-
-/* 去除之前的全量覆盖规则 */
-.post-content pre code .p,
-.post-content pre code .o,
-.post-content pre code .k,
-.post-content pre code .kc,
-.post-content pre code .kd,
-.post-content pre code .kr,
-.post-content pre code .s,
-.post-content pre code .m {
-    color: unset !important;
 }

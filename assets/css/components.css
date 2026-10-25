@@ -482,6 +482,16 @@
     display: none;
 }
 
+@media (max-width: 768px) {
+    .archive-years-desktop {
+        display: none;
+    }
+
+    .archive-years-mobile {
+        display: flex;
+    }
+}
+
 .archive-year-item {
     display: inline-flex;
     align-items: center;

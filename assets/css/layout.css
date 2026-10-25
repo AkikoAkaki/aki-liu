@@ -582,14 +582,6 @@
         height: auto;
     }
 
-    .archive-years-desktop {
-        display: none;
-    }
-
-    .archive-years-mobile {
-        display: flex;
-    }
-
 }
 
 @media (max-width: 768px) {

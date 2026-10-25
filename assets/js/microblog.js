@@ -21,16 +21,45 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         if (feedData) return Promise.resolve(feedData);
         if (feedPromise) return feedPromise;
         feedPromise = fetch(feedURL, { credentials: 'same-origin' })
-            .then(r => r.ok ? r.json() : null)
+            .then(r => {
+                if (!r.ok) throw new Error(`Feed request failed: ${r.status}`);
+                return r.json();
+            })
             .then(data => {
-                feedData = data && Array.isArray(data.entries) ? data : { entries: [], tags: [] };
+                if (!data || !Array.isArray(data.entries)) throw new Error('Invalid feed');
+                feedData = data;
                 return feedData;
             })
-            .catch(() => {
-                feedData = { entries: [], tags: [] };
-                return feedData;
+            .finally(() => {
+                feedPromise = null;
             });
         return feedPromise;
+    }
+
+    function loadColumn(column, tag, year = '', onLoaded = () => {}) {
+        column.setAttribute('aria-busy', 'true');
+        const feedEl = column.querySelector('[data-mb-feed]');
+        feedEl.replaceChildren();
+        loadFeed().then(() => {
+            if (!column.isConnected) return;
+            hydrateColumn(column, tag, year);
+            onLoaded();
+        }).catch(() => {
+            if (!column.isConnected) return;
+            const message = document.createElement('div');
+            message.className = 'mb-column-empty';
+            message.setAttribute('role', 'alert');
+            message.textContent = 'Unable to load entries. ';
+            const retry = document.createElement('button');
+            retry.type = 'button';
+            retry.className = 'mb-feed-retry';
+            retry.textContent = 'Retry';
+            retry.addEventListener('click', () => loadColumn(column, tag, year, onLoaded));
+            message.appendChild(retry);
+            feedEl.replaceChildren(message);
+        }).finally(() => {
+            column.removeAttribute('aria-busy');
+        });
     }
 
     function formatDate(iso) {
@@ -292,9 +321,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         `;
         deck.appendChild(column);
 
-        loadFeed().then(() => {
-            if (column.isConnected) hydrateColumn(column, '', year);
-        });
+        loadColumn(column, '', year);
 
         void column.getBoundingClientRect();
         scheduleColumnCompression();
@@ -337,9 +364,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
             </div>
         `;
         deck.appendChild(column);
-        loadFeed().then(() => {
-            if (column.isConnected) hydrateColumn(column, slug);
-        });
+        loadColumn(column, slug);
         void column.getBoundingClientRect();
         scheduleColumnCompression();
         requestAnimationFrame(() => {
@@ -461,8 +486,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
 
     function init() {
         const mainColumn = deck.querySelector('.mb-column-main');
-        loadFeed().then(data => {
-            if (mainColumn) hydrateColumn(mainColumn, '');
+        loadColumn(mainColumn, '', '', () => {
             restoreFromURL();
             scheduleColumnCompression();
         });
