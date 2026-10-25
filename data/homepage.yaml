@@ -8,7 +8,7 @@ intro:
   name: "Aki Liu"
   tagline: "AI Infrastructure, MLSys, Writing, and Thinking"
   bio:
-    - "Junior at University of Rochester (dual degrees in CS + Applied MATH), building toward AI infrastructure and ML systems."
+    - "Senior at the University of Rochester (B.S. in Computer Science and Applied Mathematics, graduating December 2026), working on ML systems and AI infrastructure."
     - "Alongside this, I write essays, fragments, and criticism on sensation, space, and the textures of contemporary existence. Some of it ends up in <a href='/textlab/'>Text Lab</a>."
 
 # -----------------------------------------------------------------------------
@@ -20,19 +20,22 @@ grid:
       title: Experience
       link: ""
       items:
+        - title: ML Systems Research @URochester
+          role: Undergraduate Researcher
+          date: "2026 ~ Present"
         - title: Artisk
-          role: Full-stack AI Engineer Intern
-          date: "2024 ~ Present"
+          role: Software Engineer Intern
+          date: "2025 ~ 2026"
           link: "https://gemini.artisk.ai/about"
           preview: "images/home/artisk.png"
         - title: Dentist Journey
-          role: QA & Test Intern
-          date: "2023 ~ 2024"
+          role: QA & Test Engineer Intern
+          date: "2025"
           link: "https://dentistjourney.com"
           preview: "images/home/dentistjourney.png"
-        - title: Bear Lab @URochester
+        - title: BEAR Lab @URochester
           role: Research Assistant
-          date: "2023 ~ 2024"
+          date: "2025"
           link: "https://rochester-bear-lab.github.io/"
           preview: "images/home/bearlab.png"
     - id: projects
@@ -40,11 +43,11 @@ grid:
       link: ""
       items:
         - title: LLM Quant Profiler
-          date: "2024"
+          date: "2026"
           link: "/notes/quantization-tax/"
           preview: "images/home/llm-quant-profiler.png"
         - title: MoodStream
-          date: "2023"
+          date: "2026"
           link: "https://github.com/AkikoAkaki/moodstream"
   right:
     - id: about
@@ -79,29 +82,29 @@ grid:
 now:
   cards:
     - title: "Focusing Now"
-      tagline: "LLM inference systems and quantization. Working toward operator-level GPU optimization and distributed ML infrastructure."
+      tagline: "ML systems research on GPU kernel autotuning in Prof. Sreepathi Pai's group, and LLM inference performance on a single GPU."
       paragraphs:
-        - "Below is the current course I am taking:"
+        - "Courses I am taking in Fall 2026:"
       pillars:
         - num: "1"
-          title: "CSC 254: Programming Language Design & Implementation"
-          desc: "Design and implementation of programming languages, with an emphasis on imperative languages and implementation tradeoffs. Topics include fundamental language concepts (names, values, types, abstraction, control flow), compilation and interpretation (syntactic and semantic analysis, code generation and optimization), and major language paradigms (imperative, object-oriented, functional, logic-based, concurrent)."
+          title: "CSC 290: Machine Learning Systems for Efficient AI"
+          desc: "How ML programs map onto hardware: CPU and GPU architecture, the CUDA model, number formats, memory layout and sparse matrices, computational graphs, loop transformations, autotuning, caches, and virtual memory."
 
         - num: "2"
-          title: "CSC 282: Design & Analysis of Efficient Algorithms"
-          desc: "How does one design programs and ascertain their efficiency? Topics include greedy algorithms, dynamic programming, divide-and-conquer techniques, string processing, graph algorithms, and mathematical algorithms. Introduction to NP-completeness and linear programming."
+          title: "MATH 280: Introduction to Numerical Analysis"
+          desc: "Floating-point arithmetic and error propagation, root finding with bisection, Newton, and secant methods, and solving linear systems with LU, pivoting, and Cholesky decompositions."
 
         - num: "3"
-          title: "CSC 280: Computer Models & Limitations"
-          desc: "This course studies fundamental computer models and their computational limitations. After a quick review of finite-state machines, topics include the pumping lemma, context-free languages, Turing machines, undecidability, time complexity, space complexity, and randomized computation."
+          title: "MATH 208: Operations Research and Linear Optimization"
+          desc: "Linear programming: feasible sets and convexity, extreme points, the simplex method with Phase I and Phase II, degeneracy and Bland's rule, and duality."
 
         - num: "4"
-          title: "MATH 282: Intro to Complex Analysis"
-          desc: "Introduction to complex analysis covering the algebra and geometry of complex numbers, analytic functions, Cauchy-Riemann equations, contour integration, Cauchy's theorem and integral formula, Taylor and Laurent series, singularities, the residue theorem, and applications to improper integrals."
+          title: "ECON 208W: Topics in Microeconomic Theory"
+          desc: "A writing-intensive course in game theory: Nash equilibrium and Pareto efficiency, mixed strategies, and repeated games."
 
         - num: "5"
-          title: "CSC 299W: Social Implications of Computing"
-          desc: "Computers and the Internet have transformed society over the past 50 years, bringing dramatic increases in productivity and communication alongside unprecedented threats to privacy, new forms of crime, and large-scale systemic risks. In this discussion- and writing-oriented class, students examine the social, legal, and ethical dimensions of computing technology."
+          title: "CSC 273W: Writing for Computer Science"
+          desc: "Technical and research writing for computer science."
     - title: "Elsewhere"
       paragraphs:
         - "Writing across affect theory, psychogeography, negative aesthetics, and phenomenology of the body, tracing how sensation, space, and form encode the conditions of contemporary existence."
