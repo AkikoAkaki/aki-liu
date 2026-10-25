@@ -58,14 +58,9 @@ grid:
           link: /about/courses/
         - label: Resume
           link: /about/resume/
-    - id: writing
-      title: Writing
-      link: ""
-      sublinks:
-        - label: Ideas
-          link: /ideas/
-        - label: Text Lab
-          link: /textlab/
+    - id: textlab
+      title: Text Lab
+      link: /textlab/
     - id: notes
       title: Notes
       link: /notes/

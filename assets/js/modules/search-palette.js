@@ -102,13 +102,6 @@ export function initSearchPalette() {
         action: () => navigate(root.dataset.homeUrl),
       },
       {
-        id: "go-ideas",
-        label: lang === "en" ? "Go to Ideas" : "前往 Ideas",
-        hint: "/ideas",
-        icon: "arrow",
-        action: () => navigate(sectionUrls.ideas),
-      },
-      {
         id: "go-textlab",
         label: lang === "en" ? "Go to Text Lab" : "前往 Text Lab",
         hint: "/textlab",

@@ -1,5 +1,4 @@
 ---
-hidden: true
 title: "MLSys 2：计算图、训练系统与分布式扩展"
 date: 2026-05-31
 tags: ["mlsys"]
