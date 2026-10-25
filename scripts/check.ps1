@@ -100,7 +100,6 @@ function Test-StagedPaths {
     $generatedPrefixes = @(
         "public/",
         "public_test/",
-        "content/ideas/test-archetype/",
         "content/microblog/2099/"
     )
 

@@ -1,6 +1,5 @@
 {{- /* Per-language site search index. Hugo emits one file per language. */ -}}
-{{- /* Searchable sections: site.MainSections (hugo.toml) plus influences and microblog.
-       Keep in sync with scripts/microblog-server.js. */ -}}
+{{- /* Searchable sections: site.MainSections (hugo.toml) plus influences and microblog. */ -}}
 {{- $sections := site.MainSections | append "influences" "microblog" -}}
 {{- $pages := where site.RegularPages "Section" "in" $sections -}}
 {{- $items := slice -}}

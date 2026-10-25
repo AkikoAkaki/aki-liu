@@ -55,7 +55,7 @@ No `npm`, `Node.js`, or package manager needed. Hugo handles CSS/JS bundling int
 ## Project structure
 
 - **Multilingual**: Chinese is default (`zh`), English uses `index.en.md` alongside `index.md`. Content filenames are always Chinese; English translations live in the same directory.
-- **Content sections** (`content/`): `ideas/`, `notes/`, `textlab/`, `influences/`. All use the same `list.html` template with the 3-column archive layout (sidebar-left → main → sidebar-right with hover preview). `mainSections` in `hugo.toml` (ideas, notes, textlab) feeds tag pages and tag search via `site.MainSections`; keep it above the first `[table]` or TOML assigns it to that table.
+- **Content sections** (`content/`): `notes/`, `textlab/`, `influences/`. All use the same `list.html` template with the 3-column archive layout (sidebar-left → main → sidebar-right with hover preview). `mainSections` in `hugo.toml` (notes, textlab) feeds tag pages and tag search via `site.MainSections`; keep it above the first `[table]` or TOML assigns it to that table.
 - **Homepage**: Driven by `data/homepage.yaml`, not markdown. Template: `layouts/index.html`.
 - **CSS pipeline**: Global bundle concatenates `base.css` → `layout.css` → `components.css` → `motion.css` → `search.css`. Homepage loads `home.css`; single pages load a `post.css` + `syntax-highlight.css` page bundle; About, microblog, and dashboard CSS are route-conditional. All are processed via Hugo Pipes (`resources.Concat` + `resources.Minify` where applicable).
 - **JS**: `assets/js/main.js` is the global entrypoint built via Hugo's `js.Build`. `home.js`, `dashboard.js`, and `microblog.js` load on their respective routes; `post-toc.js` loads on single pages with a table of contents. KaTeX rendering uses `assets/js/modules/katex.js` for both articles and archive previews. Media queries live in `assets/js/modules/media.js`; search scoring and snippets live in `assets/js/modules/search-core.js`. No external bundler.
@@ -74,13 +74,13 @@ No `npm`, `Node.js`, or package manager needed. Hugo handles CSS/JS bundling int
 ## Creating content
 
 ```powershell
-hugo new content ideas/my-slug/index.md
+hugo new content notes/my-slug/index.md
 ```
 
 Use the same leaf-bundle pattern for `notes/`, `textlab/`, and `influences/`.
 
 ```powershell
-hugo new content ideas/my-slug/index.en.md
+hugo new content notes/my-slug/index.en.md
 ```
 
 Create the English translation in the same bundle by using the filename suffix.
@@ -91,9 +91,7 @@ hugo new content microblog/2026/06/12-101010
 
 Microblog directories must be `YYYY/MM/DD-HHMMSS`; the slug and public URL derive from that directory.
 
-`microblog.cmd` opens the local composer console; publishing from that console commits and pushes to the current branch.
-
-Use `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-microblog.ps1` as the safe file-only microblog alternative with no commit or push.
+`powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-microblog.ps1` creates a correctly named microblog entry without committing or pushing.
 
 See `WORKFLOW.md` for the human authoring, preview, microblog, media, metrics, and publishing workflow.
 

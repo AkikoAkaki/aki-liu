@@ -28,13 +28,13 @@ hugo --gc --minify
 
 ## 3. Creating a normal article
 
-All content sections (`ideas/`, `notes/`, `textlab/`, `influences/`) use the same leaf-bundle pattern.
+All content sections (`notes/`, `textlab/`, `influences/`) use the same leaf-bundle pattern.
 
 ```powershell
-hugo new content ideas/my-slug/index.md
+hugo new content notes/my-slug/index.md
 ```
 
-This creates `content/ideas/my-slug/index.md` using the archetype for that section. Edit frontmatter, write content, add assets into the same bundle directory.
+This creates `content/notes/my-slug/index.md` using the archetype for that section. Edit frontmatter, write content, add assets into the same bundle directory.
 
 ---
 
@@ -43,14 +43,14 @@ This creates `content/ideas/my-slug/index.md` using the archetype for that secti
 Create the translation file alongside the Chinese `index.md` in the same bundle:
 
 ```powershell
-hugo new content ideas/my-slug/index.en.md
+hugo new content notes/my-slug/index.en.md
 ```
 
 The slug and URL are inherited from the bundle directory. The archetype pre-fills a matching frontmatter stub.
 
 ---
 
-## 5. Creating a microblog entry (safe method)
+## 5. Creating a microblog entry
 
 Use the dedicated script. It creates files only and does nothing with git.
 
@@ -93,21 +93,7 @@ Either way, no git operations are performed.
 
 ---
 
-## 6. Microblog console
-
-```powershell
-.\microblog.cmd
-```
-
-Opens a local composer console. **Caution: publishing from this console commits and pushes to the current branch by default.** It does not stage for review, and direct publishing on `main` is blocked.
-
-For a safer console session that commits locally but skips `git push`, run `$env:MICROBLOG_NO_PUSH='1'; .\microblog.cmd` in PowerShell. The console publish flow also rejects direct publishing on `main`.
-
-Use the script in section 5 when you want to write, review, and commit on your own schedule.
-
----
-
-## 7. Images and media
+## 6. Images and media
 
 **Standard images** (Markdown syntax):
 
@@ -135,7 +121,7 @@ The render-image hook converts these to WebP automatically. No extra steps.
 
 ---
 
-## 8. Drafts and publishing
+## 7. Drafts and publishing
 
 Set `draft: true` in frontmatter to hold a piece back:
 
@@ -149,7 +135,7 @@ To publish: change `draft: false` (or remove the field) before committing.
 
 ---
 
-## 9. Before pushing / before merging
+## 8. Before pushing / before merging
 
 - Check that `public/` is not staged (`git status`).
 - Check that `public_test/` is not staged.
@@ -172,7 +158,7 @@ Add `-Audit` for a heavier media/asset check. The script builds `public_test/`, 
 
 ---
 
-## 10. Metrics and asset audits
+## 9. Metrics and asset audits
 
 **Metrics report** (build timing, template performance, broken links, HTML quality):
 
@@ -193,14 +179,14 @@ Run this against a local build output. Do not commit `public_test/`.
 
 ---
 
-## 11. Recommended workflows
+## 10. Recommended workflows
 
 ### Normal article workflow
 
-1. `hugo new content ideas/my-slug/index.md`
-2. Write in `content/ideas/my-slug/index.md`. Add assets to same directory.
+1. `hugo new content notes/my-slug/index.md`
+2. Write in `content/notes/my-slug/index.md`. Add assets to same directory.
 3. `hugo server -D --disableFastRender` to preview.
-4. If translating: `hugo new content ideas/my-slug/index.en.md`
+4. If translating: `hugo new content notes/my-slug/index.en.md`
 5. When ready: set `draft: false`.
 6. Commit the bundle directory only.
 7. Push branch, check Vercel preview, then merge.
@@ -231,13 +217,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\public-asset-audit
 
 ---
 
-## 12. Common mistakes / footguns
+## 11. Common mistakes / footguns
 
 | Mistake | What happens | Fix |
 |---|---|---|
-| Running `.\microblog.cmd` on `main` and publishing | Commits and pushes directly to `main` | Use `new-microblog.ps1` instead; commit manually |
 | Committing `public/` | Build artifacts in git history; Vercel ignores it anyway | First use `git restore --staged public/ public_test/`; if artifacts were already committed, use `git rm --cached` |
-| Using a flat path `content/ideas/my-slug.md` instead of a bundle | Images and assets cannot co-locate; shortcodes may break | Always use `content/ideas/my-slug/index.md` |
+| Using a flat path `content/notes/my-slug.md` instead of a bundle | Images and assets cannot co-locate; shortcodes may break | Always use `content/notes/my-slug/index.md` |
 | Forgetting to set `draft: false` | Post is invisible in production, even after pushing | Check frontmatter before the final commit |
 | Wrong microblog directory name format | Hugo cannot derive the slug; URL breaks | Directory must be `YYYY/MM/DD-HHMMSS`; use the script |
 | Missing `slug` field in microblog frontmatter | Public URL falls back to directory name instead of time | The script sets this automatically; double-check if hand-crafting |
