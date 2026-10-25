@@ -68,6 +68,7 @@ $month = $entryTime.ToString("MM")
 $day = $entryTime.ToString("dd")
 $time = $entryTime.ToString("HHmmss")
 $date = $entryTime.ToString("yyyy-MM-ddTHH:mm:sszzz")
+$slug = $entryTime.ToString("yyyyMMddHHmmss")
 $bundleName = "$day-$time"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
@@ -80,6 +81,17 @@ $indexPath = Join-Path -Path $bundlePath -ChildPath "index.md"
 
 if (Test-Path -LiteralPath $bundlePath) {
     throw "Microblog bundle already exists: $bundlePath"
+}
+
+$publicPath = "/microblog/$slug/"
+$existingPages = & hugo list all --source $repoRoot
+if ($LASTEXITCODE -ne 0) {
+    throw "Cannot check microblog URL collisions: hugo list all failed."
+}
+foreach ($page in ($existingPages | ConvertFrom-Csv)) {
+    if (([System.Uri]::new([System.Uri]"https://microblog.invalid/", $page.permalink)).AbsolutePath -eq $publicPath) {
+        throw "Microblog URL already exists: $publicPath ($($page.path))"
+    }
 }
 
 $normalizedTags = @(
@@ -106,16 +118,16 @@ $draftValue = if ($Draft.IsPresent) { "true" } else { "false" }
 $content = @(
     "---",
     "date: $date",
-    "slug: `"$time`"",
+    "slug: `"$slug`"",
     $tagsLine,
     "draft: $draftValue",
     "---",
     ""
 ) -join [System.Environment]::NewLine
 
-New-Item -ItemType Directory -Path $bundlePath -Force | Out-Null
+New-Item -ItemType Directory -Path $bundlePath | Out-Null
 [System.IO.File]::WriteAllText($indexPath, $content, [System.Text.UTF8Encoding]::new($false))
 
 $relativePath = $indexPath.Substring($repoRoot.Length).TrimStart([char[]]@("\", "/"))
 Write-Output "Created: $relativePath"
-Write-Output "URL: /microblog/$time/"
+Write-Output "URL: $publicPath"

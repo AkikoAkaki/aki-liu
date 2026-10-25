@@ -155,6 +155,7 @@ function Test-MicroblogFrontMatter {
     }
 
     $files = @(Get-ChildItem -LiteralPath $microblogRoot -Recurse -Filter "index.md" -File)
+    $publicSlugs = New-Object 'System.Collections.Generic.HashSet[string]'
     foreach ($file in $files) {
         $relativePath = Normalize-RepoPath (Get-RelativePath -Root $ProjectRoot -Path $file.FullName)
         if ($relativePath -notmatch "^content/microblog/(\d{4})/(\d{2})/(\d{2})-(\d{6})/index\.md$") {
@@ -162,7 +163,7 @@ function Test-MicroblogFrontMatter {
             continue
         }
 
-        $expectedSlug = $Matches[4]
+        $expectedSlug = $Matches[1] + $Matches[2] + $Matches[3] + $Matches[4]
 
         try {
             $frontMatter = Get-FrontMatter -Path $file.FullName
@@ -179,9 +180,16 @@ function Test-MicroblogFrontMatter {
         }
 
         if ($frontMatter.ContainsKey("slug")) {
-            $slug = Normalize-YamlScalar ([string]$frontMatter["slug"])
-            if ($slug -ne $expectedSlug) {
-                $Failures.Add("$relativePath slug '$slug' does not match directory time '$expectedSlug'")
+            $rawSlug = ([string]$frontMatter["slug"]).Trim()
+            $slug = Normalize-YamlScalar $rawSlug
+            if ($rawSlug -notmatch '^("[0-9]+"|''[0-9]+'')$') {
+                $Failures.Add("$relativePath slug must be a quoted numeric string")
+            }
+            if ($slug -notmatch '^\d{1,6}$' -and $slug -ne $expectedSlug) {
+                $Failures.Add("$relativePath slug '$slug' must preserve a legacy URL or match '$expectedSlug'")
+            }
+            if (-not $publicSlugs.Add($slug)) {
+                $Failures.Add("$relativePath duplicates public microblog slug '$slug'")
             }
         }
 

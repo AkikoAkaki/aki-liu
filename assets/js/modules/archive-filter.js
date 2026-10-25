@@ -393,6 +393,12 @@ export function initArchiveFilter() {
           const toHide = visibleBefore.filter((item) => !matchedSet.has(item));
           const toShow = matched.filter((item) => item.hidden);
 
+          matched.forEach((item) => {
+            item.classList.remove("is-filter-leaving");
+            item.style.opacity = "";
+            item.style.transform = "";
+          });
+
           updateFilterControls();
           updateStats(matched);
           clearPreview();

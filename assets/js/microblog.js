@@ -139,8 +139,8 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         if (sentinel) sentinel.dataset.mbDone = done ? 'true' : 'false';
     }
 
-    function hydrateColumn(column, tag) {
-        const entries = entriesForTag(tag);
+    function hydrateColumn(column, tag, year = '') {
+        const entries = year ? entriesForYear(year) : entriesForTag(tag);
         const countEl = column.querySelector('[data-mb-column-count]');
         if (countEl) countEl.textContent = entries.length;
         const unitEl = column.querySelector('[data-mb-column-unit]');
@@ -153,7 +153,8 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         if (!entries.length) {
             const empty = document.createElement('div');
             empty.className = 'mb-column-empty';
-            empty.textContent = tag ? `Nothing tagged #${tag} yet.` : 'Nothing yet.';
+            empty.textContent = year ? `Nothing in ${year} yet.`
+                : tag ? `Nothing tagged #${tag} yet.` : 'Nothing yet.';
             feedEl.appendChild(empty);
             const sentinel = column.querySelector('[data-mb-sentinel]');
             if (sentinel) sentinel.dataset.mbDone = 'true';
@@ -263,7 +264,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         });
     }
 
-    function openYearColumn(year) {
+    function openYearColumn(year, updateHistory = true) {
         year = String(year);
         const existing = deck.querySelector(`.mb-column[data-mb-year="${CSS.escape(year)}"]`);
         if (existing) {
@@ -272,7 +273,6 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
             return existing;
         }
 
-        const entries = entriesForYear(year);
         const column = document.createElement('section');
         column.className = 'mb-column mb-column-year is-entering';
         column.dataset.mbColumnId = `year-${columnSeq++}`;
@@ -281,7 +281,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
             <div class="mb-column-content">
                 <div class="mb-column-header">
                     <span class="mb-column-title">${escapeHtml(year)}</span>
-                    <span class="mb-column-meta"><span class="mb-column-count" data-mb-column-count>${entries.length}</span> <span data-mb-column-unit>${entries.length === 1 ? 'Entry' : 'Entries'}</span></span>
+                    <span class="mb-column-meta"><span class="mb-column-count" data-mb-column-count>0</span> <span data-mb-column-unit>Entries</span></span>
                     <button class="mb-column-close" type="button" data-mb-close aria-label="Close column">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M17 7L7 17"/><path d="M7 7l10 10"/></svg>
                     </button>
@@ -292,19 +292,9 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         `;
         deck.appendChild(column);
 
-        const feedEl = column.querySelector('[data-mb-feed]');
-        if (!entries.length) {
-            const empty = document.createElement('div');
-            empty.className = 'mb-column-empty';
-            empty.textContent = `Nothing in ${year} yet.`;
-            feedEl.appendChild(empty);
-            const sentinel = column.querySelector('[data-mb-sentinel]');
-            if (sentinel) sentinel.dataset.mbDone = 'true';
-        } else {
-            column.dataset.mbNextIdx = '0';
-            appendBatch(column, entries, 0);
-            attachInfiniteScroll(column, entries);
-        }
+        loadFeed().then(() => {
+            if (column.isConnected) hydrateColumn(column, '', year);
+        });
 
         void column.getBoundingClientRect();
         scheduleColumnCompression();
@@ -315,11 +305,11 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
             });
         });
         column.querySelector('[data-mb-close]').addEventListener('click', () => closeTagColumn(column));
-        syncURL();
+        syncURL(updateHistory);
         return column;
     }
 
-    function openTagColumn(tagLabel) {
+    function openTagColumn(tagLabel, updateHistory = true) {
         const slug = tagToSlug(tagLabel || '');
         if (!slug) return;
         const existing = deck.querySelector(`.mb-column[data-mb-tag="${CSS.escape(slug)}"]`);
@@ -347,7 +337,9 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
             </div>
         `;
         deck.appendChild(column);
-        hydrateColumn(column, slug);
+        loadFeed().then(() => {
+            if (column.isConnected) hydrateColumn(column, slug);
+        });
         void column.getBoundingClientRect();
         scheduleColumnCompression();
         requestAnimationFrame(() => {
@@ -357,7 +349,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
             });
         });
         column.querySelector('[data-mb-close]').addEventListener('click', () => closeTagColumn(column));
-        syncURL();
+        syncURL(updateHistory);
         return column;
     }
 
@@ -374,7 +366,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         }, COLUMN_REFLOW_MS);
     }
 
-    function syncURL() {
+    function syncURL(updateHistory = true) {
         const slugs = getActiveColumns()
             .filter(c => c.classList.contains('mb-column-tag'))
             .map(c => c.dataset.mbTag)
@@ -404,7 +396,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         });
 
         const next = url.pathname + (url.search ? url.search : '') + url.hash;
-        if (next !== window.location.pathname + window.location.search + window.location.hash) {
+        if (updateHistory && next !== window.location.pathname + window.location.search + window.location.hash) {
             history.pushState({ cols: slugs, years }, '', next);
         }
     }
@@ -413,12 +405,13 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         const params = new URLSearchParams(window.location.search);
         const cols = (params.get('cols') || '').split(',').map(s => s.trim()).filter(Boolean);
         const years = (params.get('years') || '').split(',').map(s => s.trim()).filter(Boolean);
-        const tags = feedData.tags || [];
+        const tags = feedData ? feedData.tags || [] : [];
         cols.forEach(slug => {
             const label = tags.find(t => tagToSlug(t) === slug) || slug;
-            openTagColumn(label);
+            openTagColumn(label, false);
         });
-        years.forEach(year => openYearColumn(year));
+        years.forEach(year => openYearColumn(year, false));
+        syncURL(false);
     }
 
     function bindSidebarTags() {

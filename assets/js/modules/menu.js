@@ -368,7 +368,10 @@ export function initExpandingMenu() {
   function updateScrollState() {
     scrollRafId = 0;
 
-    if (menuBar.classList.contains("is-open")) {
+    if (
+      menuBar.classList.contains("is-open") ||
+      menuBar.classList.contains("is-search")
+    ) {
       lastScrollY = window.scrollY || 0;
       menuBar.classList.remove("is-scrolled-away");
       return;

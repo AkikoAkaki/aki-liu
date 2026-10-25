@@ -49,9 +49,9 @@ Write-Host "Starting downloading KaTeX core stylesheets and scripts..." -Foregro
 foreach ($file in $coreFiles) {
     Write-Host "Downloading $($file.Url) -> $($file.Out)" -ForegroundColor Gray
     try {
-        Invoke-WebRequest -Uri $file.Url -OutFile $file.Out -UseBasicParsing
+        Invoke-WebRequest -Uri $file.Url -OutFile $file.Out -UseBasicParsing -ErrorAction Stop
     } catch {
-        Write-Error "Failed to download $($file.Url)"
+        throw "Failed to download $($file.Url): $_"
     }
 }
 
@@ -63,9 +63,9 @@ foreach ($font in $fonts) {
     $fontOut = "$fontsDir/$font"
     Write-Host "Downloading $fontUrl -> $fontOut" -ForegroundColor Gray
     try {
-        Invoke-WebRequest -Uri $fontUrl -OutFile $fontOut -UseBasicParsing
+        Invoke-WebRequest -Uri $fontUrl -OutFile $fontOut -UseBasicParsing -ErrorAction Stop
     } catch {
-        Write-Error "Failed to download $font"
+        throw "Failed to download ${font}: $_"
     }
 }
 

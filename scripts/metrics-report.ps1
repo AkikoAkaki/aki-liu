@@ -351,14 +351,19 @@ function Convert-ToInvariantNumber {
 function Get-HistorySeries {
     param(
         [string]$HistoryDir,
+        [string]$TimelinePath,
         [int]$Limit = 30
     )
 
     $files = Get-ChildItem -Path $HistoryDir -Filter "*.json" -File -ErrorAction SilentlyContinue |
-        Sort-Object Name |
-        Select-Object -Last $Limit
+        Sort-Object Name
 
-    $series = @()
+    $series = @{}
+    if (Test-Path -LiteralPath $TimelinePath) {
+        foreach ($point in (Get-Content -Raw -LiteralPath $TimelinePath | ConvertFrom-Json)) {
+            $series[$point.stamp] = $point
+        }
+    }
     foreach ($file in $files) {
         try {
             $item = Get-Content -Raw -Path $file.FullName | ConvertFrom-Json
@@ -389,7 +394,7 @@ function Get-HistorySeries {
             continue
         }
 
-        $series += [pscustomobject]@{
+        $series[$stamp] = [pscustomobject]@{
             stamp       = $stamp
             label       = $label
             buildMs     = [math]::Round($buildMs, 3)
@@ -401,7 +406,7 @@ function Get-HistorySeries {
         }
     }
 
-    return @($series)
+    return @($series.Values | Sort-Object stamp | Select-Object -Last $Limit)
 }
 
 function New-LineChartSvg {
@@ -754,7 +759,7 @@ $stamp = (Get-Date).ToString("yyyyMMdd-HHmmss")
 $historyJsonPath = Join-Path $historyDir "$stamp.json"
 [System.IO.File]::WriteAllText($historyJsonPath, $json, $utf8NoBom)
 
-$historyPoints = Get-HistorySeries -HistoryDir $historyDir -Limit 30
+$historyPoints = Get-HistorySeries -HistoryDir $historyDir -TimelinePath (Join-Path $ProjectRoot "data\metrics\history_timeline.json") -Limit 30
 Write-ReportHtml -Metrics $metrics -Delta $delta -Path $latestHtmlPath -HistoryPoints $historyPoints
 
 # Direct Hugo-accessible static data feeding

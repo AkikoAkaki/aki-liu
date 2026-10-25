@@ -13,7 +13,10 @@
     {{- if gt (len $summary) 280 -}}
         {{- $summary = (substr $summary 0 280) -}}
     {{- end -}}
-    {{- $tags := default (slice) .Params.tags -}}
+    {{- $tags := slice -}}
+    {{- if and (in (slice "ideas" "notes" "textlab") .Section) (ne .Params.hidden true) -}}
+        {{- $tags = default (slice) .Params.tags -}}
+    {{- end -}}
     {{- /* For microblog entries, synthesize title from first line of body since posts have no explicit titles. */ -}}
     {{- $title := .Title -}}
     {{- if eq .Section "microblog" -}}

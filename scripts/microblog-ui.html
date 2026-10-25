@@ -1526,6 +1526,11 @@ body {
 </div>
 
 <script>
+function studioFetch(resource, options = {}) {
+  const headers = new Headers(options.headers);
+  headers.set('X-Studio-Token', document.querySelector('meta[name="studio-token"]').content);
+  return fetch(resource, { ...options, headers });
+}
 // -- State --
 let tags = [];
 let existingTags = [];
@@ -1539,6 +1544,7 @@ let contentItems = [];
 let filteredContentItems = [];
 let selectedContentItemId = null;
 let selectedDetail = null;
+let detailRequest = 0;
 let selectedLanguage = 'zh';
 let selectedViewMode = 'preview';
 let isEditing = false;
@@ -1553,18 +1559,22 @@ let isPushing = false;
 let pushFeedback = null; // { text, cls, checkOutput? } — persists across re-renders
 
 // -- Markdown renderer with image proxy --
+let markdownBundleId = null;
 function setupMarked() {
   if (typeof marked === 'undefined') return;
   const renderer = new marked.Renderer();
   renderer.image = function(href, title, text) {
-    const src = /^https?:\/\//.test(href) ? href : `/uploads/${href}`;
-    return `<img src="${src}" alt="${text || ''}" title="${title || ''}">`;
+    const src = /^https?:\/\//.test(href) ? href : markdownBundleId
+      ? `/api/resource?id=${encodeURIComponent(markdownBundleId)}&file=${encodeURIComponent(href)}`
+      : `/uploads/${encodeURIComponent(href)}`;
+    return `<img src="${escHtml(src)}" alt="${escHtml(text || '')}" title="${escHtml(title || '')}">`;
   };
   marked.use({ renderer, breaks: true });
 }
 setupMarked();
 
-function renderMarkdown(md) {
+function renderMarkdown(md, bundleId = null) {
+  markdownBundleId = bundleId;
   if (typeof marked !== 'undefined') return marked.parse(md);
   return '<p>' + md
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -1578,11 +1588,13 @@ const slugEl  = document.getElementById('slug-display');
 const days    = ['日','一','二','三','四','五','六'];
 
 function updateClock() {
-  const now = new Date();
+  const now = new Date(Date.now() + 8 * 3600000);
   const pad = n => String(n).padStart(2, '0');
-  clockEl.textContent = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} · 周${days[now.getDay()]} · ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  const day = `${now.getUTCFullYear()}${pad(now.getUTCMonth()+1)}${pad(now.getUTCDate())}`;
+  const time = `${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}`;
+  clockEl.textContent = `${now.getUTCFullYear()}-${pad(now.getUTCMonth()+1)}-${pad(now.getUTCDate())} · 周${days[now.getUTCDay()]} · ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())} (UTC+08:00)`;
   if (!editingRelPath) {
-    slugEl.textContent  = `slug: ${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    slugEl.textContent  = `slug: ${day}${time}`;
   } else {
     slugEl.textContent  = `编辑: ${editingRelPath.split('/').slice(-2).join('/')}`;
   }
@@ -1592,7 +1604,7 @@ updateClock();
 
 // -- Load tags --
 function loadTags() {
-  fetch('/api/tags')
+  studioFetch('/api/tags')
     .then(r => r.json())
     .then(data => {
       existingTags = data.tags || [];
@@ -1619,7 +1631,7 @@ function renderRepoStatus(status) {
 
 async function loadRepoStatus() {
   try {
-    const res = await fetch('/api/status');
+    const res = await studioFetch('/api/status');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     renderRepoStatus(await res.json());
   } catch (_) {
@@ -1772,7 +1784,7 @@ async function loadContentLibrary(force = false) {
   listEl.innerHTML = '<div class="library-loading">Loading library...</div>';
 
   try {
-    const res = await fetch('/api/content');
+    const res = await studioFetch('/api/content');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     contentItems = Array.isArray(data) ? data : (data.items || []);
@@ -1954,7 +1966,7 @@ function renderEditorEditBody(detail) {
     if (editViewMode === 'preview') {
       return `
         <div class="editor-view-body">
-          <div class="editor-body-content detail-markdown">${renderMarkdown(ef.enBody || '')}</div>
+          <div class="editor-body-content detail-markdown">${renderMarkdown(ef.enBody || '', detail.item.id)}</div>
         </div>
       `;
     }
@@ -1968,7 +1980,7 @@ function renderEditorEditBody(detail) {
   if (editViewMode === 'preview') {
     return `
       <div class="editor-view-body">
-        <div class="editor-body-content detail-markdown">${renderMarkdown(ef.zhBody || '')}</div>
+        <div class="editor-body-content detail-markdown">${renderMarkdown(ef.zhBody || '', detail.item.id)}</div>
         ${pathStr ? `<div class="editor-view-path">${escHtml(pathStr)}</div>` : ''}
       </div>
     `;
@@ -2008,7 +2020,7 @@ function renderEditorBody(detail) {
     if (!enFile || !enFile.body) {
       bodyHtml = '<div class="editor-body-empty">No English version yet.</div>';
     } else if (selectedViewMode === 'preview') {
-      bodyHtml = `<div class="editor-body-content detail-markdown">${renderMarkdown(enFile.body)}</div>`;
+      bodyHtml = `<div class="editor-body-content detail-markdown">${renderMarkdown(enFile.body, item.id)}</div>`;
       showCaveat = true;
     } else {
       bodyHtml = `<pre class="editor-body-raw">${escHtml(enFile.body)}</pre>`;
@@ -2018,7 +2030,7 @@ function renderEditorBody(detail) {
     if (!body.trim()) {
       bodyHtml = '<div class="editor-body-empty">(empty)</div>';
     } else if (selectedViewMode === 'preview') {
-      bodyHtml = `<div class="editor-body-content detail-markdown">${renderMarkdown(body)}</div>`;
+      bodyHtml = `<div class="editor-body-content detail-markdown">${renderMarkdown(body, item.id)}</div>`;
       showCaveat = true;
     } else {
       bodyHtml = `<pre class="editor-body-raw">${escHtml(body)}</pre>`;
@@ -2073,6 +2085,7 @@ function attachEditorListeners() {
   const backBtn = document.getElementById('editor-back-btn');
   if (backBtn) {
     backBtn.addEventListener('click', () => {
+      if (isSaving || isCommitting || isPushing) return;
       if (isEditing && isDirty && !confirm('Discard unsaved changes?')) return;
       if (isEditing) exitEditMode();
       document.getElementById('library-pane').scrollIntoView({ behavior: 'smooth' });
@@ -2112,6 +2125,7 @@ function attachEditorListeners() {
     const cancelBtn = document.getElementById('editor-cancel-btn');
     if (cancelBtn) {
       cancelBtn.addEventListener('click', () => {
+        if (isSaving || isCommitting || isPushing) return;
         if (isDirty && !confirm('Discard unsaved changes?')) return;
         exitEditMode();
       });
@@ -2258,6 +2272,7 @@ function enterEditMode(detail) {
 }
 
 function exitEditMode() {
+  if (isSaving || isCommitting || isPushing) return;
   isEditing = false;
   isDirty = false;
   saveState = 'clean';
@@ -2272,6 +2287,8 @@ async function handleSave() {
   if (!selectedDetail || !editFields || isSaving) return;
   isSaving = true;
   collectAllEditFields();
+  const sentFields = JSON.stringify(editFields);
+  const requestVersion = detailRequest;
 
   const item = selectedDetail.item;
   const files = selectedDetail.files || {};
@@ -2299,7 +2316,7 @@ async function handleSave() {
     payload.files.en = { body: editFields.enBody, frontmatter: enFm };
   }
 
-  const statusEl = document.getElementById('editor-save-status');
+  let statusEl = document.getElementById('editor-save-status');
   const saveBtn = document.getElementById('editor-save-btn');
   const commitBtnDuringSave = document.getElementById('editor-commit-btn');
   if (statusEl) { statusEl.textContent = 'Saving...'; statusEl.className = 'editor-save-status editor-save-status--saving'; }
@@ -2307,23 +2324,29 @@ async function handleSave() {
   if (commitBtnDuringSave) commitBtnDuringSave.disabled = true;
 
   try {
-    const res = await fetch(`/api/content/${encodeURIComponent(item.id)}`, {
+    const res = await studioFetch(`/api/content/${encodeURIComponent(item.id)}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
     const data = await res.json();
+    if (selectedContentItemId !== item.id || detailRequest !== requestVersion || !isEditing) return;
+    statusEl = document.getElementById('editor-save-status');
 
     if (data.ok) {
-      isDirty = false;
-      saveState = 'saved';
+      collectAllEditFields();
+      isDirty = JSON.stringify(editFields) !== sentFields;
+      saveState = isDirty ? 'dirty' : 'saved';
       selectedDetail = { item: data.item, files: data.files };
       const idx = contentItems.findIndex(ci => ci.id === item.id);
       if (idx !== -1) contentItems[idx] = data.item;
       filteredContentItems = filteredContentItems.map(ci => ci.id === item.id ? data.item : ci);
       renderLibraryList();
       loadRepoStatus();
-      if (statusEl) { statusEl.textContent = 'Saved locally. Not committed or pushed.'; statusEl.className = 'editor-save-status editor-save-status--success'; }
+      if (statusEl) {
+        statusEl.textContent = isDirty ? 'Unsaved changes' : 'Saved locally. Not committed or pushed.';
+        statusEl.className = `editor-save-status editor-save-status--${isDirty ? 'dirty' : 'success'}`;
+      }
     } else if (data.state === 'conflict') {
       if (statusEl) {
         statusEl.className = 'editor-save-status editor-save-status--error';
@@ -2331,7 +2354,7 @@ async function handleSave() {
         const reloadBtn = document.getElementById('editor-reload-btn');
         if (reloadBtn) {
           reloadBtn.addEventListener('click', () => {
-            isEditing = false; isDirty = false; editFields = null; editViewMode = 'write'; saveState = 'clean';
+            isEditing = false; isDirty = false; editFields = null; editViewMode = 'write'; saveState = 'clean'; selectedDetail = null;
             selectContentItem(item.id);
           });
         }
@@ -2343,13 +2366,18 @@ async function handleSave() {
     if (statusEl) { statusEl.textContent = 'Network error: ' + err.message; statusEl.className = 'editor-save-status editor-save-status--error'; }
   } finally {
     isSaving = false;
-    if (saveBtn) saveBtn.disabled = false;
-    if (commitBtnDuringSave) commitBtnDuringSave.disabled = isDirty || isCommitting;
+    const freshSave = document.getElementById('editor-save-btn');
+    const freshCommit = document.getElementById('editor-commit-btn');
+    const freshPush = document.getElementById('editor-push-btn');
+    if (freshSave) freshSave.disabled = false;
+    if (freshCommit) freshCommit.disabled = isDirty || isCommitting;
+    if (freshPush) freshPush.disabled = isDirty || isCommitting || isPushing;
   }
 }
 
 async function handleCommit() {
   if (!selectedContentItemId || isCommitting) return;
+  if (selectedDetail?.item.id !== selectedContentItemId) return;
   if (isEditing && (isDirty || isSaving)) return;
 
   isCommitting = true;
@@ -2367,7 +2395,7 @@ async function handleCommit() {
   }
 
   try {
-    const res = await fetch(`/api/content/${encodeURIComponent(selectedContentItemId)}/commit`, {
+    const res = await studioFetch(`/api/content/${encodeURIComponent(selectedContentItemId)}/commit`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({}),
@@ -2448,7 +2476,7 @@ async function handlePush() {
   }
 
   try {
-    const res = await fetch('/api/push', { method: 'POST' });
+    const res = await studioFetch('/api/push', { method: 'POST' });
     const data = await res.json();
 
     const cls = data.ok ? 'success' : (data.state === 'no_push' ? 'info' : 'error');
@@ -2506,6 +2534,9 @@ function renderContentDetail(detail) {
 async function selectContentItem(id) {
   const item = contentItems.find(candidate => candidate.id === id);
   if (!item) return;
+  if (isSaving || isCommitting || isPushing) return;
+  if (id === selectedContentItemId && selectedDetail) return;
+  const requestVersion = ++detailRequest;
 
   if (isEditing && isDirty && id !== selectedContentItemId) {
     if (!confirm('You have unsaved changes. Leave this item?')) return;
@@ -2528,11 +2559,13 @@ async function selectContentItem(id) {
   renderDetailLoading(item);
 
   try {
-    const res = await fetch(`/api/content/${encodeURIComponent(id)}`);
+    const res = await studioFetch(`/api/content/${encodeURIComponent(id)}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const detail = await res.json();
+    if (requestVersion !== detailRequest || selectedContentItemId !== id) return;
     renderContentDetail(detail);
   } catch (err) {
+    if (requestVersion !== detailRequest || selectedContentItemId !== id) return;
     document.getElementById('library-detail').innerHTML = `
       <div class="editor-view-shell">
         <div class="editor-view-header">
@@ -2589,7 +2622,7 @@ function updatePreview() {
   
   if (md.trim()) {
     placeholder.style.display = 'none';
-    preview.innerHTML = renderMarkdown(md);
+    preview.innerHTML = renderMarkdown(md, editingRelPath ? editingRelPath.slice('content/'.length) : null);
   } else {
     preview.innerHTML = '';
     placeholder.style.display = '';
@@ -2637,7 +2670,7 @@ async function uploadImage(file, targetEditor) {
     reader.onload = async () => {
       try {
         const base64 = reader.result.split(',')[1];
-        const res = await fetch('/api/upload-image', {
+        const res = await studioFetch('/api/upload-image', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ filename: file.name, data: base64 }),
@@ -2702,6 +2735,7 @@ function resetEditors() {
 }
 
 function switchTab(tab) {
+  if ((isSaving || isCommitting || isPushing) && currentTab !== tab) return;
   if (isEditing && isDirty && currentTab !== tab) {
     if (!confirm('You have unsaved changes. Leave this item?')) return;
   }
@@ -2870,7 +2904,7 @@ const mHtml = document.getElementById('mgr-preview-html');
 async function loadManagerPosts() {
   mList.innerHTML = '<div style="padding:20px; color:#9ca3af; font-size:12px; text-align:center;">读取列表中...</div>';
   try {
-    const res = await fetch('/api/posts');
+    const res = await studioFetch('/api/posts');
     const data = await res.json();
     allPosts = data.posts || [];
     renderManagerList(allPosts);
@@ -2944,11 +2978,11 @@ function selectPostInManager(post) {
   const sectTxt = `<span class="badge badge-${post.section}">${post.section}</span>`;
   mMeta.innerHTML = `${sectTxt} ${draftTxt} <span>日期: ${post.date.split('T')[0]}</span>`;
   
-  let html = renderMarkdown(post.content);
+  let html = renderMarkdown(post.content, post.relPath.slice('content/'.length));
   if (post.hasEn && post.contentEn) {
     html += '<hr style="border:none; border-top:1px dashed #e5e7eb; margin:16px 0;">';
     html += '<div style="font-size:10px; font-weight:700; color:#c4c9d4; letter-spacing:.1em; margin-bottom:8px;">ENGLISH</div>';
-    html += renderMarkdown(post.contentEn);
+    html += renderMarkdown(post.contentEn, post.relPath.slice('content/'.length));
   }
   mHtml.innerHTML = html;
 }
@@ -3001,13 +3035,23 @@ mgrBtnDelete.addEventListener('click', async () => {
   mgrBtnDelete.textContent = '删除中...';
   
   try {
-    const res = await fetch('/api/delete', {
+    const res = await studioFetch('/api/delete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ relPath: post.relPath })
     });
     const data = await res.json();
     if (data.ok) {
+      contentItems = [];
+      if (selectedDetail?.item.path === post.relPath) {
+        selectedContentItemId = null;
+        selectedDetail = null;
+        detailRequest += 1;
+        isEditing = false;
+        isDirty = false;
+        editFields = null;
+        document.getElementById('library-detail').innerHTML = '<div class="detail-empty">No item selected</div>';
+      }
       mPlaceholder.style.display = 'block';
       mContent.style.display = 'none';
       mActions.style.display = 'none';
@@ -3077,11 +3121,12 @@ publishBtn.addEventListener('click', async () => {
 
   if (currentTab === 'microblog') {
     payload.content = content;
-    payload.draft = false;
+    if (!wasEditing) payload.draft = false;
   } else {
     payload.section = document.getElementById('article-section').value;
     payload.title = articleTitleZh.value.trim();
     payload.titleEn = articleTitleEn.value.trim();
+    payload.slug = document.getElementById('article-slug').value.trim();
     payload.content = content;
     payload.contentEn = editorEn.value.trim();
     payload.draft = document.getElementById('article-draft').checked;
@@ -3090,7 +3135,7 @@ publishBtn.addEventListener('click', async () => {
   }
 
   try {
-    const res = await fetch('/api/publish', {
+    const res = await studioFetch('/api/publish', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -3098,6 +3143,12 @@ publishBtn.addEventListener('click', async () => {
     const data = await res.json();
 
     if (data.ok) {
+      contentItems = [];
+      if (!isEditing && selectedDetail?.item.path === data.dir) {
+        selectedContentItemId = null;
+        selectedDetail = null;
+        detailRequest += 1;
+      }
       if (wasEditing && selectedPost?.relPath === payload.relPath) {
         selectedPost = null;
         mPlaceholder.style.display = 'block';

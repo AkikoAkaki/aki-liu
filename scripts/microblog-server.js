@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync, exec } = require('child_process');
 const url = require('url');
+const { randomBytes } = require('crypto');
 
 const PORT = 3737;
 const ROOT = path.join(__dirname, '..');
@@ -13,16 +14,25 @@ const CONTENT_SECTIONS = ['ideas', 'notes', 'textlab', 'influences', 'microblog'
 const KNOWN_FRONTMATTER_FIELDS = new Set(['title', 'date', 'slug', 'tags', 'draft', 'math', 'enableKaTeX']);
 const UI_FILE = path.join(__dirname, 'microblog-ui.html');
 const TEMP_DIR = path.join(__dirname, '.temp-uploads');
+const SESSION_TOKEN = randomBytes(32).toString('hex');
 
 function getLocalISO(customDate) {
   const now = customDate ? new Date(customDate) : new Date();
-  const pad = n => String(n).padStart(2, '0');
-  const offset = -now.getTimezoneOffset();
-  const sign = offset >= 0 ? '+' : '-';
-  const oh = pad(Math.floor(Math.abs(offset) / 60));
-  const om = pad(Math.abs(offset) % 60);
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}` +
-    `T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}${sign}${oh}:${om}`;
+  if (!Number.isFinite(now.getTime())) throw new Error('Invalid date');
+  return new Date(now.getTime() + 8 * 3600000).toISOString().slice(0, 19) + '+08:00';
+}
+
+function stripScalarComment(raw) {
+  let quote = '';
+  for (let i = 0; i < raw.length; i += 1) {
+    const char = raw[i];
+    if (quote === '"' && char === '\\') { i += 1; continue; }
+    if (quote === "'" && char === "'" && raw[i + 1] === "'") { i += 1; continue; }
+    if (char === quote) quote = '';
+    else if (!quote && (char === '"' || char === "'")) quote = char;
+    else if (!quote && char === '#' && (i === 0 || /\s/.test(raw[i - 1]))) return raw.slice(0, i).trim();
+  }
+  return raw.trim();
 }
 
 function unquoteFrontMatterString(value) {
@@ -96,8 +106,13 @@ function splitInlineArray(value) {
 }
 
 function parseFrontMatterValue(rawValue) {
-  const value = rawValue.trim();
+  const value = stripScalarComment(rawValue);
   if (!value) return '';
+  if (/^!!bool\s+/.test(value)) {
+    const boolean = unquoteFrontMatterString(value.replace(/^!!bool\s+/, ''));
+    if (/^(true|false)$/i.test(boolean)) return /^true$/i.test(boolean);
+    throw Object.assign(new Error('Cannot safely parse boolean flag'), { statusCode: 400 });
+  }
   if (value.startsWith('[') && value.endsWith(']')) return splitInlineArray(value);
   if (/^(true|false)$/i.test(value)) return /^true$/i.test(value);
   return unquoteFrontMatterString(value);
@@ -106,8 +121,25 @@ function parseFrontMatterValue(rawValue) {
 function parseYamlFrontMatter(rawFrontmatter) {
   const data = {};
   let pendingArrayKey = null;
+  let pendingBlockKey = null;
+  let blockLines = [];
+  let blockStyle = '';
+  function finishBlock() {
+    if (!pendingBlockKey) return;
+    const indent = blockLines.find(line => line.trim())?.match(/^\s*/)[0].length || 0;
+    let value = blockLines.map(line => line.slice(indent)).join('\n');
+    if (blockStyle[0] === '>') value = value.replace(/([^\n])\n(?=[^\n])/g, '$1 ');
+    data[pendingBlockKey] = blockStyle.includes('-') ? value.replace(/\n+$/, '') : value.replace(/\n*$/, '\n');
+    pendingBlockKey = null;
+    blockLines = [];
+  }
 
   rawFrontmatter.split(/\r\n|\n|\r/).forEach(line => {
+    if (pendingBlockKey && (!line.trim() || /^\s/.test(line))) {
+      blockLines.push(line);
+      return;
+    }
+    finishBlock();
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) return;
 
@@ -126,6 +158,11 @@ function parseYamlFrontMatter(rawFrontmatter) {
     if (!KNOWN_FRONTMATTER_FIELDS.has(key)) return;
 
     const rawValue = line.slice(separatorIndex + 1);
+    if (key === 'title' && /^[>|][+-]?$/.test(stripScalarComment(rawValue))) {
+      pendingBlockKey = key;
+      blockStyle = stripScalarComment(rawValue);
+      return;
+    }
     if (!rawValue.trim() && key === 'tags') {
       data[key] = [];
       pendingArrayKey = key;
@@ -133,7 +170,11 @@ function parseYamlFrontMatter(rawFrontmatter) {
     }
 
     data[key] = parseFrontMatterValue(rawValue);
+    if (key === 'draft' && typeof data[key] !== 'boolean') {
+      throw Object.assign(new Error('Cannot safely parse draft flag'), { statusCode: 400 });
+    }
   });
+  finishBlock();
 
   return data;
 }
@@ -141,7 +182,7 @@ function parseYamlFrontMatter(rawFrontmatter) {
 function parseTomlFrontMatter(rawFrontmatter) {
   const data = {};
 
-  rawFrontmatter.split(/\r\n|\n|\r/).forEach(line => {
+  rawFrontmatter.split(/^\s*\[/m)[0].split(/\r\n|\n|\r/).forEach(line => {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) return;
 
@@ -618,7 +659,6 @@ function sendJSON(res, data, status = 200) {
   const body = JSON.stringify(data);
   res.writeHead(status, {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
   });
   res.end(body);
 }
@@ -739,38 +779,21 @@ const MIME = {
 };
 
 function formatFrontmatterValue(key, value, delimiter) {
-  if (delimiter === 'toml') {
-    if (key === 'tags') {
-      const arr = Array.isArray(value) ? value : normalizeTags(value);
-      return `[${arr.map(t => `"${String(t).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`).join(', ')}]`;
-    }
-    if (typeof value === 'boolean') return String(value);
-    const str = String(value);
-    return `"${str.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
-  }
-  if (key === 'tags') {
-    const arr = Array.isArray(value) ? value : normalizeTags(value);
-    if (!arr.length) return '[]';
-    return `[${arr.map(t => `"${String(t).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`).join(', ')}]`;
-  }
-  if (typeof value === 'boolean') return String(value);
-  if (typeof value === 'number') return String(value);
-  const str = String(value);
-  if (!str) return '""';
-  const needsQuoting = (
-    /^[\s]/.test(str) || /[\s]$/.test(str) ||
-    /^[{[\]!|>'"%@`]/.test(str) ||
-    /:\s/.test(str) ||
-    str === 'true' || str === 'false' || str === 'null' || str === '~'
-  );
-  if (key === 'title' || needsQuoting) {
-    return `"${str.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
-  }
-  return str;
+  if (key === 'tags') return JSON.stringify(Array.isArray(value) ? value : normalizeTags(value));
+  if (typeof value === 'boolean' || typeof value === 'number') return String(value);
+  return JSON.stringify(String(value));
 }
 
 function applyFrontmatterUpdates(rawFm, delimiter, updates) {
-  if (!rawFm || !updates || !Object.keys(updates).length) return rawFm;
+  if (!updates || !Object.keys(updates).length) return rawFm;
+  let tableSuffix = '';
+  if (delimiter === 'toml') {
+    const table = rawFm.search(/^\s*\[/m);
+    if (table !== -1) {
+      tableSuffix = rawFm.slice(table);
+      rawFm = rawFm.slice(0, table);
+    }
+  }
   const handled = new Set();
   let result = rawFm;
   for (const [key, value] of Object.entries(updates)) {
@@ -780,9 +803,9 @@ function applyFrontmatterUpdates(rawFm, delimiter, updates) {
     const newLine = isTOML ? `${key} = ${formatted}` : `${key}: ${formatted}`;
     let matched = false;
     if (!isTOML) {
-      const blockRe = new RegExp(`^${key}:[ \\t]*\\r?\\n(?:[ \\t]+-[^\\r\\n]*\\r?\\n)+`, 'm');
+      const blockRe = new RegExp(`^${key}:[^\\r\\n]*(?:\\r?\\n(?:[ \\t]+[^\\r\\n]*|(?=\\r?$)))*`, 'm');
       if (blockRe.test(result)) {
-        result = result.replace(blockRe, newLine + '\n');
+        result = result.replace(blockRe, () => newLine);
         matched = true;
       }
     }
@@ -791,7 +814,7 @@ function applyFrontmatterUpdates(rawFm, delimiter, updates) {
         ? new RegExp(`^${key}[ \\t]*=[ \\t]*[^\\r\\n]*$`, 'm')
         : new RegExp(`^${key}:[ \\t]*[^\\r\\n]*$`, 'm');
       if (inlineRe.test(result)) {
-        result = result.replace(inlineRe, newLine);
+        result = result.replace(inlineRe, () => newLine);
         matched = true;
       }
     }
@@ -805,7 +828,7 @@ function applyFrontmatterUpdates(rawFm, delimiter, updates) {
     if (!result.match(/[\r\n]$/)) result += '\n';
     result += toAppend.join('\n') + '\n';
   }
-  return result;
+  return result + tableSuffix;
 }
 
 function atomicWriteFile(filePath, content) {
@@ -819,21 +842,34 @@ function atomicWriteFile(filePath, content) {
   }
 }
 
+function assertNoUnrelatedStaged(itemPath) {
+  if (process.env.TEST_MODE === 'true') return;
+  const staged = gitRun(['diff', '--cached', '--name-only', '-z'], ROOT).split('\0').filter(Boolean);
+  if (staged.some(p => p !== itemPath && !p.startsWith(itemPath + '/'))) {
+    throw Object.assign(new Error('Unrelated staged changes exist. Commit or unstage them first.'), { statusCode: 400 });
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   const { pathname } = url.parse(req.url);
+  const port = server.address()?.port || PORT;
+  const trustedHosts = new Set([`localhost:${port}`, `127.0.0.1:${port}`]);
+  if (!trustedHosts.has(req.headers.host) ||
+      (req.headers.origin && ![...trustedHosts].some(host => req.headers.origin === `http://${host}`))) {
+    return sendJSON(res, { error: 'Untrusted request origin or host' }, 403);
+  }
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method) && req.headers['x-studio-token'] !== SESSION_TOKEN) {
+    return sendJSON(res, { error: 'Invalid Content Studio session' }, 403);
+  }
 
   if (req.method === 'OPTIONS') {
-    res.writeHead(204, {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,POST,PUT',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    });
+    res.writeHead(204);
     return res.end();
   }
 
   if (req.method === 'GET' && pathname === '/') {
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    return res.end(fs.readFileSync(UI_FILE));
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+    return res.end(fs.readFileSync(UI_FILE, 'utf8').replace('<head>', `<head><meta name="studio-token" content="${SESSION_TOKEN}">`));
   }
 
   if (req.method === 'GET' && pathname === '/api/health') {
@@ -853,6 +889,25 @@ const server = http.createServer(async (req, res) => {
       return sendJSON(res, scanContentItems());
     } catch (e) {
       return sendJSON(res, { error: e.message }, 500);
+    }
+  }
+
+  if (req.method === 'GET' && pathname === '/api/resource') {
+    try {
+      const query = new URL(req.url, `http://${req.headers.host}`).searchParams;
+      const { bundleDir } = resolveContentItem(query.get('id'));
+      let resource = path.resolve(bundleDir, query.get('file') || '');
+      const relative = path.relative(bundleDir, resource);
+      if (!relative || relative.startsWith('..') || path.isAbsolute(relative) || !MIME[path.extname(resource).toLowerCase()]) {
+        return sendJSON(res, { error: 'Invalid image path' }, 400);
+      }
+      if (!fs.existsSync(resource) && path.basename(relative) === relative && relative.startsWith('img-')) {
+        resource = path.join(TEMP_DIR, relative);
+      }
+      res.writeHead(200, { 'Content-Type': MIME[path.extname(resource).toLowerCase()] });
+      return res.end(fs.readFileSync(resource));
+    } catch (e) {
+      return sendJSON(res, { error: e.message }, e.statusCode || 404);
     }
   }
 
@@ -1037,7 +1092,11 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && pathname === '/api/tags') {
-    return sendJSON(res, { tags: scanTags() });
+    try {
+      return sendJSON(res, { tags: scanTags() });
+    } catch (e) {
+      return sendJSON(res, { error: e.message }, e.statusCode || 500);
+    }
   }
 
   if (req.method === 'GET' && pathname === '/api/posts') {
@@ -1082,6 +1141,7 @@ const server = http.createServer(async (req, res) => {
         relPath,
         title,
         titleEn,
+        slug: requestedSlug,
         content,
         contentEn,
         tags,
@@ -1091,6 +1151,15 @@ const server = http.createServer(async (req, res) => {
       } = JSON.parse(body);
 
       const publishPolicy = getPublishSafety();
+      if (!['microblog', 'article'].includes(type) || typeof content !== 'string') {
+        return sendJSON(res, { ok: false, error: 'Invalid content type or body' }, 400);
+      }
+      const isoDate = getLocalISO();
+      const articleDate = date || isoDate.slice(0, 10);
+      if (type === 'article' && (!/^\d{4}-\d{2}-\d{2}$/.test(articleDate) ||
+          !Number.isFinite(Date.parse(articleDate)) || new Date(articleDate).toISOString().slice(0, 10) !== articleDate)) {
+        return sendJSON(res, { ok: false, error: 'Invalid article date' }, 400);
+      }
 
       let targetDir = '';
       let isEdit = false;
@@ -1101,7 +1170,10 @@ const server = http.createServer(async (req, res) => {
         // Edit existing post
         let resolvedPath;
         try {
-          resolvedPath = resolveContentPath(relPath);
+          const resolved = resolveContentPath(relPath);
+          const { item, bundleDir } = resolveContentItem(resolved.relPath.slice('content/'.length));
+          if ((type === 'microblog') !== (item.kind === 'microblog')) throw new Error('Content type mismatch');
+          resolvedPath = { absPath: bundleDir, relPath: item.path };
         } catch (_) {
           return sendJSON(res, { ok: false, error: 'Invalid path' }, 400);
         }
@@ -1111,29 +1183,26 @@ const server = http.createServer(async (req, res) => {
         }
         isEdit = true;
         finalRelPath = resolvedPath.relPath;
-        const parts = finalRelPath.split('/');
-        finalSlug = parts[parts.length - 1];
-        if (type === 'microblog' && finalSlug.includes('-')) {
-          finalSlug = finalSlug.split('-')[1];
-        }
+        finalSlug = parseFrontMatter(fs.readFileSync(path.join(targetDir, 'index.md'), 'utf8')).data.slug || path.basename(targetDir);
       } else {
         // Create new post
-        const now = new Date();
-        const pad = n => String(n).padStart(2, '0');
-        
         if (type === 'microblog') {
-          const year = String(now.getFullYear());
-          const month = pad(now.getMonth() + 1);
-          const day = pad(now.getDate());
-          const slug = `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
-          const dirName = `${day}-${slug}`;
+          const year = isoDate.slice(0, 4);
+          const month = isoDate.slice(5, 7);
+          const day = isoDate.slice(8, 10);
+          const time = isoDate.slice(11, 19).replace(/:/g, '');
+          const slug = `${year}${month}${day}${time}`;
+          const dirName = `${day}-${time}`;
           targetDir = path.join(ROOT, 'content', 'microblog', year, month, dirName);
           finalRelPath = `content/microblog/${year}/${month}/${dirName}`;
           finalSlug = slug;
         } else {
           // Article slug generation or sanitization
-          let slug = '';
-          if (titleEn) {
+          let slug = typeof requestedSlug === 'string' ? requestedSlug.trim() : '';
+          if (slug && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+            return sendJSON(res, { ok: false, error: 'Slug must use lowercase letters, digits, and hyphens' }, 400);
+          }
+          if (!slug && titleEn) {
             slug = titleEn.toLowerCase()
               .replace(/[^a-z0-9]+/g, '-')
               .replace(/(^-|-$)/g, '');
@@ -1151,13 +1220,42 @@ const server = http.createServer(async (req, res) => {
         }
       }
 
+      if (!isEdit && (fs.existsSync(targetDir) || (type === 'microblog' &&
+          scanContentItems().some(item => item.url === `/microblog/${finalSlug}/`)))) {
+        return sendJSON(res, { ok: false, error: 'Content already exists at this path or URL' }, 409);
+      }
+      assertNoUnrelatedStaged(finalRelPath);
+
+      function prepareFile(filename, bodyText, fileTitle) {
+        const filePath = path.join(targetDir, filename);
+        const existing = isEdit && fs.existsSync(filePath) ? parseFrontMatter(fs.readFileSync(filePath, 'utf8')) : null;
+        if (existing && !existing.delimiter) throw new Error('Cannot safely edit content without frontmatter');
+        const updates = {};
+        if (tags !== undefined) updates.tags = normalizeTags(tags);
+        if (typeof draft === 'boolean') updates.draft = draft;
+        else if (!existing) updates.draft = false;
+        if (!existing) updates.date = type === 'microblog' ? isoDate : articleDate;
+        else if (type === 'article' && date) updates.date = articleDate;
+        if (type === 'microblog' && !existing) updates.slug = finalSlug;
+        if (type === 'article') {
+          if (typeof fileTitle === 'string') updates.title = fileTitle;
+          if (typeof math === 'boolean') updates[existing && 'enableKaTeX' in existing.data ? 'enableKaTeX' : 'math'] = math;
+        }
+        const rawFrontmatter = applyFrontmatterUpdates(existing?.rawFrontmatter || '', existing?.delimiter || 'yaml', updates);
+        const fileBody = typeof bodyText === 'string' ? `\n${bodyText.trim()}\n` : existing.body;
+        return existing ? reconstructFrontMatter({ ...existing, rawFrontmatter, body: fileBody }) : `---\n${rawFrontmatter}---\n${fileBody}`;
+      }
+      const zhOutput = prepareFile('index.md', content, title);
+      const enPath = path.join(targetDir, 'index.en.md');
+      const enOutput = type !== 'microblog' && ((isEdit && fs.existsSync(enPath)) || (contentEn && contentEn.trim()))
+        ? prepareFile('index.en.md', contentEn, titleEn) : null;
       fs.mkdirSync(targetDir, { recursive: true });
 
       // Move any referenced temp images into the post directory
       const allContent = content + '\n' + (contentEn || '');
       const imgRefs = [...allContent.matchAll(/!\[.*?\]\(([^)]+)\)/g)].map(m => m[1]);
       for (const ref of imgRefs) {
-        if (ref.startsWith('img-')) {
+        if (ref.startsWith('img-') && path.basename(ref) === ref) {
           const tempPath = path.join(TEMP_DIR, ref);
           if (fs.existsSync(tempPath)) {
             fs.renameSync(tempPath, path.join(targetDir, ref));
@@ -1165,50 +1263,21 @@ const server = http.createServer(async (req, res) => {
         }
       }
 
-      const isoDate = getLocalISO(date);
-      const tagsStr = tags && tags.length ? `[${tags.map(t => `"${t}"`).join(', ')}]` : '[]';
-
-      // 1. Write Chinese index.md
-      let zhFront = '';
-      if (type === 'microblog') {
-        zhFront = `---\ndate: ${isoDate}\nslug: ${finalSlug}\ntags: ${tagsStr}\ndraft: ${!!draft}\n---\n\n${content.trim()}\n`;
-      } else {
-        zhFront = `---\ntitle: "${title.replace(/"/g, '\\"')}"\ndate: ${isoDate.split('T')[0]}\ntags: ${tagsStr}\ndraft: ${!!draft}\n`;
-        if (math) {
-          zhFront += `math: true\n`;
-        }
-        zhFront += `---\n\n${content.trim()}\n`;
-      }
-      fs.writeFileSync(path.join(targetDir, 'index.md'), zhFront, 'utf8');
-
-      // 2. Write English index.en.md (if provided for articles)
-      if (type !== 'microblog') {
-        const enPath = path.join(targetDir, 'index.en.md');
-        if (contentEn && contentEn.trim()) {
-          let enFront = `---\ntitle: "${titleEn.replace(/"/g, '\\"')}"\ndate: ${isoDate.split('T')[0]}\ntags: ${tagsStr}\ndraft: ${!!draft}\n`;
-          if (math) {
-            enFront += `math: true\n`;
-          }
-          enFront += `---\n\n${contentEn.trim()}\n`;
-          fs.writeFileSync(enPath, enFront, 'utf8');
-        } else if (fs.existsSync(enPath)) {
-          // If english file existed but now cleared, remove it
-          fs.unlinkSync(enPath);
-        }
-      }
+      atomicWriteFile(path.join(targetDir, 'index.md'), zhOutput);
+      if (enOutput !== null) atomicWriteFile(enPath, enOutput);
 
       const actionText = isEdit ? 'edit' : 'create';
       const commitMsg = `${type}: ${actionText} ${finalRelPath}`;
 
-      gitRun(['add', finalRelPath], ROOT);
-      gitRun(['commit', '-m', commitMsg], ROOT);
+      gitRun(['add', '--', finalRelPath], ROOT);
+      gitRun(['commit', '-m', commitMsg, '--', finalRelPath], ROOT);
       const pushResult = pushWithSafety(publishPolicy);
 
       console.log(`[OK] ${finalRelPath}`);
       return sendJSON(res, { ok: true, slug: finalSlug, dir: finalRelPath, branch: publishPolicy.branch, pushed: pushResult.pushed, message: pushResult.message });
     } catch (e) {
       console.error('[FAIL]', e.message);
-      return sendJSON(res, { ok: false, error: e.message }, 500);
+      return sendJSON(res, { ok: false, error: e.message }, e.statusCode || 500);
     }
   }
 
@@ -1220,7 +1289,9 @@ const server = http.createServer(async (req, res) => {
 
       let resolvedPath;
       try {
-        resolvedPath = resolveContentPath(relPath);
+        const resolved = resolveContentPath(relPath);
+        const { item, bundleDir } = resolveContentItem(resolved.relPath.slice('content/'.length));
+        resolvedPath = { absPath: bundleDir, relPath: item.path };
       } catch (_) {
         return sendJSON(res, { ok: false, error: 'Invalid path' }, 400);
       }
@@ -1231,19 +1302,20 @@ const server = http.createServer(async (req, res) => {
         return sendJSON(res, { ok: false, error: 'Path not found' }, 404);
       }
 
+      assertNoUnrelatedStaged(finalRelPath);
       // Delete folder from disk
       fs.rmSync(targetDir, { recursive: true, force: true });
 
       // Git add -A to track deletion, commit, push
-      gitRun(['add', '-A', finalRelPath], ROOT);
-      gitRun(['commit', '-m', `delete: ${path.basename(finalRelPath)}`], ROOT);
+      gitRun(['add', '-A', '--', finalRelPath], ROOT);
+      gitRun(['commit', '-m', `delete: ${path.basename(finalRelPath)}`, '--', finalRelPath], ROOT);
       const pushResult = pushWithSafety(publishPolicy);
 
       console.log(`[OK] Deleted ${finalRelPath}`);
       return sendJSON(res, { ok: true, branch: publishPolicy.branch, pushed: pushResult.pushed, message: pushResult.message });
     } catch (e) {
       console.error('[FAIL]', e.message);
-      return sendJSON(res, { ok: false, error: e.message }, 500);
+      return sendJSON(res, { ok: false, error: e.message }, e.statusCode || 500);
     }
   }
 

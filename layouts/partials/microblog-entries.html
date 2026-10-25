@@ -1,0 +1,5 @@
+{{- $entries := where .Site.RegularPages "Section" "microblog" -}}
+{{- if and (eq .Language.Lang "en") (eq (len $entries) 0) -}}
+    {{- $entries = where .Sites.Default.RegularPages "Section" "microblog" -}}
+{{- end -}}
+{{- return $entries.ByDate.Reverse -}}

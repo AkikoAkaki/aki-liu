@@ -68,6 +68,10 @@ function New-FileRecord {
 function Get-TotalLength {
     param([object[]]$Files)
 
+    if ($null -eq $Files -or $Files.Count -eq 0) {
+        return [int64]0
+    }
+
     $sum = ($Files | Measure-Object -Property Length -Sum).Sum
     if ($null -eq $sum) {
         return [int64]0

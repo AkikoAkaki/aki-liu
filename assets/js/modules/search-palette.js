@@ -558,7 +558,10 @@ export function initSearchPalette() {
     inputEl.setAttribute("aria-expanded", "true");
 
     const menuBar = document.getElementById("menu-bar");
-    if (menuBar) menuBar.classList.add("is-search");
+    if (menuBar) {
+      menuBar.classList.remove("is-scrolled-away");
+      menuBar.classList.add("is-search");
+    }
 
     // Force browser layout so the newly injected DOM elements
     // register their initial CSS state (e.g., blur(0px)) before transitioning.

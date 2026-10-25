@@ -1,7 +1,7 @@
 {{ define "main" }}
 {{- $section := .Site.GetPage "section" "microblog" -}}
-{{- $newer := .PrevInSection -}}
-{{- $older := .NextInSection -}}
+{{- $newer := .NextInSection -}}
+{{- $older := .PrevInSection -}}
 
 <article class="microblog-single">
     <div class="microblog-single-back">

@@ -1,6 +1,5 @@
 {{- /* Microblog feed: emitted as /microblog/feed.json. Consumed by assets/js/microblog.js. */ -}}
-{{- $entries := where .Site.RegularPages "Section" "microblog" -}}
-{{- $entries = $entries.ByDate.Reverse -}}
+{{- $entries := partial "microblog-entries.html" . -}}
 
 {{- $allTags := slice -}}
 {{- range $entries -}}

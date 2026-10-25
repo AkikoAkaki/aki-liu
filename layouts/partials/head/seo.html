@@ -100,6 +100,11 @@
 {{- $socialImage := "" -}}
 {{- with $page.Params.cover -}}
     {{- $socialImage = printf "%v" . -}}
+    {{- if not (hasPrefix $socialImage "/") -}}
+        {{- with $page.Resources.Get $socialImage -}}
+            {{- $socialImage = .RelPermalink -}}
+        {{- end -}}
+    {{- end -}}
 {{- end -}}
 {{- if and (eq $socialImage "") $page.Site.Params.defaultSocialImage -}}
     {{- $socialImage = printf "%v" $page.Site.Params.defaultSocialImage -}}
