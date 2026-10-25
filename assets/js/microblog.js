@@ -293,9 +293,10 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         });
     }
 
-    function openYearColumn(year, updateHistory = true) {
-        year = String(year);
-        const existing = deck.querySelector(`.mb-column[data-mb-year="${CSS.escape(year)}"]`);
+    function openColumn(type, label, updateHistory = true) {
+        const value = type === 'year' ? String(label) : tagToSlug(label || '');
+        if (!value) return;
+        const existing = deck.querySelector(`.mb-column[data-mb-${type}="${CSS.escape(value)}"]`);
         if (existing) {
             existing.classList.add('is-pulsing');
             setTimeout(() => existing.classList.remove('is-pulsing'), 600);
@@ -303,13 +304,13 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         }
 
         const column = document.createElement('section');
-        column.className = 'mb-column mb-column-year is-entering';
-        column.dataset.mbColumnId = `year-${columnSeq++}`;
-        column.dataset.mbYear = year;
+        column.className = `mb-column mb-column-${type} is-entering`;
+        column.dataset.mbColumnId = `${type}-${columnSeq++}`;
+        column.setAttribute(`data-mb-${type}`, value);
         column.innerHTML = `
             <div class="mb-column-content">
                 <div class="mb-column-header">
-                    <span class="mb-column-title">${escapeHtml(year)}</span>
+                    <span class="mb-column-title">${escapeHtml(label)}</span>
                     <span class="mb-column-meta"><span class="mb-column-count" data-mb-column-count>0</span> <span data-mb-column-unit>Entries</span></span>
                     <button class="mb-column-close" type="button" data-mb-close aria-label="Close column">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M17 7L7 17"/><path d="M7 7l10 10"/></svg>
@@ -320,9 +321,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
             </div>
         `;
         deck.appendChild(column);
-
-        loadColumn(column, '', year);
-
+        loadColumn(column, type === 'tag' ? value : '', type === 'year' ? value : '');
         void column.getBoundingClientRect();
         scheduleColumnCompression();
         requestAnimationFrame(() => {
@@ -331,54 +330,12 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
                 column.classList.add('is-entered');
             });
         });
-        column.querySelector('[data-mb-close]').addEventListener('click', () => closeTagColumn(column));
+        column.querySelector('[data-mb-close]').addEventListener('click', () => closeColumn(column));
         syncURL(updateHistory);
         return column;
     }
 
-    function openTagColumn(tagLabel, updateHistory = true) {
-        const slug = tagToSlug(tagLabel || '');
-        if (!slug) return;
-        const existing = deck.querySelector(`.mb-column[data-mb-tag="${CSS.escape(slug)}"]`);
-        if (existing) {
-            existing.classList.add('is-pulsing');
-            setTimeout(() => existing.classList.remove('is-pulsing'), 600);
-            return existing;
-        }
-
-        const column = document.createElement('section');
-        column.className = 'mb-column mb-column-tag is-entering';
-        column.dataset.mbColumnId = `tag-${columnSeq++}`;
-        column.dataset.mbTag = slug;
-        column.innerHTML = `
-            <div class="mb-column-content">
-                <div class="mb-column-header">
-                    <span class="mb-column-title">${escapeHtml(tagLabel)}</span>
-                    <span class="mb-column-meta"><span class="mb-column-count" data-mb-column-count>0</span> <span data-mb-column-unit>Entries</span></span>
-                    <button class="mb-column-close" type="button" data-mb-close aria-label="Close column">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M17 7L7 17"/><path d="M7 7l10 10"/></svg>
-                    </button>
-                </div>
-                <div class="mb-column-feed" data-mb-feed></div>
-                <div class="mb-column-sentinel" data-mb-sentinel aria-hidden="true"></div>
-            </div>
-        `;
-        deck.appendChild(column);
-        loadColumn(column, slug);
-        void column.getBoundingClientRect();
-        scheduleColumnCompression();
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                column.classList.remove('is-entering');
-                column.classList.add('is-entered');
-            });
-        });
-        column.querySelector('[data-mb-close]').addEventListener('click', () => closeTagColumn(column));
-        syncURL(updateHistory);
-        return column;
-    }
-
-    function closeTagColumn(column) {
+    function closeColumn(column) {
         if (!column || column.classList.contains('mb-column-main')) return;
         const beforeRects = captureColumnRects();
         column.classList.add('is-leaving');
@@ -433,9 +390,9 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         const tags = feedData ? feedData.tags || [] : [];
         cols.forEach(slug => {
             const label = tags.find(t => tagToSlug(t) === slug) || slug;
-            openTagColumn(label, false);
+            openColumn('tag', label, false);
         });
-        years.forEach(year => openYearColumn(year, false));
+        years.forEach(year => openColumn('year', year, false));
         syncURL(false);
     }
 
@@ -448,7 +405,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
             e.preventDefault();
             const labelEl = tagItem.querySelector('.tag-name');
             const label = labelEl ? labelEl.textContent.trim() : tagItem.dataset.tag;
-            openTagColumn(label);
+            openColumn('tag', label);
         });
     }
 
@@ -458,7 +415,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
                 const yearItem = e.target.closest('.archive-year-item');
                 if (!yearItem || !yearItem.dataset.year) return;
                 e.preventDefault();
-                openYearColumn(yearItem.dataset.year);
+                openColumn('year', yearItem.dataset.year);
             });
         });
     }
@@ -468,7 +425,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
             const tag = e.target.closest('.mb-card-tag-dot');
             if (!tag) return;
             e.preventDefault();
-            openTagColumn(tag.dataset.mbTagLabel || tag.dataset.mbTag);
+            openColumn('tag', tag.dataset.mbTagLabel || tag.dataset.mbTag);
         });
     }
 

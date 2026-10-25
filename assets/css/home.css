@@ -56,14 +56,14 @@
     opacity: 1;
     display: flex;
     flex-direction: column;
-    align-items: center; /* 鏁翠綋灞呬腑 */
-    justify-content: center; /* 鍨傜洿鏂瑰悜鍚戜笅鍘嬶紝淇濇寔椤甸潰涓績浣嶇疆 */
+    align-items: center;
+    justify-content: center;
     min-height: 55vh;
 }
 
 .author-name-svg-wrapper {
     width: 100%;
-    max-width: 1200px; /* 鎺у埗 SVG 鐨勬渶澶у搴︼紝闃叉鍦ㄥぇ灞忎笂杩囧ぇ */
+    max-width: 1200px;
     margin: 0 auto 3rem auto;
     display: flex;
     justify-content: center;
@@ -73,7 +73,7 @@
 }
 
 .hero-svg {
-    width: 85%; /* 鍗犳嵁瀹瑰櫒鐨勫ぇ閮ㄥ垎瀹藉害 */
+    width: 85%;
     height: auto;
     display: block;
 }
@@ -81,12 +81,12 @@
 .bio-text {
     opacity: 0;
     animation: motion-rise 0.5s ease forwards;
-    font-family: var(--font-sans); /* 姝ｆ枃鏀逛负 Switzer sans */
+    font-family: var(--font-sans);
     font-size: clamp(1.1rem, 1.6vw, 1.4rem);
-    line-height: 1.35; /* 鏀圭揣鍑?*/
+    line-height: 1.35;
     margin: 0 auto 1.5rem auto;
     color: var(--color-heading);
-    max-width: 600px; /* 缁熶竴缂╁皬瀹藉害 */
+    max-width: 600px;
     text-align: center;
     font-weight: 400;
 }
@@ -114,7 +114,7 @@
 }
 
 .intro .bio-text:first-of-type > em {
-    font-family: var(--font-serif); /* 浠呴娈?tag 浣跨敤 serif */
+    font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
 }
@@ -610,7 +610,7 @@ a.nav-panel-subitem:hover {
     animation-delay: 0.2s;
     display: flex;
     flex-direction: column;
-    align-items: center; /* 纭繚鏍囬涓庡崱鐗囧眳涓?*/
+    align-items: center;
 }
 
 /* ==========================================================================
@@ -622,18 +622,18 @@ a.nav-panel-subitem:hover {
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-    max-width: 680px; /* 缂╁皬鍏变韩瀹藉害 */
+    max-width: 680px;
 }
 
 .now-card-expandable {
     background-color: var(--bg-color);
     border: 1px solid var(--border-color);
-    border-radius: 20px; /* 鏇村渾娑︾殑杈硅锛岀鍚堝浘涓€銆佸浘浜岄鏍?*/
+    border-radius: 20px;
     box-shadow:
         0 2px 4px rgba(0, 0, 0, 0.02),
         0 6px 12px rgba(0, 0, 0, 0.03),
         inset 0 1px 1px rgba(255, 255, 255, 0.8),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.03); /* 澧炲己寰嫙鐗╁簳閮ㄥ帤搴︽劅 */
+        inset 0 -2px 0 rgba(0, 0, 0, 0.03);
     overflow: hidden;
     transition:
         box-shadow 0.3s ease,
@@ -657,7 +657,7 @@ a.nav-panel-subitem:hover {
     align-items: center;
     background: none;
     border: none;
-    padding: 1.4rem 2rem; /* 鍑忓皬鐣欑櫧锛屽崱鐗囨洿绱у噾 */
+    padding: 1.4rem 2rem;
     cursor: pointer;
     color: var(--color-heading);
     transition: padding 0.3s ease;
@@ -816,14 +816,14 @@ a.nav-panel-subitem:hover {
     box-shadow:
         0 2px 4px rgba(0, 0, 0, 0.04),
         inset 0 1px 1px rgba(255, 255, 255, 0.9),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.03); /* 澧炲己寰嫙鐗╁簳閮ㄥ帤搴︽劅 */
-    outline: 6px solid var(--bg-color); /* 鍒╃敤澶栨绾夸骇鐢熶笂涓嬫柇绂绘晥鏋?*/
+        inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+    outline: 6px solid var(--bg-color);
 }
 
 .nc-pillar-content {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem; /* 澶у箙缂╁皬涓绘爣棰樹笌姝ｆ枃璺濈 */
+    gap: 0.15rem;
     padding-top: 0.35rem;
 }
 
@@ -831,18 +831,18 @@ a.nav-panel-subitem:hover {
     margin: 0;
     font-family: var(--font-sans);
     font-size: 1rem;
-    font-weight: 500; /* 鍘婚櫎绮楅粦浣撴劅 */
+    font-weight: 500;
     color: var(--color-heading);
 }
 
 .nc-pillar-desc {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: 0.96rem; /* 鍜屾鏂囧悓鏍峰ぇ灏?*/
+    font-size: 0.96rem;
     color: var(--color-secondary);
-    line-height: 1.38; /* 鍜屾鏂囧悓鏍疯璺?*/
-    letter-spacing: -0.01em; /* 鍜屾鏂囧悓鏍峰瓧璺?*/
-    font-weight: 400; /* 瀹屽叏闈炵矖浣?*/
+    line-height: 1.38;
+    letter-spacing: -0.01em;
+    font-weight: 400;
 }
 
 @media (max-width: 768px) {
@@ -936,99 +936,16 @@ a.nav-panel-subitem:hover {
     }
 }
 
-/* Inline links in bio text: text-like link with a soft hover glow behind it. */
-.bio-text a {
-    position: relative;
-    display: inline-block;
-    padding: 0 0.12em 0.04em;
-    border: 0;
-    border-radius: 0.14em;
-    background-color: rgba(5, 5, 5, 0.035);
-    background-image: none;
-    box-shadow: 0 0 0 0 rgba(5, 5, 5, 0);
-    color: var(--color-heading);
-    text-decoration: none !important;
-    text-decoration-line: none !important;
-    text-decoration-thickness: 0;
-    text-underline-offset: 0;
-    white-space: nowrap;
-    transition:
-        background-color 0.28s ease,
-        box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-        color 0.18s ease;
-}
-
-.bio-text a.link-slot {
-    display: inline-flex;
-    align-items: baseline;
-    clip-path: none;
-    -webkit-clip-path: none;
-    overflow: visible;
-    vertical-align: baseline;
-}
-
-.bio-text a .link-slot-mask {
-    position: relative;
-    display: inline-flex;
-    align-items: baseline;
-    overflow: hidden;
-    clip-path: none;
-    -webkit-clip-path: none;
-    line-height: inherit;
-    vertical-align: baseline;
-}
-
-.bio-text a .link-slot-text {
-    line-height: inherit;
-}
-
-.bio-text a .link-slot-text--hover {
-    inset: 0 auto auto 0;
-}
-
-.bio-text a::before {
-    content: none;
-}
-
-.bio-text a.link-slot::after {
-    content: none;
-}
-
+.bio-text a,
 .bio-text a:hover,
 .bio-text a:focus-visible {
-    background-color: rgba(5, 5, 5, 0.048);
-    box-shadow:
-        0 0 0.18em 0.05em rgba(5, 5, 5, 0.032),
-        0 0.04em 0.56em 0.14em rgba(5, 5, 5, 0.044);
     color: var(--color-heading);
 }
 
+.bio-text a::before,
 .bio-text a:hover::before,
 .bio-text a:focus-visible::before {
     content: none;
-}
-
-.bio-text a:focus-visible {
-    outline: 2px solid var(--color-heading);
-    outline-offset: 3px;
-}
-
-:root[data-theme="dark"] .bio-text a {
-    background-color: rgba(255, 255, 255, 0.065);
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-}
-
-:root[data-theme="dark"] .bio-text a:hover,
-:root[data-theme="dark"] .bio-text a:focus-visible {
-    background-color: rgba(255, 255, 255, 0.085);
-    box-shadow:
-        0 0 0.18em 0.05em rgba(255, 255, 255, 0.042),
-        0 0.04em 0.56em 0.14em rgba(255, 255, 255, 0.058);
-}
-
-:root[data-theme="dark"] .bio-text a:hover::before,
-:root[data-theme="dark"] .bio-text a:focus-visible::before {
-    background-color: rgba(255, 255, 255, 0.18);
 }
 
 @media (prefers-reduced-motion: reduce) {

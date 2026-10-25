@@ -10,7 +10,6 @@ export class FluidEngine {
         
         this.rafId = null;
         this.resizeRafId = null;
-        this.isDestroyed = false;
         this.isPaused = false;
         this.isContextLost = false;
         
@@ -155,7 +154,7 @@ export class FluidEngine {
         this.isContextLost = false;
         this.setupWebGL();
         this.doResize();
-        if (!this.isPaused && !this.isDestroyed) {
+        if (!this.isPaused) {
             this.start();
         }
     }
@@ -215,7 +214,7 @@ export class FluidEngine {
     }
     
     start() {
-        if (this.isDestroyed || !this.gl) return;
+        if (!this.gl) return;
         this.isPaused = false;
         
         if (this.reduced) {
@@ -266,37 +265,12 @@ export class FluidEngine {
     }
     
     loop() {
-        if (this.isPaused || this.isDestroyed || this.isContextLost) {
+        if (this.isPaused || this.isContextLost) {
             this.rafId = null;
             return;
         }
         
         this.renderFrame();
         this.rafId = requestAnimationFrame(this.loop);
-    }
-    
-    destroy() {
-        this.isDestroyed = true;
-        this.pause();
-        
-        window.removeEventListener('mousemove', this.handleMouseMove);
-        document.removeEventListener('mouseleave', this.handleMouseLeave);
-        window.removeEventListener('resize', this.handleResize);
-        
-        if (this.canvas) {
-            this.canvas.removeEventListener('webglcontextlost', this.handleContextLost);
-            this.canvas.removeEventListener('webglcontextrestored', this.handleContextRestored);
-            this.canvas.remove();
-        }
-        
-        if (this.gl) {
-            const ext = this.gl.getExtension('WEBGL_lose_context');
-            if (ext) ext.loseContext();
-        }
-        
-        this.gl = null;
-        this.canvas = null;
-        this.intro = null;
-        this.wrapper = null;
     }
 }
