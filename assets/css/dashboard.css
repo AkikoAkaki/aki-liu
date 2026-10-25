@@ -37,7 +37,6 @@
     --dur-fast: 160ms;
     --dur-base: 260ms;
     --dur-slow: 520ms;
-    --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --dash-neutral: #8b93a7;
     --dash-good: #5d7cff;
     --dash-good-soft: rgba(93, 124, 255, 0.16);
@@ -72,44 +71,6 @@
     position: relative;
     min-height: 100vh;
     padding: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-    .dash-shell {
-        --dash-card-bg: linear-gradient(180deg, #0a0a0a 0%, #070707 100%);
-        --dash-card-border: rgba(255, 255, 255, 0.1);
-        --dash-card-highlight: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.07) 0%,
-            rgba(255, 255, 255, 0.025) 38%,
-            rgba(255, 255, 255, 0) 100%
-        );
-        --shadow-card:
-            0 18px 44px rgba(0, 0, 0, 0.42),
-            0 1px 0 rgba(255, 255, 255, 0.04) inset;
-        --shadow-card-hover:
-            0 22px 54px rgba(0, 0, 0, 0.52),
-            0 1px 0 rgba(255, 255, 255, 0.06) inset;
-    }
-}
-
-:root[data-theme="light"] .dash-shell {
-    --dash-card-bg: linear-gradient(180deg, #fdfdfd 0%, #fbfbfb 100%);
-    --dash-card-border: rgba(5, 5, 5, 0.075);
-    --dash-card-highlight: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.92) 0%,
-        rgba(255, 255, 255, 0.36) 34%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    --shadow-card:
-        0 20px 48px rgba(0, 0, 0, 0.052),
-        0 2px 8px rgba(0, 0, 0, 0.025),
-        inset 0 1px 0 rgba(255, 255, 255, 0.92);
-    --shadow-card-hover:
-        0 24px 58px rgba(0, 0, 0, 0.068),
-        0 3px 12px rgba(0, 0, 0, 0.03),
-        inset 0 1px 0 rgba(255, 255, 255, 0.96);
 }
 
 :root[data-theme="dark"] .dash-shell {
@@ -290,9 +251,9 @@
     gap: 1.25rem;
     min-height: 270px;
     transition:
-        border-color var(--dur-base) var(--ease-expo),
-        box-shadow var(--dur-base) var(--ease-expo),
-        transform var(--dur-base) var(--ease-expo);
+        border-color var(--dur-base) var(--ease-out-expo),
+        box-shadow var(--dur-base) var(--ease-out-expo),
+        transform var(--dur-base) var(--ease-out-expo);
 }
 .metric-card::before {
     content: "";
@@ -845,7 +806,7 @@
     pointer-events: none;
 }
 .trend-chart #chart-cursor {
-    transition: opacity 0.14s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.14s var(--ease-standard);
     opacity: 0;
     pointer-events: none;
 }

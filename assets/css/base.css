@@ -141,11 +141,14 @@
 /* 全局变量：字体、颜色、间距统一在这里配置 */
 :root {
     /* 字体栈 */
-    --font-serif: "Newsreader", serif;
+    /* Latin fonts first; the CJK fallbacks pick a consistent Chinese face per OS. */
+    --font-cjk-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC";
+    --font-cjk-serif: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun";
+    --font-serif: "Newsreader", var(--font-cjk-serif), serif;
     --font-editorial: "PP Editorial Old", var(--font-serif);
     --font-mono: "JetBrains Mono", monospace;
-    --font-sans: "Switzer", sans-serif;
-    --font-ui: "Switzer", sans-serif;
+    --font-sans: "Switzer", var(--font-cjk-sans), sans-serif;
+    --font-ui: "Switzer", var(--font-cjk-sans), sans-serif;
 
     /* 排版预设 */
     --type-intro: 400 clamp(1.2rem, 2vw, 1.6rem)/1.6 var(--font-serif);
@@ -155,6 +158,7 @@
     --type-s: 400 14px/1.6 var(--font-sans);
 
     /* 亮色主题配色 */
+    color-scheme: light;
     --bg-color: #fafafa;
     --bg-rgb: 250, 250, 250;
     --text-color: #2c2c2c;
@@ -176,6 +180,11 @@
     --post-inline-code-bg: #f3f3f3;
     --post-table-hover: rgba(0, 0, 0, 0.025);
 
+    /* Easing curves shared by every stylesheet. */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+
     /* Shared panel shell for the open menu panel and Ctrl+K palette */
     --panel-shell-bg: rgba(236, 236, 236, 0.14);
     --panel-shell-border: rgba(var(--text-rgb), 0.1);
@@ -184,38 +193,10 @@
     --panel-shell-radius: 16px;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        /* 深色模式：覆盖配色变量 */
-        --bg-color: #050505;
-        --bg-rgb: 5, 5, 5;
-        --text-color: #ffffff;
-        --text-rgb: 255, 255, 255;
-        --text-meta: #666666;
-        --border-color: #1a1a1a;
-
-        /* 深色模式语义化颜色 */
-        --color-heading: #ffffff;
-        --color-secondary: #999999;
-        --color-muted: #888888;
-        --color-dim: #777777;
-        --color-bg-muted: #0d0d0d;
-        --color-divider: #1a1a1a;
-        --footer-reveal-bg: #18171a;
-        --post-aside-bg: rgba(255, 255, 255, 0.04);
-        --post-image-border: rgba(255, 255, 255, 0.08);
-        --post-media-border: rgba(255, 255, 255, 0.08);
-        --post-inline-code-bg: #1a1a1a;
-        --post-table-hover: rgba(255, 255, 255, 0.03);
-
-        --panel-shell-bg: rgba(255, 255, 255, 0.07);
-        --panel-shell-border: rgba(255, 255, 255, 0.08);
-        --panel-shell-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
-    }
-}
-
-/* 显式主题覆盖（命令面板的 Toggle dark mode 写入 [data-theme] 与 localStorage） */
+/* Dark palette. The inline script in head/core-assets.html always sets
+   html[data-theme] to the stored choice or the system preference. */
 :root[data-theme="dark"] {
+    color-scheme: dark;
     --bg-color: #050505;
     --bg-rgb: 5, 5, 5;
     --text-color: #ffffff;
@@ -238,31 +219,6 @@
     --panel-shell-bg: rgba(255, 255, 255, 0.07);
     --panel-shell-border: rgba(255, 255, 255, 0.08);
     --panel-shell-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
-}
-
-:root[data-theme="light"] {
-    --bg-color: #fafafa;
-    --bg-rgb: 250, 250, 250;
-    --text-color: #2c2c2c;
-    --text-rgb: 44, 44, 44;
-    --text-meta: #999999;
-    --border-color: #e8e8e8;
-    --color-heading: #050505;
-    --color-secondary: #6f6f6f;
-    --color-muted: #7d7d7d;
-    --color-dim: #8f8f8f;
-    --color-bg-muted: #f3f3f3;
-    --color-divider: #f0f0f0;
-    --footer-reveal-bg: #f0f0f0;
-    --post-aside-bg: rgba(0, 0, 0, 0.03);
-    --post-image-border: rgba(0, 0, 0, 0.03);
-    --post-media-border: rgba(0, 0, 0, 0.05);
-    --post-inline-code-bg: #f3f3f3;
-    --post-table-hover: rgba(0, 0, 0, 0.025);
-
-    --panel-shell-bg: rgba(236, 236, 236, 0.14);
-    --panel-shell-border: rgba(var(--text-rgb), 0.1);
-    --panel-shell-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
 }
 
 .skip-link {
@@ -359,7 +315,7 @@ body::after {
     z-index: 40;
     pointer-events: none;
     transform: translate3d(0, 0, 0);
-    transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: height 0.6s var(--ease-out-expo);
 }
 
 /* ==========================================================================
@@ -391,10 +347,10 @@ body::after {
 
     /* Non-linear morphing animation — expo.out curve */
     transition:
-        transform 0.82s cubic-bezier(0.22, 1, 0.36, 1),
-        width 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-        height 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-        border-radius 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        transform 0.82s var(--ease-out-quint),
+        width 0.6s var(--ease-out-quint),
+        height 0.6s var(--ease-out-quint),
+        border-radius 0.6s var(--ease-out-quint);
 }
 
 .menu-bar.is-scrolled-away {
@@ -460,8 +416,8 @@ body::after {
     display: block;
     will-change: transform, opacity;
     transition:
-        opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        opacity 0.22s var(--ease-out-expo),
+        transform 0.28s var(--ease-out-expo);
 }
 
 .menu-trigger-title--menu {
@@ -517,7 +473,7 @@ body::after {
     position: absolute;
     transition:
         opacity 0.22s ease,
-        transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        transform 0.22s var(--ease-out-expo);
 }
 
 /* Closed state: show hamburger, hide ×  */
@@ -554,7 +510,7 @@ body::after {
     will-change: opacity, transform;
     transition:
         opacity 0.22s ease,
-        transform 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.52s var(--ease-out-quint),
         visibility 0s linear 0.52s;
 }
 
@@ -572,8 +528,8 @@ body::after {
     pointer-events: none;
     transform: translate3d(0, -18px, 0);
     transition:
-        opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.18s var(--ease-out-expo),
+        transform 0.28s var(--ease-out-expo),
         visibility 0s linear 0.28s;
 }
 
@@ -601,7 +557,7 @@ body::after {
     transform: translate3d(0, 10px, 0);
     transition:
         opacity 0.22s ease,
-        transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+        transform 0.42s var(--ease-out-quint);
 }
 
 .menu-bar.is-open:not(.is-search) .menu-group-label {
@@ -660,7 +616,7 @@ body::after {
     will-change: transform, opacity;
     transition:
         opacity 0.22s ease,
-        transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.42s var(--ease-out-quint),
         background-color 0.2s ease;
 }
 
@@ -878,10 +834,10 @@ body.menu-cursor-hidden * {
         backdrop-filter: blur(16px) saturate(140%) !important;
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
         transition:
-            transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-            width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-            height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-            border-radius 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.4s var(--ease-out-expo),
+            width 0.3s var(--ease-out-expo),
+            height 0.3s var(--ease-out-expo),
+            border-radius 0.3s var(--ease-out-expo),
             backdrop-filter 0.3s ease;
     }
 
@@ -909,14 +865,14 @@ body.menu-cursor-hidden * {
         padding-top: 72px;
         transition:
             opacity 0.18s ease,
-            transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.35s var(--ease-out-expo),
             visibility 0s linear 0.35s !important;
     }
 
     .menu-link {
         transition:
             opacity 0.18s ease,
-            transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.3s var(--ease-out-expo),
             background-color 0.2s ease !important;
     }
 

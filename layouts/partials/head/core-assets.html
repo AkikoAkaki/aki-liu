@@ -1,7 +1,9 @@
 {{- /* Static head assets cached across pages in one build. */ -}}
 {{- /* Inline theme bootstrap: must run before first paint to avoid a
        light-to-dark snap when the visitor's stored preference is dark. */ -}}
-<script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(_){}if(window.self!==window.top){document.documentElement.classList.add('is-iframe');}}())</script>
+{{- /* CSS reads only html[data-theme]: the stored choice, else the system
+       preference (kept in sync until the visitor picks a theme). */ -}}
+<script>(function(){var d=document.documentElement,m=window.matchMedia('(prefers-color-scheme: dark)');function apply(){var t=null;try{t=localStorage.getItem('theme');}catch(_){}d.setAttribute('data-theme',t==='dark'||t==='light'?t:(m.matches?'dark':'light'));}apply();if(m.addEventListener){m.addEventListener('change',apply);}if(window.self!==window.top){d.classList.add('is-iframe');}}())</script>
 {{- /* Fonts */ -}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

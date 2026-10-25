@@ -60,18 +60,6 @@
     --footer-signature-filter: none;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        --footer-text: #f3f0eb;
-        --footer-text-soft: rgba(243, 240, 235, 0.76);
-        --footer-line: rgba(243, 240, 235, 0.16);
-        --footer-background:
-            radial-gradient(circle at 20% 8%, rgba(76, 72, 68, 0.32) 0%, rgba(76, 72, 68, 0) 40%),
-            linear-gradient(180deg, rgba(18, 18, 19, 0.99) 0%, rgba(24, 23, 26, 0.99) 42%, rgba(30, 27, 24, 1) 100%);
-        --footer-signature-filter: invert(1) brightness(1.8);
-    }
-}
-
 :root[data-theme="dark"] {
     --footer-text: #f3f0eb;
     --footer-text-soft: rgba(243, 240, 235, 0.76);
@@ -137,12 +125,6 @@
     gap: 6rem;
 }
 
-@media (prefers-color-scheme: dark) {
-    .footer-content {
-        background: transparent;
-        box-shadow: none;
-    }
-}
 :root[data-theme="dark"] .footer-content {
     background: transparent;
     box-shadow: none;
@@ -351,30 +333,6 @@
     font-weight: 400;
     margin-bottom: 1.5rem;
     color: var(--color-secondary);
-}
-
-.archive-site-title {
-    font-family: var(--font-sans);
-    font-size: 1.2rem;
-    font-weight: 500;
-    margin-bottom: 4rem;
-}
-
-.archive-nav-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-.archive-nav-list a {
-    text-decoration: none;
-    color: var(--color-heading);
-    font-family: var(--font-sans);
-    font-size: 0.95rem;
-}
-
-.archive-nav-list a:hover, .archive-nav-list a.active {
-    text-decoration: underline;
 }
 
 /* Microblog Specific Layout Override */
@@ -592,6 +550,10 @@
 }
 @media (max-width: 480px) {
     .footer-content { padding: 3rem 1rem 1.5rem; gap: 2.5rem; }
+    .footer-grid { grid-template-columns: minmax(0, 1fr); }
+    .footer-links li { gap: 0.75rem; }
+    .link-name { min-width: 64px; }
+    .footer-links a { min-width: 0; overflow-wrap: anywhere; }
 }
 
 /* Iframe page preview specific layout overrides */
@@ -605,7 +567,6 @@
 .is-iframe .site-sidebar,
 .is-iframe .site-sidebar-right,
 .is-iframe .site-sidebar-bottom,
-.is-iframe .title-with-back,
 .is-iframe .skip-link,
 .is-iframe .post-header-redesigned,
 .is-iframe .post-toc {

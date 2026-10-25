@@ -11,12 +11,9 @@
     --motion-sweep-fast: 0.6s;
     --motion-sweep-slow: 0.9s;
 
-    /* Stagger steps */
-    --motion-stagger-fast: 40ms;
-    --motion-stagger-slow: 120ms;
 
     /* Easings */
-    --motion-ease-rise: cubic-bezier(0.16, 1, 0.3, 1);
+    --motion-ease-rise: var(--ease-out-expo);
     --motion-ease-sweep: cubic-bezier(0.25, 0.1, 0.1, 1);
 }
 
@@ -47,21 +44,6 @@
         filter: blur(0);
         opacity: 1;
     }
-}
-
-/* ----- Load-time rise primitive (snappy pages) ----- */
-
-.motion-rise {
-    opacity: 0;
-    animation: motion-rise var(--motion-rise-fast) var(--motion-ease-rise) forwards;
-}
-
-/* Stagger helper. Set --i on each item (1-based). Cap at 12 to keep
-   long lists from trailing. After cap, items use the cap delay. */
-.motion-stagger > * {
-    opacity: 0;
-    animation: motion-rise var(--motion-rise-fast) var(--motion-ease-rise) forwards;
-    animation-delay: calc(var(--i, 0) * var(--motion-stagger-fast));
 }
 
 /* ----- Scroll-reveal primitive (fancy pages only) ----- */
@@ -101,8 +83,6 @@
 /* ----- Global reduced-motion override ----- */
 
 @media (prefers-reduced-motion: reduce) {
-    .motion-rise,
-    .motion-stagger > *,
     .reveal-on-scroll {
         opacity: 1;
         transform: none;

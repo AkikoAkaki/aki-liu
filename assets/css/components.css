@@ -1,3 +1,5 @@
+
+
 /* ==========================================================================
    Component Styles
    可复用组件：导航、标题、404页面、标签侧边栏等
@@ -7,58 +9,7 @@
    Title with Back Link
    ========================================================================== */
 
-.title-with-back {
-    position: relative;
-    z-index: 50;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-left: -10rem;
-    padding-left: 10rem;
-    width: fit-content;
-}
-
-.title-with-back .back-link {
-    position: absolute;
-    left: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-family: var(--font-serif);
-    font-size: 1.15rem;
-    color: var(--color-muted);
-    text-decoration: none;
-    padding: 0.15rem 0.4rem 0.15rem 0;
-    border-radius: 999px;
-    transition: color 0.18s ease;
-}
-
-.title-with-back .back-link:hover {
-    color: var(--color-heading);
-}
-
-.title-with-back .back-link svg {
-    width: 16px;
-    height: 16px;
-    margin-top: -1.75px;
-}
-
-.title-with-back .back-link span {
-    letter-spacing: 0.01em;
-}
-
 @media (max-width: 768px) {
-    .title-with-back {
-        margin-left: 0;
-        padding-left: 0;
-        gap: 0.8rem;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .title-with-back .back-link {
-        position: static;
-    }
 }
 
 /* ==========================================================================
@@ -68,15 +19,6 @@
 .item-title,
 .item-date {
     transition: opacity 0.1s ease;
-}
-
-.item-divider {
-    grid-column: 1 / -1;
-    height: 1px;
-    background-color: var(--color-divider);
-    position: absolute;
-    top: 0;
-    width: 100%;
 }
 
 .item-year {
@@ -129,7 +71,7 @@
 /* Each text copy */
 .link-slot-text {
     display: block;
-    transition: transform 0.48s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.48s var(--ease-out-expo);
     white-space: nowrap;
 }
 
@@ -170,7 +112,7 @@
     transform: scaleX(0);
     opacity: 0;
     transition:
-        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.5s var(--ease-out-expo),
         opacity 0.2s ease;
 }
 
@@ -198,7 +140,7 @@
     white-space: nowrap;
     transition:
         background-color 0.28s ease,
-        box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.28s var(--ease-out-quint),
         color 0.18s ease;
 }
 
@@ -515,7 +457,7 @@
     position: relative;
     padding: 0.2rem 0.4rem;
     z-index: 1;
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.05s;
+    transition: transform 0.2s var(--ease-standard) 0.05s;
     will-change: transform;
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
@@ -536,7 +478,7 @@
     height: 14px;
     color: var(--color-heading);
     opacity: 0;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.05s;
+    transition: all 0.2s var(--ease-standard) 0.05s;
     pointer-events: none;
     display: flex;
     align-items: center;
@@ -591,23 +533,23 @@
 .archive-tag-item:hover .filter-hover-arrow--left {
     opacity: 1;
     transform: translate(0, -50%);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.25s;
+    transition: all 0.2s var(--ease-standard) 0.25s;
 }
 
 .archive-year-item:hover .filter-hover-arrow--right {
     opacity: 1;
     transform: translate(0, -50%) scaleX(-1);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.25s;
+    transition: all 0.2s var(--ease-standard) 0.25s;
 }
 
 .archive-tag-item:hover .filter-item-label {
     transform: translateX(22px);
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.25s;
+    transition: transform 0.2s var(--ease-standard) 0.25s;
 }
 
 .archive-year-item:hover .filter-item-label {
     transform: translateX(-22px);
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.25s;
+    transition: transform 0.2s var(--ease-standard) 0.25s;
 }
 
 .filter-item-label::after {
@@ -619,7 +561,7 @@
     z-index: -1;
     transform: scaleX(0);
     will-change: transform;
-    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
+    transition: transform 0.12s var(--ease-standard) 0.35s;
 }
 
 .archive-tag-item .filter-item-label::after {
@@ -633,7 +575,7 @@
 .archive-tag-item:hover .filter-item-label::after,
 .archive-year-item:hover .filter-item-label::after {
     transform: scaleX(1);
-    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.46s;
+    transition: transform 0.12s var(--ease-standard) 0.46s;
 }
 
 .archive-tag-item.active .filter-item-label::after,
@@ -730,7 +672,7 @@
     pointer-events: none;
     transition:
         opacity 0.18s ease,
-        transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+        transform 0.18s var(--ease-standard);
 }
 
 /* Hover Arrow SVG */
@@ -743,7 +685,7 @@
     color: var(--color-heading);
     opacity: 0;
     transform: translate(-10px, -50%);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.05s; /* Arrow disappears first */
+    transition: all 0.2s var(--ease-standard) 0.05s; /* Arrow disappears first */
     pointer-events: none;
     display: flex;
     align-items: center;
@@ -759,7 +701,7 @@
 .archive-item:hover .item-hover-arrow {
     opacity: 1;
     transform: translate(0, -50%);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.25s; /* Hover intent pause 0.25s (debounce) */
+    transition: all 0.2s var(--ease-standard) 0.25s; /* Hover intent pause 0.25s (debounce) */
 }
 
 .archive-item .item-year {
@@ -772,7 +714,7 @@
     position: relative;
     padding: 0.2rem 0.4rem;
     margin-left: -0.4rem;
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.05s; /* Matches arrow reset timing */
+    transition: transform 0.2s var(--ease-standard) 0.05s; /* Matches arrow reset timing */
     z-index: 1;
     will-change: transform;
     backface-visibility: hidden;
@@ -781,7 +723,7 @@
 
 .archive-item:hover .item-year {
     transform: translateX(22px);
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.25s; /* Matches arrow timing */
+    transition: transform 0.2s var(--ease-standard) 0.25s; /* Matches arrow timing */
 }
 
 .archive-item .item-title-wrapper {
@@ -821,14 +763,14 @@
     transform-origin: left;
     transform: scaleX(0);
     will-change: transform;
-    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.35s; /* Pause after arrow, then shrink */
+    transition: transform 0.12s var(--ease-standard) 0.35s; /* Pause after arrow, then shrink */
 }
 
 .archive-item:hover .item-year::after,
 .archive-item:hover .item-title::after {
     transform: scaleX(1);
     /* Wait for hover intent (0.25s) + arrow animate (0.2s) = 0.45s, plus 0.01s pause = 0.46s delay */
-    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1) 0.46s;
+    transition: transform 0.12s var(--ease-standard) 0.46s;
 }
 
 .item-tag-dots {

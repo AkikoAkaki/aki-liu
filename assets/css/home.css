@@ -69,7 +69,7 @@
     justify-content: center;
     opacity: 1;
     clip-path: inset(0 100% 0 0);
-    animation: hero-reveal 1.6s cubic-bezier(0.25, 0.1, 0.1, 1) forwards;
+    animation: hero-reveal 1.6s var(--motion-ease-sweep) forwards;
 }
 
 .hero-svg {
@@ -473,6 +473,10 @@ a.nav-panel-subitem:hover {
     font-size: 0.95rem;
     color: var(--color-heading);
     white-space: nowrap;
+    /* Truncate before the date pill is pushed off very narrow screens. */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .work-item-leader {
@@ -496,7 +500,7 @@ a.nav-panel-subitem:hover {
 
 @media (max-width: 900px) {
     .work-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         gap: 3.5rem;
         max-width: 680px;
     }
