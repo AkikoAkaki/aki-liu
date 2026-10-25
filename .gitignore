@@ -38,6 +38,7 @@ yarn.lock
 scripts/.temp-uploads/
 
 # Local tooling artifacts
+.optmem/
 .playwright-cli/
 .superpowers/
 .claude/worktrees/
