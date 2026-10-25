@@ -17,17 +17,10 @@
       {{ range $images }}
         {{ $subType := lower .MediaType.SubType }}
         {{ if in (slice "jpg" "jpeg" "png" "webp") $subType }}
+          {{/* The frame is 380 CSS px wide on desktop; 800px covers 2x screens. */}}
           {{ $processed := . }}
-          {{ $longEdge := .Height }}
-          {{ if gt .Width .Height }}
-            {{ $longEdge = .Width }}
-          {{ end }}
-          {{ if gt $longEdge 2000 }}
-            {{ if ge .Width .Height }}
-              {{ $processed = .Resize "2000x webp q82" }}
-            {{ else }}
-              {{ $processed = .Resize "x2000 webp q82" }}
-            {{ end }}
+          {{ if gt .Width 800 }}
+            {{ $processed = .Resize "800x webp q82" }}
           {{ else }}
             {{ $processed = .Process "webp q82" }}
           {{ end }}
@@ -101,7 +94,8 @@
                 </figcaption>
                 <div class="af-sequence-photo" style="{{ $itemStyle | safeCSS }}">
                   <div class="ab-photo">
-                    <img src="{{ $file_name.image.RelPermalink }}" alt="{{ $file_name.name }}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
+                    {{/* about-page.js sets src from data-src when the sequence first opens. */}}
+                    <img data-src="{{ $file_name.image.RelPermalink }}" alt="{{ $file_name.name }}" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
                     <div class="ab-photo-silhouette"></div>
                     {{ if $isAnchor }}
                     <div class="ab-photo-label">

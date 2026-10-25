@@ -9,17 +9,8 @@
 {{- end -}}
 
 {{- if $resource -}}
-  {{- $imgURL := $resource.RelPermalink -}}
-  {{- $imgWidth := $resource.Width -}}
-  {{- $imgHeight := $resource.Height -}}
-  {{- $subType := lower $resource.MediaType.SubType -}}
-  {{- if and (ne $subType "svg") (ne $subType "gif") -}}
-    {{- $webp := $resource.Process "webp q82" -}}
-    {{- $imgURL = $webp.RelPermalink -}}
-    {{- $imgWidth = $webp.Width -}}
-    {{- $imgHeight = $webp.Height -}}
-  {{- end -}}
-<img src="{{ $imgURL }}" alt="{{ $alt }}" loading="lazy" decoding="async" width="{{ $imgWidth }}" height="{{ $imgHeight }}"{{ with $title }} title="{{ . }}"{{ end }}>
+  {{- $img := partial "post-image.html" $resource -}}
+<img src="{{ $img.RelPermalink }}" alt="{{ $alt }}" loading="lazy" decoding="async" width="{{ $img.Width }}" height="{{ $img.Height }}"{{ with $title }} title="{{ . }}"{{ end }}>
 {{- else -}}
 <img src="{{ $dest | safeURL }}" alt="{{ $alt }}" loading="lazy" decoding="async"{{ with $title }} title="{{ . }}"{{ end }}>
 {{- end -}}

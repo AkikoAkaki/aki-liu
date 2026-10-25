@@ -1,0 +1,9 @@
+{{- /* Returns the WebP version of a post image resource, capped at 1400px
+       wide (the post column is at most 680 CSS px). SVG and GIF pass through. */ -}}
+{{- $resource := . -}}
+{{- $subType := lower $resource.MediaType.SubType -}}
+{{- if and (ne $subType "svg") (ne $subType "gif") -}}
+  {{- $spec := cond (gt $resource.Width 1400) "resize 1400x webp q82" "webp q82" -}}
+  {{- $resource = $resource.Process $spec -}}
+{{- end -}}
+{{- return $resource -}}

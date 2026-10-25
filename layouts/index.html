@@ -62,7 +62,8 @@
                     {{- else }}
                     <div class="work-items">
                         {{- range $cell.items }}
-                        <div class="work-item"{{ if .preview }} data-preview="{{ .preview | relURL }}"{{ end }}>
+                        {{- /* The hover preview box is at most 320 CSS px wide; 640px covers 2x screens. */}}
+                        <div class="work-item"{{ with .preview }}{{ with resources.Get . }} data-preview="{{ (.Resize "640x webp q82").RelPermalink }}"{{ else }}{{ errorf "homepage preview not found in assets: %s" . }}{{ end }}{{ end }}>
                             <div class="work-item-title-row">
                                 {{- if .link }}
                                 <a href="{{ .link | relLangURL }}" class="work-item-title">{{ .title }}</a>

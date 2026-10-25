@@ -30,17 +30,11 @@
 {{- $imgWidth := 0 -}}
 {{- $imgHeight := 0 -}}
 
-{{- if $resource -}}
-  {{- $imgURL = $resource.RelPermalink -}}
-  {{- $imgWidth = $resource.Width -}}
-  {{- $imgHeight = $resource.Height -}}
-  {{- $subType := lower $resource.MediaType.SubType -}}
-  {{- if and (ne $subType "svg") (ne $subType "gif") -}}
-    {{- $webp := $resource.Process "webp q82" -}}
-    {{- $imgURL = $webp.RelPermalink -}}
-    {{- $imgWidth = $webp.Width -}}
-    {{- $imgHeight = $webp.Height -}}
-  {{- end -}}
+{{- with $resource -}}
+  {{- $img := partial "post-image.html" . -}}
+  {{- $imgURL = $img.RelPermalink -}}
+  {{- $imgWidth = $img.Width -}}
+  {{- $imgHeight = $img.Height -}}
 {{- end -}}
 
 <figure{{ with .Get "class" }} class="{{ . }}"{{ end }}>

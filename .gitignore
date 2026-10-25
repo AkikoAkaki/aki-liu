@@ -1,7 +1,9 @@
 # Hugo build outputs
 /public/
 /public_test/
-/resources/_gen/
+/resources/_gen/*
+# Processed images are committed so Vercel builds skip image conversion.
+!/resources/_gen/images/
 /assets/jsconfig.json
 hugo_stats.json
 

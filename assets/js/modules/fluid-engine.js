@@ -202,8 +202,10 @@ export class FluidEngine {
         this.canvas.style.top    = ct + 'px';
         this.canvas.style.width  = cw + 'px';
         this.canvas.style.height = ch + 'px';
-        this.canvas.width  = cw * devicePixelRatio;
-        this.canvas.height = ch * devicePixelRatio;
+        // The noise field is soft, so render at most 1 device pixel per CSS pixel.
+        const scale = Math.min(devicePixelRatio, 1);
+        this.canvas.width  = Math.round(cw * scale);
+        this.canvas.height = Math.round(ch * scale);
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
         
         // Force a single render on resize to avoid flicker if paused

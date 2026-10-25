@@ -40,7 +40,7 @@ function applyAboutCover(root, item) {
   const srcImg = item.querySelector("img");
   const baseImg = root.querySelector(".af-photo-base img");
   if (srcImg && baseImg) {
-    const nextSrc = srcImg.getAttribute("src");
+    const nextSrc = srcImg.dataset.src || srcImg.getAttribute("src");
     if (nextSrc && baseImg.getAttribute("src") !== nextSrc) {
       baseImg.src = nextSrc;
       baseImg.alt = srcImg.getAttribute("alt") || "";
@@ -163,10 +163,21 @@ export function initAboutImageSequence() {
     void track.offsetHeight;
   }
 
+  // The sequence images stay unloaded until the first hover or click.
+  let imagesLoaded = false;
+  function loadSequenceImages() {
+    if (imagesLoaded) return;
+    imagesLoaded = true;
+    track.querySelectorAll("img[data-src]").forEach((img) => {
+      img.src = img.dataset.src;
+    });
+  }
+
   function open() {
     clearTimeout(closeTimer);
     if (active) return;
 
+    loadSequenceImages();
     active = true;
     root.classList.add("is-sequence-open");
     document.body.classList.add("about-sequence-open");

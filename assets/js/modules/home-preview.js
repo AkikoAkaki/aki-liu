@@ -34,13 +34,18 @@ export function initHomeHoverPreview() {
   let previewHeight = 0;
   let currentPreviewImage = null;
 
-  items.forEach((item) => {
-    const url = item.getAttribute("data-preview");
-    if (!url) return;
-    const preload = new Image();
-    preload.decoding = "async";
-    preload.src = url;
-  });
+  // Warm the previews once the pointer reaches the work grid, not on page load.
+  scope.addEventListener(
+    "pointerenter",
+    () => {
+      items.forEach((item) => {
+        const preload = new Image();
+        preload.decoding = "async";
+        preload.src = item.getAttribute("data-preview");
+      });
+    },
+    { once: true },
+  );
 
   function clearIntent() {
     if (!intentTimer) return;
