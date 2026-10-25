@@ -7,6 +7,8 @@ import { initExpandableCards, initFooterReveal, initTableWrapping } from "./modu
 import { initPrefetcher } from "./modules/prefetch.js";
 import { initSearchPalette } from "./modules/search-palette.js";
 
+import { renderMath } from "./modules/katex.js";
+
 document.addEventListener("DOMContentLoaded", () => {
   initScrollReveal();
   initAboutImageSequence();
@@ -30,4 +32,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initFooterReveal();
   initFluidEngine();
   initPrefetcher();
+  if (typeof window.renderMathInElement === "function") renderMath(document.body);
 });

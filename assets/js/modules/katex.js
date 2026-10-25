@@ -1,4 +1,3 @@
-// Keep delimiters aligned with layouts/partials/head/katex.html.
 const KATEX_DELIMITERS = [
   { left: "$$", right: "$$", display: true },
   { left: "\\(", right: "\\)", display: false },

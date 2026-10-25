@@ -18,6 +18,11 @@
 {{- $style := slice $base $layout $components $motion $search | resources.Concat "css/bundle.css" | resources.Minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
 
+{{- if eq .Section "about" -}}
+    {{- $aboutStyle := resources.Get "css/about.css" | resources.Minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $aboutStyle.RelPermalink }}" integrity="{{ $aboutStyle.Data.Integrity }}">
+{{- end -}}
+
 {{- if .IsHome -}}
     {{- $home := resources.Get "css/home.css" -}}
     {{- $homeStyle := $home | resources.Minify | fingerprint -}}
@@ -50,4 +55,14 @@
 {{- if and (eq .Section "microblog") (eq .Kind "section") -}}
     {{- $microblogJS := resources.Get "js/microblog.js" | js.Build (dict "targetPath" "js/microblog.js") | resources.Minify | fingerprint -}}
     <script defer src="{{ $microblogJS.RelPermalink }}" integrity="{{ $microblogJS.Data.Integrity }}"></script>
+{{- end -}}
+
+{{- if .IsHome -}}
+    {{- $homeJS := resources.Get "js/home.js" | js.Build (dict "targetPath" "js/home.js") | resources.Minify | fingerprint -}}
+    <script defer src="{{ $homeJS.RelPermalink }}" integrity="{{ $homeJS.Data.Integrity }}"></script>
+{{- end -}}
+
+{{- if or (eq .Section "dashboard") (eq .Type "dashboard") -}}
+    {{- $dashboardJS := resources.Get "js/dashboard.js" | js.Build (dict "targetPath" "js/dashboard.js") | resources.Minify | fingerprint -}}
+    <script defer src="{{ $dashboardJS.RelPermalink }}" integrity="{{ $dashboardJS.Data.Integrity }}"></script>
 {{- end -}}

@@ -2,20 +2,4 @@
     <link rel="stylesheet" href="{{ "lib/katex/katex.min.css" | relURL }}">
     <script defer src="{{ "lib/katex/katex.min.js" | relURL }}"></script>
     <script defer src="{{ "lib/katex/auto-render.min.js" | relURL }}"></script>
-    <script defer>
-        document.addEventListener('DOMContentLoaded', function () {
-            if (typeof renderMathInElement === 'function') {
-                renderMathInElement(document.body, {
-                    // Keep delimiters aligned with assets/js/modules/katex.js.
-                    delimiters: [
-                        {left: '$$', right: '$$', display: true},
-                        {left: '\\(', right: '\\)', display: false},
-                        {left: '\\[', right: '\\]', display: true},
-                        {left: '$', right: '$', display: false}
-                    ],
-                    throwOnError: false
-                });
-            }
-        });
-    </script>
 {{- end -}}

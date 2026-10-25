@@ -1,9 +1,5 @@
-/* ==========================================================================
-   Layout Styles
-   缃戞牸甯冨眬銆佸鍣ㄣ€佷晶杈规爮銆侀〉鑴?
-   ========================================================================== */
+/* Grid, sidebars, and footer layout. */
 
-/* 涓讳綋甯冨眬锛氫笁鍒楃綉�?*/
 .site-container {
     display: grid;
     grid-template-columns: 1fr 650px 1fr;
@@ -15,14 +11,12 @@
     align-content: start;
 }
 
-/* 瑙ｉ櫎棣栭�?650px 灏佸嵃锛氬皢鍏堕噴鏀句负鍏ㄥ睆鑷€傚簲锛屾瀬闄愭斁澶фí鍚戠┖�?*/
 .home-page .site-container {
     grid-template-columns: 1fr minmax(auto, 1440px) 1fr;
     padding-left: 4vw;
     padding-right: 4vw;
 }
 
-/* 渚ц竟�?*/
 .site-sidebar {
     grid-column: 1;
     justify-self: end;
@@ -35,7 +29,6 @@
     display: none;
 }
 
-/* 涓诲唴瀹瑰�?*/
 .site-main {
     grid-column: 2;
     width: 100%;
@@ -48,7 +41,6 @@
     padding-top: 0.5rem;
 }
 
-/* 鍙充晶杈规爮 */
 .site-sidebar-right {
     grid-column: 3;
     justify-self: start;
@@ -138,7 +130,7 @@
     background: transparent;
     backdrop-filter: none;
     box-shadow: none;
-    
+
     padding: 6rem 4vw 3rem;
     display: flex;
     flex-direction: column;
@@ -319,16 +311,15 @@
     pointer-events: none;
 }
 
-/* 鍐呴儴鐨勪袱鍒楁媶鍒?(View �?Index) - 鐜板湪缁熶竴涓哄崰鎹暣涓彸渚э紝骞堕檮鐫€鎮�?*/
 .archive-right-cols {
     display: block;
     width: 100%;
     position: relative;
-    max-height: calc(100vh - 6rem); /* 闄愬埗鏈€楂樹笉瓒呰繃灞忓箷瑙嗗彛楂樺害 */
+    max-height: calc(100vh - 6rem);
     overflow: hidden;
-    padding-bottom: 2rem; /* 鐣欏嚭涓€鐐圭┖闅欏埆椤跺埌搴曢�?*/
-    z-index: 60; /* = 瑕嗙洊鍦?body::after 娓愬彉涔嬩笂 */
-    scrollbar-width: none; /* 闅愯棌婊氬姩鏉¤鎺掔増骞插噣 (Firefox) */
+    padding-bottom: 2rem;
+    z-index: 60;
+    scrollbar-width: none;
 }
 
 .archive-view-col {
@@ -349,7 +340,6 @@
     }
 }
 
-/* 闅愯棌婊氬姩鏉¤鎺掔増骞插噣 (Chrome/Safari) */
 .archive-right-cols::-webkit-scrollbar {
     display: none;
 }
@@ -463,9 +453,6 @@
         grid-template-rows: auto;
     }
 
-    /* 瑕嗙洊妗岄潰?4vw 鐨勫乏鍙冲唴杈硅窛涓庝笁鍒楃綉鏍硷細鎵嬫満涓婇渶瑕佸崟?+ 1.25rem 鍐呰竟璺濓紝
-       鐢变?.home-page .site-container 鐨勭壒寮傚害(0,2,0)楂樹?.site-container(0,1,0)?
-       蹇呴鬱鍦ㄦ鏄惧紡瑕嗙洊 grid-template-columns锛屽惁鍒欐闈㈢?3 鍒楀畾涔変細娉勯湶鍒版墜鏈虹?*/
     .home-page .site-container {
         grid-template-columns: 1fr;
         padding-left: 1.25rem;
@@ -532,7 +519,7 @@
         padding-top: 6rem;
         row-gap: 0.5rem; /* High-density vertical gap control */
     }
-    
+
     .kind-section .site-sidebar,
     .kind-term .site-sidebar,
     .kind-section .site-main,

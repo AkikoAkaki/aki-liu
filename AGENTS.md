@@ -57,8 +57,8 @@ No `npm`, `Node.js`, or package manager needed. Hugo handles CSS/JS bundling int
 - **Multilingual**: Chinese is default (`zh`), English uses `index.en.md` alongside `index.md`. Content filenames are always Chinese; English translations live in the same directory.
 - **Content sections** (`content/`): `ideas/`, `notes/`, `textlab/`, `influences/`. All use the same `list.html` template with the 3-column archive layout (sidebar-left → main → sidebar-right with hover preview).
 - **Homepage**: Driven by `data/homepage.yaml`, not markdown. Template: `layouts/index.html`.
-- **CSS pipeline**: Global bundle concatenates `base.css` → `layout.css` → `components.css` → `motion.css` → `search.css`. Homepage loads `home.css`; single pages load a `post.css` + `syntax-highlight.css` page bundle; microblog and dashboard CSS are route-conditional. All are processed via Hugo Pipes (`resources.Concat` + `resources.Minify` where applicable).
-- **JS**: `assets/js/main.js` is the global entrypoint built via Hugo's `js.Build`; `assets/js/microblog.js` is a second entrypoint loaded only on the microblog section list. No external bundler.
+- **CSS pipeline**: Global bundle concatenates `base.css` → `layout.css` → `components.css` → `motion.css` → `search.css`. Homepage loads `home.css`; single pages load a `post.css` + `syntax-highlight.css` page bundle; About, microblog, and dashboard CSS are route-conditional. All are processed via Hugo Pipes (`resources.Concat` + `resources.Minify` where applicable).
+- **JS**: `assets/js/main.js` is the global entrypoint built via Hugo's `js.Build`. `home.js`, `dashboard.js`, and `microblog.js` load on their respective routes; `post-toc.js` loads on single pages with a table of contents. KaTeX rendering uses `assets/js/modules/katex.js` for both articles and archive previews. No external bundler.
 
 ## Conventions
 

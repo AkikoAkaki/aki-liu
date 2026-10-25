@@ -6,3 +6,8 @@
 {{- if $siteKaTeX -}}
     {{- partial "head/katex.html" . -}}
 {{- end -}}
+
+{{- if and .IsPage (gt (len (findRE "<li" .TableOfContents)) 0) -}}
+    {{- $tocJS := resources.Get "js/post-toc.js" | js.Build (dict "targetPath" "js/post-toc.js") | resources.Minify | fingerprint -}}
+    <script defer src="{{ $tocJS.RelPermalink }}" integrity="{{ $tocJS.Data.Integrity }}"></script>
+{{- end -}}

@@ -1,4 +1,3 @@
-<script>
 document.addEventListener('DOMContentLoaded', function () {
     const tocs = document.querySelectorAll('.post-toc');
     if (!tocs.length) return;
@@ -293,4 +292,3 @@ document.addEventListener('DOMContentLoaded', function () {
         window.addEventListener('scroll', dismissHint, { passive: true });
     }
 });
-</script>
