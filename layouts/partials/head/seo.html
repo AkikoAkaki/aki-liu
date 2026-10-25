@@ -1,7 +1,7 @@
 {{- $page := .page -}}
 {{- $siteTitle := $page.Site.Title -}}
 {{- /* Microblog entries have no explicit title; synthesize from first line of plain text. */ -}}
-{{- $pageTitle := $page.Title -}}
+{{- $pageTitle := partial "page-title.html" $page -}}
 {{- if and (eq $page.Section "microblog") $page.IsPage -}}
     {{- $first := $page.Plain | strings.TrimSpace -}}
     {{- if gt (len $first) 60 -}}

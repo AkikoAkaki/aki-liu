@@ -1,6 +1,5 @@
 {{ define "sidebar-left" }}
-{{- $mainSections := slice "ideas" "notes" "textlab" -}}
-{{- $regularPages := where .Site.RegularPages "Section" "in" $mainSections -}}
+{{- $regularPages := where .Site.RegularPages "Section" "in" site.MainSections -}}
 {{- $regularPages = where $regularPages "Params.hidden" "!=" true -}}
 {{- .Store.Set "regularPages" $regularPages -}}
 {{- $tagSlice := partial "tag-sidebar-data.html" (dict "pages" $regularPages) -}}

@@ -1,10 +1,12 @@
+import { matches, QUERIES } from "./modules/media.js";
+
 document.addEventListener("DOMContentLoaded", () => {
   const navContent = document.querySelector(".nav-panel-content");
   const leftCol = document.querySelector(".work-column:not(.nav-panel-column)");
   if (!navContent || !leftCol) return;
 
   function updateNavGap() {
-    if (!window.matchMedia("(min-width: 901px)").matches) return;
+    if (!matches(QUERIES.homeDesktop)) return;
     const groups = navContent.querySelectorAll(".nav-panel-group");
     const list = navContent.querySelector(".nav-panel-list");
     if (!list) return;

@@ -9,7 +9,7 @@ export function initArchivePreview(archiveList, archiveItems) {
   if (!previewContainer || !previewSrc) return { clear() {} };
   previewContainer.innerHTML = "";
 
-  const katexBase = archiveList.dataset.katexBase || "/lib/katex/";
+  const katexBase = archiveList.dataset.katexBase || "/lib/katex-0.16.8/";
   let previewsReady = null;
   let currentHoverNode = null;
   let leaveTimeout = null;

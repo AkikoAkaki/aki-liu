@@ -1,3 +1,5 @@
+import { matches, QUERIES } from './modules/media.js';
+
 document.addEventListener('DOMContentLoaded', function () {
     const tocs = document.querySelectorAll('.post-toc');
     if (!tocs.length) return;
@@ -36,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const sidebarToc = document.querySelector('.post-toc--sidebar');
         if (!sidebarToc) return;
 
-        if (window.matchMedia('(max-width: 1200px)').matches) {
+        if (matches(QUERIES.tocCollapsed)) {
             sidebarToc.style.removeProperty('--toc-max-height');
             sidebarToc.style.removeProperty('--toc-sticky-top');
             return;
@@ -178,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const initTooltip = () => {
             if (localStorage.getItem(HINT_KEY)) return;
 
-            const isMobile = window.matchMedia('(max-width: 900px)').matches;
+            const isMobile = matches(QUERIES.tablet);
             if (!isMobile) return;
 
             const lang = document.documentElement.lang || 'zh';
@@ -217,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const deltaX = touchEndX - touchStartX;
             const deltaY = touchEndY - touchStartY;
 
-            const isMobile = window.matchMedia('(max-width: 900px)').matches;
+            const isMobile = matches(QUERIES.tablet);
             if (!isMobile) return;
 
             // 提升灵敏度：横向移动大于纵向移动的 1.2 倍，且移动距离大于 30px
@@ -242,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 点击事件绑定（点击外侧收起目录）
         document.addEventListener('click', (e) => {
-            const isMobile = window.matchMedia('(max-width: 900px)').matches;
+            const isMobile = matches(QUERIES.tablet);
             if (!isMobile) return;
 
             const isOpen = sidebarToc.classList.contains('is-drawer-open');
@@ -264,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 核心直击绑定：直接点击拉手本身（未展开的 sidebarToc），直接滑出目录并阻止冒泡
         sidebarToc.addEventListener('click', (e) => {
-            const isMobile = window.matchMedia('(max-width: 900px)').matches;
+            const isMobile = matches(QUERIES.tablet);
             if (!isMobile) return;
 
             const isOpen = sidebarToc.classList.contains('is-drawer-open');
@@ -279,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const tocLinks = sidebarToc.querySelectorAll('nav a');
         tocLinks.forEach((link) => {
             link.addEventListener('click', () => {
-                const isMobile = window.matchMedia('(max-width: 900px)').matches;
+                const isMobile = matches(QUERIES.tablet);
                 if (isMobile) {
                     setTimeout(() => {
                         sidebarToc.classList.remove('is-drawer-open');

@@ -1,4 +1,14 @@
-import { escapeHtml, tagToSlug } from "./dom-utils.js";
+import { escapeHtml } from "./dom-utils.js";
+import { matches, QUERIES } from "./media.js";
+import {
+  collectTags,
+  highlight,
+  makeSnippet,
+  prepareRecord,
+  recordTagLabel,
+  searchRecords,
+  tokenize,
+} from "./search-core.js";
 
 export function initSearchPalette() {
   const root = document.getElementById("menu-search-panel");
@@ -11,6 +21,8 @@ export function initSearchPalette() {
     ? "en"
     : "zh";
   const indexUrl = root.dataset.indexUrl;
+  // Section URLs are rendered by baseof.html (language prefix included).
+  const sectionUrls = JSON.parse(root.dataset.sections || "{}");
   const isMac = /Mac|iPhone|iPad/i.test(navigator.userAgent || "");
 
   let panel = null;
@@ -38,13 +50,7 @@ export function initSearchPalette() {
         return r.json();
       })
       .then((records) => {
-        indexCache = records.map((r) => ({
-          ...r,
-          _titleLower: (r.title || "").toLowerCase(),
-          _bodyLower: (r.body || "").toLowerCase(),
-          _summaryLower: (r.summary || "").toLowerCase(),
-          _tagsLower: (r.tags || []).map((t) => String(t).toLowerCase()),
-        }));
+        indexCache = records.map(prepareRecord);
         return indexCache;
       })
       .catch(() => {
@@ -56,108 +62,6 @@ export function initSearchPalette() {
         if (isOpen) render(inputEl.value);
       });
     return indexPromise;
-  }
-
-  // ---------- Tokenization ----------
-  function isCJK(s) {
-    return /[㐀-鿿豈-﫿]/.test(s);
-  }
-
-  function tokenize(query) {
-    const q = (query || "").toLowerCase().trim();
-    if (!q) return [];
-    const tokens = [];
-    const parts = q.split(/[\s　]+/).filter(Boolean);
-    for (const part of parts) {
-      if (isCJK(part)) {
-        if (part.length === 1) tokens.push(part);
-        else
-          for (let i = 0; i < part.length - 1; i++)
-            tokens.push(part.substring(i, i + 2));
-      } else {
-        tokens.push(part);
-      }
-    }
-    return [...new Set(tokens)];
-  }
-
-  function countHits(haystack, needle) {
-    if (!haystack || !needle) return 0;
-    let count = 0,
-      idx = 0;
-    while ((idx = haystack.indexOf(needle, idx)) !== -1) {
-      count++;
-      idx += needle.length;
-    }
-    return count;
-  }
-
-  function scoreRecord(rec, tokens) {
-    let total = 0;
-    for (const t of tokens) {
-      const titleHits = countHits(rec._titleLower, t);
-      const tagHits = rec._tagsLower.reduce(
-        (a, tag) => a + (tag.includes(t) ? 1 : 0),
-        0,
-      );
-      const summaryHits = countHits(rec._summaryLower, t);
-      const bodyHits = countHits(rec._bodyLower, t);
-      if (!(titleHits || tagHits || summaryHits || bodyHits)) return 0; // require every token to land somewhere
-      total += titleHits * 5 + tagHits * 3 + summaryHits * 2 + bodyHits * 1;
-    }
-    return total;
-  }
-
-  function searchRecords(tokens) {
-    if (!indexCache) return [];
-    if (!tokens.length) return [];
-    const hits = [];
-    for (const rec of indexCache) {
-      if (rec.lang !== lang) continue;
-      const s = scoreRecord(rec, tokens);
-      if (s > 0) hits.push({ rec, s });
-    }
-    hits.sort(
-      (a, b) =>
-        b.s - a.s || (b.rec.date || "").localeCompare(a.rec.date || ""),
-    );
-    return hits.slice(0, 30).map((h) => h.rec);
-  }
-
-  // ---------- Snippet + highlight ----------
-  function highlight(text, tokens) {
-    const escaped = escapeHtml(text);
-    if (!tokens.length) return escaped;
-    const sorted = [...new Set(tokens)].sort((a, b) => b.length - a.length);
-    const pattern = sorted
-      .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-      .join("|");
-    if (!pattern) return escaped;
-    const re = new RegExp("(" + pattern + ")", "gi");
-    return escaped.replace(re, "<mark>$1</mark>");
-  }
-
-  function makeSnippet(rec, tokens, len) {
-    const body = rec.body || rec.summary || "";
-    const lower = rec._bodyLower || rec._summaryLower || "";
-    if (!body) return "";
-    let pos = -1;
-    for (const t of tokens) {
-      const i = lower.indexOf(t);
-      if (i !== -1 && (pos === -1 || i < pos)) pos = i;
-    }
-    const span = len || 160;
-    if (pos === -1) {
-      const head = body.slice(0, span);
-      return escapeHtml(head) + (body.length > span ? "…" : "");
-    }
-    const half = Math.floor(span / 2);
-    const start = Math.max(0, pos - half);
-    const end = Math.min(body.length, pos + half + (span - half));
-    let text = body.slice(start, end);
-    if (start > 0) text = "…" + text;
-    if (end < body.length) text = text + "…";
-    return highlight(text, tokens);
   }
 
   // ---------- Commands ----------
@@ -172,7 +76,7 @@ export function initSearchPalette() {
     if (current === "dark") next = "light";
     else if (current === "light") next = "dark";
     else
-      next = window.matchMedia("(prefers-color-scheme: dark)").matches
+      next = matches(QUERIES.darkScheme)
         ? "light"
         : "dark";
     html.setAttribute("data-theme", next);
@@ -189,7 +93,7 @@ export function initSearchPalette() {
   function buildCommands(query) {
     const otherLang = lang === "zh" ? "en" : "zh";
     const list = [
-      // Section commands must stay in sync with searchindex.json and microblog-server.js.
+      // Section commands must stay in sync with the sections in baseof.html.
       {
         id: "go-home",
         label: lang === "en" ? "Go to Home" : "回到首页",
@@ -202,38 +106,35 @@ export function initSearchPalette() {
         label: lang === "en" ? "Go to Ideas" : "前往 Ideas",
         hint: "/ideas",
         icon: "arrow",
-        action: () => navigate(lang === "en" ? "/en/ideas/" : "/ideas/"),
+        action: () => navigate(sectionUrls.ideas),
       },
       {
         id: "go-textlab",
         label: lang === "en" ? "Go to Text Lab" : "前往 Text Lab",
         hint: "/textlab",
         icon: "arrow",
-        action: () => navigate(lang === "en" ? "/en/textlab/" : "/textlab/"),
+        action: () => navigate(sectionUrls.textlab),
       },
       {
         id: "go-notes",
         label: lang === "en" ? "Go to Notes" : "前往 Notes",
         hint: "/notes",
         icon: "arrow",
-        action: () =>
-          navigate(lang === "en" ? "/en/notes/" : "/notes/"),
+        action: () => navigate(sectionUrls.notes),
       },
       {
         id: "go-microblog",
         label: lang === "en" ? "Go to Microblog" : "前往 Microblog",
         hint: "/microblog",
         icon: "arrow",
-        action: () =>
-          navigate(lang === "en" ? "/en/microblog/" : "/microblog/"),
+        action: () => navigate(sectionUrls.microblog),
       },
       {
         id: "go-influences",
         label: lang === "en" ? "Go to Influences" : "前往 Influences",
         hint: "/influences",
         icon: "arrow",
-        action: () =>
-          navigate(lang === "en" ? "/en/influences/" : "/influences/"),
+        action: () => navigate(sectionUrls.influences),
       },
       {
         id: "theme",
@@ -270,29 +171,13 @@ export function initSearchPalette() {
 
   function buildTags(query) {
     if (!indexCache) return [];
-    const counts = new Map();
-    for (const r of indexCache) {
-      if (r.lang !== lang) continue;
-      for (const t of r.tags || []) {
-        const key = String(t);
-        counts.set(key, (counts.get(key) || 0) + 1);
-      }
-    }
-    const q = (query || "").toLowerCase();
-    return [...counts.entries()]
-      .filter(([t]) => !q || t.toLowerCase().includes(q))
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .map(([tag, count]) => ({
-        type: "tag",
-        label: tag,
-        count,
-        action: () =>
-          navigate(
-            root.dataset.tagsUrl +
-              encodeURIComponent(tagToSlug(tag)) +
-              "/",
-          ),
-      }));
+    return collectTags(indexCache, lang, query).map(({ slug, label, count }) => ({
+      type: "tag",
+      label,
+      count,
+      action: () =>
+        navigate(root.dataset.tagsUrl + encodeURIComponent(slug) + "/"),
+    }));
   }
 
   // ---------- Render ----------
@@ -331,7 +216,7 @@ export function initSearchPalette() {
     } else {
       mode = "search";
       currentTokens = tokenize(trimmed);
-      const recs = searchRecords(currentTokens);
+      const recs = searchRecords(indexCache, currentTokens, lang);
       items = recs.map((r) => ({ type: "result", record: r }));
       const ctxCmds = buildCommands(trimmed).slice(0, 1);
       if (ctxCmds.length && items.length) {
@@ -429,7 +314,7 @@ export function initSearchPalette() {
       const r = item.record;
       const snip = makeSnippet(r, currentTokens, 280);
       const tagsHtml = (r.tags || [])
-        .map((t) => `<span>#${escapeHtml(t)}</span>`)
+        .map((_, i) => `<span>#${escapeHtml(recordTagLabel(r, i))}</span>`)
         .join("");
       previewEl.innerHTML = `
                   <div class="preview-meta">${escapeHtml(r.section || "")} · ${escapeHtml(r.date || "")}</div>

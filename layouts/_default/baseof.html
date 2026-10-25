@@ -2,10 +2,13 @@
 <html lang="{{ .Language.Lang }}">
 <head>
     {{- $homePage := .Site.Home -}}
-    {{- $ideasPage := .Site.GetPage "section" "ideas" -}}
-    {{- $textLabPage := .Site.GetPage "section" "textlab" -}}
-    {{- $notesPage := .Site.GetPage "section" "notes" -}}
-    {{- $microblogPage := .Site.GetPage "section" "microblog" -}}
+    {{- /* Section URLs for the menu and the search palette commands. */ -}}
+    {{- $sectionURLs := dict -}}
+    {{- range slice "ideas" "textlab" "notes" "microblog" "influences" -}}
+        {{- $url := printf "%s/" . | relLangURL -}}
+        {{- with site.GetPage "section" . -}}{{- $url = .RelPermalink -}}{{- end -}}
+        {{- $sectionURLs = merge $sectionURLs (dict . $url) -}}
+    {{- end -}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
@@ -85,12 +88,12 @@
                 <div class="menu-group{{ if or (eq .Section "ideas") (eq .Section "textlab") }} is-active{{ end }}" role="group" aria-label="Writing">
                     <div class="menu-group-label">Writing</div>
                     <div class="menu-submenu">
-                        <a href="{{ with $ideasPage }}{{ .RelPermalink }}{{ else }}{{ "ideas/" | relLangURL }}{{ end }}" class="menu-link menu-link--sub{{ if eq .Section "ideas" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Ideas</span></span></a>
-                        <a href="{{ with $textLabPage }}{{ .RelPermalink }}{{ else }}{{ "textlab/" | relLangURL }}{{ end }}" class="menu-link menu-link--sub{{ if eq .Section "textlab" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Text Lab</span></span></a>
+                        <a href="{{ $sectionURLs.ideas }}" class="menu-link menu-link--sub{{ if eq .Section "ideas" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Ideas</span></span></a>
+                        <a href="{{ $sectionURLs.textlab }}" class="menu-link menu-link--sub{{ if eq .Section "textlab" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Text Lab</span></span></a>
                     </div>
                 </div>
-                <a href="{{ with $notesPage }}{{ .RelPermalink }}{{ else }}{{ "notes/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "notes" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Notes</span></span></a>
-                <a href="{{ with $microblogPage }}{{ .RelPermalink }}{{ else }}{{ "microblog/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "microblog" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Microblog</span></span></a>
+                <a href="{{ $sectionURLs.notes }}" class="menu-link{{ if eq .Section "notes" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Notes</span></span></a>
+                <a href="{{ $sectionURLs.microblog }}" class="menu-link{{ if eq .Section "microblog" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Microblog</span></span></a>
                 <a href="{{ "/dashboard/" | relLangURL }}" class="menu-link{{ if or (eq .Section "dashboard") (eq .Type "dashboard") }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Dashboard</span></span></a>
                 <a href="#search" class="menu-link menu-link--search" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
             </div>
@@ -113,6 +116,7 @@
              data-index-url="{{ "search-index.json" | relLangURL }}"
              data-home-url="{{ $homePage.RelPermalink }}"
              data-tags-url="{{ "tags/" | relLangURL }}"
+             data-sections="{{ $sectionURLs | jsonify }}"
              data-language-url="{{ $languageURL }}"></div>
     </div>
 

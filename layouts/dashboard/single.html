@@ -1,18 +1,41 @@
-{{ define "sidebar-left" }}{{ end }} {{ define "sidebar-right" }}{{ end }} {{
-define "post-header" }}{{ end }} {{ define "main" }} {{ $latest :=
-.Site.Data.metrics.latest }} {{ $history := .Site.Data.metrics.history_timeline
-}} {{ $totalPages :=
-add $latest.build.zhPages $latest.build.enPages }} {{ $zhPct := printf "%.1f"
-(mul (div (float $latest.build.zhPages) (float $totalPages)) 100) }} {{ $enPct
-:= printf "%.1f" (mul (div (float $latest.build.enPages) (float $totalPages))
-100) }} {{ $zhBarPct := printf "%.2f" (mul (div (float $latest.build.zhPages)
-(float $totalPages)) 100) }} {{ $enBarPct := printf "%.2f" (mul (div (float
-$latest.build.enPages) (float $totalPages)) 100) }} {{ $cssBundleKB := printf
-"%.1f" (div (float $latest.quality.cssBundleBytes) 1024.0) }} {{ $cacheRatio :=
-$latest.templates.aggregateCacheRatio }} {{ $cacheRatioStr := printf "%.2f" $cacheRatio }} {{
-$totalCacheCalls := $latest.templates.aggregateCalls }} {{ $ringCirc := 163.36
-}} {{ $ringOffset := printf "%.2f" (mul $ringCirc (sub 1.0 (div $cacheRatio
-100.0))) }}
+{{ define "sidebar-left" }}{{ end }}
+{{ define "sidebar-right" }}{{ end }}
+{{ define "post-header" }}{{ end }}
+
+{{ define "main" }}
+{{- $latest := site.Data.metrics.latest -}}
+{{- $history := site.Data.metrics.history_timeline -}}
+
+{{- /* Language split: one ratio per language, shown as %.1f in the legend and %.2f as the bar width. */ -}}
+{{- $totalPages := add $latest.build.zhPages $latest.build.enPages -}}
+{{- $zhRatio := mul (div (float $latest.build.zhPages) (float $totalPages)) 100 -}}
+{{- $enRatio := mul (div (float $latest.build.enPages) (float $totalPages)) 100 -}}
+{{- $zhPct := printf "%.1f" $zhRatio -}}
+{{- $enPct := printf "%.1f" $enRatio -}}
+{{- $zhBarPct := printf "%.2f" $zhRatio -}}
+{{- $enBarPct := printf "%.2f" $enRatio -}}
+
+{{- /* Template cache ring: circumference 2πr, rounded to 2 decimals for the SVG dash attributes. */ -}}
+{{- $cacheRatio := $latest.templates.aggregateCacheRatio -}}
+{{- $cacheRatioStr := printf "%.2f" $cacheRatio -}}
+{{- $totalCacheCalls := $latest.templates.aggregateCalls -}}
+{{- $ringRadius := 26 -}}
+{{- $ringCirc := div (math.Round (mul 200 math.Pi $ringRadius)) 100.0 -}}
+{{- $ringOffset := printf "%.2f" (mul $ringCirc (sub 1.0 (div $cacheRatio 100.0))) -}}
+
+{{- /* Static asset budget: CSS bar spans 0-150 KB (limit 100 KB), JS bar 0-40 KB (limit 30 KB). */ -}}
+{{- $cssKB := div (float $latest.quality.cssBundleBytes) 1024.0 -}}
+{{- $cssBundleKB := printf "%.1f" $cssKB -}}
+{{- $cssPct := printf "%.2f" (mul (div $cssKB 150.0) 100.0) -}}
+{{- $cssLimitPct := printf "%.2f" (mul (div 100.0 150.0) 100.0) -}}
+{{- $jsBytes := $latest.quality.jsBundleBytes | default 0 -}}
+{{- $jsKB := div (float $jsBytes) 1024.0 -}}
+{{- $overBudget := or (gt $cssKB 100.0) (gt $jsKB 30.0) -}}
+
+{{- /* Static quality checks. */ -}}
+{{- $hasBroken := gt $latest.quality.brokenRootRelativeLinkCount 0 -}}
+{{- $hasMissingCanon := gt $latest.quality.missingCanonical 0 -}}
+{{- $hasLangAttr := not (gt $latest.quality.missingHtmlLang 0) -}}
 
 <div class="dash-shell">
     <div class="dash-container">
@@ -64,17 +87,7 @@ $totalCacheCalls := $latest.templates.aggregateCalls }} {{ $ringCirc := 163.36
         <section class="cards-grid">
             {{/* Card 1: Build duration */}}
             <article class="metric-card">
-                <div class="metric-head">
-                    <span class="metric-label">
-                        <span class="ml-en">Build duration</span>
-                    </span>
-                    <span class="metric-icon">
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="8" />
-                            <path d="M12 7v5l3 2.5" />
-                        </svg>
-                    </span>
-                </div>
+                {{ partial "dashboard/metric-head.html" (dict "label" "Build duration" "icon" "clock") }}
                 <div class="metric-body">
                     <div class="metric-row">
                         <span class="metric-num">
@@ -99,20 +112,7 @@ $totalCacheCalls := $latest.templates.aggregateCalls }} {{ $ringCirc := 163.36
 
             {{/* Card 2: Template cache hit */}}
             <article class="metric-card">
-                <div class="metric-head">
-                    <span class="metric-label">
-                        <span class="ml-en">Template cache hit</span>
-                    </span>
-                    <span class="metric-icon">
-                        <svg viewBox="0 0 24 24">
-                            <ellipse cx="12" cy="6" rx="7" ry="2.5" />
-                            <path
-                                d="M5 6v12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6"
-                            />
-                            <path d="M5 12c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5" />
-                        </svg>
-                    </span>
-                </div>
+                {{ partial "dashboard/metric-head.html" (dict "label" "Template cache hit" "icon" "database") }}
                 <div class="metric-body">
                     <div class="metric-row">
                         <div>
@@ -145,14 +145,14 @@ $totalCacheCalls := $latest.templates.aggregateCalls }} {{ $ringCirc := 163.36
                                     class="ring-track"
                                     cx="28"
                                     cy="28"
-                                    r="26"
+                                    r="{{ $ringRadius }}"
                                 />
                                 <circle
                                     class="ring-fill"
                                     cx="28"
                                     cy="28"
-                                    r="26"
-                                    stroke-dasharray="{{ $ringCirc }}"
+                                    r="{{ $ringRadius }}"
+                                    stroke-dasharray="{{ printf "%.2f" $ringCirc }}"
                                     stroke-dashoffset="{{ $ringOffset }}"
                                     style="stroke: url(#cache-ring-grad);"
                                 />
@@ -169,18 +169,7 @@ $totalCacheCalls := $latest.templates.aggregateCalls }} {{ $ringCirc := 163.36
 
             {{/* Card 3: Language ratio */}}
             <article class="metric-card">
-                <div class="metric-head">
-                    <span class="metric-label">
-                        <span class="ml-en">Language ratio</span>
-                    </span>
-                    <span class="metric-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M7 3h8l4 4v14H7z" />
-                            <path d="M15 3v4h4" />
-                            <path d="M10 12h6M10 15h6M10 18h4" />
-                        </svg>
-                    </span>
-                </div>
+                {{ partial "dashboard/metric-head.html" (dict "label" "Language ratio" "icon" "document") }}
                 <div class="metric-body">
                     <div>
                         <span class="metric-num">
@@ -218,16 +207,7 @@ $totalCacheCalls := $latest.templates.aggregateCalls }} {{ $ringCirc := 163.36
 
             {{/* Card 4: Content volume */}}
             <article class="metric-card">
-                <div class="metric-head">
-                    <span class="metric-label">
-                        <span class="ml-en">Content volume</span>
-                    </span>
-                    <span class="metric-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M5 19V11M10 19V6M15 19V14M20 19V8" />
-                        </svg>
-                    </span>
-                </div>
+                {{ partial "dashboard/metric-head.html" (dict "label" "Content volume" "icon" "bars") }}
                 <div class="metric-body">
                     <div>
                         <span class="metric-num" id="vol-current">
@@ -254,25 +234,9 @@ $totalCacheCalls := $latest.templates.aggregateCalls }} {{ $ringCirc := 163.36
                 </p>
             </article>
 
-            {{/* Card 5: Static asset budget */}} {{ $cssKBNum := div (float
-            $latest.quality.cssBundleBytes) 1024.0 }} {{ $cssPct := printf
-            "%.2f" (mul (div $cssKBNum 150.0) 100.0) }} {{ $cssLimitPct :=
-            printf "%.2f" (mul (div 100.0 150.0) 100.0) }}
-            {{ $jsBytes := $latest.quality.jsBundleBytes | default 0 }}
-            {{ $jsKB := div (float $jsBytes) 1024.0 }}
-            {{ $overBudget := or (gt $cssKBNum 100.0) (gt $jsKB 30.0) }}
+            {{/* Card 5: Static asset budget */}}
             <article class="metric-card">
-                <div class="metric-head">
-                    <span class="metric-label">
-                        <span class="ml-en">Static asset budget</span>
-                    </span>
-                    <span class="metric-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M4 7h16v12H4z" />
-                            <path d="M4 11h16M9 7v12M15 7v12" />
-                        </svg>
-                    </span>
-                </div>
+                {{ partial "dashboard/metric-head.html" (dict "label" "Static asset budget" "icon" "grid") }}
                 <div class="metric-body">
                     <div class="budget-rows">
                         <div class="budget-row">
@@ -346,23 +310,9 @@ $totalCacheCalls := $latest.templates.aggregateCalls }} {{ $ringCirc := 163.36
                 </div>
             </article>
 
-            {{/* Card 6: Static quality */}} {{ $hasBroken := gt
-            $latest.quality.brokenRootRelativeLinkCount 0 }} {{ $hasMissingCanon
-            := gt $latest.quality.missingCanonical 0 }} {{ $hasLangAttr := not
-            (gt $latest.quality.missingHtmlLang 0) }}
+            {{/* Card 6: Static quality */}}
             <article class="metric-card">
-                <div class="metric-head">
-                    <span class="metric-label">
-                        <span class="ml-en">Static quality</span>
-                    </span>
-                    <span class="metric-icon">
-                        <svg viewBox="0 0 24 24">
-                            <path
-                                d="M12 3l8 3v6c0 4-3.5 7.5-8 9-4.5-1.5-8-5-8-9V6z"
-                            />
-                        </svg>
-                    </span>
-                </div>
+                {{ partial "dashboard/metric-head.html" (dict "label" "Static quality" "icon" "shield") }}
                 <div class="metric-body">
                     <div class="health-list">
                         <div

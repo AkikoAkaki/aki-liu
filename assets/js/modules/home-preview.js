@@ -1,14 +1,12 @@
+import { matches, QUERIES } from "./media.js";
+
 export function initHomeHoverPreview() {
   const scope = document.querySelector("[data-home-preview-scope]");
   const preview = document.querySelector("[data-home-hover-preview]");
   if (!scope || !preview) return;
 
-  const canHover = window.matchMedia(
-    "(any-hover: hover)",
-  ).matches;
-  const reduceMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
+  const canHover = matches(QUERIES.hover);
+  const reduceMotion = matches(QUERIES.reducedMotion);
   if (!canHover) return;
 
   const allItems = Array.from(

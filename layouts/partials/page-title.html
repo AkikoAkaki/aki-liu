@@ -1,0 +1,7 @@
+{{- /* Display title for a page. Tag term pages without their own content
+       file get the humanized tag label instead of Hugo's "Mlsys". */ -}}
+{{- $title := .Title -}}
+{{- if and (eq .Kind "term") (eq .Type "tags") (not .File) -}}
+    {{- $title = partial "tag-label.html" .Data.Term -}}
+{{- end -}}
+{{- return $title -}}

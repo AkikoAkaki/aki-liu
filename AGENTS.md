@@ -55,20 +55,20 @@ No `npm`, `Node.js`, or package manager needed. Hugo handles CSS/JS bundling int
 ## Project structure
 
 - **Multilingual**: Chinese is default (`zh`), English uses `index.en.md` alongside `index.md`. Content filenames are always Chinese; English translations live in the same directory.
-- **Content sections** (`content/`): `ideas/`, `notes/`, `textlab/`, `influences/`. All use the same `list.html` template with the 3-column archive layout (sidebar-left → main → sidebar-right with hover preview).
+- **Content sections** (`content/`): `ideas/`, `notes/`, `textlab/`, `influences/`. All use the same `list.html` template with the 3-column archive layout (sidebar-left → main → sidebar-right with hover preview). `mainSections` in `hugo.toml` (ideas, notes, textlab) feeds tag pages and tag search via `site.MainSections`; keep it above the first `[table]` or TOML assigns it to that table.
 - **Homepage**: Driven by `data/homepage.yaml`, not markdown. Template: `layouts/index.html`.
 - **CSS pipeline**: Global bundle concatenates `base.css` → `layout.css` → `components.css` → `motion.css` → `search.css`. Homepage loads `home.css`; single pages load a `post.css` + `syntax-highlight.css` page bundle; About, microblog, and dashboard CSS are route-conditional. All are processed via Hugo Pipes (`resources.Concat` + `resources.Minify` where applicable).
-- **JS**: `assets/js/main.js` is the global entrypoint built via Hugo's `js.Build`. `home.js`, `dashboard.js`, and `microblog.js` load on their respective routes; `post-toc.js` loads on single pages with a table of contents. KaTeX rendering uses `assets/js/modules/katex.js` for both articles and archive previews. No external bundler.
+- **JS**: `assets/js/main.js` is the global entrypoint built via Hugo's `js.Build`. `home.js`, `dashboard.js`, and `microblog.js` load on their respective routes; `post-toc.js` loads on single pages with a table of contents. KaTeX rendering uses `assets/js/modules/katex.js` for both articles and archive previews. Media queries live in `assets/js/modules/media.js`; search scoring and snippets live in `assets/js/modules/search-core.js`. No external bundler.
 
 ## Conventions
 
 - **Images**: Non-SVG/GIF images are auto-converted to WebP via the custom render-image hook (`layouts/_default/_markup/render-image.html`). Use the `figure` shortcode for page-bundle images that need captions.
 - **Video**: Use `localvideo` shortcode with page-bundle assets.
-- **KaTeX**: Enabled globally but only rendered on pages with `enableKaTeX: true` or `math: true` frontmatter (see `layouts/partials/head/katex.html`).
-- **Tags**: Defined in frontmatter as `tags: ["tag-name"]`. Rendered via `/tags/<name>/` using `layouts/tags/term.html`.
+- **KaTeX**: Enabled globally; loaded on pages whose frontmatter sets `enableKaTeX`/`math`, or whose content has math delimiters (`layouts/partials/page-has-math.html`, `layouts/partials/head/katex.html`). Files live in a versioned directory (`static/lib/katex-<version>/`) because `/lib/` is cached as immutable; on upgrade, change `layouts/partials/katex-base.html` and `scripts/download-katex.ps1` together.
+- **Tags**: Defined in frontmatter as `tags: ["tag-name"]`. Rendered via `/tags/<name>/` using `layouts/tags/term.html`. URLs, `data-tag` attributes and filters use the slug; displayed names come from `layouts/partials/tag-label.html` (hyphens to spaces, title case, acronym map such as `mlsys` → `MLSys`). Add new acronyms there.
 - **Archive preview**: Hover previews come from one fingerprinted JSON per language (`layouts/partials/archive-preview-index.html`, first 800 characters of each page). `assets/js/modules/archive-preview.js` fetches it the first time the pointer enters a list and loads KaTeX only for previews with math.
 - **Fonts**: Switzer is served locally from `/static/fonts/switzer/` (paid). Newsreader and JetBrains Mono loaded from Google Fonts.
-- **Goldmark**: `unsafe = true` (HTML in markdown), `hardLineBreak = true`.
+- **Goldmark**: `unsafe = true` (HTML in markdown), `hardWraps = true`; `$`, `\(`, `$$`, `\[` math passes through to KaTeX.
 - **Drafts**: Set `draft: true` in frontmatter; Hugo only publishes them with `--buildDrafts`.
 
 ## Creating content
@@ -118,6 +118,8 @@ Vercel — configured in `vercel.json`. Build command sets `--baseURL` from the 
 | Homepage data | `data/homepage.yaml` |
 | Base layout | `layouts/_default/baseof.html` |
 | CSS bundle entrypoints | `layouts/partials/head/core-assets.html`, `assets/css/base.css`, `layout.css`, `components.css`, `motion.css`, `search.css` |
-| JS entrypoints | `assets/js/main.js`, `assets/js/microblog.js` |
-| Deferred decisions | `deferred_optimizations.md` |
+| Route CSS | `assets/css/home.css`, `post.css` + `syntax-highlight.css`, `about.css`, `microblog.css`, `dashboard.css` |
+| JS entrypoints | `assets/js/main.js`, `home.js`, `dashboard.js`, `microblog.js`, `post-toc.js` |
+| Archive hover previews | `layouts/partials/archive-preview-index.html`, `assets/js/modules/archive-preview.js` |
+| Tag display names | `layouts/partials/tag-label.html` |
 | Claude local config | `.claude/settings.local.json` |

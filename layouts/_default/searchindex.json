@@ -1,6 +1,7 @@
 {{- /* Per-language site search index. Hugo emits one file per language. */ -}}
-{{- /* Keep sections in sync with search-palette commands and scripts/microblog-server.js. */ -}}
-{{- $sections := slice "ideas" "notes" "textlab" "influences" "microblog" -}}
+{{- /* Searchable sections: site.MainSections (hugo.toml) plus influences and microblog.
+       Keep in sync with scripts/microblog-server.js. */ -}}
+{{- $sections := site.MainSections | append "influences" "microblog" -}}
 {{- $pages := where site.RegularPages "Section" "in" $sections -}}
 {{- $items := slice -}}
 {{- range $pages -}}
@@ -14,8 +15,12 @@
         {{- $summary = (substr $summary 0 280) -}}
     {{- end -}}
     {{- $tags := slice -}}
-    {{- if and (in (slice "ideas" "notes" "textlab") .Section) (ne .Params.hidden true) -}}
+    {{- $tagLabels := slice -}}
+    {{- if and (in site.MainSections .Section) (ne .Params.hidden true) -}}
         {{- $tags = default (slice) .Params.tags -}}
+        {{- range $tags -}}
+            {{- $tagLabels = $tagLabels | append (partial "tag-label.html" .) -}}
+        {{- end -}}
     {{- end -}}
     {{- /* For microblog entries, synthesize title from first line of body since posts have no explicit titles. */ -}}
     {{- $title := .Title -}}
@@ -34,6 +39,7 @@
         "url"     .RelPermalink
         "date"    (.Date.Format "2006-01-02")
         "tags"    $tags
+        "tagLabels" $tagLabels
         "lang"    .Language.Lang
         "summary" $summary
         "body"    $body

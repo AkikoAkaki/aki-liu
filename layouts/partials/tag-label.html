@@ -1,0 +1,16 @@
+{{- /* Human-readable label for a tag slug or raw tag name:
+       "complex-analysis" -> "Complex Analysis", "mlsys" -> "MLSys".
+       Display only; URLs, data-tag attributes and filter keys stay slugs. */ -}}
+{{- $acronyms := dict
+    "ai" "AI"
+    "cs" "CS"
+    "gpu" "GPU"
+    "llm" "LLM"
+    "ml" "ML"
+    "mlsys" "MLSys"
+-}}
+{{- $words := slice -}}
+{{- range split (replace (printf "%v" .) "-" " " | title) " " -}}
+    {{- $words = $words | append (index $acronyms (lower .) | default .) -}}
+{{- end -}}
+{{- return (delimit $words " ") -}}

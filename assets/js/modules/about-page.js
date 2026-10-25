@@ -1,10 +1,10 @@
+import { matches, media, QUERIES } from "./media.js";
+
 export function initScrollReveal() {
   const targets = document.querySelectorAll(".reveal-on-scroll, .reveal-pin");
   if (!targets.length) return;
 
-  const reduceMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
+  const reduceMotion = matches(QUERIES.reducedMotion);
   if (reduceMotion || !("IntersectionObserver" in window)) {
     targets.forEach((el) => el.classList.add("is-revealed"));
     return;
@@ -96,7 +96,7 @@ export function initAboutImageSequence() {
 
   // Mobile cannot hover, so use a tap-to-cycle gallery instead of the
   // hover + wheel sequence.
-  if (window.matchMedia("(max-width: 768px)").matches) {
+  if (matches(QUERIES.mobile)) {
     initAboutImageTap(root, track);
     return;
   }
@@ -104,9 +104,7 @@ export function initAboutImageSequence() {
   const sourceItems = [...track.querySelectorAll(".af-sequence-item")];
   if (!sourceItems.length) return;
 
-  const reduceMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
+  const reduceMotion = matches(QUERIES.reducedMotion);
   const sourceCount = sourceItems.length;
   const repeatCount = 5;
   const middleSet = Math.floor(repeatCount / 2);
@@ -302,11 +300,9 @@ export function initAboutFlightAndDrag() {
   const summary = document.getElementById("about-summary");
   if (!canvas || !summary) return;
 
-  const desktop = window.matchMedia("(min-width: 881px)");
+  const desktop = media(QUERIES.aboutDesktop);
 
-  const reduceMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
+  const reduceMotion = matches(QUERIES.reducedMotion);
 
   const FLIERS = [
     { name: "coordinates", srcRot: -0.8 },

@@ -1,7 +1,10 @@
 # download-katex.ps1
 # Automates the self-hosting of KaTeX assets to achieve fully localized, CDN-free math rendering.
 
-$baseDir = "static/lib/katex"
+# Versioned directory: /lib/ is cached as immutable (vercel.json). After an
+# upgrade, update layouts/partials/katex-base.html to the new directory.
+$katexVersion = "0.16.8"
+$baseDir = "static/lib/katex-$katexVersion"
 $fontsDir = "$baseDir/fonts"
 
 # 1. Create directory paths
@@ -10,7 +13,7 @@ if (!(Test-Path $fontsDir)) {
     Write-Host "Created local KaTeX directories." -ForegroundColor Green
 }
 
-$cdnBase = "https://cdn.jsdelivr.net/npm/katex@0.16.8/dist"
+$cdnBase = "https://cdn.jsdelivr.net/npm/katex@$katexVersion/dist"
 
 # 2. Files to download
 $coreFiles = @(

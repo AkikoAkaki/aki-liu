@@ -1,4 +1,5 @@
 import { initArchivePreview } from "./archive-preview.js";
+import { media, QUERIES } from "./media.js";
 
 export function initArchiveFilter() {
   const archiveList = document.querySelector(
@@ -21,9 +22,7 @@ export function initArchiveFilter() {
     '[data-archive-stat="entries"]',
   );
   const yearStat = document.querySelector('[data-archive-stat="years"]');
-  const reduceMotionQuery = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  );
+  const reduceMotionQuery = media(QUERIES.reducedMotion);
   const selectedTags = new Set();
   const selectedYears = new Set();
   let filterToken = 0;

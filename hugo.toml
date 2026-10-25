@@ -8,6 +8,9 @@ defaultContentLanguage = "zh"
 defaultContentLanguageInSubdir = false
 hasCJKLanguage = true
 
+# Content grouping (top-level key: must stay above the first [table]).
+mainSections = ["ideas", "notes", "textlab"]
+
 [languages]
   [languages.zh]
     languageCode = "zh-CN"
@@ -23,9 +26,6 @@ hasCJKLanguage = true
   [module.hugoVersion]
     extended = false
     min = "0.152.0"
-
-# Content grouping
-mainSections = ["ideas", "notes", "textlab"]
 
 [taxonomies]
   tag = "tags"

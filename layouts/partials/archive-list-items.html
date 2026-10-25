@@ -6,7 +6,7 @@
     {{- $previewSrc = (partialCached "archive-preview-index.html" .Site .Language.Lang).RelPermalink -}}
 {{- end -}}
 
-<div class="archive-list" data-archive-filter-root data-archive-initial-tags="{{ delimit $initialTags "," }}" data-archive-preview-src="{{ $previewSrc }}" data-katex-base="{{ "lib/katex/" | relURL }}">
+<div class="archive-list" data-archive-filter-root data-archive-initial-tags="{{ delimit $initialTags "," }}" data-archive-preview-src="{{ $previewSrc }}" data-katex-base="{{ partialCached "katex-base.html" "katex-base" }}">
     {{ range $pages.GroupByPublishDate "2006" }}
         {{ range .Pages }}
             {{- $tagSlugs := slice -}}

@@ -1,10 +1,8 @@
+import { matches, QUERIES } from "./media.js";
+
 export function initSlotLinks() {
-  const canHover = window.matchMedia(
-    "(any-hover: hover)",
-  ).matches;
-  const reduceMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
+  const canHover = matches(QUERIES.hover);
+  const reduceMotion = matches(QUERIES.reducedMotion);
   if (!canHover || reduceMotion) return;
 
   const links = document.querySelectorAll(
@@ -41,12 +39,8 @@ export function initSlotLinks() {
 }
 
 export function initMagneticHover(elements, opts) {
-  const reduceMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
-  const canHover = window.matchMedia(
-    "(any-hover: hover)",
-  ).matches;
+  const reduceMotion = matches(QUERIES.reducedMotion);
+  const canHover = matches(QUERIES.hover);
   if (!canHover || reduceMotion || !elements.length) return;
 
   const mX = opts && opts.magnetX != null ? opts.magnetX : 4;
@@ -308,9 +302,7 @@ export function initExpandingMenu() {
   const menuPanel = document.getElementById("menu-panel");
   if (!menuBar || !menuTrigger) return;
 
-  const canHover = window.matchMedia(
-    "(any-hover: hover)",
-  ).matches;
+  const canHover = matches(QUERIES.hover);
   const magneticLinks = menuPanel
     ? [...menuPanel.querySelectorAll(".menu-link")]
     : [];

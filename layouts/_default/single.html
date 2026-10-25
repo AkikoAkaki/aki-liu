@@ -13,8 +13,10 @@
                 <div class="meta-metadata-stack">
                     <span class="metadata-item">{{ .Date.Format "Jan 02, 2006" }}</span>
                     {{ with .Params.tags }}
+                    {{- $labels := slice -}}
+                    {{- range . }}{{ $labels = $labels | append (partial "tag-label.html" .) }}{{ end -}}
                     <span class="metadata-separator">·</span>
-                    <span class="metadata-item">{{ delimit . " / " }}</span>
+                    <span class="metadata-item">{{ delimit $labels " / " }}</span>
                     {{ end }}
                     <span class="metadata-separator">·</span>
                     <span class="metadata-item">{{ .WordCount }} words</span>

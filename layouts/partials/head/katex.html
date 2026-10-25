@@ -1,5 +1,6 @@
 {{- if partial "page-has-math.html" . -}}
-    <link rel="stylesheet" href="{{ "lib/katex/katex.min.css" | relURL }}">
-    <script defer src="{{ "lib/katex/katex.min.js" | relURL }}"></script>
-    <script defer src="{{ "lib/katex/auto-render.min.js" | relURL }}"></script>
+    {{- $katexBase := partialCached "katex-base.html" "katex-base" -}}
+    <link rel="stylesheet" href="{{ $katexBase }}katex.min.css">
+    <script defer src="{{ $katexBase }}katex.min.js"></script>
+    <script defer src="{{ $katexBase }}auto-render.min.js"></script>
 {{- end -}}

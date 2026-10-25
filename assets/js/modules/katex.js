@@ -17,7 +17,7 @@ function loadScript(src) {
   });
 }
 
-// Loads KaTeX from `base` (e.g. "/lib/katex/") once per page.
+// Loads KaTeX from `base` (e.g. "/lib/katex-0.16.8/") once per page.
 export function loadKatex(base) {
   if (typeof window.renderMathInElement === "function") {
     return Promise.resolve();

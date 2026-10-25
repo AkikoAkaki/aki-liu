@@ -1,4 +1,5 @@
 import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
+import { matches, QUERIES } from "./modules/media.js";
 
 (function () {
     const root = document.querySelector('.microblog-page');
@@ -73,11 +74,17 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         }
     }
 
-    function entriesForTag(tag) {
+    function entriesForTag(slug) {
         if (!feedData) return [];
-        if (!tag) return feedData.entries;
-        const lower = String(tag).toLowerCase();
-        return feedData.entries.filter(e => (e.tags || []).some(t => String(t).toLowerCase() === lower));
+        if (!slug) return feedData.entries;
+        return feedData.entries.filter(e => (e.tags || []).some(t => tagToSlug(t) === slug));
+    }
+
+    // Display labels are rendered by the template (partials/tag-label.html)
+    // into the sidebar; reuse them instead of formatting tags in JS.
+    function tagLabel(slug, fallback = slug) {
+        const el = document.querySelector(`.archive-tag-item[data-tag="${CSS.escape(slug)}"] .tag-name`);
+        return el ? el.textContent.trim() : fallback;
     }
 
     function entriesForYear(year) {
@@ -115,7 +122,8 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         if (!tags || !tags.length) return '';
         const dots = tags.map(t => {
             const slug = tagToSlug(t);
-            return `<a class="mb-card-tag-dot" href="?cols=${encodeURIComponent(slug)}" data-mb-tag="${escapeHtml(slug)}" data-mb-tag-label="${escapeHtml(t)}" title="${escapeHtml(t)}">
+            const label = tagLabel(slug, t);
+            return `<a class="mb-card-tag-dot" href="?cols=${encodeURIComponent(slug)}" data-mb-tag="${escapeHtml(slug)}" data-mb-tag-label="${escapeHtml(label)}" title="${escapeHtml(label)}">
                 <span class="item-dot" data-tag="${escapeHtml(slug)}"></span>
             </a>`;
         }).join('');
@@ -218,7 +226,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
 
     function updateColumnCompression() {
         if (!deck) return;
-        if (window.matchMedia('(max-width: 768px)').matches) {
+        if (matches(QUERIES.mobile)) {
             deck.classList.remove('is-compressed');
             return;
         }
@@ -293,8 +301,8 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         });
     }
 
-    function openColumn(type, label, updateHistory = true) {
-        const value = type === 'year' ? String(label) : tagToSlug(label || '');
+    function openColumn(type, key, label = key, updateHistory = true) {
+        const value = type === 'year' ? String(key) : tagToSlug(key || '');
         if (!value) return;
         const existing = deck.querySelector(`.mb-column[data-mb-${type}="${CSS.escape(value)}"]`);
         if (existing) {
@@ -389,10 +397,10 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
         const years = (params.get('years') || '').split(',').map(s => s.trim()).filter(Boolean);
         const tags = feedData ? feedData.tags || [] : [];
         cols.forEach(slug => {
-            const label = tags.find(t => tagToSlug(t) === slug) || slug;
-            openColumn('tag', label, false);
+            const raw = tags.find(t => tagToSlug(t) === slug) || slug;
+            openColumn('tag', slug, tagLabel(slug, raw), false);
         });
-        years.forEach(year => openColumn('year', year, false));
+        years.forEach(year => openColumn('year', year, year, false));
         syncURL(false);
     }
 
@@ -403,9 +411,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
             const tagItem = e.target.closest('.archive-tag-item');
             if (!tagItem) return;
             e.preventDefault();
-            const labelEl = tagItem.querySelector('.tag-name');
-            const label = labelEl ? labelEl.textContent.trim() : tagItem.dataset.tag;
-            openColumn('tag', label);
+            openColumn('tag', tagItem.dataset.tag, tagLabel(tagItem.dataset.tag));
         });
     }
 
@@ -425,7 +431,7 @@ import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
             const tag = e.target.closest('.mb-card-tag-dot');
             if (!tag) return;
             e.preventDefault();
-            openColumn('tag', tag.dataset.mbTagLabel || tag.dataset.mbTag);
+            openColumn('tag', tag.dataset.mbTag, tag.dataset.mbTagLabel || tag.dataset.mbTag);
         });
     }
 

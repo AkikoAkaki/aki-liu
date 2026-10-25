@@ -1,8 +1,10 @@
+import { matches, QUERIES } from './media.js';
+
 export class FluidEngine {
     constructor(introNode, wrapperNode) {
         this.intro = introNode;
         this.wrapper = wrapperNode;
-        this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.reduced = matches(QUERIES.reducedMotion);
         
         this.canvas = null;
         this.gl = null;
