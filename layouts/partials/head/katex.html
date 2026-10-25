@@ -1,48 +1,4 @@
-{{- $siteEnabled := or .Site.Params.enablekatex .Site.Params.enableKaTeX -}}
-{{- if $siteEnabled -}}
-    {{- $hasOverride := false -}}
-    {{- $pageEnabledRaw := false -}}
-    {{- if isset .Params "enablekatex" -}}
-        {{- $hasOverride = true -}}
-        {{- $pageEnabledRaw = .Params.enablekatex -}}
-    {{- else if isset .Params "enableKaTeX" -}}
-        {{- $hasOverride = true -}}
-        {{- $pageEnabledRaw = .Params.enableKaTeX -}}
-    {{- else if isset .Params "math" -}}
-        {{- $hasOverride = true -}}
-        {{- $pageEnabledRaw = .Params.math -}}
-    {{- end -}}
-
-    {{- $pageEnabled := partial "is-truthy.html" $pageEnabledRaw -}}
-
-    {{- $hasMathDelimiters := false -}}
-    {{- if and (not $hasOverride) .IsPage -}}
-        {{- $raw := .RawContent -}}
-        {{- $maybeMath := or (in $raw "$") (in $raw "\\(") (in $raw "\\[") -}}
-        {{- if $maybeMath -}}
-            {{- $hasMathDelimiters = gt (len (findRE `\$\$[\s\S]*?\$\$|\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]|(^|[^\\])\$[^$\n]+\$` $raw 1)) 0 -}}
-        {{- end -}}
-    {{- else if (not $hasOverride) -}}
-        {{- /* List pages (sections/taxonomy terms): scan child pages'
-               RawContent so the hover preview can render embedded math. */ -}}
-        {{- range .Pages -}}
-            {{- if not $hasMathDelimiters -}}
-                {{- $childRaw := .RawContent -}}
-                {{- if or (in $childRaw "$") (in $childRaw "\\(") (in $childRaw "\\[") -}}
-                    {{- $hasMathDelimiters = true -}}
-                {{- end -}}
-            {{- end -}}
-        {{- end -}}
-    {{- end -}}
-
-    {{- $enableKaTeX := false -}}
-    {{- if $hasOverride -}}
-        {{- $enableKaTeX = $pageEnabled -}}
-    {{- else -}}
-        {{- $enableKaTeX = $hasMathDelimiters -}}
-    {{- end -}}
-
-    {{- if $enableKaTeX -}}
+{{- if partial "page-has-math.html" . -}}
     <link rel="stylesheet" href="{{ "lib/katex/katex.min.css" | relURL }}">
     <script defer src="{{ "lib/katex/katex.min.js" | relURL }}"></script>
     <script defer src="{{ "lib/katex/auto-render.min.js" | relURL }}"></script>
@@ -50,7 +6,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             if (typeof renderMathInElement === 'function') {
                 renderMathInElement(document.body, {
-                    // Keep delimiters aligned with assets/js/modules/archive-filter.js.
+                    // Keep delimiters aligned with assets/js/modules/katex.js.
                     delimiters: [
                         {left: '$$', right: '$$', display: true},
                         {left: '\\(', right: '\\)', display: false},
@@ -62,5 +18,4 @@
             }
         });
     </script>
-    {{- end -}}
 {{- end -}}

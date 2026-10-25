@@ -1,7 +1,12 @@
 {{- $pages := .pages -}}
 {{- $initialTags := .initialTags | default (slice) -}}
+{{- $previewSrc := "" -}}
+{{- range first 1 $pages -}}
+    {{- /* English lists can fall back to Chinese pages, so use the pages' own site. */ -}}
+    {{- $previewSrc = (partialCached "archive-preview-index.html" .Site .Language.Lang).RelPermalink -}}
+{{- end -}}
 
-<div class="archive-list" data-archive-filter-root data-archive-initial-tags="{{ delimit $initialTags "," }}">
+<div class="archive-list" data-archive-filter-root data-archive-initial-tags="{{ delimit $initialTags "," }}" data-archive-preview-src="{{ $previewSrc }}" data-katex-base="{{ "lib/katex/" | relURL }}">
     {{ range $pages.GroupByPublishDate "2006" }}
         {{ range .Pages }}
             {{- $tagSlugs := slice -}}
@@ -29,14 +34,6 @@
                             </span>
                         {{- end -}}
                     </a>
-                </div>
-
-                {{/* Consumed verbatim by assets/js/modules/archive-filter.js hover preview. */}}
-                <div class="item-preview-data" style="display: none;">
-                    <h4 class="preview-title">{{ .Title }}</h4>
-                    <div class="preview-summary raw-content-preview">
-                        {{ .Content | safeHTML | truncate 800 }}
-                    </div>
                 </div>
             </article>
         {{ end }}

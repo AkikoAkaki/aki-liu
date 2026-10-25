@@ -1,0 +1,19 @@
+{{- /* Builds one fingerprinted JSON of hover previews for a language site.
+       Context: a Site. Call through partialCached keyed by language so every
+       list and tag page shares the same file. Consumed by
+       assets/js/modules/archive-preview.js. */ -}}
+{{- $pages := where .RegularPages "Params.hidden" "!=" true -}}
+{{- $pages = where $pages "Section" "not in" (slice "microblog" "about" "dashboard") -}}
+{{- $entries := slice -}}
+{{- range $pages -}}
+    {{- $html := .Content | truncate 800 -}}
+    {{- $maybeMath := or (in $html "$") (in $html "\\(") (in $html "\\[") -}}
+    {{- $entries = $entries | append (dict
+        "url" .RelPermalink
+        "title" .Title
+        "html" $html
+        "math" (and $maybeMath (partial "page-has-math.html" .))
+    ) -}}
+{{- end -}}
+{{- $path := printf "data/archive-previews.%s.json" .Language.Lang -}}
+{{- return (resources.FromString $path (jsonify $entries) | fingerprint) -}}

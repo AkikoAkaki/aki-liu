@@ -66,7 +66,7 @@ No `npm`, `Node.js`, or package manager needed. Hugo handles CSS/JS bundling int
 - **Video**: Use `localvideo` shortcode with page-bundle assets.
 - **KaTeX**: Enabled globally but only rendered on pages with `enableKaTeX: true` or `math: true` frontmatter (see `layouts/partials/head/katex.html`).
 - **Tags**: Defined in frontmatter as `tags: ["tag-name"]`. Rendered via `/tags/<name>/` using `layouts/tags/term.html`.
-- **Archive preview**: List pages embed full `.Content` in hidden `<div class="item-preview-data">` elements for the hover preview panel. This means list pages grow linearly with article count — if you need to reduce payload, see `deferred_optimizations.md`.
+- **Archive preview**: Hover previews come from one fingerprinted JSON per language (`layouts/partials/archive-preview-index.html`, first 800 characters of each page). `assets/js/modules/archive-preview.js` fetches it the first time the pointer enters a list and loads KaTeX only for previews with math.
 - **Fonts**: Switzer is served locally from `/static/fonts/switzer/` (paid). Newsreader and JetBrains Mono loaded from Google Fonts.
 - **Goldmark**: `unsafe = true` (HTML in markdown), `hardLineBreak = true`.
 - **Drafts**: Set `draft: true` in frontmatter; Hugo only publishes them with `--buildDrafts`.
