@@ -122,8 +122,8 @@ function Write-ReportHtml {
         "<li>&#26080;</li>"
     }
 
-    $brokenItems = if ($Metrics.quality.brokenRootRelativeLinkTop.Count -gt 0) {
-        ($Metrics.quality.brokenRootRelativeLinkTop | ForEach-Object {
+    $brokenItems = if ($Metrics.quality.brokenInternalReferenceTop.Count -gt 0) {
+        ($Metrics.quality.brokenInternalReferenceTop | ForEach-Object {
             "<li><code>$(Convert-ToHtmlSafe $_.page)</code> -> <code>$(Convert-ToHtmlSafe $_.href)</code></li>"
         }) -join "`n"
     } else {
@@ -159,7 +159,7 @@ function Write-ReportHtml {
       $buildChart
     </div>
     <div>
-      <h3>&#27169;&#26495;&#32531;&#23384;&#21629;&#20013;&#29575;&#36235;&#21183;(%)</h3>
+      <h3>&#27169;&#26495;&#32531;&#23384;&#22797;&#29992;&#21344;&#27604;&#36235;&#21183;(%)</h3>
       $cacheChart
     </div>
     <div>
@@ -169,7 +169,7 @@ function Write-ReportHtml {
   </div>
   <h3>&#26368;&#36817;&#35760;&#24405;</h3>
   <table class='history-table'>
-    <thead><tr><th>&#26102;&#38388;</th><th>&#24635;&#32791;&#26102;(ms)</th><th>&#32531;&#23384;&#21629;&#20013;&#29575;(%)</th><th>&#26029;&#38142;&#25968;</th></tr></thead>
+    <thead><tr><th>&#26102;&#38388;</th><th>&#24635;&#32791;&#26102;(ms)</th><th>&#32531;&#23384;&#22797;&#29992;&#21344;&#27604;(%)</th><th>&#26029;&#38142;&#25968;</th></tr></thead>
     <tbody>
       $historyRowsHtml
     </tbody>
@@ -184,9 +184,9 @@ function Write-ReportHtml {
   <h2>&#19982;&#19978;&#27425;&#25253;&#21578;&#23545;&#27604;</h2>
   <ul>
     <li>&#26500;&#24314;&#24635;&#32791;&#26102;&#21464;&#21270;(ms): <strong>$($Delta.buildMsDelta)</strong></li>
-    <li>&#26681;&#30456;&#23545;&#26029;&#38142;&#21464;&#21270;: <strong>$($Delta.brokenLinksDelta)</strong></li>
-    <li>&#32570;&#22833; canonical &#21464;&#21270;: <strong>$($Delta.missingCanonicalDelta)</strong></li>
-    <li>&#27169;&#26495;&#32531;&#23384;&#21629;&#20013;&#29575;&#21464;&#21270;: <strong>$($Delta.templateCacheRatioDelta)%</strong></li>
+    <li>&#26412;&#22320;&#38142;&#25509;&#19982;&#36164;&#28304;&#32570;&#22833;&#25968;&#21464;&#21270;: <strong>$($Delta.brokenLinksDelta)</strong></li>
+    <li>canonical &#32570;&#22833;&#25110;&#26080;&#25928; &#21464;&#21270;: <strong>$($Delta.invalidCanonicalCountDelta)</strong></li>
+    <li>&#27169;&#26495;&#32531;&#23384;&#22797;&#29992;&#21344;&#27604;&#21464;&#21270;: <strong>$($Delta.templateCacheRatioDelta)%</strong></li>
   </ul>
 </div>
 "@
@@ -194,7 +194,7 @@ function Write-ReportHtml {
 @"
 <div class='card'>
   <h2>&#19982;&#19978;&#27425;&#25253;&#21578;&#23545;&#27604;</h2>
-  <p>&#39318;&#27425;&#29983;&#25104;&#25253;&#21578;&#65292;&#26242;&#26080;&#21487;&#27604;&#36739;&#22522;&#32447;&#12290;</p>
+  <p>&#26242;&#26080;&#30456;&#21516;&#26816;&#26597;&#33539;&#22260;&#30340;&#23545;&#27604;&#22522;&#32447;&#12290;</p>
 </div>
 "@
     }
@@ -237,18 +237,18 @@ function Write-ReportHtml {
       <h2>&#39029;&#38754;&#36136;&#37327;</h2>
       <ul>
         <li>HTML &#25991;&#20214;&#25968;: <strong>$($Metrics.quality.htmlFiles)</strong></li>
-        <li>&#32570;&#22833; canonical: <strong>$($Metrics.quality.missingCanonical)</strong></li>
-        <li>&#32570;&#22833; html lang: <strong>$($Metrics.quality.missingHtmlLang)</strong></li>
+        <li>canonical &#32570;&#22833;&#25110;&#26080;&#25928;: <strong>$($Metrics.quality.invalidCanonicalCount)</strong></li>
+        <li>lang &#32570;&#22833;&#25110;&#19981;&#21463;&#25903;&#25345;: <strong>$($Metrics.quality.invalidHtmlLangCount)</strong></li>
         <li>&#32570;&#22833; hreflang x-default: <strong>$($Metrics.quality.missingXDefaultForAlternates)</strong></li>
-        <li>&#26681;&#30456;&#23545;&#38142;&#25509;&#26029;&#38142;&#25968;: <strong>$($Metrics.quality.brokenRootRelativeLinkCount)</strong></li>
+        <li>&#26412;&#22320;&#38142;&#25509;&#19982;&#36164;&#28304;&#32570;&#22833;&#25968;: <strong>$($Metrics.quality.brokenInternalReferenceCount)</strong></li>
         <li>CSS bundle &#22823;&#23567;(&#23383;&#33410;): <strong>$($Metrics.quality.cssBundleBytes)</strong></li>
       </ul>
     </div>
     <div class="card">
       <h2>&#27169;&#26495;&#24615;&#33021;</h2>
       <ul>
-        <li>&#24635;&#20307;&#32531;&#23384;&#21629;&#20013;&#29575;: <strong>$($Metrics.templates.aggregateCacheRatio)%</strong></li>
-        <li>&#32531;&#23384;&#21629;&#20013;/&#24635;&#35843;&#29992;: <strong>$($Metrics.templates.aggregateCached) / $($Metrics.templates.aggregateCalls)</strong></li>
+        <li>&#27169;&#26495;&#32531;&#23384;&#22797;&#29992;&#21344;&#27604;: <strong>$($Metrics.templates.aggregateCacheRatio)%</strong></li>
+        <li>&#32531;&#23384;&#22797;&#29992;/&#20840;&#37096;&#27169;&#26495;&#35843;&#29992;: <strong>$($Metrics.templates.aggregateCached) / $($Metrics.templates.aggregateCalls)</strong></li>
         <li>&#24050;&#32479;&#35745;&#27169;&#26495;&#25968;: <strong>$($Metrics.templates.totalTemplatesParsed)</strong></li>
       </ul>
     </div>

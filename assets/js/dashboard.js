@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const H = JSON.parse(document.getElementById("dashboard-history").textContent);
+  const recent = H.slice(-12);
+  const formatStamp = stamp => stamp.replace(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})$/, '$1-$2-$3 $4:$5:$6');
   const timelineColors = {
     good: 'var(--dash-good)',
     mid: 'var(--dash-accent-2)',
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return timelineColors.good;
   }
 
-  const sparkData = H.slice(-12).map(d => d.buildMs);
+  const sparkData = recent.map(d => d.buildMs);
   (function drawSparkline() {
     const svg = document.getElementById('sparkline-build');
     if (!svg) return;
@@ -55,22 +57,25 @@ document.addEventListener('DOMContentLoaded', () => {
       <path d="${linePath}" fill="none" stroke="url(#sparkline-line-grad)" stroke-width="1.3" stroke-linecap="square" stroke-linejoin="miter"/>
       <circle cx="${lastPt[0].toFixed(1)}" cy="${lastPt[1].toFixed(1)}" r="1.8" fill="url(#sparkline-line-grad)"/>
     `;
-    const allMs = H.map(d => d.buildMs);
-    const mean30 = Math.round(allMs.reduce((a, b) => a + b, 0) / allMs.length);
-    const current = allMs[allMs.length - 1];
-    const delta = current - mean30;
     const el = document.getElementById('spark-delta');
     if (el) {
+      if (H.length < 2) {
+        el.textContent = 'No previous measurement';
+        return;
+      }
+      const previous = H[H.length - 2].buildMs;
+      const delta = H[H.length - 1].buildMs - previous;
       const sign = delta >= 0 ? '+' : '';
-      const color = delta > 0 ? 'var(--tag-poetry)' : 'var(--tag-drama)';
-      el.innerHTML = `<span style="color:${color};font-family:var(--font-mono)">${sign}${delta}ms</span> vs ${H.length}-measurement mean`;
+      const color = delta > 0 ? timelineColors.bad : delta < 0 ? timelineColors.good : 'var(--color-muted)';
+      const change = delta === 0 ? 'unchanged' : `${(Math.abs(delta) / previous * 100).toFixed(1)}% ${delta < 0 ? 'faster' : 'slower'}`;
+      el.innerHTML = `<span style="color:${color};font-family:var(--font-mono)">${sign}${delta}ms</span> vs previous build (${previous}ms; ${change})`;
     }
   })();
 
   (function drawBars() {
     const container = document.getElementById('bars-chart');
     if (!container) return;
-    const vols = H.map(d => (d.zhPages || 0) + (d.enPages || 0));
+    const vols = recent.map(d => d.zhPages + d.enPages);
     const min = Math.min(...vols), max = Math.max(...vols);
     const span = max - min || 1;
     container.innerHTML = vols.map((v, i) => {
@@ -78,19 +83,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const isLast = i === vols.length - 1;
       return `<div class="bar${isLast ? ' last' : ''}" style="height:${h}%"></div>`;
     }).join('');
-    const delta = vols[vols.length - 1] - vols[0];
     const el = document.getElementById('vol-delta');
-    if (el && vols.length) el.textContent = `${delta > 0 ? '+' : ''}${delta} pages over ${H.length} measurements`;
+    if (el) {
+      if (vols.length < 2) {
+        el.textContent = 'No previous measurement';
+        return;
+      }
+      const delta = vols[vols.length - 1] - vols[vols.length - 2];
+      el.textContent = delta === 0 ? 'Unchanged vs previous build' : `${delta > 0 ? '+' : ''}${delta} pages vs previous build`;
+    }
   })();
 
   function getData(metric) {
-    return H.map(d => metric === 'build' ? d.buildMs : (d.zhPages || 0) + (d.enPages || 0));
+    return H.map(d => metric === 'build' ? d.buildMs : d.zhPages + d.enPages);
   }
 
   function updateStats(data, unit) {
     const sorted = [...data].sort((a, b) => a - b);
     const mean = Math.round(data.reduce((a, b) => a + b, 0) / data.length);
-    const p95 = sorted[Math.floor(data.length * 0.95)];
+    const p95 = sorted[Math.ceil(data.length * 0.95) - 1];
     const min = sorted[0], max = sorted[sorted.length - 1];
     document.getElementById('ts-min').innerHTML = `${min}<span class="small">${unit}</span>`;
     document.getElementById('ts-mean').innerHTML = `${mean}<span class="small">${unit}</span>`;
@@ -110,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const data = getData(metric);
     if (!data.length) return;
-    const unit = metric === 'build' ? 'ms' : '';
+    const unit = metric === 'build' ? 'ms' : ' pages';
     updateStats(data, unit);
 
     const W = 1080, H2 = 280;
@@ -129,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const areaPath = `${linePath} L${x(data.length-1)} ${H2-padB} L${padL} ${H2-padB} Z`;
     const yTicks = [0, 0.25, 0.5, 0.75, 1].map(t => lo + t * yspan);
     const tickIdx = [...new Set(Array.from({ length: Math.min(7, data.length) }, (_, i) => Math.round(i * (data.length - 1) / Math.max(1, Math.min(7, data.length) - 1))))];
-    const labels = H.map(d => d.label || d.stamp || '');
+    const labels = H.map(d => formatStamp(d.stamp).slice(0, 10));
 
     let html = `
       <defs>
@@ -169,14 +180,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     data.forEach((v, i) => {
       const pointColor = colorForValue(v, min, max, metric);
-      html += `<circle class="chart-pt" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.4" stroke="${pointColor}" fill="var(--bg-color)" stroke-width="1.4"/>`;
+      html += `<circle class="chart-pt" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.4" stroke="${pointColor}" fill="var(--bg-color)" stroke-width="1.4"><title>${formatStamp(H[i].stamp)} · ${H[i].commit} · ${H[i].zhPages + H[i].enPages} pages · ${v}${unit}</title></circle>`;
     });
 
     html += `<g id="chart-cursor">
       <line class="cursor-line" id="cursor-line" x1="0" x2="0" y1="${padT}" y2="${H2 - padB}"/>
       <circle class="chart-pt-cursor" id="cursor-dot" cx="0" cy="0" r="3.6" fill="var(--bg-color)" stroke="url(#trend-line-grad-${metric})" stroke-width="1.8"/>
-      <rect id="cursor-rect" x="0" y="0" width="80" height="22" rx="6" fill="var(--color-heading)"/>
+      <rect id="cursor-rect" x="0" y="0" width="190" height="40" rx="6" fill="var(--color-heading)"/>
       <text id="cursor-text" x="0" y="0" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--bg-color)" letter-spacing=".04em"></text>
+      <text id="cursor-time" x="0" y="0" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="var(--bg-color)"></text>
     </g>`;
 
     tickIdx.forEach(i => {
@@ -191,24 +203,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let animFrameId = null;
     let curX = null, curY = null;
     let curTx = null, curTy = null;
-    let curVal = null;
     let firstMove = true;
 
-    function updateCursorPositions(cx, cy, tx, ty, val) {
+    function updateCursorPositions(cx, cy, tx, ty) {
       const cursor = document.getElementById('chart-cursor');
       const line = document.getElementById('cursor-line');
       const dot = document.getElementById('cursor-dot');
       const crect = document.getElementById('cursor-rect');
       const ctext = document.getElementById('cursor-text');
+      const ctime = document.getElementById('cursor-time');
       if (!cursor) return;
       cursor.classList.add('active');
       line.setAttribute('x1', cx.toFixed(1)); line.setAttribute('x2', cx.toFixed(1));
       dot.setAttribute('cx', cx.toFixed(1)); dot.setAttribute('cy', cy.toFixed(1));
-      const pointColor = colorForValue(val, min, max, metric);
+      const pointColor = colorForValue(data[activeIdx], min, max, metric);
       dot.setAttribute('stroke', pointColor);
       crect.setAttribute('x', tx.toFixed(1)); crect.setAttribute('y', ty.toFixed(1));
-      ctext.setAttribute('x', (tx + 40).toFixed(1)); ctext.setAttribute('y', (ty + 14).toFixed(1));
-      ctext.textContent = `${Math.round(val)}${unit}`;
+      ctext.setAttribute('x', (tx + 95).toFixed(1)); ctext.setAttribute('y', (ty + 14).toFixed(1));
+      ctext.textContent = `${data[activeIdx]}${unit} · ${H[activeIdx].commit}`;
+      ctime.setAttribute('x', (tx + 95).toFixed(1)); ctime.setAttribute('y', (ty + 29).toFixed(1));
+      ctime.textContent = formatStamp(H[activeIdx].stamp);
     }
 
     function animateCursor() {
@@ -219,21 +233,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const targetX = x(activeIdx);
       const targetY = y(data[activeIdx]);
-      const targetTx = Math.min(W - padR - 80, Math.max(padL + 4, targetX - 40));
-      const targetTy = Math.max(padT + 4, targetY - 32);
-      const targetVal = data[activeIdx];
+      const targetTx = Math.min(W - padR - 190, Math.max(padL + 4, targetX - 95));
+      const targetTy = Math.max(padT + 4, targetY - 48);
 
       curX += (targetX - curX) * 0.18;
       curY += (targetY - curY) * 0.18;
       curTx += (targetTx - curTx) * 0.18;
       curTy += (targetTy - curTy) * 0.18;
-      curVal += (targetVal - curVal) * 0.18;
 
-      updateCursorPositions(curX, curY, curTx, curTy, curVal);
+      updateCursorPositions(curX, curY, curTx, curTy);
 
       const dist = Math.abs(targetX - curX) + Math.abs(targetY - curY);
       if (dist < 0.05) {
-        updateCursorPositions(targetX, targetY, targetTx, targetTy, targetVal);
+        updateCursorPositions(targetX, targetY, targetTx, targetTy);
         animFrameId = null;
       } else {
         animFrameId = requestAnimationFrame(animateCursor);
@@ -253,11 +265,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const cx = x(i), cy = y(data[i]);
         curX = cx;
         curY = cy;
-        curTx = Math.min(W - padR - 80, Math.max(padL + 4, cx - 40));
-        curTy = Math.max(padT + 4, cy - 32);
-        curVal = data[i];
+        curTx = Math.min(W - padR - 190, Math.max(padL + 4, cx - 95));
+        curTy = Math.max(padT + 4, cy - 48);
         firstMove = false;
-        updateCursorPositions(curX, curY, curTx, curTy, curVal);
+        updateCursorPositions(curX, curY, curTx, curTy);
       }
 
       if (animFrameId === null) {

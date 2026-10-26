@@ -6,9 +6,9 @@ weight: 1
 draft: false
 ---
 
-A running record of courses I have taken at the University of Rochester, for a B.S. in Computer Science and a B.S. in Applied Mathematics. I graduate in December 2026.
+These are the courses I have taken at the University of Rochester, for a B.S. in Computer Science and a B.S. in Applied Mathematics. I graduate in December 2026.
 
-## Fall 2026 (in progress)
+## 2026 Fall (In Progress)
 
 - **CSC 290** · Machine Learning Systems for Efficient AI
 - **CSC 273W** · Writing for Computer Science
@@ -16,7 +16,7 @@ A running record of courses I have taken at the University of Rochester, for a B
 - **MATH 208** · Operations Research and Linear Optimization
 - **ECON 208W** · Topics in Microeconomic Theory
 
-## Spring 2026
+## 2026 Spring
 
 - **CSC 254** · Programming Language Design and Implementation
 - **CSC 280** · Computer Models and Limitations
@@ -24,15 +24,15 @@ A running record of courses I have taken at the University of Rochester, for a B
 - **CSC 299W** · Social Implications of Computing
 - **MATH 282** · Introduction to Complex Variables
 
-## Fall 2025
+## 2025 Fall
 
 - **CSC 252** · Computer Organization
-- **CSC 391** · Independent Study (HCI and spatial computing security)
+- **CSC 391** · Independent Study（about HCI and XR securuity）
 - **MATH 265** · Real Analysis I
 - **ECON 207** · Intermediate Microeconomics
 - **CASC 394I** · Special Internship
 
-## Spring 2025
+## 2025 Spring
 
 - **CSC 211** · Introduction to Human-Computer Interaction
 - **CSC 214** · Mobile App Development
@@ -40,7 +40,7 @@ A running record of courses I have taken at the University of Rochester, for a B
 - **MATH 236** · Abstract Algebra I
 - **JPNS 152** · Intermediate Japanese II
 
-## Fall 2024
+## 2024 Fall
 
 - **CSC 173** · Computation and Formal Systems
 - **CSC 240** · Data Mining
@@ -48,11 +48,11 @@ A running record of courses I have taken at the University of Rochester, for a B
 - **MATH 235** · Linear Algebra
 - **JPNS 151** · Intermediate Japanese I
 
-## Summer 2024
+## 2024 Summers
 
-- **MATH 201** · Introduction to Probability (transfer credit, Jinan University)
+- **MATH 201** · Introduction to Probability (transfer credit)
 
-## Spring 2024
+## 2024 Spring
 
 - **CSC 172** · Data Structures and Algorithms
 - **MATH 150** · Discrete Mathematics
@@ -60,7 +60,7 @@ A running record of courses I have taken at the University of Rochester, for a B
 - **ECON 108** · Principles of Economics
 - **JPNS 102** · Elementary Japanese II
 
-## Fall 2023
+## 2023 Fall
 
 - **CSC 171** · Introduction to Computer Science
 - **DMST 104** · Design in the Digital Age

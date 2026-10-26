@@ -55,6 +55,9 @@ function Convert-DurationToMs {
     if ($v -match "^([0-9]*\.?[0-9]+)s$") {
         return [double]$Matches[1] * 1000.0
     }
+    if ($v -match "^([0-9]*\.?[0-9]+)ns$") {
+        return [double]$Matches[1] / 1000000.0
+    }
     if ($v -match "^([0-9]*\.?[0-9]+)us$") {
         return [double]$Matches[1] / 1000.0
     }
@@ -170,119 +173,208 @@ function Parse-UnusedTemplates {
     return @($unused | Sort-Object -Unique)
 }
 
-function Get-HrefValues {
-    param([string]$Html)
+function Get-HtmlAttribute {
+    param([string]$Tag, [string]$Name)
 
-    $values = New-Object System.Collections.Generic.List[string]
-
-    foreach ($m in [regex]::Matches($Html, 'href\s*=\s*["'']([^"'']+)["'']', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
-        $values.Add($m.Groups[1].Value)
-    }
-    foreach ($m in [regex]::Matches($Html, 'href\s*=\s*([^"''\s>]+)', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
-        $values.Add($m.Groups[1].Value)
-    }
-
-    return @($values | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Sort-Object -Unique)
+    $pattern = '(?<![\w:-])' + [regex]::Escape($Name) + '\s*=\s*(?:"([^"]*)"|''([^'']*)''|([^\s>]+))'
+    $match = [regex]::Match($Tag, $pattern, 'IgnoreCase')
+    return [System.Net.WebUtility]::HtmlDecode($match.Groups[1].Value + $match.Groups[2].Value + $match.Groups[3].Value)
 }
 
-function Get-RootRelativeTargetPath {
-    param(
-        [string]$Href,
-        [string]$DestRoot
-    )
+function Get-LocalTargetPath {
+    param([string]$Reference, [string]$PagePath, [string]$DestRoot)
 
-    $trimmed = $Href.Split("#")[0].Split("?")[0]
-    if (-not $trimmed.StartsWith("/")) { return $null }
-
-    if ($trimmed -eq "/") {
-        return Join-Path $DestRoot "index.html"
+    if ([string]::IsNullOrWhiteSpace($Reference)) { return $null }
+    $Reference = $Reference.Trim()
+    if ($Reference -match '^(?:[#?]|//|[a-z][a-z0-9+.-]*:)') {
+        return $null
     }
 
-    $rel = $trimmed.TrimStart("/") -replace "/", [IO.Path]::DirectorySeparatorChar
-    if ($trimmed.EndsWith("/")) {
-        return Join-Path (Join-Path $DestRoot $rel) "index.html"
+    $page = $PagePath.Substring($DestRoot.Length).TrimStart('\', '/') -replace '\\', '/'
+    $resolved = [uri]::new([uri]("https://local.invalid/" + $page), $Reference.Trim())
+    $relative = [uri]::UnescapeDataString($resolved.AbsolutePath).TrimStart('/')
+    $candidate = [IO.Path]::GetFullPath((Join-Path $DestRoot $relative))
+    $rootPrefix = [IO.Path]::GetFullPath($DestRoot).TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
+    if ($candidate -ne $rootPrefix.TrimEnd('\', '/') -and -not $candidate.StartsWith($rootPrefix, [StringComparison]::OrdinalIgnoreCase)) {
+        throw "Local reference leaves the output directory: $Reference"
     }
-
-    $candidate = Join-Path $DestRoot $rel
-    if ([IO.Path]::GetExtension($candidate)) {
-        return $candidate
+    if (Test-Path -LiteralPath $candidate -PathType Leaf) { return $candidate }
+    if ((Test-Path -LiteralPath $candidate -PathType Container) -or $resolved.AbsolutePath.EndsWith('/') -or -not [IO.Path]::GetExtension($candidate)) {
+        return Join-Path $candidate 'index.html'
     }
+    return $candidate
+}
 
-    return Join-Path $candidate "index.html"
+function Get-GzipByteCount {
+    param([byte[]]$Bytes)
+
+    $stream = [IO.MemoryStream]::new()
+    $gzip = [IO.Compression.GZipStream]::new($stream, [IO.Compression.CompressionLevel]::Optimal, $true)
+    try {
+        $gzip.Write($Bytes, 0, $Bytes.Length)
+        $gzip.Dispose()
+        return $stream.Length
+    }
+    finally {
+        $gzip.Dispose()
+        $stream.Dispose()
+    }
+}
+
+function Get-AssetBaseline {
+    param($Current, [string]$Root)
+
+    $result = @{ status = 'unavailable'; source = 'origin/main'; reason = 'No reference measurement with the same scope.' }
+    try {
+        $saved = Invoke-GitCapture -Arguments @('show', 'origin/main:data/metrics/latest.json') -Root $Root | ConvertFrom-Json
+        if ($saved.quality.pageBundles.scope -eq $Current.scope) {
+            $result = @{
+                status = 'available'
+                source = 'origin/main'
+                commit = Invoke-GitCapture -Arguments @('rev-parse', 'origin/main') -Root $Root
+                measuredAt = $saved.generatedAt
+                cssBytes = $saved.quality.pageBundles.maxCssBytes
+                jsBytes = $saved.quality.pageBundles.maxJsBytes
+                cssDeltaBytes = $Current.maxCssBytes - $saved.quality.pageBundles.maxCssBytes
+                jsDeltaBytes = $Current.maxJsBytes - $saved.quality.pageBundles.maxJsBytes
+            }
+        }
+    }
+    catch {
+        # Missing ref or older measurement scope has no comparable baseline.
+    }
+    return $result
 }
 
 function Analyze-BuiltHtml {
     param([string]$DestRoot)
 
-    $htmlFiles = Get-ChildItem -Path $DestRoot -Recurse -File -Filter "*.html"
+    $htmlFiles = @(Get-ChildItem -LiteralPath $DestRoot -Recurse -File -Filter "*.html")
 
-    $missingCanonical = 0
-    $missingLang = 0
+    $invalidCanonicalCount = 0
+    $invalidLang = 0
     $missingXDefault = 0
     $brokenLinks = New-Object System.Collections.Generic.List[object]
     $assetSizes = @{}
-    $pageBundles = @{ maxCssBytes = [int64]0; maxJsBytes = [int64]0; cssPage = ""; jsPage = "" }
+    $pageBundles = @{
+        scope = 'initial-local-files-v1'
+        maxCssBytes = [int64]0; maxJsBytes = [int64]0
+        cssGzipBytes = [int64]0; jsGzipBytes = [int64]0
+        cssPage = ''; jsPage = ''; cssGroup = ''; jsGroup = ''
+        maxInlineJsBytes = [int64]0; maxRemoteScripts = 0
+    }
+    $pageGroups = @{}
 
     foreach ($file in $htmlFiles) {
-        $raw = Get-Content -Raw -Path $file.FullName
+        $raw = Get-Content -Raw -LiteralPath $file.FullName -Encoding UTF8
 
         $pageAssets = @{}
-        foreach ($tag in [regex]::Matches($raw, '<(?:link|script)\b[^>]*>', 'IgnoreCase')) {
-            $attribute = [regex]::Match($tag.Value, '(?:href|src)\s*=\s*(?:"([^"]*)"|''([^'']*)''|([^\s>]+))', 'IgnoreCase')
-            if (-not $attribute.Success) { continue }
-            $assetPath = ($attribute.Groups[1].Value + $attribute.Groups[2].Value + $attribute.Groups[3].Value) -replace '[?#].*$', ''
-            if ($assetPath -notmatch '^/(css|js)/') { continue }
-            if (-not $assetSizes.ContainsKey($assetPath)) {
-                $assetSizes[$assetPath] = (Get-Item -LiteralPath (Join-Path $DestRoot $assetPath.TrimStart('/'))).Length
+        $remoteScripts = 0
+        $pagePath = $file.FullName.Substring($DestRoot.Length).TrimStart('\', '/') -replace '\\', '/'
+        $groupPath = $pagePath -replace '^en/', ''
+        $section = ($groupPath -split '/')[0]
+        $label = switch ($section) {
+            'index.html' { 'Home' }
+            'about' { 'About' }
+            'dashboard' { 'Dashboard' }
+            'notes' { 'Notes' }
+            'textlab' { 'Text Lab' }
+            'weeknotes' { 'Weeknotes' }
+            'microblog' { 'Microblog' }
+            'tags' { 'Tags' }
+            'categories' { 'Categories' }
+            default { 'Other' }
+        }
+        if (-not $pageGroups.ContainsKey($label)) {
+            $pageGroups[$label] = @{
+                label = $label; maxCssBytes = [int64]0; maxJsBytes = [int64]0
+                cssGzipBytes = [int64]0; jsGzipBytes = [int64]0
+                cssPage = ''; jsPage = ''
             }
-            $pageAssets[$assetPath] = $assetSizes[$assetPath]
+        }
+        foreach ($tag in [regex]::Matches($raw, '<(?:link|script)\b[^>]*>', 'IgnoreCase')) {
+            $isScript = $tag.Value -match '^<script\b'
+            if (-not $isScript -and (Get-HtmlAttribute -Tag $tag.Value -Name 'rel') -ne 'stylesheet') { continue }
+            $attributeName = if ($isScript) { 'src' } else { 'href' }
+            $reference = Get-HtmlAttribute -Tag $tag.Value -Name $attributeName
+            if ([string]::IsNullOrWhiteSpace($reference)) { continue }
+            $assetTarget = Get-LocalTargetPath -Reference $reference -PagePath $file.FullName -DestRoot $DestRoot
+            if ($null -eq $assetTarget) {
+                if ($isScript -and $reference.Trim() -match '^(?:https?:|//)') { $remoteScripts++ }
+                continue
+            }
+            if (-not (Test-Path -LiteralPath $assetTarget -PathType Leaf)) { continue }
+            $kind = if ($isScript) { 'js' } else { 'css' }
+            if (-not $assetSizes.ContainsKey($assetTarget)) {
+                $bytes = [IO.File]::ReadAllBytes($assetTarget)
+                $assetSizes[$assetTarget] = @{ bytes = $bytes.Length; gzipBytes = Get-GzipByteCount -Bytes $bytes; kind = $kind }
+            }
+            $pageAssets[$assetTarget] = $assetSizes[$assetTarget]
         }
         foreach ($kind in @('css', 'js')) {
             $bytes = [int64]0
-            foreach ($assetPath in $pageAssets.Keys) {
-                if ($assetPath.StartsWith("/$kind/")) { $bytes += $pageAssets[$assetPath] }
+            $gzipBytes = [int64]0
+            foreach ($asset in $pageAssets.Values) {
+                if ($asset.kind -eq $kind) { $bytes += $asset.bytes; $gzipBytes += $asset.gzipBytes }
             }
             $key = if ($kind -eq 'css') { 'maxCssBytes' } else { 'maxJsBytes' }
-            if ($bytes -gt $pageBundles[$key]) {
-                $pageBundles[$key] = $bytes
-                $pageBundles["${kind}Page"] = $file.FullName.Substring($DestRoot.Length).TrimStart('\', '/') -replace '\\', '/'
+            $gzipKey = if ($kind -eq 'css') { 'cssGzipBytes' } else { 'jsGzipBytes' }
+            foreach ($record in @($pageBundles, $pageGroups[$label])) {
+                if ($bytes -gt $record[$key]) {
+                    $record[$key] = $bytes
+                    $record[$gzipKey] = $gzipBytes
+                    $record["${kind}Page"] = $pagePath
+                }
+            }
+            if ($pageBundles["${kind}Page"] -eq $pagePath) { $pageBundles["${kind}Group"] = $label }
+        }
+        $inlineBytes = [int64]0
+        foreach ($inline in [regex]::Matches($raw, '<script\b([^>]*)>([\s\S]*?)</script>', 'IgnoreCase')) {
+            $type = Get-HtmlAttribute -Tag $inline.Groups[1].Value -Name 'type'
+            $src = Get-HtmlAttribute -Tag $inline.Groups[1].Value -Name 'src'
+            if (-not $src -and $type -in @('', 'module', 'text/javascript', 'application/javascript')) {
+                $inlineBytes += [Text.Encoding]::UTF8.GetByteCount($inline.Groups[2].Value)
             }
         }
+        $pageBundles.maxInlineJsBytes = [math]::Max($pageBundles.maxInlineJsBytes, $inlineBytes)
+        $pageBundles.maxRemoteScripts = [math]::Max($pageBundles.maxRemoteScripts, $remoteScripts)
 
-        if ($raw -notmatch 'rel\s*=\s*["'']?canonical["'']?') {
-            $missingCanonical++
+        $canonicalLinks = @([regex]::Matches($raw, '<link\b[^>]*>', 'IgnoreCase') | Where-Object {
+            ((Get-HtmlAttribute -Tag $_.Value -Name 'rel') -split '\s+') -contains 'canonical'
+        })
+        $canonical = if ($canonicalLinks.Count -eq 1) { Get-HtmlAttribute -Tag $canonicalLinks[0].Value -Name 'href' } else { '' }
+        $canonicalUri = $null
+        if ([string]::IsNullOrWhiteSpace($canonical) -or $canonical -match '[\s]|^[#?]' -or
+            -not [uri]::TryCreate([uri]'https://local.invalid/', $canonical, [ref]$canonicalUri) -or
+            $canonicalUri.Scheme -notin @('http', 'https')) {
+            $invalidCanonicalCount++
         }
-        if ($raw -notmatch "<html[^>]*\blang\s*=") {
-            $missingLang++
+        $htmlTag = [regex]::Match($raw, '<html\b[^>]*>', 'IgnoreCase').Value
+        $language = Get-HtmlAttribute -Tag $htmlTag -Name 'lang'
+        if ($language -notmatch '^(?:zh|en)(?:-[a-z]{2})?$') {
+            $invalidLang++
         }
         if (($raw -match "hreflang\s*=") -and ($raw -notmatch 'hreflang\s*=\s*["'']?x-default["'']?')) {
             $missingXDefault++
         }
 
-        foreach ($href in (Get-HrefValues $raw)) {
-            if (
-                $href.StartsWith("#") -or
-                $href.StartsWith("mailto:", [System.StringComparison]::OrdinalIgnoreCase) -or
-                $href.StartsWith("tel:", [System.StringComparison]::OrdinalIgnoreCase) -or
-                $href.StartsWith("javascript:", [System.StringComparison]::OrdinalIgnoreCase) -or
-                $href.StartsWith("data:", [System.StringComparison]::OrdinalIgnoreCase) -or
-                $href.StartsWith("http://", [System.StringComparison]::OrdinalIgnoreCase) -or
-                $href.StartsWith("https://", [System.StringComparison]::OrdinalIgnoreCase)
-            ) {
-                continue
-            }
-
-            $target = Get-RootRelativeTargetPath -Href $href -DestRoot $DestRoot
+        $references = @([regex]::Matches($raw, '<(?:a|area|link|script|img|source|video|audio|iframe|track|input|embed)\b[^>]*>', 'IgnoreCase') | ForEach-Object {
+            Get-HtmlAttribute -Tag $_.Value -Name 'href'
+            Get-HtmlAttribute -Tag $_.Value -Name 'src'
+        } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Sort-Object -Unique)
+        foreach ($reference in $references) {
+            $target = Get-LocalTargetPath -Reference $reference -PagePath $file.FullName -DestRoot $DestRoot
             if ($null -eq $target) { continue }
-
-            if (-not (Test-Path -Path $target -PathType Leaf)) {
+            if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
                 $brokenLinks.Add([pscustomobject]@{
                     page = $file.FullName.Substring($DestRoot.Length).TrimStart('\', '/')
-                    href = $href
+                    href = $reference
                 })
             }
         }
     }
+
+    $pageBundles.groups = @($pageGroups.Values | Sort-Object label)
 
     $cssBundle = Get-ChildItem -Path (Join-Path $DestRoot "css") -Filter "bundle*.css" -File -ErrorAction SilentlyContinue | Select-Object -First 1
     $cssBytes = if ($cssBundle) { [int64]$cssBundle.Length } else { 0 }
@@ -314,11 +406,11 @@ function Analyze-BuiltHtml {
 
     return @{
         htmlFiles                    = $htmlFiles.Count
-        missingCanonical             = $missingCanonical
-        missingHtmlLang              = $missingLang
+        invalidCanonicalCount        = $invalidCanonicalCount
+        invalidHtmlLangCount         = $invalidLang
         missingXDefaultForAlternates = $missingXDefault
-        brokenRootRelativeLinkCount  = $brokenLinks.Count
-        brokenRootRelativeLinkTop    = @($brokenLinks | Select-Object -First 20)
+        brokenInternalReferenceCount = $brokenLinks.Count
+        brokenInternalReferenceTop   = @($brokenLinks | Select-Object -First 20)
         cssBundleBytes               = $cssBytes
         jsBundleBytes                = $jsBytes
         pageBundles                  = $pageBundles
@@ -341,8 +433,8 @@ function New-Delta {
     return @{
         hasBaseline             = $true
         buildMsDelta            = [math]::Round(($Current.build.totalMs - $Previous.build.totalMs), 3)
-        brokenLinksDelta        = ($Current.quality.brokenRootRelativeLinkCount - $Previous.quality.brokenRootRelativeLinkCount)
-        missingCanonicalDelta   = ($Current.quality.missingCanonical - $Previous.quality.missingCanonical)
+        brokenLinksDelta        = ($Current.quality.brokenInternalReferenceCount - $Previous.quality.brokenInternalReferenceCount)
+        invalidCanonicalCountDelta   = ($Current.quality.invalidCanonicalCount - $Previous.quality.invalidCanonicalCount)
         templateCacheRatioDelta = [math]::Round(($Current.templates.aggregateCacheRatio - $Previous.templates.aggregateCacheRatio), 3)
     }
 }
@@ -371,11 +463,9 @@ function Get-HistorySeries {
             continue
         }
 
+        if (-not $item.quality.PSObject.Properties['brokenInternalReferenceCount']) { continue }
         $stamp = $file.BaseName
-        $label = $stamp
-        if ($stamp -match "^\d{8}-(\d{2})(\d{2})(\d{2})$") {
-            $label = "$($Matches[1]):$($Matches[2]):$($Matches[3])"
-        }
+        $label = $stamp -replace '^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})$', '$1-$2-$3 $4:$5:$6'
 
         $buildMs = 0.0
         $cacheRatio = 0.0
@@ -385,7 +475,7 @@ function Get-HistorySeries {
         $commit = "unknown"
         try { $buildMs = [double]$item.build.totalMs } catch {}
         try { $cacheRatio = [double]$item.templates.aggregateCacheRatio } catch {}
-        try { $brokenLinks = [int]$item.quality.brokenRootRelativeLinkCount } catch {}
+        try { $brokenLinks = [int]$item.quality.brokenInternalReferenceCount } catch {}
         try { $zhPages = [int]$item.build.zhPages } catch {}
         try { $enPages = [int]$item.build.enPages } catch {}
         try { $commit = [string]$item.git.commit } catch {}
@@ -405,6 +495,9 @@ function Get-HistorySeries {
         }
     }
 
+    foreach ($point in $series.Values) {
+        $point.label = $point.stamp -replace '^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})$', '$1-$2-$3 $4:$5:$6'
+    }
     return @($series.Values | Sort-Object stamp | Select-Object -Last $Limit)
 }
 
@@ -431,6 +524,7 @@ New-Item -ItemType Directory -Path $tempDest -Force | Out-Null
 try {
     $buildOutput = Invoke-HugoCapture -Arguments @("--gc", "--minify", "--destination", $tempDest) -Root $ProjectRoot
     $quality = Analyze-BuiltHtml -DestRoot $tempDest
+    $quality.pageBundles.baseline = Get-AssetBaseline -Current $quality.pageBundles -Root $ProjectRoot
     & (Join-Path $ProjectRoot "scripts\public-asset-audit.ps1") -PublicDir $tempDest -JsonOut $assetAuditJsonPath -Quiet
 }
 finally {
@@ -459,7 +553,7 @@ $metrics = @{
         cache = "existing-resource-cache"
         buildArgs = @("--gc", "--minify")
         templateArgs = @("--templateMetrics", "--templateMetricsHints", "--renderToMemory")
-        assetScope = "largest per-page /css/ and /js/ bundles; excludes fonts and vendor libraries"
+        assetScope = "initial local stylesheet and script files, including vendor; inline, remote and runtime-loaded code excluded; independent gzip estimates"
     }
     build           = @{
         totalMs   = Parse-TotalBuildMs -Output $buildOutput
@@ -485,6 +579,9 @@ if (Test-Path $latestJsonPath) {
     try {
         # Keep compatibility with Windows PowerShell, which lacks -AsHashtable.
         $previous = Get-Content -Raw $latestJsonPath | ConvertFrom-Json
+        if (-not $previous.quality.PSObject.Properties['brokenInternalReferenceCount']) {
+            $previous = $null
+        }
     }
     catch {
         $previous = $null
@@ -525,6 +622,6 @@ Write-Host "  Hugo series $dataHistoryJsonPath"
 Write-Host ""
 Write-Host "Summary:"
 Write-Host "  Build total: $($metrics.build.totalMs) ms"
-Write-Host "  Broken root-relative links: $($metrics.quality.brokenRootRelativeLinkCount)"
-Write-Host "  Missing canonical: $($metrics.quality.missingCanonical)"
-Write-Host "  Template cache ratio: $($metrics.templates.aggregateCacheRatio)%"
+Write-Host "  Missing local references: $($metrics.quality.brokenInternalReferenceCount)"
+Write-Host "  Missing or invalid canonical: $($metrics.quality.invalidCanonicalCount)"
+Write-Host "  Template cache reuse share: $($metrics.templates.aggregateCacheRatio)%"

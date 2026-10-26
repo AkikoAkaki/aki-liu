@@ -1,13 +1,13 @@
 {
     "templates":  {
-                      "aggregateCached":  2080,
-                      "totalTemplatesParsed":  47,
+                      "aggregateCached":  2030,
+                      "totalTemplatesParsed":  46,
                       "top":  [
                                   {
                                       "template":  "_partials/archive-list-items.html",
-                                      "cumulativeMs":  3394.865,
-                                      "averageMs":  141.453,
-                                      "maxMs":  324.749,
+                                      "cumulativeMs":  7083.728,
+                                      "averageMs":  295.155,
+                                      "maxMs":  698.586,
                                       "cachePotential":  17,
                                       "percentCached":  0,
                                       "cachedCount":  0,
@@ -15,9 +15,9 @@
                                   },
                                   {
                                       "template":  "_partials/archive-preview-index.html",
-                                      "cumulativeMs":  3188.52,
-                                      "averageMs":  159.426,
-                                      "maxMs":  316.2,
+                                      "cumulativeMs":  6655.06,
+                                      "averageMs":  332.753,
+                                      "maxMs":  667.605,
                                       "cachePotential":  55,
                                       "percentCached":  85,
                                       "cachedCount":  17,
@@ -25,9 +25,9 @@
                                   },
                                   {
                                       "template":  "tags/term.html",
-                                      "cumulativeMs":  2739.593,
-                                      "averageMs":  195.685,
-                                      "maxMs":  339.116,
+                                      "cumulativeMs":  5453.533,
+                                      "averageMs":  389.538,
+                                      "maxMs":  708.563,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
@@ -35,77 +35,77 @@
                                   },
                                   {
                                       "template":  "single.html",
-                                      "cumulativeMs":  1187.432,
-                                      "averageMs":  6.904,
-                                      "maxMs":  68.836,
+                                      "cumulativeMs":  2124.297,
+                                      "averageMs":  12.351,
+                                      "maxMs":  177.24,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  172
                                   },
                                   {
-                                      "template":  "_partials/head/seo.html",
-                                      "cumulativeMs":  1018.898,
-                                      "averageMs":  3.006,
-                                      "maxMs":  62.026,
-                                      "cachePotential":  13,
-                                      "percentCached":  0,
-                                      "cachedCount":  0,
-                                      "totalCount":  339
-                                  },
-                                  {
                                       "template":  "list.html",
-                                      "cumulativeMs":  982.47,
-                                      "averageMs":  98.247,
-                                      "maxMs":  330.188,
+                                      "cumulativeMs":  1933.983,
+                                      "averageMs":  193.398,
+                                      "maxMs":  704.659,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  10
                                   },
                                   {
-                                      "template":  "microblog/single.html",
-                                      "cumulativeMs":  774.601,
-                                      "averageMs":  5.824,
-                                      "maxMs":  29.529,
+                                      "template":  "_partials/head/seo.html",
+                                      "cumulativeMs":  1676.538,
+                                      "averageMs":  5.127,
+                                      "maxMs":  149.145,
+                                      "cachePotential":  7,
+                                      "percentCached":  0,
+                                      "cachedCount":  0,
+                                      "totalCount":  327
+                                  },
+                                  {
+                                      "template":  "_shortcodes/figure.html",
+                                      "cumulativeMs":  966.971,
+                                      "averageMs":  5.722,
+                                      "maxMs":  62.643,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
-                                      "totalCount":  133
+                                      "totalCount":  169
                                   },
                                   {
-                                      "template":  "_partials/head/assets.html",
-                                      "cumulativeMs":  559.132,
-                                      "averageMs":  1.649,
-                                      "maxMs":  32.711,
-                                      "cachePotential":  88,
+                                      "template":  "microblog/single.html",
+                                      "cumulativeMs":  903.318,
+                                      "averageMs":  7.465,
+                                      "maxMs":  28.65,
+                                      "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
-                                      "totalCount":  339
+                                      "totalCount":  121
                                   },
                                   {
                                       "template":  "about/list.html",
-                                      "cumulativeMs":  477.73,
-                                      "averageMs":  238.865,
-                                      "maxMs":  471.211,
+                                      "cumulativeMs":  813.178,
+                                      "averageMs":  406.589,
+                                      "maxMs":  807.794,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  2
                                   },
                                   {
-                                      "template":  "_shortcodes/figure.html",
-                                      "cumulativeMs":  407.848,
-                                      "averageMs":  2.472,
-                                      "maxMs":  22.484,
+                                      "template":  "_partials/post-image.html",
+                                      "cumulativeMs":  642.173,
+                                      "averageMs":  3.8,
+                                      "maxMs":  45.575,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
-                                      "totalCount":  165
+                                      "totalCount":  169
                                   }
                               ],
-                      "aggregateCacheRatio":  26.15,
-                      "aggregateCalls":  7954
+                      "aggregateCacheRatio":  26.08,
+                      "aggregateCalls":  7784
                   },
     "hugoVersion":  "v0.152.2",
     "measurement":  {
@@ -116,7 +116,7 @@
                                          ],
                         "scope":  "local-production-build",
                         "cache":  "existing-resource-cache",
-                        "assetScope":  "largest per-page /css/ and /js/ bundles; excludes fonts and vendor libraries",
+                        "assetScope":  "initial local stylesheet and script files, including vendor; inline, remote and runtime-loaded code excluded; independent gzip estimates",
                         "platform":  "Win32NT",
                         "buildArgs":  [
                                           "--gc",
@@ -124,9 +124,9 @@
                                       ]
                     },
     "quality":  {
-                    "missingCanonical":  0,
-                    "brokenRootRelativeLinkCount":  0,
-                    "cssBundleBytes":  48378,
+                    "invalidHtmlLangCount":  0,
+                    "invalidCanonicalCount":  0,
+                    "cssBundleBytes":  46080,
                     "homeExternalHosts":  [
                                               "dentistjourney.com",
                                               "fonts.googleapis.com",
@@ -140,21 +140,125 @@
                                               "www.threads.com"
                                           ],
                     "missingXDefaultForAlternates":  0,
-                    "pageBundles":  {
-                                        "cssPage":  "dashboard/index.html",
-                                        "maxJsBytes":  44342,
-                                        "maxCssBytes":  83779,
-                                        "jsPage":  "index.html"
-                                    },
-                    "brokenRootRelativeLinkTop":  [
+                    "jsBundleBytes":  32105,
+                    "brokenInternalReferenceCount":  0,
+                    "brokenInternalReferenceTop":  [
 
-                                                  ],
-                    "jsBundleBytes":  32837,
-                    "missingHtmlLang":  0,
-                    "htmlFiles":  341
+                                                   ],
+                    "htmlFiles":  329,
+                    "pageBundles":  {
+                                        "cssGzipBytes":  15988,
+                                        "scope":  "initial-local-files-v1",
+                                        "maxJsBytes":  317520,
+                                        "cssGroup":  "Notes",
+                                        "jsGzipBytes":  90109,
+                                        "maxInlineJsBytes":  355,
+                                        "jsPage":  "en/notes/mlsys-notes-part-i/index.html",
+                                        "groups":  [
+                                                       {
+                                                           "maxCssBytes":  80949,
+                                                           "maxJsBytes":  41607,
+                                                           "cssPage":  "dashboard/index.html",
+                                                           "jsPage":  "dashboard/index.html",
+                                                           "label":  "Dashboard",
+                                                           "cssGzipBytes":  16382,
+                                                           "jsGzipBytes":  13054
+                                                       },
+                                                       {
+                                                           "maxCssBytes":  84948,
+                                                           "maxJsBytes":  317520,
+                                                           "cssPage":  "en/textlab/roast-duck/index.html",
+                                                           "jsPage":  "en/textlab/roast-duck/index.html",
+                                                           "label":  "Text Lab",
+                                                           "cssGzipBytes":  15988,
+                                                           "jsGzipBytes":  90109
+                                                       },
+                                                       {
+                                                           "maxCssBytes":  75878,
+                                                           "maxJsBytes":  42671,
+                                                           "cssPage":  "microblog/005800/index.html",
+                                                           "jsPage":  "en/microblog/index.html",
+                                                           "label":  "Microblog",
+                                                           "cssGzipBytes":  15967,
+                                                           "jsGzipBytes":  13930
+                                                       },
+                                                       {
+                                                           "maxCssBytes":  46080,
+                                                           "maxJsBytes":  32105,
+                                                           "cssPage":  "en/tags/index.html",
+                                                           "jsPage":  "en/tags/index.html",
+                                                           "label":  "Tags",
+                                                           "cssGzipBytes":  8914,
+                                                           "jsGzipBytes":  10038
+                                                       },
+                                                       {
+                                                           "maxCssBytes":  46080,
+                                                           "maxJsBytes":  32105,
+                                                           "cssPage":  "categories/index.html",
+                                                           "jsPage":  "categories/index.html",
+                                                           "label":  "Categories",
+                                                           "cssGzipBytes":  8914,
+                                                           "jsGzipBytes":  10038
+                                                       },
+                                                       {
+                                                           "maxCssBytes":  80670,
+                                                           "maxJsBytes":  41039,
+                                                           "cssPage":  "about/courses/index.html",
+                                                           "jsPage":  "about/index.html",
+                                                           "label":  "About",
+                                                           "cssGzipBytes":  16647,
+                                                           "jsGzipBytes":  13287
+                                                       },
+                                                       {
+                                                           "maxCssBytes":  61835,
+                                                           "maxJsBytes":  37180,
+                                                           "cssPage":  "weeknotes/2026-w43/index.html",
+                                                           "jsPage":  "weeknotes/2026-w43/index.html",
+                                                           "label":  "Weeknotes",
+                                                           "cssGzipBytes":  12509,
+                                                           "jsGzipBytes":  11958
+                                                       },
+                                                       {
+                                                           "maxCssBytes":  61835,
+                                                           "maxJsBytes":  37180,
+                                                           "cssPage":  "en/influences/index.html",
+                                                           "jsPage":  "en/influences/index.html",
+                                                           "label":  "Other",
+                                                           "cssGzipBytes":  12509,
+                                                           "jsGzipBytes":  11958
+                                                       },
+                                                       {
+                                                           "maxCssBytes":  84948,
+                                                           "maxJsBytes":  317520,
+                                                           "cssPage":  "en/notes/mlsys-notes-part-i/index.html",
+                                                           "jsPage":  "en/notes/mlsys-notes-part-i/index.html",
+                                                           "label":  "Notes",
+                                                           "cssGzipBytes":  15988,
+                                                           "jsGzipBytes":  90109
+                                                       },
+                                                       {
+                                                           "maxCssBytes":  59355,
+                                                           "maxJsBytes":  43610,
+                                                           "cssPage":  "index.html",
+                                                           "jsPage":  "index.html",
+                                                           "label":  "Home",
+                                                           "cssGzipBytes":  11853,
+                                                           "jsGzipBytes":  14152
+                                                       }
+                                                   ],
+                                        "baseline":  {
+                                                         "status":  "unavailable",
+                                                         "source":  "origin/main",
+                                                         "reason":  "No reference measurement with the same scope."
+                                                     },
+                                        "maxCssBytes":  84948,
+                                        "maxRemoteScripts":  0,
+                                        "cssPage":  "en/notes/mlsys-notes-part-i/index.html",
+                                        "jsGroup":  "Notes"
+                                    }
                 },
     "unusedTemplates":  [
-
+                            "/_markup/render-image.html"
                         ],
     "build":  {
                   "enPages":  120,
@@ -163,14 +267,14 @@
                   "zhNonPage":  84,
                   "enStatic":  56,
                   "zhAliases":  2,
-                  "totalMs":  1071,
-                  "zhPages":  257,
+                  "totalMs":  2231,
+                  "zhPages":  245,
                   "zhStatic":  56
               },
     "git":  {
                 "branch":  "main",
-                "dirty":  false,
-                "commit":  "9d0b52e"
+                "dirty":  true,
+                "commit":  "f579b9b"
             },
-    "generatedAt":  "2026-10-26T00:26:26-04:00"
+    "generatedAt":  "2026-10-26T12:20:24-04:00"
 }

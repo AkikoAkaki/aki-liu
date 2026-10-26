@@ -89,23 +89,6 @@
     padding: 3.5rem 2rem 8rem;
 }
 
-.live-dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--tag-drama);
-    position: relative;
-}
-.live-dot::after {
-    content: "";
-    position: absolute;
-    inset: -3px;
-    border-radius: 50%;
-    background: var(--tag-drama);
-    opacity: 0.25;
-    animation: livepulse 2.4s ease-out infinite;
-}
 @keyframes livepulse {
     0% {
         transform: scale(0.6);
@@ -287,24 +270,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-.metric-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    color: var(--color-dim);
-    flex-shrink: 0;
-}
-.metric-icon svg {
-    width: 18px;
-    height: 18px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 1.1;
-    stroke-linecap: square;
-    stroke-linejoin: miter;
 }
 
 .metric-body {
