@@ -247,6 +247,11 @@
     align-items: start;
 }
 
+.section-weeknotes.kind-section .site-container {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .kind-section .site-sidebar,
 .kind-section .site-sidebar-right,
 .kind-term .site-sidebar,
