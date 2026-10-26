@@ -12,108 +12,68 @@
 
     <div class="af-center-band reveal-on-scroll">
       <div></div>
-      {{ $images := sort (resources.Match "images/about/*") "Name" }}
       {{ $valid_images := slice }}
-      {{ range $images }}
-        {{ $subType := lower .MediaType.SubType }}
-        {{ if in (slice "jpg" "jpeg" "png" "webp") $subType }}
-          {{/* The frame is 380 CSS px wide on desktop; 800px covers 2x screens. */}}
+      {{ range site.Data.about_photos }}
+        {{ $entry := . }}
+        {{ with resources.Get (printf "images/about/%s" .file) }}
           {{ $processed := . }}
           {{ if gt .Width 800 }}
             {{ $processed = .Resize "800x webp q82" }}
           {{ else }}
             {{ $processed = .Process "webp q82" }}
           {{ end }}
-          {{ $valid_images = $valid_images | append (dict "name" (path.Base .Name) "image" $processed) }}
+          {{ $alt := strings.TrimSuffix (path.Ext $entry.file) $entry.file }}
+          {{ $format := cond (gt $processed.Height $processed.Width) "Portrait" "Landscape" }}
+          {{ $valid_images = $valid_images | append (dict "name" $entry.file "alt" $alt "title" $entry.title "format" $format "image" $processed) }}
+        {{ else }}
+          {{ errorf "About photo not found: %s" $entry.file }}
         {{ end }}
       {{ end }}
-      {{ $random_name := index ($valid_images | shuffle) 0 }}
+      {{ $img_index := index (seq 0 (sub (len $valid_images) 1) | shuffle) 0 }}
+      {{ $random_name := index $valid_images $img_index }}
+      {{ $random_style := printf "aspect-ratio: %d/%d;" $random_name.image.Width $random_name.image.Height }}
 
-      {{/* Original caption arrays to cycle through for placeholders */}}
-      {{ $captionL_kicker := slice "Portrait" "Desk" "Interface" "Studio" "Notes" "Place" "Archive" }}
-      {{ $captionL_text := slice "A blurred study of presence and distance." "Objects, notes, and unfinished interface sketches." "Systems become visible through small controls." "The default image remains part of the same sequence." "A narrow scan, closer to a page than a photograph." "Rochester appears as weather, light, and institutional texture." "A repeated fragment for testing the seamless scroll." }}
-      {{ $captionR_text := slice "Rochester / winter light" "Working surface" "Screen fragment" "LIU Studio" "Vertical note" "Campus light" "Returned image" }}
-      {{ $captionR_note := slice "vertical frame" "square crop" "wide capture" "anchor frame" "tall ratio" "landscape frame" "loop sample" }}
-      {{ $img_index := 0 }}
-      {{ range $index, $name := $valid_images }}
-        {{ if eq $name.name $random_name.name }}
-          {{ $img_index = $index }}
-        {{ end }}
-      {{ end }}
-      {{ $mod := mod $img_index 7 }}
-
-      {{ $kicker_l := index $captionL_kicker $mod }}
-      {{ $text_l := index $captionL_text $mod }}
-      {{ $text_r := index $captionR_text $mod }}
-      {{ $note_r := index $captionR_note $mod }}
-
-      {{ $random_style := printf "aspect-ratio: %d/%d;" (int $random_name.image.Width) (int $random_name.image.Height) }}
-
-      <div class="af-photo-wrap" data-about-sequence style="{{ $random_style | safeCSS }}">
-        <div class="ab-photo af-photo-base" style="width:100%;height:100%;">
-          <img src="{{ $random_name.image.RelPermalink }}" alt="{{ $random_name.name }}" fetchpriority="high" style="width:100%;height:100%;object-fit:cover;display:block;">
-          <div class="ab-photo-silhouette"></div>
-          <div class="ab-photo-label">
-            <span>LIU — STUDIO</span>
-            <span>2025</span>
-          </div>
+      <div class="af-photo-wrap" data-about-sequence data-initial-index="{{ $img_index }}" style="{{ $random_style | safeCSS }}"
+        role="group" aria-roledescription="carousel" aria-label="Personal photographs" aria-describedby="about-photo-status" tabindex="0">
+        <div class="ab-photo af-photo-base" id="about-photo-frame">
+          <img src="{{ $random_name.image.RelPermalink }}" alt="{{ $random_name.alt }}" fetchpriority="high" width="{{ $random_name.image.Width }}" height="{{ $random_name.image.Height }}">
+          <div class="ab-photo-label"><span>LIU — STUDIO</span><span>2025</span></div>
         </div>
-
-        {{/* Default Captions for the random image */}}
-        <figcaption class="af-sequence-caption af-sequence-caption--left af-default-caption" style="opacity: 1; pointer-events: auto;">
-          <span class="af-sequence-caption-kicker">{{ $kicker_l }}</span>
-          <span class="af-sequence-caption-text">{{ $text_l }}</span>
-        </figcaption>
-        <figcaption class="af-sequence-caption af-sequence-caption--right af-default-caption" style="opacity: 1; pointer-events: auto;">
-          <span class="af-sequence-caption-kicker">{{ printf "%02d" (add $img_index 1) }}</span>
-          <span class="af-sequence-caption-text">{{ $text_r }}</span>
-          <span class="af-sequence-caption-note">{{ $note_r }}</span>
-        </figcaption>
-
+        <div class="af-sequence-caption af-sequence-caption--left af-default-caption">
+          <span class="af-sequence-caption-kicker" data-cover-caption="archive">Personal archive</span>
+          <span class="af-sequence-caption-text" data-cover-caption="title">{{ $random_name.title }}</span>
+        </div>
+        <div class="af-sequence-caption af-sequence-caption--right af-default-caption">
+          <span class="af-sequence-caption-kicker" data-cover-caption="number">{{ printf "%02d" (add $img_index 1) }}</span>
+          <span class="af-sequence-caption-text" data-cover-caption="format">{{ $random_name.format }}</span>
+          <span class="af-sequence-caption-note" data-cover-caption="count">{{ len $valid_images }} photographs</span>
+        </div>
+        {{/* The base image and live status expose the current photo; the expanded strip is decorative. */}}
         <div class="af-sequence-layer" aria-hidden="true">
           <div class="af-sequence-track" data-about-sequence-track>
-            {{ range $index, $file_name := $valid_images }}
-              {{ $m := mod $index 7 }}
-              
-              {{ $kl := index $captionL_kicker $m }}
-              {{ $tl := index $captionL_text $m }}
-              {{ $tr := index $captionR_text $m }}
-              {{ $nr := index $captionR_note $m }}
-
-              {{ $isAnchor := false }}
-              {{ if eq $index $img_index }}
-                {{ $isAnchor = true }}
-              {{ end }}
-
-              {{ $itemStyle := printf "aspect-ratio: %d/%d;" (int $file_name.image.Width) (int $file_name.image.Height) }}
-
-              <figure class="af-sequence-item{{ if $isAnchor }} is-anchor{{ end }}">
+            {{ range $index, $photo := $valid_images }}
+              <figure class="af-sequence-item{{ if eq $index $img_index }} is-current{{ end }}">
                 <figcaption class="af-sequence-caption af-sequence-caption--left">
-                  <span class="af-sequence-caption-kicker">{{ $kl }}</span>
-                  <span class="af-sequence-caption-text">{{ $tl }}</span>
+                  <span class="af-sequence-caption-kicker" data-caption="archive">Personal archive</span>
+                  <span class="af-sequence-caption-text" data-caption="title">{{ $photo.title }}</span>
                 </figcaption>
-                <div class="af-sequence-photo" style="{{ $itemStyle | safeCSS }}">
-                  <div class="ab-photo">
-                    {{/* about-page.js sets src from data-src when the sequence first opens. */}}
-                    <img data-src="{{ $file_name.image.RelPermalink }}" alt="{{ $file_name.name }}" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'">
-                    <div class="ab-photo-silhouette"></div>
-                    {{ if $isAnchor }}
-                    <div class="ab-photo-label">
-                      <span>LIU — STUDIO</span>
-                      <span>2025</span>
-                    </div>
-                    {{ end }}
-                  </div>
+                <div class="af-sequence-photo" style="{{ printf "aspect-ratio: %d/%d;" $photo.image.Width $photo.image.Height | safeCSS }}">
+                  <img data-src="{{ $photo.image.RelPermalink }}" alt="{{ $photo.alt }}" decoding="async" width="{{ $photo.image.Width }}" height="{{ $photo.image.Height }}">
                 </div>
                 <figcaption class="af-sequence-caption af-sequence-caption--right">
-                  <span class="af-sequence-caption-kicker">{{ printf "%02d" (add $index 1) }}</span>
-                  <span class="af-sequence-caption-text">{{ $tr }}</span>
-                  <span class="af-sequence-caption-note">{{ $nr }}</span>
+                  <span class="af-sequence-caption-kicker" data-caption="number">{{ printf "%02d" (add $index 1) }}</span>
+                  <span class="af-sequence-caption-text" data-caption="format">{{ $photo.format }}</span>
+                  <span class="af-sequence-caption-note" data-caption="count">{{ len $valid_images }} photographs</span>
                 </figcaption>
               </figure>
             {{ end }}
           </div>
         </div>
+        <div class="af-gallery-controls">
+          <button type="button" data-gallery-prev aria-label="Previous photograph" aria-controls="about-photo-frame">↑</button>
+          <button type="button" data-gallery-next aria-label="Next photograph" aria-controls="about-photo-frame">↓</button>
+        </div>
+        <span class="af-gallery-status" id="about-photo-status" data-gallery-status aria-live="polite" aria-atomic="true">{{ add $img_index 1 }} / {{ len $valid_images }} · {{ $random_name.alt }}</span>
       </div>
       <div></div>
     </div>
@@ -135,32 +95,34 @@
       </div>
 
       <div class="af-flier-slot" data-slot-for="coordinates">
-        <div class="af-origin-label reveal-on-scroll" data-flier="coordinates" data-card-id="coordinates" style="--reveal-delay: 80ms; z-index: 30; position: relative;">
-          <div class="af-object-head">
-            <span></span>
-            <span>Coordinates</span>
-          </div>
-          <div class="af-origin-name">Aki Liu <span>/ 刘丰恺</span></div>
-          <div class="af-timeline">
-            <div class="af-timeline-item">
-              <span class="af-timeline-year">2004</span>
-              <span class="af-timeline-dot"></span>
-              <div>
-                <strong>Born in Shanghai, China</strong>
-              </div>
+        <div class="af-card-position af-flier-card" data-card-id="coordinates" data-flier="coordinates" style="z-index: 30; position: relative; --pin-rot: -0.8deg">
+          <div class="af-origin-label reveal-on-scroll af-card-surface" style="--reveal-delay: 80ms">
+            <div class="af-object-head">
+              <span></span>
+              <span>Coordinates</span>
             </div>
-            <div class="af-timeline-item">
-              <span class="af-timeline-year">2010s</span>
-              <span class="af-timeline-dot"></span>
-              <div>
-                <strong>Grew up in Shanghai</strong>
+            <div class="af-origin-name">Aki Liu <span>/ 刘丰恺</span></div>
+            <div class="af-timeline">
+              <div class="af-timeline-item">
+                <span class="af-timeline-year">2004</span>
+                <span class="af-timeline-dot"></span>
+                <div>
+                  <strong>Born in Shanghai, China</strong>
+                </div>
               </div>
-            </div>
-            <div class="af-timeline-item">
-              <span class="af-timeline-year">Now</span>
-              <span class="af-timeline-dot"></span>
-              <div>
-                <strong>Studying in Rochester, NY, United States</strong>
+              <div class="af-timeline-item">
+                <span class="af-timeline-year">2010s</span>
+                <span class="af-timeline-dot"></span>
+                <div>
+                  <strong>Grew up in Shanghai</strong>
+                </div>
+              </div>
+              <div class="af-timeline-item">
+                <span class="af-timeline-year">Now</span>
+                <span class="af-timeline-dot"></span>
+                <div>
+                  <strong>Studying in Rochester, NY, United States</strong>
+                </div>
               </div>
             </div>
           </div>
@@ -168,27 +130,29 @@
       </div>
 
       <div class="af-flier-slot" data-slot-for="registration">
-        <div class="af-enrollment-slip reveal-on-scroll" data-flier="registration" data-card-id="registration" style="--reveal-delay: 160ms; z-index: 10; position: relative;">
-          <div class="af-slip-logo-panel">
-            <img class="af-slip-logo" src="/images/University%20of%20Rochester%20logo.png" alt="University of Rochester logo">
-          </div>
-          <div class="af-slip-content">
-            <div class="af-slip-topline">
-              <span>Registration</span>
-              <span>Active</span>
+        <div class="af-card-position af-flier-card" data-card-id="registration" data-flier="registration" style="z-index: 10; position: relative; --pin-rot: 0.8deg">
+          <div class="af-enrollment-slip reveal-on-scroll af-card-surface" style="--reveal-delay: 160ms">
+            <div class="af-slip-logo-panel">
+              <img class="af-slip-logo" src="/images/University%20of%20Rochester%20logo.png" alt="University of Rochester logo">
             </div>
-            <div class="af-slip-title">University of Rochester</div>
-            <div class="af-slip-grid">
-              <span>Student</span>
-              <strong>Aki Liu</strong>
-              <span>Degree</span>
-              <strong>Dual degree</strong>
-              <span>Major</span>
-              <strong>B.S. in Computer Science, B.S. in Applied Mathematics</strong>
-              <span>Previous</span>
-              <strong>East Asian Studies + Digital Media Studies</strong>
+            <div class="af-slip-content">
+              <div class="af-slip-topline">
+                <span>Registration</span>
+                <span>Active</span>
+              </div>
+              <div class="af-slip-title">University of Rochester</div>
+              <div class="af-slip-grid">
+                <span>Student</span>
+                <strong>Aki Liu</strong>
+                <span>Degree</span>
+                <strong>Dual degree</strong>
+                <span>Major</span>
+                <strong>B.S. in Computer Science, B.S. in Applied Mathematics</strong>
+                <span>Previous</span>
+                <strong>East Asian Studies + Digital Media Studies</strong>
+              </div>
+              <div class="af-slip-note">Meliora, "Ever Better"</div>
             </div>
-            <div class="af-slip-note">Meliora, "Ever Better"</div>
           </div>
         </div>
       </div>
@@ -248,77 +212,89 @@
         </div>
 
         <div class="af-pinboard-canvas" id="about-pinboard-canvas">
-          <div class="af-polaroid reveal-pin" data-card-id="polaroid-portrait" style="width:270px;height:318px;top:18px;left:150px; --pin-rot:-1.8deg; --reveal-delay: 0ms">
-            <div class="ab-photo" style="width:100%;height:100%">
-              <img src="/images/avatar.png" alt="Aki Liu" style="width:100%;height:100%;object-fit:cover;display:block;">
+          <div class="af-card-position" data-card-id="polaroid-portrait" style="width:270px; height:318px; top:18px; left:150px; --pin-rot:-1.8deg">
+            <div class="af-polaroid reveal-pin af-card-surface" style="--reveal-delay: 0ms">
+              <div class="ab-photo" style="width:100%;height:100%">
+                <img src="/images/avatar.png" alt="Aki Liu" style="width:100%;height:100%;object-fit:cover;display:block;">
+              </div>
+              <div class="af-polaroid-caption"><span>A · Portrait</span><span>2025</span></div>
             </div>
-            <div class="af-polaroid-caption"><span>A · Portrait</span><span>2025</span></div>
           </div>
 
-          <div class="af-polaroid reveal-pin" data-card-id="polaroid-desk" style="width:290px;height:214px;top:270px;left:-50px; --pin-rot:1.6deg; --reveal-delay: 240ms">
-            <div class="ab-photo" style="width:100%;height:100%">
-              {{/* Future desk image slot; keep silhouette fallback until the asset exists. */}}
-              <div class="ab-photo-silhouette"></div>
+          <div class="af-card-position" data-card-id="polaroid-desk" style="width:290px; height:214px; top:270px; left:-50px; --pin-rot:1.6deg">
+            <div class="af-polaroid reveal-pin af-card-surface" style="--reveal-delay: 240ms">
+              <div class="ab-photo" style="width:100%;height:100%">
+                {{/* Future desk image slot; keep silhouette fallback until the asset exists. */}}
+                <div class="ab-photo-silhouette"></div>
+              </div>
+              <div class="af-polaroid-caption"><span>B · Desk</span><span>ROC</span></div>
             </div>
-            <div class="af-polaroid-caption"><span>B · Desk</span><span>ROC</span></div>
           </div>
 
-          <div class="af-notebook reveal-pin" data-card-id="notebook" style="width:300px;top:100px;left:-120px; --pin-rot:-1deg; --reveal-delay: 80ms">
-            <em>The meaning of speech, then, requires that before any word is spoken, there must be a sort of immense hecatomb, a preliminary flood plunging all of creation into a total sea.</em>
-            <div style="height:14px"></div>
-            <span class="af-notebook-attr">Maurice Blanchot, "Literature and the Right to Death"</span>
+          <div class="af-card-position" data-card-id="notebook" style="width:300px; top:100px; left:-120px; --pin-rot:-1deg">
+            <div class="af-notebook reveal-pin af-card-surface" style="--reveal-delay: 80ms">
+              <em>The meaning of speech, then, requires that before any word is spoken, there must be a sort of immense hecatomb, a preliminary flood plunging all of creation into a total sea.</em>
+              <div style="height:14px"></div>
+              <span class="af-notebook-attr">Maurice Blanchot, "Literature and the Right to Death"</span>
+            </div>
           </div>
 
-          <div class="af-book reveal-pin" data-card-id="book" style="top:370px;left:240px; --pin-rot:-2deg; --reveal-delay: 320ms">
-            <div>
-              <div class="af-book-author">Žižek</div>
-              <div class="af-book-title">Enjoy Your<br>Symptom!</div>
+          <div class="af-card-position" data-card-id="book" style="top:370px; left:240px; --pin-rot:-2deg">
+            <div class="af-book reveal-pin af-card-surface" style="--reveal-delay: 320ms">
+              <div>
+                <div class="af-book-author">Žižek</div>
+                <div class="af-book-title">Enjoy Your<br>Symptom!</div>
+              </div>
+              <div class="af-book-author">RTLDG · 2008</div>
             </div>
-            <div class="af-book-author">RTLDG · 2008</div>
           </div>
 
-          <a class="af-cv-card reveal-pin" data-card-id="cv" href="{{ "about/resume/" | relLangURL }}" style="top:520px;left:460px; --pin-rot:1.6deg; --reveal-delay: 160ms; z-index: 20; position: absolute;">
-            <div class="af-cv-card-head">Aki Liu — Resume</div>
-            <div class="af-cv-line"></div>
-            <div class="af-cv-line af-cv-line--short"></div>
-            <div class="af-cv-line af-cv-line--med"></div>
-            <div style="height:8px"></div>
-            <div class="af-cv-line af-cv-line--med"></div>
-            <div class="af-cv-line"></div>
-            <div class="af-cv-line af-cv-line--short"></div>
-            <div class="af-cv-card-pdf">View resume →</div>
-          </a>
+          <div class="af-card-position" data-card-id="cv" style="top:520px; left:460px; --pin-rot:1.6deg; z-index: 20; position: absolute">
+            <a class="af-cv-card reveal-pin af-card-surface" href="{{ "about/resume/" | relLangURL }}" style="--reveal-delay: 160ms">
+              <div class="af-cv-card-head">Aki Liu — Resume</div>
+              <div class="af-cv-line"></div>
+              <div class="af-cv-line af-cv-line--short"></div>
+              <div class="af-cv-line af-cv-line--med"></div>
+              <div style="height:8px"></div>
+              <div class="af-cv-line af-cv-line--med"></div>
+              <div class="af-cv-line"></div>
+              <div class="af-cv-line af-cv-line--short"></div>
+              <div class="af-cv-card-pdf">View resume →</div>
+            </a>
+          </div>
 
-          <a class="af-courses-card reveal-pin" data-card-id="courses" href="{{ "about/courses/" | relLangURL }}" style="top:132px;left:410px; --pin-rot:-1.2deg; --reveal-delay: 400ms">
-            <div class="af-courses-card-punch"></div>
-            <div class="af-courses-card-header">
-              <span>Fall 2026</span>
-              <span>5 courses</span>
-            </div>
-            <div class="af-courses-card-list">
-              <div class="af-courses-card-row">
-                <span class="af-courses-card-code">CSC 290</span>
-                <span class="af-courses-card-name">ML Systems</span>
+          <div class="af-card-position" data-card-id="courses" style="top:132px; left:410px; --pin-rot:-1.2deg">
+            <a class="af-courses-card reveal-pin af-card-surface" href="{{ "about/courses/" | relLangURL }}" style="--reveal-delay: 400ms">
+              <div class="af-courses-card-punch"></div>
+              <div class="af-courses-card-header">
+                <span>Fall 2026</span>
+                <span>5 courses</span>
               </div>
-              <div class="af-courses-card-row">
-                <span class="af-courses-card-code">MATH 280</span>
-                <span class="af-courses-card-name">Numerical Analysis</span>
+              <div class="af-courses-card-list">
+                <div class="af-courses-card-row">
+                  <span class="af-courses-card-code">CSC 290</span>
+                  <span class="af-courses-card-name">ML Systems</span>
+                </div>
+                <div class="af-courses-card-row">
+                  <span class="af-courses-card-code">MATH 280</span>
+                  <span class="af-courses-card-name">Numerical Analysis</span>
+                </div>
+                <div class="af-courses-card-row">
+                  <span class="af-courses-card-code">MATH 208</span>
+                  <span class="af-courses-card-name">Linear Optimization</span>
+                </div>
+                <div class="af-courses-card-row">
+                  <span class="af-courses-card-code">ECON 208W</span>
+                  <span class="af-courses-card-name">Micro Theory</span>
+                </div>
+                <div class="af-courses-card-row">
+                  <span class="af-courses-card-code">CSC 273W</span>
+                  <span class="af-courses-card-name">Writing for CS</span>
+                </div>
               </div>
-              <div class="af-courses-card-row">
-                <span class="af-courses-card-code">MATH 208</span>
-                <span class="af-courses-card-name">Linear Optimization</span>
-              </div>
-              <div class="af-courses-card-row">
-                <span class="af-courses-card-code">ECON 208W</span>
-                <span class="af-courses-card-name">Micro Theory</span>
-              </div>
-              <div class="af-courses-card-row">
-                <span class="af-courses-card-code">CSC 273W</span>
-                <span class="af-courses-card-name">Writing for CS</span>
-              </div>
-            </div>
-            <div class="af-courses-card-footer">All courses →</div>
-          </a>
+              <div class="af-courses-card-footer">All courses →</div>
+            </a>
+          </div>
 
           <div class="af-flier-target" data-target-for="coordinates" data-land-top="300" data-land-left="380" data-land-rot="-2" aria-hidden="true"></div>
           <div class="af-flier-target" data-target-for="registration" data-land-top="460" data-land-left="-110" data-land-rot="1.2" aria-hidden="true"></div>
