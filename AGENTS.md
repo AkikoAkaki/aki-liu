@@ -67,7 +67,7 @@ No `npm`, `Node.js`, or package manager needed. Hugo handles CSS/JS bundling int
 - **KaTeX**: Enabled globally; loaded on pages whose frontmatter sets `enableKaTeX`/`math`, or whose content has math delimiters (`layouts/partials/page-has-math.html`, `layouts/partials/head/katex.html`). Files live in a versioned directory (`static/lib/katex-<version>/`) because `/lib/` is cached as immutable; on upgrade, change `layouts/partials/katex-base.html` and `scripts/download-katex.ps1` together.
 - **Tags**: Defined in frontmatter as `tags: ["tag-name"]`. Rendered via `/tags/<name>/` using `layouts/tags/term.html`. URLs, `data-tag` attributes and filters use the slug; displayed names come from `layouts/partials/tag-label.html` (hyphens to spaces, title case, acronym map such as `mlsys` → `MLSys`). Add new acronyms there.
 - **Archive preview**: Hover previews come from one fingerprinted JSON per language (`layouts/partials/archive-preview-index.html`, first 800 characters of each page). `assets/js/modules/archive-preview.js` fetches it the first time the pointer enters a list and loads KaTeX only for previews with math.
-- **Fonts**: Switzer is served locally from `/static/fonts/switzer/` (paid). Newsreader and JetBrains Mono loaded from Google Fonts.
+- **Fonts**: Switzer and PP Editorial Old are served locally from `static/fonts/`. Newsreader and JetBrains Mono load from Google Fonts.
 - **Goldmark**: `unsafe = true` (HTML in markdown), `hardWraps = true`; `$`, `\(`, `$$`, `\[` math passes through to KaTeX.
 - **Drafts**: Set `draft: true` in frontmatter; Hugo only publishes them with `--buildDrafts`.
 
@@ -120,4 +120,6 @@ Vercel — configured in `vercel.json`. Build command sets `--baseURL` from the 
 | JS entrypoints | `assets/js/main.js`, `home.js`, `dashboard.js`, `microblog.js`, `post-toc.js` |
 | Archive hover previews | `layouts/partials/archive-preview-index.html`, `assets/js/modules/archive-preview.js` |
 | Tag display names | `layouts/partials/tag-label.html` |
-| Claude local config | `.claude/settings.local.json` |
+| Local Claude config (ignored) | `.claude/settings.local.json` |
+
+Historical engineering records and design drafts are archived in the Obsidian project folder `E:\obsidian-vault\00 系统\项目\aki-liu`; they are not build inputs.

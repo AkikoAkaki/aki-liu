@@ -70,14 +70,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-microblog.ps1 
 
 Output: `content/microblog/YYYY/MM/DD-HHMMSS/index.md`
 
-Public URL is `/microblog/HHMMSS/`.
+New entries use `/microblog/YYYYMMDDHHMMSS/`. Existing short slugs retain their original URLs.
 
 Frontmatter shape produced:
 
 ```yaml
 ---
 date: 2026-06-12T10:10:10+08:00
-slug: "101010"
+slug: "20260612101010"
 tags: []
 draft: false
 ---
@@ -166,7 +166,7 @@ Add `-Audit` for a heavier media/asset check. The script builds `public_test/`, 
 powershell -ExecutionPolicy Bypass -File .\scripts\metrics-report.ps1
 ```
 
-Output lands in `reports/metrics/`. These files are tracked in git as history.
+Raw reports in `reports/metrics/` are local and ignored by Git. Commit `data/metrics/latest.json` and `data/metrics/history_timeline.json` to publish a refreshed dashboard snapshot.
 
 **Asset audit** (public directory inventory):
 

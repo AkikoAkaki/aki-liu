@@ -42,3 +42,4 @@ yarn.lock
 .playwright-cli/
 .superpowers/
 .claude/worktrees/
+.claude/settings.local.json
