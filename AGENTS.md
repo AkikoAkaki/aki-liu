@@ -58,7 +58,7 @@ No `npm`, `Node.js`, or package manager needed. Hugo handles CSS/JS bundling int
 - **Content sections** (`content/`): `notes/`, `textlab/`, `influences/`. All use the same `list.html` template with the 3-column archive layout (sidebar-left → main → sidebar-right with hover preview). `mainSections` in `hugo.toml` (notes, textlab) feeds tag pages and tag search via `site.MainSections`; keep it above the first `[table]` or TOML assigns it to that table.
 - **Homepage**: Driven by `data/homepage.yaml`, not markdown. Template: `layouts/index.html`.
 - **CSS pipeline**: Global bundle concatenates `base.css` → `layout.css` → `components.css` → `motion.css` → `search.css`. Homepage loads `home.css`; single pages load a `post.css` + `syntax-highlight.css` page bundle; About, microblog, and dashboard CSS are route-conditional. All are processed via Hugo Pipes (`resources.Concat` + `resources.Minify` where applicable).
-- **JS**: `assets/js/main.js` is the global entrypoint built via Hugo's `js.Build`. `home.js`, `dashboard.js`, and `microblog.js` load on their respective routes; `post-toc.js` loads on single pages with a table of contents. KaTeX rendering uses `assets/js/modules/katex.js` for both articles and archive previews. Media queries live in `assets/js/modules/media.js`; search scoring and snippets live in `assets/js/modules/search-core.js`. No external bundler.
+- **JS**: `assets/js/main.js` is the global entrypoint built via Hugo's `js.Build`. `home.js`, `about.js`, `dashboard.js`, and `microblog.js` load on their respective routes; `post-toc.js` loads on single pages with a table of contents. KaTeX rendering uses `assets/js/modules/katex.js` for both articles and archive previews. Media queries live in `assets/js/modules/media.js`; search scoring and snippets live in `assets/js/modules/search-core.js`. No external bundler.
 
 ## Conventions
 
@@ -117,7 +117,7 @@ Vercel — configured in `vercel.json`. Build command sets `--baseURL` from the 
 | Base layout | `layouts/_default/baseof.html` |
 | CSS bundle entrypoints | `layouts/partials/head/core-assets.html`, `assets/css/base.css`, `layout.css`, `components.css`, `motion.css`, `search.css` |
 | Route CSS | `assets/css/home.css`, `post.css` + `syntax-highlight.css`, `about.css`, `microblog.css`, `dashboard.css` |
-| JS entrypoints | `assets/js/main.js`, `home.js`, `dashboard.js`, `microblog.js`, `post-toc.js` |
+| JS entrypoints | `assets/js/main.js`, `home.js`, `about.js`, `dashboard.js`, `microblog.js`, `post-toc.js` |
 | Archive hover previews | `layouts/partials/archive-preview-index.html`, `assets/js/modules/archive-preview.js` |
 | Tag display names | `layouts/partials/tag-label.html` |
 | Local Claude config (ignored) | `.claude/settings.local.json` |

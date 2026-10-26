@@ -1,14 +1,3 @@
-export function initExpandableCards() {
-    const cardHeaders = document.querySelectorAll(".now-card-header");
-    cardHeaders.forEach((button) => {
-      button.addEventListener("click", () => {
-        const card = button.parentElement;
-        card.classList.toggle("is-expanded");
-        card.classList.toggle("is-collapsed");
-      });
-    });
-}
-
 export function initTableWrapping() {
   document.querySelectorAll(".post-content table").forEach((table) => {
     if (table.parentNode?.nodeType === Node.ELEMENT_NODE && table.parentNode.classList.contains("table-wrapper")) return;

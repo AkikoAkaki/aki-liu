@@ -444,75 +444,75 @@ body.post-short {
 
 @media (max-width: 900px) {
     .post-toc--sidebar {
-        display: block !important;
-        position: fixed !important;
-        right: 0 !important;
-        top: 50% !important;
-        transform: translate3d(calc(100% - 14px), -50%, 0) !important;
-        width: 250px !important;
-        height: auto !important;
-        max-height: 80vh !important;
-        z-index: 4000 !important;
-        box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15) !important;
-        transition: transform 0.4s var(--ease-out-expo) !important;
-        border-radius: 20px 0 0 20px !important;
-        overflow: visible !important;
-        background-color: var(--footer-reveal-bg) !important;
-        padding: 6px !important;
+        display: block;
+        position: fixed;
+        right: 0;
+        top: 50%;
+        transform: translate3d(calc(100% - 14px), -50%, 0);
+        width: 250px;
+        height: auto;
+        max-height: 80vh;
+        z-index: 4000;
+        box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+        transition: transform 0.4s var(--ease-out-expo);
+        border-radius: 20px 0 0 20px;
+        overflow: visible;
+        background-color: var(--footer-reveal-bg);
+        padding: 6px;
     }
 
     .post-toc--sidebar.is-drawer-open {
-        transform: translate3d(0, -50%, 0) !important;
+        transform: translate3d(0, -50%, 0);
     }
 
     .post-toc--sidebar::after {
-        content: "" !important;
-        position: absolute !important;
-        left: 4px !important;
-        top: 50% !important;
-        transform: translateY(-50%) !important;
-        width: 3px !important;
-        height: 36px !important;
-        border-radius: 2px !important;
-        background-color: var(--text-meta) !important;
-        opacity: 0.35 !important;
-        transition: opacity 0.2s ease !important;
-        pointer-events: none !important;
+        content: "";
+        position: absolute;
+        left: 4px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 36px;
+        border-radius: 2px;
+        background-color: var(--text-meta);
+        opacity: 0.35;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
     }
 
     .post-toc--sidebar.is-drawer-open::after {
-        opacity: 0 !important;
+        opacity: 0;
     }
 
     .post-toc--sidebar .post-toc-content {
-        max-height: calc(80vh - 12px) !important;
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
+        max-height: calc(80vh - 12px);
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .toc-drawer-hint {
-        position: fixed !important;
-        right: 24px !important;
-        top: 50% !important;
-        transform: translate3d(0, -50%, 0) !important;
-        background-color: var(--footer-reveal-bg) !important;
-        color: var(--color-heading) !important;
-        border: 1px solid var(--border-color) !important;
-        padding: 6px 14px !important;
-        border-radius: 20px !important;
-        font-family: var(--font-sans) !important;
-        font-size: 0.72rem !important;
-        font-weight: 500 !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-        transition: opacity 0.4s ease, transform 0.4s ease !important;
-        z-index: 3900 !important;
+        position: fixed;
+        right: 24px;
+        top: 50%;
+        transform: translate3d(0, -50%, 0);
+        background-color: var(--footer-reveal-bg);
+        color: var(--color-heading);
+        border: 1px solid var(--border-color);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-family: var(--font-sans);
+        font-size: 0.72rem;
+        font-weight: 500;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        z-index: 3900;
     }
 
     .toc-drawer-hint.is-visible {
-        opacity: 0.95 !important;
-        transform: translate3d(-14px, -50%, 0) !important;
+        opacity: 0.95;
+        transform: translate3d(-14px, -50%, 0);
     }
 }
 

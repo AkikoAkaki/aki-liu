@@ -30,7 +30,6 @@ export function initPrefetcher() {
             
             if (prefetchedUrls.has(url.pathname)) return false;
             
-            if (url.pathname.includes('/microblog/server/')) return false;
 
             return true;
         } catch (_) {

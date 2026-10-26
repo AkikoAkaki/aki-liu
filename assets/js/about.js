@@ -1,4 +1,4 @@
-import { matches, media, QUERIES } from "./media.js";
+import { matches, media, QUERIES } from "./modules/media.js";
 
 export function initScrollReveal() {
   const targets = document.querySelectorAll(".reveal-on-scroll, .reveal-pin");
@@ -577,3 +577,9 @@ export function initAboutFlightAndDrag() {
 
   canvas.querySelectorAll("[data-card-id]").forEach(makeDraggable);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  initScrollReveal();
+  initAboutImageSequence();
+  initAboutFlightAndDrag();
+});

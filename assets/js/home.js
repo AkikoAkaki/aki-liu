@@ -1,6 +1,11 @@
+import { initFluidEngine } from "./modules/fluid-init.js";
+import { initHomeHoverPreview } from "./modules/home-preview.js";
 import { matches, QUERIES } from "./modules/media.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  initExpandableCards();
+  initHomeHoverPreview();
+  initFluidEngine();
   const navContent = document.querySelector(".nav-panel-content");
   const leftCol = document.querySelector(".work-column:not(.nav-panel-column)");
   if (!navContent || !leftCol) return;
@@ -44,3 +49,14 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(navContent);
   }
 });
+
+function initExpandableCards() {
+    const cardHeaders = document.querySelectorAll(".now-card-header");
+    cardHeaders.forEach((button) => {
+      button.addEventListener("click", () => {
+        const card = button.parentElement;
+        card.classList.toggle("is-expanded");
+        card.classList.toggle("is-collapsed");
+      });
+    });
+}

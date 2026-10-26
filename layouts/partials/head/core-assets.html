@@ -59,6 +59,11 @@
     <script defer src="{{ $microblogJS.RelPermalink }}" integrity="{{ $microblogJS.Data.Integrity }}"></script>
 {{- end -}}
 
+{{- if and (eq .Section "about") (eq .Kind "section") -}}
+    {{- $aboutJS := resources.Get "js/about.js" | js.Build (dict "targetPath" "js/about.js") | resources.Minify | fingerprint -}}
+    <script defer src="{{ $aboutJS.RelPermalink }}" integrity="{{ $aboutJS.Data.Integrity }}"></script>
+{{- end -}}
+
 {{- if .IsHome -}}
     {{- $homeJS := resources.Get "js/home.js" | js.Build (dict "targetPath" "js/home.js") | resources.Minify | fingerprint -}}
     <script defer src="{{ $homeJS.RelPermalink }}" integrity="{{ $homeJS.Data.Integrity }}"></script>
