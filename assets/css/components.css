@@ -851,6 +851,33 @@
     color: var(--color-heading);
 }
 
+.md-link.md-link--external {
+    padding: 0.06em 0.3em;
+    border-radius: 4px;
+    background-color: var(--post-inline-code-bg);
+    text-decoration: none;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    transition: background-color 0.15s ease;
+}
+
+.md-link.md-link--external:hover {
+    background-color: var(--border-color);
+}
+
+.md-link.md-link--external .md-link-icon,
+#archive-preview-container .md-link-icon {
+    display: inline-block;
+    width: 0.875em;
+    height: 0.875em;
+    margin: 0 0.3em 0 0;
+    vertical-align: -0.1em;
+    border: 0;
+    border-radius: 2px;
+    object-fit: contain;
+    box-shadow: none;
+}
+
 #archive-preview-container .preview-summary {
     font-family: var(--font-serif);
     font-size: 0.95rem;
