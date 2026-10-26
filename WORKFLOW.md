@@ -154,6 +154,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check.ps1
 
 Add `-Audit` for a heavier media/asset check. The script builds `public_test/`, which is generated output and should not be committed.
 
+- If the change touches fixed elements, the footer, or page-level `overflow`, also run the iPhone edge check against the same build:
+
+```powershell
+node scripts/edge-check.mjs
+```
+
+It needs Node 22+ and Chrome or Edge, and prints `PASS` or the failing page and step. It simulates Safari's rules; confirm on a real iPhone before calling a mobile layout fix done.
+
 - Check the Vercel preview deployment before merging a PR. Vercel generates a preview URL for every push to a branch. Review it before hitting merge.
 
 ---

@@ -104,6 +104,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check.ps1
 
 Generates build timing, template performance, broken link checks, and HTML quality reports in `reports/metrics/`. The check script runs a local pre-push smoke check against `public_test/`.
 
+After changing anything fixed-positioned, the footer, `.site-wrapper`, or `overflow` on `html`/`body`, run `node scripts/edge-check.mjs` (needs Node 22+ and Chrome or Edge; reads `public_test/`). iOS Safari 26 colors its status bar and toolbar from real fixed elements at the screen edges and keeps a `<footer>`'s color after it hides; the script ports WebKit's rules and fails on content under the status bar, a tinted toolbar, a page that does not end at the footer, or nested scroll containers. Keep the footer in normal flow and keep the top fade a real element with a solid `background-color`.
+
 ## Deployment
 
 Vercel — configured in `vercel.json`. Build command sets `--baseURL` from the env var. Hugo version pinned to `0.152.2`.

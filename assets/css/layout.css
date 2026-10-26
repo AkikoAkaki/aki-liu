@@ -46,80 +46,130 @@
 }
 
 
+/* Footer reveal
+   The footer sits in normal flow under the page; nothing here is fixed.
+   iOS Safari 26 paints its status bar and toolbar areas with the background
+   of fixed elements touching the screen edges, and keeps a <footer>'s color
+   even after it is hidden, so a fixed footer layer tints the toolbar grey for
+   the rest of the visit. The "page lifts off the footer" look comes from
+   scroll-driven animations bound to the footer's own view timeline. */
 :root {
     --footer-text: #23211f;
     --footer-text-soft: rgba(35, 33, 31, 0.72);
     --footer-line: rgba(35, 33, 31, 0.1);
+    --footer-edge-color: rgb(231, 231, 231);
     --footer-background:
         radial-gradient(circle at 20% 8%, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0) 36%),
-        linear-gradient(180deg, rgba(247, 247, 247, 0.99) 0%, rgba(240, 240, 240, 0.99) 44%, rgba(231, 231, 231, 1) 100%);
+        linear-gradient(180deg, rgb(247, 247, 247) 0%, rgb(240, 240, 240) 44%, var(--footer-edge-color) 100%);
     --footer-signature-filter: none;
+    --footer-curve: 40px;
 }
 
 :root[data-theme="dark"] {
     --footer-text: #f3f0eb;
     --footer-text-soft: rgba(243, 240, 235, 0.76);
     --footer-line: rgba(243, 240, 235, 0.16);
+    --footer-edge-color: rgb(30, 27, 24);
     --footer-background:
         radial-gradient(circle at 20% 8%, rgba(76, 72, 68, 0.32) 0%, rgba(76, 72, 68, 0) 40%),
-        linear-gradient(180deg, rgba(18, 18, 19, 0.99) 0%, rgba(24, 23, 26, 0.99) 42%, rgba(30, 27, 24, 1) 100%);
+        linear-gradient(180deg, rgb(18, 18, 19) 0%, rgb(24, 23, 26) 42%, var(--footer-edge-color) 100%);
     --footer-signature-filter: invert(1) brightness(1.8);
 }
 
+/* The canvas takes the footer's bottom color, so overscroll past the end and
+   the strips beside the narrowed page match the footer. The page itself is
+   painted by .site-wrapper. */
+html {
+    background-color: var(--footer-edge-color);
+}
+
+body {
+    timeline-scope: --site-footer;
+}
+
 .site-wrapper {
-    --footer-reveal-radius: 0px;
     position: relative;
     z-index: 2;
     background-color: var(--bg-color);
     min-height: 100vh;
+    padding-top: env(safe-area-inset-top, 0px);
     display: flex;
     flex-direction: column;
-    border-bottom-left-radius: var(--footer-reveal-radius);
-    border-bottom-right-radius: var(--footer-reveal-radius);
-    box-shadow: none;
     overflow: clip;
     transform-origin: center bottom;
-    will-change: border-radius, transform;
 }
 
 .site-container {
     flex-grow: 1;
 }
 
-.reveal-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+.site-footer {
+    position: relative;
     z-index: 1;
+    margin-top: calc(-1 * var(--footer-curve));
+    padding-top: var(--footer-curve);
+    overflow: clip;
     color: var(--footer-text);
-}
-
-.reveal-footer::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
     background: var(--footer-background);
+    view-timeline: --site-footer block;
 }
 
 .footer-content {
-    position: relative;
-    z-index: 1;
-    background: transparent;
-    backdrop-filter: none;
-    box-shadow: none;
-
-    padding: 6rem 4vw 3rem;
+    padding: 6rem 4vw calc(3rem + env(safe-area-inset-bottom, 0px));
     display: flex;
     flex-direction: column;
     gap: 6rem;
 }
 
-:root[data-theme="dark"] .footer-content {
-    background: transparent;
-    box-shadow: none;
+@supports (animation-timeline: view()) {
+    /* Rounded bottom edge grows as the footer comes into view. */
+    .site-wrapper {
+        animation: footer-reveal-page cubic-bezier(0.25, 1, 0.5, 1) both;
+        animation-timeline: --site-footer;
+        animation-range: entry 0% entry 100%;
+    }
+
+    /* Footer content stays pinned to the bottom of the screen while the page
+       slides up, so it reads as being uncovered rather than scrolled in. */
+    .footer-content {
+        animation: footer-reveal-content linear both;
+        animation-timeline: --site-footer;
+        animation-range: entry 0% entry 100%;
+    }
+}
+
+@keyframes footer-reveal-page {
+    from {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    to {
+        border-bottom-left-radius: var(--footer-curve);
+        border-bottom-right-radius: var(--footer-curve);
+    }
+}
+
+/* Desktop also narrows the page slightly as it lifts. Starts above the
+   900px breakpoint, where the post TOC stops being position: fixed inside the
+   page and a transform would trap it. */
+@media (min-width: 901px) {
+    @keyframes footer-reveal-page {
+        from {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            transform: none;
+        }
+        to {
+            border-bottom-left-radius: var(--footer-curve);
+            border-bottom-right-radius: var(--footer-curve);
+            transform: scaleX(0.956);
+        }
+    }
+}
+
+@keyframes footer-reveal-content {
+    from { transform: translateY(calc(-100% - var(--footer-curve))); }
+    to { transform: none; }
 }
 
 .footer-grid {
@@ -222,7 +272,7 @@
     filter: none;
 }
 
-.reveal-footer .footer-signature {
+.site-footer .footer-signature {
     filter: var(--footer-signature-filter);
 }
 
@@ -348,12 +398,14 @@
 }
 
 @media (max-width: 900px) {
-    html, body {
-        overflow-x: hidden !important;
+    /* body uses clip, not hidden: hidden would make body a scroll container
+       and detach the footer's view timeline from the page scroll. */
+    html {
+        overflow-x: hidden;
     }
 
-    .site-wrapper {
-        overflow: visible !important;
+    body {
+        overflow-x: clip;
     }
 
     .site-container {
@@ -387,7 +439,7 @@
     .site-container {
         grid-template-columns: 1fr;
         grid-template-rows: 1fr auto;
-        padding: 2rem 1.25rem calc(0.5rem + env(safe-area-inset-bottom));
+        padding: 2rem 1.25rem 0.5rem;
         gap: 1rem;
         min-height: 100vh;
         min-height: 100svh;
@@ -395,7 +447,7 @@
 
     .kind-page .site-container {
         grid-template-rows: auto;
-        padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
+        padding-bottom: 2.5rem;
     }
 
     .home-page .site-container {
@@ -428,32 +480,16 @@
         overflow: visible !important;
     }
 
-    .site-footer {
-        margin-top: auto;
-        padding-top: 1.5rem;
-        padding-bottom: 0.5rem;
-        margin-bottom: 0;
-        gap: 0.3rem;
-    }
-
-    .footer-signature {
-        width: clamp(56px, 18vw, 80px);
-    }
 }
 
 @media (max-width: 480px) {
     .site-container {
-        padding: 1.5rem 1rem calc(0.5rem + env(safe-area-inset-bottom));
+        padding: 1.5rem 1rem 0.5rem;
     }
 
     .home-page .site-container {
         padding-left: 1rem;
         padding-right: 1rem;
-    }
-
-    .site-footer {
-        padding-top: 1rem;
-        padding-bottom: 0.3rem;
     }
 
     .kind-section .site-container,
@@ -537,7 +573,7 @@
             "label label"
             "links side";
         gap: 1.25rem;
-        padding: 1.5rem 1rem 1rem;
+        padding: 1.5rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
     }
     .footer-grid { display: contents; }
     .footer-contact { grid-area: label; }
@@ -572,7 +608,7 @@
     .footer-copyright-wrapper { align-items: flex-start; }
 }
 
-.is-iframe body,
+.is-iframe,
 .is-iframe .site-wrapper {
     background-color: var(--bg-color) !important;
 }

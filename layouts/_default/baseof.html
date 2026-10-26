@@ -19,6 +19,7 @@
 </head>
 <body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} type-{{ .Type }} kind-{{ .Kind }}{{ if and (eq .Kind "page") (lt .WordCount 600) }} post-short{{ end }}">
     <a href="#main-content" class="skip-link">Skip to content</a>
+    <div class="edge-fade" aria-hidden="true"></div>
     <div class="site-wrapper">
     <div class="site-container">
         {{ block "post-header" . }}{{ end }}
@@ -31,7 +32,7 @@
     </div>
     </div><!-- /.site-wrapper -->
 
-    <footer class="site-footer reveal-footer">
+    <footer class="site-footer">
         <div class="footer-content">
             {{ block "footer-inner" . }}
             {{- $connect := site.Data.homepage.connect -}}
@@ -115,11 +116,13 @@
              data-language-url="{{ $languageURL }}"></div>
     </div>
 
+    {{- if .IsHome }}
     <!-- Home Hover Preview Box placed at root body level to ensure true viewport-relative position: fixed positioning -->
     <div class="home-hover-preview" data-home-hover-preview aria-hidden="true">
         <img class="home-hover-preview-img is-active" data-home-preview-layer="0" alt="">
         <img class="home-hover-preview-img" data-home-preview-layer="1" alt="">
     </div>
+    {{- end }}
 
 </body>
 </html>
