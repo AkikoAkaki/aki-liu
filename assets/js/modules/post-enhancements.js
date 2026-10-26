@@ -14,6 +14,8 @@ export function initFooterReveal() {
   if (!footer || !wrapper) return;
 
   let footerHeight = 0;
+  // Phones keep the rounded reveal edge but skip the horizontal squeeze.
+  const narrowScreen = window.matchMedia("(max-width: 768px)");
 
   function updateLayout() {
     footerHeight = footer.offsetHeight;
@@ -38,6 +40,11 @@ export function initFooterReveal() {
 
     const revealDistance = Math.max(1, footerHeight);
 
+    // iOS Safari tints its bottom bar from fixed layers at the screen edge,
+    // so on phones the footer layer only exists while it can be seen.
+    footer.style.visibility =
+      narrowScreen.matches && scrollBottom > footerHeight ? "hidden" : "";
+
     if (
       scrollBottom <= footerHeight &&
       footerHeight > 0 &&
@@ -49,10 +56,10 @@ export function initFooterReveal() {
 
       const eased = 1 - Math.pow(1 - progress, 4);
       const radius = 40 * eased;
-      const scaleX = 1 - 0.044 * eased;
+      const scaleX = narrowScreen.matches ? 1 : 1 - 0.044 * eased;
 
       wrapper.style.setProperty("--footer-reveal-radius", radius + "px");
-      wrapper.style.transform = "scaleX(" + scaleX + ")";
+      wrapper.style.transform = scaleX === 1 ? "none" : "scaleX(" + scaleX + ")";
       wrapper.style.boxShadow = "none";
     } else {
       wrapper.style.transform = "none";

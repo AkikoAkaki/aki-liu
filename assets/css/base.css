@@ -135,7 +135,7 @@
 
 :root {
     --font-cjk-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC";
-    --font-cjk-serif: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun";
+    --font-cjk-serif: "Songti SC", "Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun";
     --font-serif: "Newsreader", var(--font-cjk-serif), serif;
     --font-editorial: "PP Editorial Old", var(--font-serif);
     --font-mono: "JetBrains Mono", monospace;
@@ -271,6 +271,20 @@ i {
     font-family: var(--font-serif);
     font-style: normal;
     font-size: 1.1em;
+}
+
+/* Solid strip at the top edge: iOS Safari extends its color under the
+   status bar, which ignores the gradient below. */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background-color: var(--bg-color);
+    z-index: 40;
+    pointer-events: none;
 }
 
 body::after {
