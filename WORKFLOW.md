@@ -166,7 +166,7 @@ Add `-Audit` for a heavier media/asset check. The script builds `public_test/`, 
 powershell -ExecutionPolicy Bypass -File .\scripts\metrics-report.ps1
 ```
 
-Raw reports in `reports/metrics/` are local and ignored by Git. Commit `data/metrics/latest.json` and `data/metrics/history_timeline.json` to publish a refreshed dashboard snapshot.
+Raw reports in `reports/metrics/` are local and ignored by Git. After committing code changes, run the report and rebuild the site. Commit only `data/metrics/latest.json` and `data/metrics/history_timeline.json` to publish the refreshed snapshot. Measurement scope is documented in `reports/metrics/README.md`.
 
 **Asset audit** (public directory inventory):
 

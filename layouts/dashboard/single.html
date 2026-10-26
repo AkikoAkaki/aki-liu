@@ -23,14 +23,24 @@
 {{- $ringCirc := div (math.Round (mul 200 math.Pi $ringRadius)) 100.0 -}}
 {{- $ringOffset := printf "%.2f" (mul $ringCirc (sub 1.0 (div $cacheRatio 100.0))) -}}
 
-{{- /* Static asset budget: CSS bar spans 0-150 KB (limit 100 KB), JS bar 0-40 KB (limit 30 KB). */ -}}
-{{- $cssKB := div (float $latest.quality.cssBundleBytes) 1024.0 -}}
+{{- $pageBundles := $latest.quality.pageBundles -}}
+{{- $assetsMeasured := not (not $pageBundles) -}}
+{{- $cssKB := 0.0 -}}
+{{- $jsKB := 0.0 -}}
+{{- with $pageBundles -}}
+    {{- $cssKB = div (float .maxCssBytes) 1024.0 -}}
+    {{- $jsKB = div (float .maxJsBytes) 1024.0 -}}
+{{- end -}}
+{{- $cssLimitKB := 100.0 -}}
+{{- $jsLimitKB := 30.0 -}}
+{{- $cssScaleKB := 150.0 -}}
+{{- $jsScaleKB := 40.0 -}}
 {{- $cssBundleKB := printf "%.1f" $cssKB -}}
-{{- $cssPct := printf "%.2f" (mul (div $cssKB 150.0) 100.0) -}}
-{{- $cssLimitPct := printf "%.2f" (mul (div 100.0 150.0) 100.0) -}}
-{{- $jsBytes := $latest.quality.jsBundleBytes | default 0 -}}
-{{- $jsKB := div (float $jsBytes) 1024.0 -}}
-{{- $overBudget := or (gt $cssKB 100.0) (gt $jsKB 30.0) -}}
+{{- $cssPct := printf "%.2f" (math.Min 100 (mul (div $cssKB $cssScaleKB) 100.0)) -}}
+{{- $jsPct := printf "%.2f" (math.Min 100 (mul (div $jsKB $jsScaleKB) 100.0)) -}}
+{{- $cssLimitPct := printf "%.2f" (mul (div $cssLimitKB $cssScaleKB) 100.0) -}}
+{{- $jsLimitPct := printf "%.2f" (mul (div $jsLimitKB $jsScaleKB) 100.0) -}}
+{{- $overBudget := or (gt $cssKB $cssLimitKB) (gt $jsKB $jsLimitKB) -}}
 
 {{- /* Static quality checks. */ -}}
 {{- $hasBroken := gt $latest.quality.brokenRootRelativeLinkCount 0 -}}
@@ -241,9 +251,9 @@
                     <div class="budget-rows">
                         <div class="budget-row">
                             <div class="br-head">
-                                <span class="br-name">CSS bundle</span>
+                                <span class="br-name" title="Largest per-page Hugo CSS bundles; fonts and vendor libraries excluded">CSS bundles</span>
                                 <span class="br-val"
-                                    >{{ $cssBundleKB }}
+                                    >{{ if $assetsMeasured }}{{ $cssBundleKB }}{{ else }}Not measured{{ end }}
                                     <span style="color: var(--color-muted)"
                                         >KB</span
                                     ></span
@@ -257,55 +267,55 @@
                                 <div
                                     class="br-limit"
                                     style="left:{{ $cssLimitPct }}%"
-                                    title="Limit 100KB"
+                                    title="Limit {{ printf "%.0f" $cssLimitKB }}KB"
                                 ></div>
                             </div>
                             <div class="br-scale">
                                 <span>0KB</span>
                                 <span style="color: var(--color-muted)"
-                                    >100KB
+                                    >{{ printf "%.0f" $cssLimitKB }}KB
                                     <span style="opacity: 0.6"
                                         >(limit)</span
                                     ></span
                                 >
-                                <span>150KB</span>
+                                <span>{{ printf "%.0f" $cssScaleKB }}KB</span>
                             </div>
                         </div>
                         <div class="budget-row">
                             <div class="br-head">
-                                <span class="br-name">JS bundle</span>
+                                <span class="br-name" title="Largest per-page Hugo JavaScript bundles; fonts and vendor libraries excluded">JS bundles</span>
                                 <span class="br-val"
-                                    >{{ if $jsBytes }}{{ printf "%.1f" $jsKB }}{{ else }}Not measured{{ end }}
+                                    >{{ if $assetsMeasured }}{{ printf "%.1f" $jsKB }}{{ else }}Not measured{{ end }}
                                     <span style="color: var(--color-muted)"
                                         >KB</span
                                     ></span
                                 >
                             </div>
                             <div class="br-track">
-                                <div class="br-fill" style="width: {{ math.Min 100 (mul (div $jsKB 40.0) 100) }}%"></div>
+                                <div class="br-fill" style="width: {{ $jsPct }}%"></div>
                                 <div
                                     class="br-limit"
-                                    style="left: 75%"
-                                    title="Limit 30KB"
+                                    style="left:{{ $jsLimitPct }}%"
+                                    title="Limit {{ printf "%.0f" $jsLimitKB }}KB"
                                 ></div>
                             </div>
                             <div class="br-scale">
                                 <span>0KB</span>
                                 <span style="color: var(--color-muted)"
-                                    >30KB
+                                    >{{ printf "%.0f" $jsLimitKB }}KB
                                     <span style="opacity: 0.6"
                                         >(limit)</span
                                     ></span
                                 >
-                                <span>40KB</span>
+                                <span>{{ printf "%.0f" $jsScaleKB }}KB</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="budget-status-wrap">
-                    <span class="budget-status {{ if $overBudget }}fail{{ else if not $jsBytes }}warn{{ else }}pass{{ end }}">
+                    <span class="budget-status {{ if $overBudget }}fail{{ else if not $assetsMeasured }}warn{{ else }}pass{{ end }}">
                         <span class="status-orb" aria-hidden="true"></span>
-                        <span class="status-copy">{{ if $overBudget }}Over budget{{ else if not $jsBytes }}JS measurement unavailable{{ else }}Within budget{{ end }}</span>
+                        <span class="status-copy">{{ if $overBudget }}Over budget{{ else if not $assetsMeasured }}Asset measurement unavailable{{ else }}Within budget{{ end }}</span>
                     </span>
                 </div>
             </article>
