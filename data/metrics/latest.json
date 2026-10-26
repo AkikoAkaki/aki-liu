@@ -1,33 +1,33 @@
 {
     "templates":  {
-                      "aggregateCached":  2068,
-                      "totalTemplatesParsed":  46,
+                      "aggregateCached":  2080,
+                      "totalTemplatesParsed":  47,
                       "top":  [
                                   {
                                       "template":  "_partials/archive-list-items.html",
-                                      "cumulativeMs":  3962.308,
-                                      "averageMs":  180.105,
-                                      "maxMs":  390.036,
-                                      "cachePotential":  18,
+                                      "cumulativeMs":  6715.731,
+                                      "averageMs":  279.822,
+                                      "maxMs":  639.028,
+                                      "cachePotential":  17,
                                       "percentCached":  0,
                                       "cachedCount":  0,
-                                      "totalCount":  22
+                                      "totalCount":  24
                                   },
                                   {
                                       "template":  "_partials/archive-preview-index.html",
-                                      "cumulativeMs":  3682.196,
-                                      "averageMs":  204.566,
-                                      "maxMs":  372.561,
-                                      "cachePotential":  50,
-                                      "percentCached":  89,
-                                      "cachedCount":  16,
-                                      "totalCount":  18
+                                      "cumulativeMs":  6398.325,
+                                      "averageMs":  319.916,
+                                      "maxMs":  625.644,
+                                      "cachePotential":  55,
+                                      "percentCached":  85,
+                                      "cachedCount":  17,
+                                      "totalCount":  20
                                   },
                                   {
                                       "template":  "tags/term.html",
-                                      "cumulativeMs":  3227.388,
-                                      "averageMs":  230.528,
-                                      "maxMs":  401.452,
+                                      "cumulativeMs":  5108.069,
+                                      "averageMs":  364.862,
+                                      "maxMs":  653.128,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
@@ -35,77 +35,77 @@
                                   },
                                   {
                                       "template":  "single.html",
-                                      "cumulativeMs":  1176.492,
-                                      "averageMs":  6.88,
-                                      "maxMs":  62.88,
+                                      "cumulativeMs":  1955.969,
+                                      "averageMs":  11.372,
+                                      "maxMs":  203.244,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
-                                      "totalCount":  171
-                                  },
-                                  {
-                                      "template":  "_partials/head/seo.html",
-                                      "cumulativeMs":  1091.466,
-                                      "averageMs":  3.248,
-                                      "maxMs":  53.708,
-                                      "cachePotential":  12,
-                                      "percentCached":  0,
-                                      "cachedCount":  0,
-                                      "totalCount":  336
+                                      "totalCount":  172
                                   },
                                   {
                                       "template":  "list.html",
-                                      "cumulativeMs":  950.69,
-                                      "averageMs":  118.836,
-                                      "maxMs":  398.519,
+                                      "cumulativeMs":  1909.122,
+                                      "averageMs":  190.912,
+                                      "maxMs":  646.105,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
-                                      "totalCount":  8
+                                      "totalCount":  10
+                                  },
+                                  {
+                                      "template":  "_partials/head/seo.html",
+                                      "cumulativeMs":  1624.623,
+                                      "averageMs":  4.792,
+                                      "maxMs":  200.489,
+                                      "cachePotential":  7,
+                                      "percentCached":  0,
+                                      "cachedCount":  0,
+                                      "totalCount":  339
                                   },
                                   {
                                       "template":  "microblog/single.html",
-                                      "cumulativeMs":  949.28,
-                                      "averageMs":  7.137,
-                                      "maxMs":  27.077,
+                                      "cumulativeMs":  1003.558,
+                                      "averageMs":  7.546,
+                                      "maxMs":  34.867,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  133
                                   },
                                   {
-                                      "template":  "_partials/head/assets.html",
-                                      "cumulativeMs":  589.268,
-                                      "averageMs":  1.754,
-                                      "maxMs":  33.125,
-                                      "cachePotential":  73,
-                                      "percentCached":  0,
-                                      "cachedCount":  0,
-                                      "totalCount":  336
-                                  },
-                                  {
-                                      "template":  "about/list.html",
-                                      "cumulativeMs":  530.311,
-                                      "averageMs":  265.156,
-                                      "maxMs":  525.279,
-                                      "cachePotential":  0,
-                                      "percentCached":  0,
-                                      "cachedCount":  0,
-                                      "totalCount":  2
-                                  },
-                                  {
                                       "template":  "_shortcodes/figure.html",
-                                      "cumulativeMs":  441.449,
-                                      "averageMs":  2.675,
-                                      "maxMs":  14.759,
+                                      "cumulativeMs":  809.066,
+                                      "averageMs":  4.903,
+                                      "maxMs":  32.037,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  165
+                                  },
+                                  {
+                                      "template":  "_partials/head/assets.html",
+                                      "cumulativeMs":  707.074,
+                                      "averageMs":  2.086,
+                                      "maxMs":  42.46,
+                                      "cachePotential":  73,
+                                      "percentCached":  0,
+                                      "cachedCount":  0,
+                                      "totalCount":  339
+                                  },
+                                  {
+                                      "template":  "about/list.html",
+                                      "cumulativeMs":  688.087,
+                                      "averageMs":  344.044,
+                                      "maxMs":  680.041,
+                                      "cachePotential":  0,
+                                      "percentCached":  0,
+                                      "cachedCount":  0,
+                                      "totalCount":  2
                                   }
                               ],
-                      "aggregateCacheRatio":  26.3,
-                      "aggregateCalls":  7864
+                      "aggregateCacheRatio":  26.15,
+                      "aggregateCalls":  7954
                   },
     "hugoVersion":  "v0.152.2",
     "measurement":  {
@@ -142,35 +142,35 @@
                     "missingXDefaultForAlternates":  0,
                     "pageBundles":  {
                                         "cssPage":  "dashboard/index.html",
-                                        "maxJsBytes":  44213,
+                                        "maxJsBytes":  44342,
                                         "maxCssBytes":  83779,
                                         "jsPage":  "index.html"
                                     },
                     "brokenRootRelativeLinkTop":  [
 
                                                   ],
-                    "jsBundleBytes":  32708,
+                    "jsBundleBytes":  32837,
                     "missingHtmlLang":  0,
-                    "htmlFiles":  338
+                    "htmlFiles":  341
                 },
     "unusedTemplates":  [
-                            "/_markup/render-image.html"
+
                         ],
     "build":  {
-                  "enPages":  118,
+                  "enPages":  120,
                   "enNonPage":  0,
                   "enAliases":  0,
-                  "zhNonPage":  80,
+                  "zhNonPage":  84,
                   "enStatic":  56,
                   "zhAliases":  2,
-                  "totalMs":  984,
-                  "zhPages":  254,
+                  "totalMs":  1353,
+                  "zhPages":  257,
                   "zhStatic":  56
               },
     "git":  {
                 "branch":  "main",
                 "dirty":  false,
-                "commit":  "9160b1b"
+                "commit":  "326bdb6"
             },
-    "generatedAt":  "2026-10-26T00:18:24-04:00"
+    "generatedAt":  "2026-10-26T00:22:13-04:00"
 }

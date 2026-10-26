@@ -36,3 +36,4 @@ Notes:
 - `quality.cssBundleBytes` and `jsBundleBytes` describe the shared bundles. The Dashboard budget uses `quality.pageBundles`, the largest sum of distinct `/css/` or `/js/` files loaded by one page, including route bundles. Fonts and vendor libraries under `/lib/` are excluded.
 - `measurement` records the platform, cache policy, command arguments and asset scope. `git` is captured before report files are written.
 - Refresh after code changes are committed: run the report, build the site, then commit only the two `data/metrics/` snapshots. A normal deployment serves that saved measurement.
+- If the Git revision or status changes while collecting measurements, the script stops before writing public snapshots.

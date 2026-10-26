@@ -414,10 +414,12 @@ $assetAuditJsonPath = Join-Path $reportsDir "public-assets.json"
 New-Item -ItemType Directory -Path $reportsDir -Force | Out-Null
 New-Item -ItemType Directory -Path $historyDir -Force | Out-Null
 
+$measurementHead = Invoke-GitCapture -Arguments @("rev-parse", "HEAD") -Root $ProjectRoot
+$measurementStatus = Invoke-GitCapture -Arguments @("status", "--porcelain", "--untracked-files=all") -Root $ProjectRoot
 $gitContext = @{
     commit = Invoke-GitCapture -Arguments @("rev-parse", "--short", "HEAD") -Root $ProjectRoot
     branch = Invoke-GitCapture -Arguments @("rev-parse", "--abbrev-ref", "HEAD") -Root $ProjectRoot
-    dirty = -not [string]::IsNullOrWhiteSpace((Invoke-GitCapture -Arguments @("status", "--porcelain", "--untracked-files=no") -Root $ProjectRoot))
+    dirty = -not [string]::IsNullOrWhiteSpace($measurementStatus)
 }
 
 $templateOutput = Invoke-HugoCapture -Arguments @("--templateMetrics", "--templateMetricsHints", "--renderToMemory") -Root $ProjectRoot
@@ -440,6 +442,12 @@ finally {
 $siteCounts = Parse-SiteCounts -Output $buildOutput
 $templateMetrics = Parse-TemplateMetrics -Output $templateOutput -TopN $TopTemplates
 $unusedTemplates = Parse-UnusedTemplates -Output $unusedOutput
+
+$currentHead = Invoke-GitCapture -Arguments @("rev-parse", "HEAD") -Root $ProjectRoot
+$currentStatus = Invoke-GitCapture -Arguments @("status", "--porcelain", "--untracked-files=all") -Root $ProjectRoot
+if ($currentHead -ne $measurementHead -or $currentStatus -ne $measurementStatus) {
+    throw "Git revision or status changed during measurement; public snapshots were not updated. Run again from a stable worktree."
+}
 
 $metrics = @{
     generatedAt     = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ssK")
