@@ -35,7 +35,7 @@ draft: false
 - 超过 30 个文件的文件夹会先显示 10 个，点击“全部”后再显示全部
 - 日期型文件夹自动按年、月分组，不会直接平铺所有文件
 
-![obsidian-file-tree 插件示例图，上方的 MS 即为工作集](file-tree.png)
+{{< figure src="file-tree.png" alt="obsidian-file-tree 插件示例图，上方的 MS 即为工作集" caption="obsidian-file-tree 插件示例图，上方的 MS 即为工作集" >}}
 
 设计这个插件的时候完全是符合自己的需求来进行的：
 - 我自己主要靠点开文件夹找笔记，不靠搜索，所以我完全没做文件夹层面的搜索功能
@@ -45,7 +45,7 @@ draft: false
 
 我现在针对任何软件层面的高频痛点都想要配合 agent 来创建一个 solution。我这周花了可能也就两三个小时在这个东西上面。用两三个小时以及一些 token 来换我之后工作时的顺手和舒服的体验，我觉得完全值得。
 
-![我现在的 obsidian 长这样啊](obsidian-workspace.png)
+{{< figure src="obsidian-workspace.png" alt="我现在的 obsidian 长这样啊" caption="我现在的 obsidian 长这样啊" >}}
 
 ---
 
@@ -68,7 +68,7 @@ draft: false
 	- 我是使用 Obsidian 的 [NotePix](https://github.com/ayushparkara/notepix) 插件把我粘贴到笔记中的图片自动上传到 GitHub，然后用 GitHub 进行云存储，这样就避免了我的笔记库因为附件太多而膨胀，但是由于我上传的是 private repository，所以没有办法在 Thino 的媒体库中显示。我自己可以和 agent 把这个问题改掉。但是 Thino 一更新，又会覆盖掉我原来的修改
 - 我受够了让别人开发我想用的东西，就算我提了意见，也要等他们采纳，或者说服他们采纳。
 - 我决定自己来写这个插件。和体验稀烂的 Thino 比起来，我感觉  [Threads](https://www.threads.com/) 的浏览体验很好，手感非常好，性能也非常好，整个书写和发送的流程都很爽快。我最开始的需求是想要随时随地记录，体验接近发 Threads，在 Obsidian 里也能方便地浏览，并让数据安全、私密地存在我自己的 daily notes 里。经过了一段时间的开发，我的插件现在基本能够满足我的所有需求。
-  ![obsidian memo 示例图](memo.png)
+  {{< figure src="memo.png" alt="obsidian memo 示例图" caption="obsidian memo 示例图" >}}
 
 再次优化了自己在 obsidian memo 中的性能和布局。之前点击不同栏目的时候会卡顿一下再切换过去，并且加载图片类媒体会比较缓慢。于是我做了一些性能上的优化：
 - 卡片高度从“渲染一张、测量一张”改为集中测量，避免布局的重复计算。栏目切换阻塞由 0.4–0.95s 降到约 0.1s
@@ -161,7 +161,7 @@ draft: false
 - 为 MATH 208 的 midterm 复习了 simplex, duality, complementary slack 等内容
 - CSC 290 开始学一些更深入的内存和程序相关知识了，感觉都没啥时间深入研究它。最近真的事情太多太忙了，有无数的事情和 ddl 等待着我，还有 MATH 208 的 midterm，还有申请的 ddl，下下周还要给我的 research 最终的收尾（give a talk on systems seminar），感觉啥都追着我跑，真的又累又崩溃啊
 - IVE Looks Can Kill 真的杀疯了吧。
-  ![IVE - Looks Can Kill](ive-looks-can-kill.png)
+  {{< figure src="ive-looks-can-kill.png" alt="IVE - Looks Can Kill" caption="IVE - Looks Can Kill" >}}
 - 随便制作了一个 在 Muse 中可以使用 personal workspace，主要是便于我在 Muse 中查看 todo 和 calendar。
 	- 我觉得直接在 Muse 中构建这个 artifacts 很丑，所以我把它打包出来用 Claude 构建，随便制作了一个 demo，之后打包发回给 Muse。差不多随便制作了一个 demo，之后打包发回给 Muse。我之后可以通过跟 Muse 进行自然语言对话，来给这个 artifact 添加或完成任务。只不过有时候跟他对话时，他会忘记自动添加进这个 artifact，所以我现在使用这个东西的频率还不是很高。
 - 这是我写的第一篇 weeknotes，花了差不多两小时吧。还挺累的。该睡觉了。
