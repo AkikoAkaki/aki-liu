@@ -311,6 +311,9 @@ body.post-short {
 .post-toc[data-tag="ai"] {
     --active-dot-color: #5ac8fa;
 }
+.post-toc[data-tag="mlsys"] {
+    --active-dot-color: #30b0c7;
+}
 
 .post-toc nav > ul {
     list-style: none;

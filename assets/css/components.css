@@ -389,6 +389,11 @@
     background-color: #5ac8fa;
 }
 
+.archive-tag-item[data-tag="mlsys"] .tag-dot,
+.item-dot[data-tag="mlsys"] {
+    background-color: #30b0c7;
+}
+
 /* Microblog Specific Tags */
 .archive-tag-item[data-tag="lamb"] .tag-dot,
 .item-dot[data-tag="lamb"] {
