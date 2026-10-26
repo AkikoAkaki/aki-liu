@@ -22,7 +22,6 @@ export class FluidEngine {
         
         this.startPerf = performance.now();
         
-        // Bind methods
         this.handleResize = this.handleResize.bind(this);
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.handleMouseLeave = this.handleMouseLeave.bind(this);
@@ -49,7 +48,6 @@ export class FluidEngine {
         
         this.doResize();
         
-        // Show smoothly after first frame setups
         requestAnimationFrame(() => {
             if (this.canvas) this.canvas.style.opacity = '1';
         });
@@ -203,13 +201,11 @@ export class FluidEngine {
         this.canvas.style.top    = ct + 'px';
         this.canvas.style.width  = cw + 'px';
         this.canvas.style.height = ch + 'px';
-        // The noise field is soft, so render at most 1 device pixel per CSS pixel.
         const scale = Math.min(devicePixelRatio, 1);
         this.canvas.width  = Math.round(cw * scale);
         this.canvas.height = Math.round(ch * scale);
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
         
-        // Force a single render on resize to avoid flicker if paused
         if (this.isPaused && !this.reduced) {
             this.renderFrame();
         }
@@ -220,7 +216,6 @@ export class FluidEngine {
         this.isPaused = false;
         
         if (this.reduced) {
-            // Render single static frame only
             this.renderFrame();
             return;
         }

@@ -140,7 +140,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('scroll', onScrollOrResize);
     window.addEventListener('resize', onScrollOrResize);
 
-    // Initial highlight
     setTimeout(() => {
         fitSidebarToc();
         highlightActiveHeading();
@@ -152,13 +151,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 150);
     });
 
-    // --- 移动端手势滑擦抽屉 TOC 与首访引导气泡 ---
     const sidebarToc = document.querySelector('.post-toc--sidebar');
     if (sidebarToc) {
         let touchStartX = 0;
         let touchStartY = 0;
 
-        // 首访缓存标记
         const HINT_KEY = 'toc-drawer-hint-seen';
         let hintEl = null;
         let hintTimer = null;
@@ -173,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         hintEl.remove();
                         hintEl = null;
                     }
-                }, 400); // 等待淡出动画结束
+                }, 400);
             }
         };
 
@@ -192,24 +189,19 @@ document.addEventListener('DOMContentLoaded', function () {
             hintEl.textContent = hintText;
             document.body.appendChild(hintEl);
 
-            // 1秒后平滑淡出
             setTimeout(() => {
                 if (hintEl) hintEl.classList.add('is-visible');
             }, 1000);
 
-            // 5秒后自动关闭
             hintTimer = setTimeout(dismissHint, 5000);
         };
 
-        // 安全延时初始化
         setTimeout(initTooltip, 300);
 
-        // 手势检测事件绑定
         document.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
             
-            // 任意手指触摸即可消除提示
             dismissHint();
         }, { passive: true });
 
@@ -222,18 +214,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const isMobile = matches(QUERIES.tablet);
             if (!isMobile) return;
 
-            // 提升灵敏度：横向移动大于纵向移动的 1.2 倍，且移动距离大于 30px
             if (Math.abs(deltaX) > Math.abs(deltaY) * 1.2 && Math.abs(deltaX) > 30) {
                 const isOpen = sidebarToc.classList.contains('is-drawer-open');
                 if (deltaX < 0 && !isOpen) {
-                    // 自右向左滑动（Swipe Left） -> 开启目录
-                    // 只要起点在屏幕右侧 75% 范围内均可触发，非常跟手
                     if (touchStartX > window.innerWidth * 0.25) {
                         sidebarToc.classList.add('is-drawer-open');
                         dismissHint();
                     }
                 } else if (deltaX > 0 && isOpen) {
-                    // 自左向右滑动（Swipe Right） -> 收起目录
                     sidebarToc.classList.remove('is-drawer-open');
                 }
             }
@@ -242,7 +230,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.addEventListener('touchend', handleTouchEnd, { passive: true });
         document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
 
-        // 点击事件绑定（点击外侧收起目录）
         document.addEventListener('click', (e) => {
             const isMobile = matches(QUERIES.tablet);
             if (!isMobile) return;
@@ -251,12 +238,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const clickedToc = sidebarToc.contains(e.target);
 
             if (isOpen) {
-                // 打开状态下，点击目录区域外部的任何位置都会将其收起
                 if (!clickedToc) {
                     sidebarToc.classList.remove('is-drawer-open');
                 }
             } else {
-                // 关闭状态下坐标备份方案：点击最右侧 32px 范围内开启目录
                 if (e.clientX > window.innerWidth - 32 && e.clientY > window.innerHeight * 0.1 && e.clientY < window.innerHeight * 0.9) {
                     sidebarToc.classList.add('is-drawer-open');
                     dismissHint();
@@ -264,7 +249,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // 核心直击绑定：直接点击拉手本身（未展开的 sidebarToc），直接滑出目录并阻止冒泡
         sidebarToc.addEventListener('click', (e) => {
             const isMobile = matches(QUERIES.tablet);
             if (!isMobile) return;
@@ -273,11 +257,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!isOpen) {
                 sidebarToc.classList.add('is-drawer-open');
                 dismissHint();
-                e.stopPropagation(); // 阻止 document click 冒泡导致立刻被合拢
+                e.stopPropagation();
             }
         });
 
-        // 体验优化：点击目录里的任意章节超链接，自动合拢目录
         const tocLinks = sidebarToc.querySelectorAll('nav a');
         tocLinks.forEach((link) => {
             link.addEventListener('click', () => {
@@ -290,7 +273,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        // 页面滚动时同样消除提示
         window.addEventListener('scroll', dismissHint, { passive: true });
     }
 });

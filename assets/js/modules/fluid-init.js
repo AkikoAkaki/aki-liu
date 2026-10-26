@@ -22,7 +22,6 @@ export function initFluidEngine() {
     startIfVisible();
   }
 
-  // Dynamic observer: handles Hero.svg load, web font loading, and responsive shifts
   if (window.ResizeObserver) {
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -34,7 +33,6 @@ export function initFluidEngine() {
     resizeObserver.observe(wrapper);
   }
 
-  // Throttle WebGL rendering based on viewport visibility
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
       (entries) => {

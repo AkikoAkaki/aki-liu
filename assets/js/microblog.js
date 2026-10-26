@@ -80,8 +80,6 @@ import { matches, QUERIES } from "./modules/media.js";
         return feedData.entries.filter(e => (e.tags || []).some(t => tagToSlug(t) === slug));
     }
 
-    // Display labels are rendered by the template (partials/tag-label.html)
-    // into the sidebar; reuse them instead of formatting tags in JS.
     function tagLabel(slug, fallback = slug) {
         const el = document.querySelector(`.archive-tag-item[data-tag="${CSS.escape(slug)}"] .tag-name`);
         return el ? el.textContent.trim() : fallback;

@@ -1,10 +1,4 @@
-/* ==========================================================================
-   Dashboard — site-native build observability
-   A hidden Hugo build inspector for aki-liu.com.
-   Continues the editorial restraint of the parent site.
-   ========================================================================== */
 
-/* --------- Layout overrides (strip sidebars, expand width) --------- */
 
 .type-dashboard .site-sidebar,
 .type-dashboard .site-sidebar-right,
@@ -27,7 +21,6 @@
     }
 }
 
-/* --------- Layout shell --------- */
 
 .dash-shell {
     --radius-sm: 8px;
@@ -124,7 +117,6 @@
     }
 }
 
-/* --------- Title block --------- */
 
 .title-block {
     display: grid;
@@ -146,7 +138,6 @@
     white-space: nowrap;
 }
 
-/* --------- Metric cards --------- */
 
 .build-context-card {
     position: relative;
@@ -369,13 +360,11 @@
     gap: 1rem;
 }
 
-/* Sparkline */
 .sparkline {
     height: 38px;
     width: 100%;
 }
 
-/* Ring (cache hit rate) */
 .ring-wrap {
     width: 56px;
     height: 56px;
@@ -399,7 +388,6 @@
     transition: stroke-dashoffset var(--dur-slow) ease;
 }
 
-/* Stacked bar (language ratio) */
 .stack-bar {
     display: flex;
     height: 6px;
@@ -454,7 +442,6 @@
     box-shadow: 0 0 6px var(--dash-accent-2-soft);
 }
 
-/* Volume bar chart */
 .bars-chart {
     display: flex;
     align-items: flex-end;
@@ -478,7 +465,6 @@
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--dash-accent) 16%, transparent);
 }
 
-/* Budget rows */
 .budget-rows {
     display: flex;
     flex-direction: column;
@@ -608,7 +594,6 @@
     --status-color: var(--tag-poetry);
 }
 
-/* Health checks */
 .health-list {
     display: flex;
     flex-direction: column;
@@ -643,7 +628,6 @@
     letter-spacing: 0.08em;
 }
 
-/* --------- Trend chart section --------- */
 
 .trend-card {
     position: relative;
@@ -838,7 +822,6 @@
     text-transform: uppercase;
 }
 
-/* --------- Bottom row (templates + diagnostic) --------- */
 
 .bottom-row {
     display: grid;
@@ -987,7 +970,6 @@
     color: var(--dash-good);
 }
 
-/* Diagnostic report */
 .diag-body {
     margin-top: 0.5rem;
     padding: 1.5rem 1.4rem 1.25rem;
@@ -1068,7 +1050,6 @@
     letter-spacing: 0.08em;
 }
 
-/* --------- Responsive --------- */
 
 @media (max-width: 1100px) {
     .cards-grid {

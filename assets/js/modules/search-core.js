@@ -1,7 +1,5 @@
-// Pure search helpers for the search palette: no DOM access, no module state.
 import { escapeHtml, tagToSlug } from "./dom-utils.js";
 
-// Adds the lower-cased fields that scoring reads.
 export function prepareRecord(r) {
   return {
     ...r,
@@ -12,7 +10,6 @@ export function prepareRecord(r) {
   };
 }
 
-// ---------- Tokenization ----------
 function isCJK(s) {
   return /[\u3400-\u9fff\uf900-\ufaff]/.test(s);
 }
@@ -35,7 +32,6 @@ export function tokenize(query) {
   return [...new Set(tokens)];
 }
 
-// ---------- Scoring ----------
 function countHits(haystack, needle) {
   if (!haystack || !needle) return 0;
   let count = 0,
@@ -57,7 +53,7 @@ function scoreRecord(rec, tokens) {
     );
     const summaryHits = countHits(rec._summaryLower, t);
     const bodyHits = countHits(rec._bodyLower, t);
-    if (!(titleHits || tagHits || summaryHits || bodyHits)) return 0; // require every token to land somewhere
+    if (!(titleHits || tagHits || summaryHits || bodyHits)) return 0;
     total += titleHits * 5 + tagHits * 3 + summaryHits * 2 + bodyHits * 1;
   }
   return total;
@@ -78,14 +74,10 @@ export function searchRecords(records, tokens, lang) {
   return hits.slice(0, 30).map((h) => h.rec);
 }
 
-// ---------- Tags ----------
-// Display label for the i-th tag of a record; labels come from the index
-// (rendered by partials/tag-label.html), falling back to the raw tag.
 export function recordTagLabel(rec, i) {
   return (rec.tagLabels && rec.tagLabels[i]) || String(rec.tags[i]);
 }
 
-// Tags used by records in `lang`, keyed by slug, most used first.
 export function collectTags(records, lang, query) {
   const counts = new Map();
   for (const r of records || []) {
@@ -113,7 +105,6 @@ export function collectTags(records, lang, query) {
     .sort((a, b) => b.count - a.count || a.raw.localeCompare(b.raw));
 }
 
-// ---------- Snippet + highlight ----------
 export function highlight(text, tokens) {
   const escaped = escapeHtml(text);
   if (!tokens.length) return escaped;

@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return timelineColors.good;
   }
 
-  /* ---- Sparkline (build time card) ---- */
   const sparkData = H.slice(-12).map(d => d.buildMs);
   (function drawSparkline() {
     const svg = document.getElementById('sparkline-build');
@@ -56,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
       <path d="${linePath}" fill="none" stroke="url(#sparkline-line-grad)" stroke-width="1.3" stroke-linecap="square" stroke-linejoin="miter"/>
       <circle cx="${lastPt[0].toFixed(1)}" cy="${lastPt[1].toFixed(1)}" r="1.8" fill="url(#sparkline-line-grad)"/>
     `;
-    /* delta label */
     const allMs = H.map(d => d.buildMs);
     const mean30 = Math.round(allMs.reduce((a, b) => a + b, 0) / allMs.length);
     const current = allMs[allMs.length - 1];
@@ -69,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })();
 
-  /* ---- Volume bars (content volume card) ---- */
   (function drawBars() {
     const container = document.getElementById('bars-chart');
     if (!container) return;
@@ -81,13 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const isLast = i === vols.length - 1;
       return `<div class="bar${isLast ? ' last' : ''}" style="height:${h}%"></div>`;
     }).join('');
-    /* delta label */
     const delta = vols[vols.length - 1] - vols[0];
     const el = document.getElementById('vol-delta');
     if (el && vols.length) el.textContent = `${delta > 0 ? '+' : ''}${delta} pages over ${H.length} measurements`;
   })();
 
-  /* ---- Trend chart ---- */
   function getData(metric) {
     return H.map(d => metric === 'build' ? d.buildMs : (d.zhPages || 0) + (d.enPages || 0));
   }
@@ -164,23 +159,19 @@ document.addEventListener('DOMContentLoaded', () => {
       </defs>
     `;
 
-    /* grid lines + y labels */
     yTicks.forEach(v => {
       html += `<line class="grid-line" x1="${padL}" x2="${W - padR}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/>`;
       html += `<text class="axis-text" x="${padL - 10}" y="${(y(v) + 3).toFixed(1)}" text-anchor="end">${Math.round(v)}${unit}</text>`;
     });
 
-    /* area + line */
     html += `<path class="chart-area" d="${areaPath}" fill="url(#trend-area-grad-${metric})" stroke="none"/>`;
     html += `<path class="chart-line" d="${linePath}" fill="none" stroke="url(#trend-line-grad-${metric})" stroke-width="1.5" stroke-linejoin="miter"/>`;
 
-    /* data points */
     data.forEach((v, i) => {
       const pointColor = colorForValue(v, min, max, metric);
       html += `<circle class="chart-pt" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.4" stroke="${pointColor}" fill="var(--bg-color)" stroke-width="1.4"/>`;
     });
 
-    /* hover cursor group (updated on mousemove) */
     html += `<g id="chart-cursor">
       <line class="cursor-line" id="cursor-line" x1="0" x2="0" y1="${padT}" y2="${H2 - padB}"/>
       <circle class="chart-pt-cursor" id="cursor-dot" cx="0" cy="0" r="3.6" fill="var(--bg-color)" stroke="url(#trend-line-grad-${metric})" stroke-width="1.8"/>
@@ -188,7 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
       <text id="cursor-text" x="0" y="0" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--bg-color)" letter-spacing=".04em"></text>
     </g>`;
 
-    /* x axis labels */
     tickIdx.forEach(i => {
       if (i < labels.length) {
         html += `<text class="axis-text" x="${x(i).toFixed(1)}" y="${(H2 - padB + 18).toFixed(1)}" text-anchor="middle">${labels[i]}</text>`;
@@ -197,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     svg.innerHTML = html;
 
-    /* hover interaction with smooth lerp animation */
     let activeIdx = -1;
     let animFrameId = null;
     let curX = null, curY = null;
@@ -234,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetTy = Math.max(padT + 4, targetY - 32);
       const targetVal = data[activeIdx];
 
-      // Smooth lerp interpolation
       curX += (targetX - curX) * 0.18;
       curY += (targetY - curY) * 0.18;
       curTx += (targetTx - curTx) * 0.18;

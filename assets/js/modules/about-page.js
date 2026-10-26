@@ -25,10 +25,6 @@ export function initScrollReveal() {
   targets.forEach((el) => observer.observe(el));
 }
 
-// Apply one sequence item to the resting base layer: size the frame to the
-// image's own aspect ratio (real proportions, no cropping), swap the image,
-// and mirror its captions. Shared by the desktop sequence and the mobile
-// tap gallery.
 function applyAboutCover(root, item) {
   if (!root || !item) return;
 
@@ -72,9 +68,6 @@ function applyAboutCover(root, item) {
   });
 }
 
-// Mobile: tap the photo to advance to the next image. A random image is shown
-// first, and each image keeps its own proportions, so the frame height changes
-// as you cycle.
 function initAboutImageTap(root, track) {
   const items = [...track.querySelectorAll(".af-sequence-item")];
   if (!items.length) return;
@@ -94,8 +87,6 @@ export function initAboutImageSequence() {
   const track = document.querySelector("[data-about-sequence-track]");
   if (!root || !track) return;
 
-  // Mobile cannot hover, so use a tap-to-cycle gallery instead of the
-  // hover + wheel sequence.
   if (matches(QUERIES.mobile)) {
     initAboutImageTap(root, track);
     return;
@@ -120,9 +111,6 @@ export function initAboutImageSequence() {
 
   const items = [...track.querySelectorAll(".af-sequence-item")];
   let active = false;
-  // Pick the cover on the client so every visitor (and every reload) gets a
-  // different first image. Hugo's build-time shuffle bakes a single image into
-  // the static HTML, so without this everyone would see the same cover.
   const initialSourceIndex = Math.floor(Math.random() * sourceCount);
   let current = middleSet * sourceCount + initialSourceIndex;
   let closeTimer = 0;
@@ -161,7 +149,6 @@ export function initAboutImageSequence() {
     void track.offsetHeight;
   }
 
-  // The sequence images stay unloaded until the first hover or click.
   let imagesLoaded = false;
   function loadSequenceImages() {
     if (imagesLoaded) return;
@@ -192,9 +179,6 @@ export function initAboutImageSequence() {
   }
 
   function step(direction) {
-    // If we've drifted into one of the edge copies, recenter to the middle copy
-    // first (invisibly). This keeps copies available in both directions at all
-    // times, so the sequence loops forever without ever wrapping to the start.
     if (current < sourceCount || current >= sourceCount * (repeatCount - 1)) {
       recenterToMiddle();
     }
@@ -203,7 +187,6 @@ export function initAboutImageSequence() {
     render(!reduceMotion);
   }
 
-  // Apply the randomly chosen cover to the resting (pointer-away) state.
   applyAboutCover(root, items[current]);
 
   root.addEventListener("pointerenter", open);
@@ -220,7 +203,6 @@ export function initAboutImageSequence() {
       const delta = event.deltaY;
       const absDelta = Math.abs(delta);
 
-      // Clear accumulated delta after a short pause of 150ms
       clearTimeout(deltaClearTimer);
       deltaClearTimer = setTimeout(() => {
         accumulatedDelta = 0;
@@ -233,25 +215,18 @@ export function initAboutImageSequence() {
         return;
       }
 
-      // Heuristic: Is this a physical mouse wheel tick?
-      // Physical wheel ticks typically generate deltaY >= 100 or use non-pixel line/page delta modes,
-      // or have clean integer deltaY and are spaced out.
-      // A trackpad scroll generates a dense stream of very small fractional deltas (e.g. 1.5, 3.2, 8.0).
       const isMouseWheel =
         event.deltaMode !== 0 ||
         absDelta >= 100 ||
         (Number.isInteger(delta) && absDelta >= 50 && now - lastStepTime > 120);
 
       if (isMouseWheel) {
-        // 1. Mouse wheel ticks: Step instantly with NO cooldown!
         step(delta > 0 ? 1 : -1);
         lastStepTime = now;
         accumulatedDelta = 0;
       } else {
-        // 2. Trackpad: Accumulate small events for smooth control
         accumulatedDelta += delta;
 
-        // Introduce a short cooldown (90ms) ONLY for trackpads to keep scrolling smooth
         const cooldown = 90;
         if (now - lastStepTime < cooldown) {
           return;
@@ -336,7 +311,6 @@ export function initAboutFlightAndDrag() {
     const scaleX = canvasRect.width / canvas.offsetWidth;
     const scaleY = canvasRect.height / canvas.offsetHeight;
 
-    // 1. MEASURE PHASE 1 (Initial states of elements)
     const flierRects = fliers.map((f) => {
       return {
         f,
@@ -354,8 +328,6 @@ export function initAboutFlightAndDrag() {
       blocks.map((block) => [block, block.getBoundingClientRect()]),
     );
 
-    // 2. MUTATE PHASE 1 (Immediate DOM updates for new state)
-    // Reparent fliers into the canvas so they are in the target layer
     flierRects.forEach(({ f }) => {
       canvas.appendChild(f.el);
       f.el.classList.add("is-landed");
@@ -366,11 +338,9 @@ export function initAboutFlightAndDrag() {
       f.el.style.width = `${f.width}px`;
     });
 
-    // Collapse the summary layout instantly
     summary.classList.add("is-flown");
     canvas.classList.add("is-loaded");
 
-    // 3. MEASURE PHASE 2 (Target/Final states of elements)
     flierRects.forEach((fr) => {
       fr.dst = fr.f.el.getBoundingClientRect();
     });
@@ -382,16 +352,13 @@ export function initAboutFlightAndDrag() {
       blocks.map((block) => [block, block.getBoundingClientRect()]),
     );
 
-    // 4. ANIMATE PHASE (Apply GPU-accelerated transitions)
 
-    // A. Animate Fliers Flight
     flierRects.forEach(({ f, src, dst }, i) => {
       const stagger = i * 90;
       const dx = (src.left - dst.left) / scaleX;
       const dy = (src.top - dst.top) / scaleY;
       const landRot = Number(f.target.dataset.landRot);
 
-      // Put flier back to its visual start position relative to the canvas
       f.el.style.transform = `translate(${dx}px, ${dy}px) rotate(${f.srcRot}deg)`;
 
       // Force reflow for this element so starting transform is registered by the browser
@@ -424,7 +391,6 @@ export function initAboutFlightAndDrag() {
       f.el.addEventListener("transitionend", onEnd);
     });
 
-    // B. Animate Summary Text Blocks
     if (!reduceMotion) {
       blocks.forEach((block) => {
         const first = firstRects.get(block);
@@ -453,7 +419,6 @@ export function initAboutFlightAndDrag() {
         );
       });
 
-      // C. Animate Pinboard Section slide-up (instead of high-overhead height transitions)
       if (heightDelta > 1) {
         const pinboard = document.querySelector(".af-pinboard-section");
         if (pinboard) {
@@ -515,12 +480,10 @@ export function initAboutFlightAndDrag() {
   desktop.addEventListener("change", syncLayout);
   syncLayout();
 
-  // === Drag ===
   function makeDraggable(el) {
     if (el.dataset.dragReady === "1") return;
     el.dataset.dragReady = "1";
 
-    // Block native link drag (especially on the courses anchor)
     el.setAttribute("draggable", "false");
     el.addEventListener("dragstart", (e) => e.preventDefault());
 
@@ -536,7 +499,6 @@ export function initAboutFlightAndDrag() {
     el.addEventListener("pointerdown", (e) => {
       if (!desktop.matches || !canvas.contains(el)) return;
       if (e.button !== undefined && e.button !== 0) return;
-      // Lift to the top of the stack immediately
       topZ += 1;
       el.style.zIndex = String(topZ);
 
@@ -565,8 +527,6 @@ export function initAboutFlightAndDrag() {
       if (!moved && Math.hypot(screenDx, screenDy) > 4) moved = true;
       const w = el.offsetWidth,
         h = el.offsetHeight;
-      // Generous bounds: allow card to extend beyond canvas by up to half its size.
-      // This frees up the empty right-side area for dragging.
       const overX = w * 0.6;
       const overY = h * 0.6;
       const nl = Math.max(

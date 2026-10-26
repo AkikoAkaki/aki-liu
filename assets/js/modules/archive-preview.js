@@ -162,7 +162,6 @@ export function initArchivePreview(archiveList, archiveItems) {
       if (hoverTimeout) {
         clearTimeout(hoverTimeout);
         hoverTimeout = null;
-        // A cancelled render must be scheduled again on re-entry.
         if (currentHoverNode === item) currentHoverNode = null;
       }
       if (currentHoverNode === item) {

@@ -1,11 +1,4 @@
-/* ==========================================================================
-   Post Styles
-   文章页面：标题、日期、正文排版、目录
-   ========================================================================== */
 
-/* ==========================================================================
-   Post Layout
-   ========================================================================== */
 
 .post-single {
     margin-bottom: 8rem;
@@ -134,7 +127,7 @@ body.post-short {
     color: var(--text-color);
     line-height: 1.7;
     margin-bottom: var(--post-header-info-gap);
-    text-align: left; /* 改为左对齐 */
+    text-align: left;
     width: 100%;
 }
 
@@ -198,9 +191,6 @@ body.post-short {
     }
 }
 
-/* ==========================================================================
-   Table of Contents
-   ========================================================================== */
 
 .post-toc {
     --toc-line-color: var(--footer-reveal-bg);
@@ -271,9 +261,8 @@ body.post-short {
     position: relative;
 }
 
-/* Dynamic color mapping for the active dot */
 .post-toc {
-    --active-dot-color: #8e8e93; /* default */
+    --active-dot-color: #8e8e93;
 }
 .post-toc[data-tag="essay"] {
     --active-dot-color: #007aff;
@@ -334,7 +323,6 @@ body.post-short {
     padding-left: 0;
 }
 
-/* Fix for deep nesting indentation when higher level headers are missing */
 .post-toc li:not(:has(> a)) > ul {
     padding-left: 0;
     margin: 0;
@@ -434,7 +422,7 @@ body.post-short {
 
 .post-toc--sidebar {
     display: block;
-    margin-top: 1.5rem; /* Aligns with the visual top of the article text */
+    margin-top: 1.5rem;
 }
 
 @media (max-width: 1200px) {
@@ -467,7 +455,7 @@ body.post-short {
         z-index: 4000 !important;
         box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15) !important;
         transition: transform 0.4s var(--ease-out-expo) !important;
-        border-radius: 20px 0 0 20px !important; /* 左侧圆角 */
+        border-radius: 20px 0 0 20px !important;
         overflow: visible !important;
         background-color: var(--footer-reveal-bg) !important;
         padding: 6px !important;
@@ -477,7 +465,6 @@ body.post-short {
         transform: translate3d(0, -50%, 0) !important;
     }
 
-    /* 边缘微缩指示器拉手 */
     .post-toc--sidebar::after {
         content: "" !important;
         position: absolute !important;
@@ -497,14 +484,12 @@ body.post-short {
         opacity: 0 !important;
     }
 
-    /* 内部滚动区限制 */
     .post-toc--sidebar .post-toc-content {
         max-height: calc(80vh - 12px) !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
     }
 
-    /* 首次访问提示气泡 */
     .toc-drawer-hint {
         position: fixed !important;
         right: 24px !important;
@@ -531,9 +516,6 @@ body.post-short {
     }
 }
 
-/* ==========================================================================
-   Post Content
-   ========================================================================== */
 
 .post-content {
     font: var(--type-l);
@@ -546,7 +528,6 @@ body.post-short {
     margin-bottom: 1rem;
 }
 
-/* Blockquote */
 .post-content blockquote {
     margin: 2rem 0 2rem 2.5rem;
     padding-left: 0;
@@ -564,7 +545,6 @@ body.post-short {
     }
 }
 
-/* Aside blocks */
 .post-content aside {
     background-color: var(--post-aside-bg);
     padding: 1.5rem;
@@ -600,7 +580,6 @@ body.post-short {
     margin-bottom: 0;
 }
 
-/* Headings */
 .post-content h1,
 .post-content h2,
 .post-content h3,
@@ -640,7 +619,6 @@ body.post-short {
     margin-top: 1.8rem;
 }
 
-/* Tighten spacing when one heading immediately follows another */
 .post-content h1 + h2,
 .post-content h2 + h3,
 .post-content h3 + h4,
@@ -656,7 +634,6 @@ body.post-short {
     width: 12rem;
 }
 
-/* Links */
 .post-content a {
     text-decoration: underline;
     text-underline-offset: 4px;
@@ -672,9 +649,6 @@ body.post-short {
     text-decoration-thickness: 1.25px;
 }
 
-/* ==========================================================================
-   Media (Images, Video, Audio)
-   ========================================================================== */
 
 .post-content img,
 .post-content picture,
@@ -739,9 +713,6 @@ body.post-short {
     box-shadow: none;
 }
 
-/* ==========================================================================
-   Code Blocks
-   ========================================================================== */
 
 .post-content pre {
     background-color: var(--color-bg-muted);
@@ -769,9 +740,6 @@ body.post-short {
     border-radius: 6px;
 }
 
-/* ==========================================================================
-   Lists
-   ========================================================================== */
 
 .post-content ul,
 .post-content ol {
@@ -801,7 +769,6 @@ body.post-short {
     color: var(--color-secondary);
 }
 
-/* Nested list marker types */
 .post-content ul {
     list-style-type: disc;
 }
@@ -815,9 +782,6 @@ body.post-short {
     list-style-type: circle;
 }
 
-/* ==========================================================================
-   Footnotes
-   ========================================================================== */
 
 .post-content .footnotes {
     margin-top: 3rem;
@@ -845,9 +809,6 @@ body.post-short {
     line-height: 1.4;
 }
 
-/* ==========================================================================
-   Tables
-   ========================================================================== */
 
 .table-wrapper {
     overflow-x: auto;
@@ -903,7 +864,6 @@ body.post-short {
     vertical-align: top;
 }
 
-/* KaTeX Equations mobile-safety */
 .katex-display {
     overflow-x: auto;
     overflow-y: hidden;

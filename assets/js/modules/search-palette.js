@@ -21,7 +21,6 @@ export function initSearchPalette() {
     ? "en"
     : "zh";
   const indexUrl = root.dataset.indexUrl;
-  // Section URLs are rendered by baseof.html (language prefix included).
   const sectionUrls = JSON.parse(root.dataset.sections || "{}");
   const isMac = /Mac|iPhone|iPad/i.test(navigator.userAgent || "");
 
@@ -39,7 +38,6 @@ export function initSearchPalette() {
   let currentItems = [];
   let currentTokens = [];
 
-  // ---------- Index loading ----------
   function loadIndex() {
     if (indexCache) return Promise.resolve(indexCache);
     if (indexPromise) return indexPromise;
@@ -64,7 +62,6 @@ export function initSearchPalette() {
     return indexPromise;
   }
 
-  // ---------- Commands ----------
   function navigate(url) {
     location.href = url;
   }
@@ -93,7 +90,6 @@ export function initSearchPalette() {
   function buildCommands(query) {
     const otherLang = lang === "zh" ? "en" : "zh";
     const list = [
-      // Section commands must stay in sync with the sections in baseof.html.
       {
         id: "go-home",
         label: lang === "en" ? "Go to Home" : "回到首页",
@@ -173,7 +169,6 @@ export function initSearchPalette() {
     }));
   }
 
-  // ---------- Render ----------
   const ICONS = {
     search:
       '<svg class="search-input-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
@@ -332,7 +327,6 @@ export function initSearchPalette() {
     }
   }
 
-  // ---------- Panel construction ----------
   function buildPanel() {
     const modKey = isMac ? "⌘K" : "Ctrl K";
     root.innerHTML = `
@@ -426,7 +420,6 @@ export function initSearchPalette() {
     });
   }
 
-  // ---------- Open / close ----------
   function open() {
     if (isOpen) return;
     if (!panel) buildPanel();
@@ -478,7 +471,6 @@ export function initSearchPalette() {
     isOpen ? close() : open();
   }
 
-  // ---------- Global keys ----------
   document.addEventListener("keydown", (e) => {
     if (e.isComposing || e.keyCode === 229) return;
     const mod = e.metaKey || e.ctrlKey;
@@ -524,11 +516,9 @@ export function initSearchPalette() {
     }
   });
 
-  // ---------- Triggers ----------
   document.addEventListener("click", (e) => {
     if (!isOpen) return;
     const menuBar = document.getElementById("menu-bar");
-    // If click is outside menu bar, close search
     if (menuBar && !e.composedPath().includes(menuBar)) {
       close();
     }
@@ -546,7 +536,6 @@ export function initSearchPalette() {
     });
   });
 
-  // Also handle the main menu-trigger as a close button when search is open
   const menuTrigger = document.getElementById("menu-trigger");
   if (menuTrigger) {
     menuTrigger.addEventListener(
@@ -562,10 +551,9 @@ export function initSearchPalette() {
         }
       },
       true,
-    ); // Use capture to intercept before initExpandingMenu
+    );
   }
 
-  // Display the platform-correct kbd hint inside the SEARCH nav entry.
   document
     .querySelectorAll(
       "[data-search-trigger] .menu-kbd, [data-search-trigger] .nav-kbd",

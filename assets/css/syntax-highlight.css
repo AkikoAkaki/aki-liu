@@ -1,7 +1,4 @@
-/* Syntax Highlight - Scheme A
-   ========================================================================== */
 
-/* 代码块背景和基础文本颜色 */
 .post-content pre {
     background-color: #f0f0f0;
     color: #484848;
@@ -11,97 +8,88 @@
     color: #484848;
 }
 
-/* Chroma 关键字类 */
-.post-content pre code .k,   /* Keyword */
-.post-content pre code .kc,  /* Keyword.Constant */
-.post-content pre code .kd,  /* Keyword.Declaration */
-.post-content pre code .kn,  /* Keyword.Namespace */
-.post-content pre code .kp,  /* Keyword.Pseudo */
-.post-content pre code .kr,  /* Keyword.Reserved */
-.post-content pre code .kt {  /* Keyword.Type */
+.post-content pre code .k,
+.post-content pre code .kc,
+.post-content pre code .kd,
+.post-content pre code .kn,
+.post-content pre code .kp,
+.post-content pre code .kr,
+.post-content pre code .kt {
     color: #5b8dd1;
     font-weight: 600;
 }
 
-/* 字符串类 */
-.post-content pre code .s,   /* String */
-.post-content pre code .sa,  /* String.Affix */
-.post-content pre code .sb,  /* String.Backtick */
-.post-content pre code .sc,  /* String.Char */
-.post-content pre code .s1,  /* String.Single */
-.post-content pre code .s2,  /* String.Double */
-.post-content pre code .se,  /* String.Escape */
-.post-content pre code .sh,  /* String.Heredoc */
-.post-content pre code .si,  /* String.Interpol */
-.post-content pre code .sx,  /* String.Other */
-.post-content pre code .sr,  /* String.Regex */
-.post-content pre code .ss {  /* String.Symbol */
+.post-content pre code .s,
+.post-content pre code .sa,
+.post-content pre code .sb,
+.post-content pre code .sc,
+.post-content pre code .s1,
+.post-content pre code .s2,
+.post-content pre code .se,
+.post-content pre code .sh,
+.post-content pre code .si,
+.post-content pre code .sx,
+.post-content pre code .sr,
+.post-content pre code .ss {
     color: #c47d5f;
 }
 
-/* 注释类 */
-.post-content pre code .c,   /* Comment */
-.post-content pre code .c1,  /* Comment.Single */
-.post-content pre code .cm,  /* Comment.Multiline */
-.post-content pre code .cp,  /* Comment.Preproc */
-.post-content pre code .ch {  /* Comment.Hashbang */
+.post-content pre code .c,
+.post-content pre code .c1,
+.post-content pre code .cm,
+.post-content pre code .cp,
+.post-content pre code .ch {
     color: #a0a8b0;
 }
 
-/* 数字类 */
-.post-content pre code .m,   /* Number */
-.post-content pre code .mb,  /* Number.Bin */
-.post-content pre code .mf,  /* Number.Float */
-.post-content pre code .mh,  /* Number.Hex */
-.post-content pre code .mi,  /* Number.Integer */
-.post-content pre code .mo,  /* Number.Oct */
-.post-content pre code .il {  /* Number.Integer.Long */
+.post-content pre code .m,
+.post-content pre code .mb,
+.post-content pre code .mf,
+.post-content pre code .mh,
+.post-content pre code .mi,
+.post-content pre code .mo,
+.post-content pre code .il {
     color: #6eb570;
 }
 
-/* 函数/名称类 */
-.post-content pre code .nf,  /* Name.Function */
-.post-content pre code .fm {  /* Name.Function.Magic */
+.post-content pre code .nf,
+.post-content pre code .fm {
     color: #9b7bc4;
     font-weight: 600;
 }
 
-/* 操作符类 */
-.post-content pre code .o,   /* Operator */
-.post-content pre code .ow {  /* Operator.Word */
+.post-content pre code .o,
+.post-content pre code .ow {
     color: #636363;
 }
 
-/* 其他名称类（类名、变量等） */
-.post-content pre code .n,   /* Name */
-.post-content pre code .na,  /* Name.Attribute */
-.post-content pre code .nb,  /* Name.Builtin */
-.post-content pre code .bp,  /* Name.Builtin.Pseudo */
-.post-content pre code .nc,  /* Name.Class */
-.post-content pre code .no,  /* Name.Constant */
-.post-content pre code .nd,  /* Name.Decorator */
-.post-content pre code .ni,  /* Name.Entity */
-.post-content pre code .ne,  /* Name.Exception */
-.post-content pre code .nl,  /* Name.Label */
-.post-content pre code .nn,  /* Name.Namespace */
-.post-content pre code .nx,  /* Name.Other */
-.post-content pre code .py,  /* Name.Property */
-.post-content pre code .vc,  /* Name.Variable.Class */
-.post-content pre code .vg,  /* Name.Variable.Global */
-.post-content pre code .vi,  /* Name.Variable.Instance */
-.post-content pre code .vm {  /* Name.Variable.Magic */
+.post-content pre code .n,
+.post-content pre code .na,
+.post-content pre code .nb,
+.post-content pre code .bp,
+.post-content pre code .nc,
+.post-content pre code .no,
+.post-content pre code .nd,
+.post-content pre code .ni,
+.post-content pre code .ne,
+.post-content pre code .nl,
+.post-content pre code .nn,
+.post-content pre code .nx,
+.post-content pre code .py,
+.post-content pre code .vc,
+.post-content pre code .vg,
+.post-content pre code .vi,
+.post-content pre code .vm {
     color: #484848;
 }
 
-/* 标点符号、分隔符等 */
-.post-content pre code .p,   /* Punctuation */
-.post-content pre code .pi,  /* Punctuation.Indicator */
-.post-content pre code .l,   /* Literal */
-.post-content pre code .ld {  /* Literal.Date */
+.post-content pre code .p,
+.post-content pre code .pi,
+.post-content pre code .l,
+.post-content pre code .ld {
     color: #636363;
 }
 
-/* 特殊元素 */
-.post-content pre code .x {  /* Other */
+.post-content pre code .x {
     color: #484848;
 }

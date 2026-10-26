@@ -1,20 +1,10 @@
 
 
-/* ==========================================================================
-   Component Styles
-   可复用组件：导航、标题、404页面、标签侧边栏等
-   ========================================================================== */
 
-/* ==========================================================================
-   Title with Back Link
-   ========================================================================== */
 
 @media (max-width: 768px) {
 }
 
-/* ==========================================================================
-   Shared Archive List Item Styles
-   ========================================================================== */
 
 .item-title,
 .item-date {
@@ -49,9 +39,6 @@
     }
 }
 
-/* ==========================================================================
-   Slot Machine Link Effect
-   ========================================================================== */
 .bio-text a,
 .now-section a,
 .af-now-prose a {
@@ -59,7 +46,6 @@
     color: inherit;
 }
 
-/* Slot container: discovery on parent hover, activation on self hover */
 .link-slot {
     display: inline-flex;
     position: relative;
@@ -68,14 +54,12 @@
     vertical-align: baseline;
 }
 
-/* Each text copy */
 .link-slot-text {
     display: block;
     transition: transform 0.48s var(--ease-out-expo);
     white-space: nowrap;
 }
 
-/* Hover duplicate */
 .link-slot-text--hover {
     position: absolute;
     left: 0;
@@ -84,7 +68,6 @@
     transform: translateY(100%);
 }
 
-/* 1. Discovery Phase: Trigger slot roll when the PARENT is hovered */
 .intro:hover .link-slot-text:not(.link-slot-text--hover),
 .now-card-expandable:hover .link-slot-text:not(.link-slot-text--hover),
 .footer-links:hover .link-slot-text:not(.link-slot-text--hover),
@@ -99,7 +82,6 @@
     transform: translateY(0);
 }
 
-/* 2. Activation Phase: Underline grows on SELF hover */
 .link-slot::after {
     content: "";
     position: absolute;
@@ -224,9 +206,6 @@
         0 0.04em 0.56em 0.14em rgba(255, 255, 255, 0.058);
 }
 
-/* ==========================================================================
-   Archive Sidebar Components (Phase 2)
-   ========================================================================== */
 
 .archive-left-col {
     display: flex;
@@ -240,7 +219,7 @@
 }
 
 .archive-hero-svg {
-    width: 140px; /* Smaller than homepage */
+    width: 140px;
     height: auto;
     display: block;
 }
@@ -339,42 +318,41 @@
     transform: translateY(-0.3em);
 }
 
-/* Dynamic colors for tags mapped by name */
 .archive-tag-item[data-tag="essay"] .tag-dot,
 .item-dot[data-tag="essay"],
 .archive-tag-item[data-tag="productivity"] .tag-dot,
 .item-dot[data-tag="productivity"] {
     background-color: #007aff;
-} /* Blue */
+}
 
 .archive-tag-item[data-tag="critique"] .tag-dot,
 .item-dot[data-tag="critique"],
 .archive-tag-item[data-tag="mental-model"] .tag-dot,
 .item-dot[data-tag="mental-model"] {
     background-color: #af52de;
-} /* Purple */
+}
 
 .archive-tag-item[data-tag="poetry"] .tag-dot,
 .item-dot[data-tag="poetry"] {
     background-color: #ff3b30;
-} /* Red */
+}
 
 .archive-tag-item[data-tag="fiction"] .tag-dot,
 .item-dot[data-tag="fiction"],
 .archive-tag-item[data-tag="product"] .tag-dot,
 .item-dot[data-tag="product"] {
     background-color: #ffcc00;
-} /* Yellow */
+}
 
 .archive-tag-item[data-tag="drama"] .tag-dot,
 .item-dot[data-tag="drama"] {
     background-color: #34c759;
-} /* Green */
+}
 
 .archive-tag-item[data-tag="translation"] .tag-dot,
 .item-dot[data-tag="translation"] {
     background-color: #ff9500;
-} /* Orange */
+}
 
 .archive-tag-item[data-tag="content-analysis"] .tag-dot,
 .item-dot[data-tag="content-analysis"] {
@@ -394,30 +372,29 @@
     background-color: #30b0c7;
 }
 
-/* Microblog Specific Tags */
 .archive-tag-item[data-tag="lamb"] .tag-dot,
 .item-dot[data-tag="lamb"] {
     background-color: #ff2d55;
-} /* Pink */
+}
 .archive-tag-item[data-tag="morning"] .tag-dot,
 .item-dot[data-tag="morning"] {
     background-color: #ffcc00;
-} /* Yellow */
+}
 .archive-tag-item[data-tag="reading"] .tag-dot,
 .item-dot[data-tag="reading"] {
     background-color: #007aff;
-} /* Blue */
+}
 
 .archive-tag-item .tag-dot,
 .item-dot {
     background-color: #8e8e93;
-} /* Default gray */
+}
 
 .archive-years-list {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    align-items: flex-end; /* Anchor right to prevent column shift when mono font expands width */
+    align-items: flex-end;
     min-width: max-content;
 }
 
@@ -625,9 +602,6 @@
     justify-content: flex-end;
 }
 
-/* ==========================================================================
-   Archive Main Content (Phase 3 & Info Block)
-   ========================================================================== */
 
 .archive-intro-section {
     margin-bottom: 3.5rem;
@@ -638,7 +612,7 @@
     font-size: 0.95rem;
     line-height: 1.6;
     color: var(--color-heading);
-    max-width: 850px; /* Widened info block */
+    max-width: 850px;
 }
 
 .archive-list-header {
@@ -680,7 +654,6 @@
         transform 0.18s var(--ease-standard);
 }
 
-/* Hover Arrow SVG */
 .archive-item .item-hover-arrow {
     position: absolute;
     left: -0.2rem;
@@ -690,7 +663,7 @@
     color: var(--color-heading);
     opacity: 0;
     transform: translate(-10px, -50%);
-    transition: all 0.2s var(--ease-standard) 0.05s; /* Arrow disappears first */
+    transition: all 0.2s var(--ease-standard) 0.05s;
     pointer-events: none;
     display: flex;
     align-items: center;
@@ -706,7 +679,7 @@
 .archive-item:hover .item-hover-arrow {
     opacity: 1;
     transform: translate(0, -50%);
-    transition: all 0.2s var(--ease-standard) 0.25s; /* Hover intent pause 0.25s (debounce) */
+    transition: all 0.2s var(--ease-standard) 0.25s;
 }
 
 .archive-item .item-year {
@@ -719,7 +692,7 @@
     position: relative;
     padding: 0.2rem 0.4rem;
     margin-left: -0.4rem;
-    transition: transform 0.2s var(--ease-standard) 0.05s; /* Matches arrow reset timing */
+    transition: transform 0.2s var(--ease-standard) 0.05s;
     z-index: 1;
     will-change: transform;
     backface-visibility: hidden;
@@ -728,7 +701,7 @@
 
 .archive-item:hover .item-year {
     transform: translateX(22px);
-    transition: transform 0.2s var(--ease-standard) 0.25s; /* Matches arrow timing */
+    transition: transform 0.2s var(--ease-standard) 0.25s;
 }
 
 .archive-item .item-title-wrapper {
@@ -753,7 +726,6 @@
     -webkit-font-smoothing: antialiased;
 }
 
-/* Background sliding pseudo-elements */
 .archive-item .item-year::after,
 .archive-item .item-title::after {
     content: "";
@@ -768,13 +740,12 @@
     transform-origin: left;
     transform: scaleX(0);
     will-change: transform;
-    transition: transform 0.12s var(--ease-standard) 0.35s; /* Pause after arrow, then shrink */
+    transition: transform 0.12s var(--ease-standard) 0.35s;
 }
 
 .archive-item:hover .item-year::after,
 .archive-item:hover .item-title::after {
     transform: scaleX(1);
-    /* Wait for hover intent (0.25s) + arrow animate (0.2s) = 0.45s, plus 0.01s pause = 0.46s delay */
     transition: transform 0.12s var(--ease-standard) 0.46s;
 }
 
@@ -793,9 +764,6 @@
     display: inline-block;
 }
 
-/* ==========================================================================
-   404 Page
-   ========================================================================== */
 
 .not-found {
     max-width: 520px;
@@ -842,9 +810,6 @@
     }
 }
 
-/* ==========================================================================
-   Archive Preview Container
-   ========================================================================== */
 
 #archive-preview-container {
     flex: 1 1 auto;
@@ -897,7 +862,7 @@
     width: auto;
     height: auto;
     max-width: 100%;
-    max-height: 45vh; /* 单图不许吃掉全部预览空间，给文本留位置 */
+    max-height: 45vh;
     object-fit: contain;
     border-radius: 2px;
     margin: 1.5rem 0;
@@ -906,21 +871,19 @@
 
 #archive-preview-container hr {
     border: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.08); /* 极轻微的分割线 */
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
     margin: 2rem auto;
-    width: 30%; /* 缩短长度显得不突兀 */
+    width: 30%;
 }
 
 #archive-preview-container .preview-summary p {
     margin-bottom: 1rem;
 }
 
-/* Prevent any italic inheritance in preview body text */
 #archive-preview-container .preview-summary {
     font-style: normal;
 }
 
-/* Scale down headings to body size — no browser-default 2em h1 here */
 #archive-preview-container .preview-summary h1,
 #archive-preview-container .preview-summary h2,
 #archive-preview-container .preview-summary h3,
@@ -936,7 +899,6 @@
     scroll-margin-top: 0;
 }
 
-/* Hide video figures so they don't blow up the preview layout */
 #archive-preview-container .preview-summary figure.local-video,
 #archive-preview-container .preview-summary video,
 #archive-preview-container .preview-summary audio,
@@ -944,7 +906,6 @@
     display: none;
 }
 
-/* Regular figures: reset browser default horizontal margin so images align with paragraphs */
 #archive-preview-container .preview-summary figure:not(.local-video) {
     margin: 1rem 0;
     width: 100%;

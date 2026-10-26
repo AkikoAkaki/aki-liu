@@ -32,7 +32,6 @@ export function initHomeHoverPreview() {
   let previewHeight = 0;
   let currentPreviewImage = null;
 
-  // Warm the previews once the pointer reaches the work grid, not on page load.
   scope.addEventListener(
     "pointerenter",
     () => {
@@ -87,7 +86,7 @@ export function initHomeHoverPreview() {
   function placePreview() {
     positionRaf = 0;
 
-    const gap = 8; // 缩小间距，让预览图更贴合鼠标，完美位于鼠标右上角
+    const gap = 8;
     const margin = 12;
     const maxX = window.innerWidth - previewWidth - margin;
     const x = Math.max(margin, Math.min(latestPointerX + gap, maxX));

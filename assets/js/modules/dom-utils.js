@@ -13,6 +13,5 @@ export function escapeHtml(value) {
 }
 
 export function tagToSlug(tag) {
-  // Template tag links use Hugo urlize; keep this convention aligned.
   return String(tag).toLowerCase().replace(/\s+/g, "-");
 }

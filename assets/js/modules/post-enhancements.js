@@ -1,5 +1,4 @@
 export function initExpandableCards() {
-    // --- Expandable card toggle ---
     const cardHeaders = document.querySelectorAll(".now-card-header");
     cardHeaders.forEach((button) => {
       button.addEventListener("click", () => {
@@ -50,10 +49,6 @@ export function initFooterReveal() {
 
     const revealDistance = Math.max(1, footerHeight);
 
-    // Only reveal when the user has actually scrolled toward the bottom.
-    // Without the scrollY guard, short pages (and microblog before its feed
-    // fetches) hit this branch on first paint and snap from scaleX(1) to
-    // scaleX(0.956) the moment JS runs, which reads as a flicker.
     if (
       scrollBottom <= footerHeight &&
       footerHeight > 0 &&
@@ -63,9 +58,8 @@ export function initFooterReveal() {
       if (progress < 0) progress = 0;
       if (progress > 1) progress = 1;
 
-      // Quartic Ease Out for smoother non-linear curve
       const eased = 1 - Math.pow(1 - progress, 4);
-      const radius = 40 * eased; // from square slowly to round
+      const radius = 40 * eased;
       const scaleX = 1 - 0.044 * eased;
 
       wrapper.style.setProperty("--footer-reveal-radius", radius + "px");

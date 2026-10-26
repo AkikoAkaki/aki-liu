@@ -13,7 +13,6 @@ export function initSlotLinks() {
     if (link.dataset.slotInit) return;
     link.dataset.slotInit = "1";
 
-    // Preserve accessibility: store text as aria-label on the link
     const label = link.textContent.trim();
     if (label) link.setAttribute("aria-label", label);
 
@@ -429,7 +428,6 @@ export function initExpandingMenu() {
     menuBar.classList.contains("is-open") ? close() : open();
   });
 
-  // Close on click outside
   document.addEventListener("click", (e) => {
     if (
       menuBar.classList.contains("is-open") &&
@@ -439,7 +437,6 @@ export function initExpandingMenu() {
     }
   });
 
-  // Close on Escape
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") close();
   });
