@@ -9,7 +9,7 @@ defaultContentLanguageInSubdir = false
 hasCJKLanguage = true
 
 # Content grouping (top-level key: must stay above the first [table]).
-mainSections = ["notes", "textlab"]
+mainSections = ["notes", "textlab", "weeknotes"]
 
 [languages]
   [languages.zh]

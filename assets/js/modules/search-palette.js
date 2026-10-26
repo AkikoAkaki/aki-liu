@@ -112,6 +112,13 @@ export function initSearchPalette() {
         action: () => navigate(sectionUrls.notes),
       },
       {
+        id: "go-weeknotes",
+        label: lang === "en" ? "Go to Weeknotes" : "前往 Weeknotes",
+        hint: "/weeknotes",
+        icon: "arrow",
+        action: () => navigate(sectionUrls.weeknotes),
+      },
+      {
         id: "go-microblog",
         label: lang === "en" ? "Go to Microblog" : "前往 Microblog",
         hint: "/microblog",
