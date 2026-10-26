@@ -1,42 +1,5 @@
 import { matches, QUERIES } from "./media.js";
 
-export function initSlotLinks() {
-  const canHover = matches(QUERIES.hover);
-  const reduceMotion = matches(QUERIES.reducedMotion);
-  if (!canHover || reduceMotion) return;
-
-  const links = document.querySelectorAll(
-    ".bio-text a, .now-section a, .af-now-prose a",
-  );
-
-  links.forEach((link) => {
-    if (link.dataset.slotInit) return;
-    link.dataset.slotInit = "1";
-
-    const label = link.textContent.trim();
-    if (label) link.setAttribute("aria-label", label);
-
-    const originalHTML = link.innerHTML;
-
-    const s1 = document.createElement("span");
-    s1.className = "link-slot-text";
-    s1.innerHTML = originalHTML;
-
-    const s2 = document.createElement("span");
-    s2.className = "link-slot-text link-slot-text--hover";
-    s2.innerHTML = originalHTML;
-    s2.setAttribute("aria-hidden", "true");
-
-    link.innerHTML = "";
-    const mask = document.createElement("span");
-    mask.className = "link-slot-mask";
-    mask.appendChild(s1);
-    mask.appendChild(s2);
-    link.appendChild(mask);
-    link.classList.add("link-slot");
-  });
-}
-
 export function initMagneticHover(elements, opts) {
   const reduceMotion = matches(QUERIES.reducedMotion);
   const canHover = matches(QUERIES.hover);

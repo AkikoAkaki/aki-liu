@@ -4,6 +4,7 @@ export function prepareRecord(r) {
   return {
     ...r,
     _titleLower: (r.title || "").toLowerCase(),
+    _titleTokens: tokenize(r.title),
     _bodyLower: (r.body || "").toLowerCase(),
     _summaryLower: (r.summary || "").toLowerCase(),
     _tagsLower: (r.tags || []).map((t) => String(t).toLowerCase()),
@@ -18,7 +19,7 @@ export function tokenize(query) {
   const q = (query || "").toLowerCase().trim();
   if (!q) return [];
   const tokens = [];
-  const parts = q.split(/[\s　]+/).filter(Boolean);
+  const parts = q.match(/[\u3400-\u9fff\uf900-\ufaff]+|[^\u3400-\u9fff\uf900-\ufaff\s]+/g) || [];
   for (const part of parts) {
     if (isCJK(part)) {
       if (part.length === 1) tokens.push(part);
@@ -26,17 +27,28 @@ export function tokenize(query) {
         for (let i = 0; i < part.length - 1; i++)
           tokens.push(part.substring(i, i + 2));
     } else {
-      tokens.push(part);
+      tokens.push(...(part.match(/[\p{L}\p{N}]+(?:[._+#/-][\p{L}\p{N}]+)*[+#]*/gu) || []));
     }
   }
   return [...new Set(tokens)];
+}
+
+function findToken(haystack, needle, from = 0) {
+  let index = haystack.indexOf(needle, from);
+  const word = /[\p{Script=Latin}\p{N}_]/u;
+  while (index !== -1) {
+    const before = word.test(needle[0]) && word.test(haystack[index - 1] || "");
+    if (!before) return index;
+    index = haystack.indexOf(needle, index + needle.length);
+  }
+  return -1;
 }
 
 function countHits(haystack, needle) {
   if (!haystack || !needle) return 0;
   let count = 0,
     idx = 0;
-  while ((idx = haystack.indexOf(needle, idx)) !== -1) {
+  while (count < 3 && (idx = findToken(haystack, needle, idx)) !== -1) {
     count++;
     idx += needle.length;
   }
@@ -45,18 +57,25 @@ function countHits(haystack, needle) {
 
 function scoreRecord(rec, tokens) {
   let total = 0;
+  let titleTerms = 0;
+  let tagTerms = 0;
   for (const t of tokens) {
     const titleHits = countHits(rec._titleLower, t);
     const tagHits = rec._tagsLower.reduce(
-      (a, tag) => a + (tag.includes(t) ? 1 : 0),
+      (a, tag) => a + (findToken(tag, t) !== -1 ? 1 : 0),
       0,
     );
     const summaryHits = countHits(rec._summaryLower, t);
     const bodyHits = countHits(rec._bodyLower, t);
-    if (!(titleHits || tagHits || summaryHits || bodyHits)) return 0;
+    if (!(titleHits || tagHits || summaryHits || bodyHits)) return null;
+    if (titleHits) titleTerms++;
+    if (tagHits) tagTerms++;
     total += titleHits * 5 + tagHits * 3 + summaryHits * 2 + bodyHits * 1;
   }
-  return total;
+  const exactTitle = rec._titleTokens.length === tokens.length &&
+    rec._titleTokens.every((token, i) => token === tokens[i]);
+  const tier = exactTitle ? 3 : titleTerms === tokens.length ? 2 : titleTerms || tagTerms ? 1 : 0;
+  return { tier, total };
 }
 
 // Records must come from prepareRecord().
@@ -66,10 +85,11 @@ export function searchRecords(records, tokens, lang) {
   for (const rec of records) {
     if (rec.lang !== lang) continue;
     const s = scoreRecord(rec, tokens);
-    if (s > 0) hits.push({ rec, s });
+    if (s) hits.push({ rec, ...s });
   }
   hits.sort(
-    (a, b) => b.s - a.s || (b.rec.date || "").localeCompare(a.rec.date || ""),
+    (a, b) => b.tier - a.tier || b.total - a.total ||
+      (b.rec.date || "").localeCompare(a.rec.date || ""),
   );
   return hits.slice(0, 30).map((h) => h.rec);
 }
@@ -106,34 +126,44 @@ export function collectTags(records, lang, query) {
 }
 
 export function highlight(text, tokens) {
-  const escaped = escapeHtml(text);
-  if (!tokens.length) return escaped;
-  const sorted = [...new Set(tokens)].sort((a, b) => b.length - a.length);
-  const pattern = sorted
-    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-    .join("|");
-  if (!pattern) return escaped;
-  const re = new RegExp("(" + pattern + ")", "gi");
-  return escaped.replace(re, "<mark>$1</mark>");
+  const lower = text.toLowerCase();
+  const ranges = [];
+  for (const token of tokens) {
+    let index = 0;
+    while (token && (index = findToken(lower, token, index)) !== -1) {
+      ranges.push([index, index + token.length]);
+      index += token.length;
+    }
+  }
+  ranges.sort((a, b) => a[0] - b[0] || b[1] - a[1]);
+  const merged = [];
+  for (const range of ranges) {
+    const previous = merged.at(-1);
+    if (previous && range[0] <= previous[1]) previous[1] = Math.max(previous[1], range[1]);
+    else merged.push(range);
+  }
+  let html = "", cursor = 0;
+  for (const [start, end] of merged) {
+    html += escapeHtml(text.slice(cursor, start)) + "<mark>" + escapeHtml(text.slice(start, end)) + "</mark>";
+    cursor = end;
+  }
+  return html + escapeHtml(text.slice(cursor));
 }
 
 export function makeSnippet(rec, tokens, len) {
-  const body = rec.body || rec.summary || "";
-  const lower = rec._bodyLower || rec._summaryLower || "";
+  const body = (rec.body || rec.summary || "").replace(/\r\n?/g, "\n");
+  const lower = body.toLowerCase();
   if (!body) return "";
   let pos = -1;
   for (const t of tokens) {
-    const i = lower.indexOf(t);
+    const i = findToken(lower, t);
     if (i !== -1 && (pos === -1 || i < pos)) pos = i;
   }
   const span = len || 160;
-  if (pos === -1) {
-    const head = body.slice(0, span);
-    return escapeHtml(head) + (body.length > span ? "…" : "");
-  }
-  const half = Math.floor(span / 2);
-  const start = Math.max(0, pos - half);
-  const end = Math.min(body.length, pos + half + (span - half));
+  if (body.length <= span) return highlight(body, tokens);
+  const contentSpan = span - 2;
+  const start = Math.max(0, Math.min(pos === -1 ? 0 : pos - Math.floor(contentSpan / 3), body.length - contentSpan));
+  const end = Math.min(body.length, start + contentSpan);
   let text = body.slice(start, end);
   if (start > 0) text = "…" + text;
   if (end < body.length) text = text + "…";

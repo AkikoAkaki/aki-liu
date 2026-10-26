@@ -905,18 +905,6 @@ a.nav-panel-subitem:hover {
     }
 }
 
-.bio-text a,
-.bio-text a:hover,
-.bio-text a:focus-visible {
-    color: var(--color-heading);
-}
-
-.bio-text a::before,
-.bio-text a:hover::before,
-.bio-text a:focus-visible::before {
-    content: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
     .author-name-svg-wrapper {
         clip-path: none;
@@ -933,8 +921,7 @@ a.nav-panel-subitem:hover {
     .work-item[data-preview] .work-item-title,
     .work-item[data-preview] .work-item-role,
     .work-item[data-preview] .work-item-date,
-    .bio-text a,
-    .bio-text a::before {
+    .bio-text a {
         transition: none;
     }
 }

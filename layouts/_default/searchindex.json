@@ -4,12 +4,13 @@
 {{- $pages := where site.RegularPages "Section" "in" $sections -}}
 {{- $items := slice -}}
 {{- range $pages -}}
-    {{- $body := .Plain | strings.TrimSpace -}}
+    {{- $body := .Plain | htmlUnescape | strings.TrimSpace -}}
     {{- $summary := "" -}}
     {{- with .Description -}}{{- $summary = . -}}{{- end -}}
     {{- if eq $summary "" -}}
         {{- $summary = .Summary | plainify | strings.TrimSpace -}}
     {{- end -}}
+    {{- $summary = $summary | htmlUnescape -}}
     {{- if gt (len $summary) 280 -}}
         {{- $summary = (substr $summary 0 280) -}}
     {{- end -}}
@@ -22,7 +23,7 @@
         {{- end -}}
     {{- end -}}
     {{- /* For microblog entries, synthesize title from first line of body since posts have no explicit titles. */ -}}
-    {{- $title := .Title -}}
+    {{- $title := .Title | htmlUnescape -}}
     {{- if eq .Section "microblog" -}}
         {{- $firstLine := $body | strings.TrimSpace -}}
         {{- if gt (len $firstLine) 70 -}}

@@ -547,13 +547,17 @@ body::after {
     content: "";
     position: absolute;
     z-index: -1;
-    left: var(--menu-cursor-x);
-    top: var(--menu-cursor-y);
+    left: 0;
+    top: 0;
     width: max(220%, 560px);
     aspect-ratio: 1;
     border-radius: 999px;
     opacity: var(--menu-fill-opacity);
-    transform: translate3d(-50%, -50%, 0) scale(var(--menu-fill-scale));
+    transform: translate3d(
+        calc(var(--menu-cursor-x) - 50%),
+        calc(var(--menu-cursor-y) - 50%),
+        0
+    ) scale(var(--menu-fill-scale));
     transform-origin: center;
     background: radial-gradient(
         circle at center,
@@ -567,7 +571,7 @@ body::after {
         inset 0 -18px 36px rgba(0, 0, 0, 0.08);
     backdrop-filter: blur(24px) saturate(160%);
     pointer-events: none;
-    will-change: transform, opacity, left, top;
+    will-change: transform, opacity;
     transition: opacity 0.16s ease;
 }
 

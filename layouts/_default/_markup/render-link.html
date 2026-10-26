@@ -1,6 +1,7 @@
 {{- $destination := .Destination -}}
 {{- $reference := urls.Parse $destination -}}
 {{- $external := and (in (slice "http" "https" "") $reference.Scheme) (ne $reference.Host "") (ne $reference.Host (urls.Parse .Page.Permalink).Host) (not (findRE "<(img|picture)\\b" .Text 1)) -}}
+{{- $internal := false -}}
 {{- if and (not $reference.IsAbs) (not $reference.Host) (not (hasPrefix $destination "/")) -}}
     {{- $base := urls.Parse .Page.Permalink -}}
     {{- with .Page.Resources.Get $reference.Path -}}
@@ -12,4 +13,11 @@
     {{- end -}}
     {{- $destination = ($base.ResolveReference $reference).String -}}
 {{- end -}}
-<a href="{{ $destination | safeURL }}"{{ if $external }} class="md-link md-link--external"{{ end }}{{ with .Title }} title="{{ . }}"{{ end }}>{{- if $external -}}{{- $iconURL := printf "https://www.google.com/s2/favicons?domain=%s&sz=32" ($reference.Hostname | urlquery) -}}<img class="md-link-icon" src="{{ $iconURL | safeURL }}" alt="" width="14" height="14" loading="lazy" decoding="async" onerror="this.remove()">{{- end -}}{{ .Text | safeHTML }}</a>
+{{- $resolved := urls.Parse $destination -}}
+{{- if and (not $external) (in (slice "http" "https" "") $resolved.Scheme) $resolved.Path (not (findRE "<(img|picture)\\b" .Text 1)) -}}
+    {{- $pagePath := strings.TrimPrefix .Page.Site.Home.RelPermalink $resolved.Path -}}
+    {{- with .Page.Site.GetPage $pagePath -}}
+        {{- $internal = and .IsPage (ne .RelPermalink $.Page.RelPermalink) -}}
+    {{- end -}}
+{{- end -}}
+<a href="{{ $destination | safeURL }}"{{ if $external }} class="md-link md-link--external"{{ else if $internal }} class="md-link md-link--internal"{{ end }}{{ with .Title }} title="{{ . }}"{{ end }}>{{- if or $external $internal -}}{{- $iconURL := "favicon.svg" | relURL -}}{{- if $external -}}{{- $iconURL = printf "https://www.google.com/s2/favicons?domain=%s&sz=32" ($reference.Hostname | urlquery) -}}{{- end -}}<img class="md-link-icon" src="{{ $iconURL | safeURL }}" alt="" width="14" height="14" loading="lazy" decoding="async" onerror="this.remove()">{{- end -}}{{ .Text | safeHTML }}</a>

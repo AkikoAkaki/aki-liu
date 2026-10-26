@@ -205,21 +205,11 @@ export function initSearchPalette() {
       items = buildTags(q);
     } else if (trimmed === "") {
       mode = "search";
-      items = buildCommands("")
-        .slice(0, 6)
-        .map((c) => ({ type: "command", cmd: c }));
     } else {
       mode = "search";
       currentTokens = tokenize(trimmed);
       const recs = searchRecords(indexCache, currentTokens, lang);
       items = recs.map((r) => ({ type: "result", record: r }));
-      const ctxCmds = buildCommands(trimmed).slice(0, 1);
-      if (ctxCmds.length && items.length) {
-        items = [
-          ...ctxCmds.map((c) => ({ type: "command", cmd: c })),
-          ...items,
-        ];
-      }
     }
 
     currentItems = items;
@@ -240,6 +230,10 @@ export function initSearchPalette() {
   function renderList() {
     if (!currentItems.length) {
       inputEl.removeAttribute("aria-activedescendant");
+      if (!inputEl.value.trim()) {
+        listEl.innerHTML = `<li class="search-empty">${lang === "en" ? "Search posts, type > for commands, or # for tags." : "输入关键词搜索文章，输入 > 执行命令，输入 # 浏览标签。"}</li>`;
+        return;
+      }
       if (!indexCache && !inputEl.value.trim().startsWith(">")) {
         listEl.innerHTML = indexError
           ? `<li class="search-empty">${lang === "en" ? "Search could not load." : "搜索加载失败。"} <button type="button" data-search-retry>${lang === "en" ? "Retry" : "重试"}</button></li>`
@@ -267,7 +261,7 @@ export function initSearchPalette() {
                       <div class="sr-body">
                           <div class="sr-title">${title}</div>
                           <div class="sr-meta">${meta}</div>
-                          <div class="search-result-mobile-snippet">${snip}</div>
+                          <div class="search-result-snippet">${snip}</div>
                       </div>
                       <span class="sr-trail">↩</span>
                   </li>`;
@@ -314,8 +308,7 @@ export function initSearchPalette() {
       previewEl.innerHTML = `
                   <div class="preview-meta">${escapeHtml(r.section || "")} · ${escapeHtml(r.date || "")}</div>
                   <h3 class="preview-title">${highlight(r.title || "", currentTokens)}</h3>
-                  ${r.summary ? `<p class="preview-summary">${escapeHtml(r.summary)}</p>` : ""}
-                  ${snip ? `<p class="preview-snippet">${snip}</p>` : ""}
+                  ${snip ? `<div class="preview-snippet">${snip.split(/\n+/).filter((paragraph) => paragraph.trim()).map((paragraph) => `<p>${paragraph}</p>`).join("")}</div>` : ""}
                   ${tagsHtml ? `<div class="preview-tags">${tagsHtml}</div>` : ""}
               `;
     } else if (item.type === "command") {
