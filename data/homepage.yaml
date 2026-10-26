@@ -64,6 +64,9 @@ grid:
     - id: notes
       title: Notes
       link: /notes/
+    - id: weeknotes
+      title: Weeknotes
+      link: /weeknotes/
     - id: microblog
       title: Microblog
       link: /microblog/
