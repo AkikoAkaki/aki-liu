@@ -5,9 +5,9 @@
                       "top":  [
                                   {
                                       "template":  "_partials/archive-list-items.html",
-                                      "cumulativeMs":  6715.731,
-                                      "averageMs":  279.822,
-                                      "maxMs":  639.028,
+                                      "cumulativeMs":  3394.865,
+                                      "averageMs":  141.453,
+                                      "maxMs":  324.749,
                                       "cachePotential":  17,
                                       "percentCached":  0,
                                       "cachedCount":  0,
@@ -15,9 +15,9 @@
                                   },
                                   {
                                       "template":  "_partials/archive-preview-index.html",
-                                      "cumulativeMs":  6398.325,
-                                      "averageMs":  319.916,
-                                      "maxMs":  625.644,
+                                      "cumulativeMs":  3188.52,
+                                      "averageMs":  159.426,
+                                      "maxMs":  316.2,
                                       "cachePotential":  55,
                                       "percentCached":  85,
                                       "cachedCount":  17,
@@ -25,9 +25,9 @@
                                   },
                                   {
                                       "template":  "tags/term.html",
-                                      "cumulativeMs":  5108.069,
-                                      "averageMs":  364.862,
-                                      "maxMs":  653.128,
+                                      "cumulativeMs":  2739.593,
+                                      "averageMs":  195.685,
+                                      "maxMs":  339.116,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
@@ -35,73 +35,73 @@
                                   },
                                   {
                                       "template":  "single.html",
-                                      "cumulativeMs":  1955.969,
-                                      "averageMs":  11.372,
-                                      "maxMs":  203.244,
+                                      "cumulativeMs":  1187.432,
+                                      "averageMs":  6.904,
+                                      "maxMs":  68.836,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  172
                                   },
                                   {
+                                      "template":  "_partials/head/seo.html",
+                                      "cumulativeMs":  1018.898,
+                                      "averageMs":  3.006,
+                                      "maxMs":  62.026,
+                                      "cachePotential":  13,
+                                      "percentCached":  0,
+                                      "cachedCount":  0,
+                                      "totalCount":  339
+                                  },
+                                  {
                                       "template":  "list.html",
-                                      "cumulativeMs":  1909.122,
-                                      "averageMs":  190.912,
-                                      "maxMs":  646.105,
+                                      "cumulativeMs":  982.47,
+                                      "averageMs":  98.247,
+                                      "maxMs":  330.188,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  10
                                   },
                                   {
-                                      "template":  "_partials/head/seo.html",
-                                      "cumulativeMs":  1624.623,
-                                      "averageMs":  4.792,
-                                      "maxMs":  200.489,
-                                      "cachePotential":  7,
-                                      "percentCached":  0,
-                                      "cachedCount":  0,
-                                      "totalCount":  339
-                                  },
-                                  {
                                       "template":  "microblog/single.html",
-                                      "cumulativeMs":  1003.558,
-                                      "averageMs":  7.546,
-                                      "maxMs":  34.867,
+                                      "cumulativeMs":  774.601,
+                                      "averageMs":  5.824,
+                                      "maxMs":  29.529,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  133
                                   },
                                   {
-                                      "template":  "_shortcodes/figure.html",
-                                      "cumulativeMs":  809.066,
-                                      "averageMs":  4.903,
-                                      "maxMs":  32.037,
-                                      "cachePotential":  0,
-                                      "percentCached":  0,
-                                      "cachedCount":  0,
-                                      "totalCount":  165
-                                  },
-                                  {
                                       "template":  "_partials/head/assets.html",
-                                      "cumulativeMs":  707.074,
-                                      "averageMs":  2.086,
-                                      "maxMs":  42.46,
-                                      "cachePotential":  73,
+                                      "cumulativeMs":  559.132,
+                                      "averageMs":  1.649,
+                                      "maxMs":  32.711,
+                                      "cachePotential":  88,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  339
                                   },
                                   {
                                       "template":  "about/list.html",
-                                      "cumulativeMs":  688.087,
-                                      "averageMs":  344.044,
-                                      "maxMs":  680.041,
+                                      "cumulativeMs":  477.73,
+                                      "averageMs":  238.865,
+                                      "maxMs":  471.211,
                                       "cachePotential":  0,
                                       "percentCached":  0,
                                       "cachedCount":  0,
                                       "totalCount":  2
+                                  },
+                                  {
+                                      "template":  "_shortcodes/figure.html",
+                                      "cumulativeMs":  407.848,
+                                      "averageMs":  2.472,
+                                      "maxMs":  22.484,
+                                      "cachePotential":  0,
+                                      "percentCached":  0,
+                                      "cachedCount":  0,
+                                      "totalCount":  165
                                   }
                               ],
                       "aggregateCacheRatio":  26.15,
@@ -163,14 +163,14 @@
                   "zhNonPage":  84,
                   "enStatic":  56,
                   "zhAliases":  2,
-                  "totalMs":  1353,
+                  "totalMs":  1071,
                   "zhPages":  257,
                   "zhStatic":  56
               },
     "git":  {
                 "branch":  "main",
                 "dirty":  false,
-                "commit":  "326bdb6"
+                "commit":  "9d0b52e"
             },
-    "generatedAt":  "2026-10-26T00:22:13-04:00"
+    "generatedAt":  "2026-10-26T00:26:26-04:00"
 }
