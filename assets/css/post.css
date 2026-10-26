@@ -754,7 +754,7 @@ body.post-short {
 .post-content ul ol,
 .post-content ol ul,
 .post-content ol ol {
-    margin: 0;
+    margin: 0.5rem 0 0;
     line-height: 1.7;
 }
 
