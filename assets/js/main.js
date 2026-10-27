@@ -1,4 +1,3 @@
-import { initArchiveFilter } from "./modules/archive-filter.js";
 import { initExpandingMenu, initMagneticHover } from "./modules/menu.js";
 import { initTableWrapping } from "./modules/post-enhancements.js";
 import { initPrefetcher } from "./modules/prefetch.js";
@@ -16,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initExpandingMenu();
   initTableWrapping();
-  initArchiveFilter();
   initSearchPalette();
   initPrefetcher();
   if (typeof window.renderMathInElement === "function") renderMath(document.body);

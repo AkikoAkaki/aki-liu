@@ -1,41 +1,38 @@
-{{- $pages := .pages -}}
-{{- $initialTags := .initialTags | default (slice) -}}
 {{- $previewSrc := "" -}}
-{{- range first 1 $pages -}}
-    {{- /* English lists can fall back to Chinese pages, so use the pages' own site. */ -}}
+{{- range first 1 .regularPages -}}
+    {{- /* English lists can display Chinese pages when no translation exists. */ -}}
     {{- $previewSrc = (partialCached "archive-preview-index.html" .Site .Language.Lang).RelPermalink -}}
 {{- end -}}
+{{- $tags := slice -}}
+{{- range .tagSlice -}}{{- $tags = $tags | append (.name | urlize) -}}{{- end -}}
 
-<div class="archive-list" data-archive-filter-root data-archive-initial-tags="{{ delimit $initialTags "," }}" data-archive-preview-src="{{ $previewSrc }}" data-katex-base="{{ partialCached "katex-base.html" "katex-base" }}">
-    {{ range $pages.GroupByPublishDate "2006" }}
-        {{ range .Pages }}
-            {{- $tagSlugs := slice -}}
-            {{- with .Params.tags -}}
-                {{- range . -}}
-                    {{- $tagSlugs = $tagSlugs | append (printf "%v" . | urlize) -}}
-                {{- end -}}
-            {{- end -}}
-            <article class="archive-item" data-archive-year="{{ .Date.Format "2006" }}" data-archive-tags="{{ delimit $tagSlugs "," }}">
-                <div class="item-hover-arrow">
-                    {{ partialCached "icons/hover-arrow.html" "hover-arrow" }}
-                </div>
-                <a href="{{ .RelPermalink }}" class="item-year">
-                    {{ .Date.Format "2006.01.02" }}
+<div id="archive-list" class="archive-list" data-archive-filter-root
+     data-archive-initial-tags="{{ delimit .initialTags "," }}"
+     data-archive-valid-tags="{{ delimit $tags "," }}"
+     data-archive-valid-years="{{ delimit .years "," }}"
+     data-archive-preview-src="{{ $previewSrc }}"
+     data-katex-base="{{ partialCached "katex-base.html" "katex-base" }}">
+    {{ range .entries }}
+        {{- $page := .page -}}
+        <article class="archive-item" data-archive-year="{{ .year }}" data-archive-tags="{{ delimit .tags "," }}"{{ if not .visible }} hidden{{ end }}>
+            <div class="item-hover-arrow" aria-hidden="true">
+                {{ partialCached "icons/hover-arrow.html" "hover-arrow" }}
+            </div>
+            <a href="{{ $page.RelPermalink }}" class="item-year" tabindex="-1">
+                <time datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "2006.01.02" }}</time>
+            </a>
+            <div class="item-title-wrapper">
+                <a href="{{ $page.RelPermalink }}" class="item-title">
+                    {{- $page.Title -}}
+                    {{- with .tags -}}
+                        <span class="item-tag-dots" aria-hidden="true">
+                            {{- range . -}}
+                                <span class="item-dot" data-tag="{{ . }}"></span>
+                            {{- end -}}
+                        </span>
+                    {{- end -}}
                 </a>
-                <div class="item-title-wrapper">
-                    <a href="{{ .RelPermalink }}" class="item-title">
-                        {{- .Title -}}
-                        {{- $tags := .GetTerms "tags" -}}
-                        {{- if gt (len $tags) 0 -}}
-                            <span class="item-tag-dots">
-                                {{- range $tags -}}
-                                    <span class="item-dot" data-tag="{{ .LinkTitle | urlize }}"></span>
-                                {{- end -}}
-                            </span>
-                        {{- end -}}
-                    </a>
-                </div>
-            </article>
-        {{ end }}
+            </div>
+        </article>
     {{ end }}
 </div>

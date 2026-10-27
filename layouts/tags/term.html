@@ -1,32 +1,19 @@
 {{ define "sidebar-left" }}
-{{- $regularPages := where .Site.RegularPages "Section" "in" site.MainSections -}}
-{{- $regularPages = where $regularPages "Params.hidden" "!=" true -}}
-{{- .Store.Set "regularPages" $regularPages -}}
-{{- $tagSlice := partial "tag-sidebar-data.html" (dict "pages" $regularPages) -}}
-{{- $years := slice -}}
-{{- range $regularPages.GroupByPublishDate "2006" -}}
-    {{- $years = $years | append .Key -}}
-{{- end -}}
-{{- .Store.Set "years" $years -}}
-{{- .Store.Set "initialTags" (slice (.Data.Term | urlize)) -}}
-{{ partial "archive-sidebar-left.html" (dict "context" . "regularPages" $regularPages "years" $years "tagSlice" $tagSlice) }}
+{{- $archive := partialCached "archive-data.html" . .Path .Language.Lang -}}
+{{ partial "archive-sidebar-left.html" $archive }}
 {{ end }}
 
-{{ define "sidebar-bottom" }}
-{{ $years := .Store.Get "years" }}
-{{ partial "archive-sidebar-bottom.html" (dict "years" $years) }}
-{{ end }}
+{{ define "sidebar-bottom" }}{{ end }}
 
 {{ define "main" }}
-{{ $regularPages := .Store.Get "regularPages" }}
-{{ $initialTags := .Store.Get "initialTags" }}
+{{- $archive := partialCached "archive-data.html" . .Path .Language.Lang -}}
 <div class="archive-main-col">
     <div class="archive-list-header">
         <span class="header-col-year">Date:</span>
         <span class="header-col-project">Project:</span>
     </div>
 
-    {{ partial "archive-list-items.html" (dict "pages" $regularPages "initialTags" $initialTags) }}
+    {{ partial "archive-list-items.html" $archive }}
 </div>
 {{ end }}
 

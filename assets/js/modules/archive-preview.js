@@ -1,184 +1,205 @@
 import { loadKatex, renderMath } from "./katex.js";
+import { media, QUERIES } from "./media.js";
 
-// Hover preview for archive lists. Preview bodies come from one fingerprinted
-// JSON per language (layouts/partials/archive-preview-index.html), fetched the
-// first time the pointer enters the list. Returns clear() for the filter.
-export function initArchivePreview(archiveList, archiveItems) {
-  const previewContainer = document.getElementById("archive-preview-container");
-  const previewSrc = archiveList.dataset.archivePreviewSrc;
-  if (!previewContainer || !previewSrc) return { clear() {} };
-  previewContainer.innerHTML = "";
+export function initArchivePreview(list) {
+  const container = document.getElementById("archive-preview-container");
+  const source = list.dataset.archivePreviewSrc;
+  if (!container || !source) return { clear() {} };
 
-  const katexBase = archiveList.dataset.katexBase || "/lib/katex-0.16.8/";
-  let previewsReady = null;
-  let currentHoverNode = null;
-  let leaveTimeout = null;
-  let hoverTimeout = null;
-  let renderToken = 0;
+  const enabled = media("(min-width: 1201px)");
+  const reducedMotion = media(QUERIES.reducedMotion);
+  const panel = container.closest(".site-sidebar-right");
+  const katexBase = list.dataset.katexBase;
+  let previews = null;
+  let hoveredItem = null;
+  let focusedItem = null;
+  let desiredItem = null;
+  let renderedItem = null;
+  let panelHovered = false;
+  let hoverTimer = 0;
+  let leaveTimer = 0;
+  let fitFrame = 0;
+  let requestToken = 0;
+  let content = null;
+  const transitions = [];
 
   function loadPreviews() {
-    if (!previewsReady) {
-      previewsReady = fetch(previewSrc)
+    if (!previews) {
+      previews = fetch(source)
         .then((response) => {
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          if (!response.ok) throw new Error("HTTP " + response.status);
           return response.json();
         })
         .then((entries) => new Map(entries.map((entry) => [entry.url, entry])))
         .catch((error) => {
-          previewsReady = null;
+          previews = null;
           throw error;
         });
     }
-    return previewsReady;
+    return previews;
   }
 
-  function itemURL(item) {
-    return item.querySelector("a.item-title")?.getAttribute("href") || "";
+  function fitPreview() {
+    if (fitFrame) return;
+    fitFrame = requestAnimationFrame(() => {
+      fitFrame = 0;
+      container.classList.toggle("is-truncated", Boolean(content && content.scrollHeight > container.clientHeight + 1));
+    });
   }
 
-  function injectContent(entry) {
+  const observer = new ResizeObserver(fitPreview);
+  observer.observe(container);
+  container.addEventListener("load", fitPreview, true);
+  container.addEventListener("error", fitPreview, true);
+
+  function cancelTransition() {
+    transitions.splice(0).forEach((animation) => animation.cancel());
+    container.querySelector(".preview-outgoing")?.remove();
+  }
+
+  function buildContent(entry) {
+    const next = document.createElement("div");
+    next.className = "preview-content";
     const title = document.createElement("h4");
     title.className = "preview-title";
     title.textContent = entry.title;
-    // Parse into an inert template so media is removed before it can load.
     const template = document.createElement("template");
     template.innerHTML = entry.html;
-    template.content
-      .querySelectorAll("figure.local-video, video, audio, iframe")
-      .forEach((el) => el.remove());
+    // An inert template prevents discarded media from starting requests.
+    template.content.querySelectorAll("figure.local-video, video, audio, iframe").forEach((element) => element.remove());
+    template.content.querySelectorAll("[id]").forEach((element) => element.removeAttribute("id"));
     const summary = document.createElement("div");
     summary.className = "preview-summary raw-content-preview";
     summary.append(template.content);
-
-    previewContainer.classList.remove("is-truncated");
-    previewContainer.replaceChildren(title, summary);
-    if (entry.math) {
-      try {
-        renderMath(previewContainer);
-      } catch (e) {}
-    }
+    next.append(title, summary);
+    if (entry.math) renderMath(next);
+    return next;
   }
 
-  async function fitPreview(token) {
-    const summary = previewContainer.querySelector(".preview-summary");
-    if (!summary) {
-      previewContainer.classList.remove("is-truncated");
-      return;
-    }
-
-    if (document.fonts && document.fonts.ready) {
-      try {
-        await document.fonts.ready;
-      } catch (e) {}
-    }
-    if (token !== renderToken) return;
-
-    const imgs = Array.from(summary.querySelectorAll("img"));
-    await Promise.all(
-      imgs.map((img) => {
-        if (img.complete) return Promise.resolve();
-        return new Promise((resolve) => {
-          img.addEventListener("load", resolve, { once: true });
-          img.addEventListener("error", resolve, { once: true });
-        });
-      }),
-    );
-    if (token !== renderToken) return;
-
-    const liveSummary = previewContainer.querySelector(".preview-summary");
-    if (!liveSummary || liveSummary !== summary) return;
-
-    previewContainer.classList.toggle(
-      "is-truncated",
-      previewContainer.scrollHeight > previewContainer.clientHeight + 1,
-    );
-  }
-
-  async function renderForItem(item) {
-    if (item.hidden) return;
-    const token = ++renderToken;
+  async function render(item, token) {
     let entry;
     try {
-      entry = (await loadPreviews()).get(itemURL(item));
+      const url = item.querySelector(".item-title").getAttribute("href");
+      entry = (await loadPreviews()).get(url);
       if (entry?.math) await loadKatex(katexBase);
-    } catch (e) {
+    } catch {
+      if (token === requestToken) desiredItem = null;
       return;
     }
-    if (token !== renderToken || !entry || item.hidden) return;
-    injectContent(entry);
-    await fitPreview(token);
-    if (token === renderToken) {
-      previewContainer.style.opacity = "1";
+    if (token !== requestToken || item.hidden || !entry || !enabled.matches) return;
+
+    const next = buildContent(entry);
+    cancelTransition();
+    const previous = content;
+    if (previous) observer.unobserve(previous);
+    content = next;
+    renderedItem = item;
+    container.replaceChildren(next);
+    observer.observe(next);
+    fitPreview();
+
+    if (!reducedMotion.matches) {
+      transitions.push(next.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160, easing: "ease-out" }));
+      if (previous) {
+        previous.classList.add("preview-outgoing");
+        previous.inert = true;
+        previous.setAttribute("aria-hidden", "true");
+        container.append(previous);
+        const fade = previous.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 140, fill: "forwards" });
+        transitions.push(fade);
+        fade.addEventListener("finish", () => previous.remove(), { once: true });
+      }
     }
   }
 
   function clear() {
-    if (leaveTimeout) clearTimeout(leaveTimeout);
-    if (hoverTimeout) clearTimeout(hoverTimeout);
-    currentHoverNode = null;
-    renderToken++;
-    previewContainer.style.opacity = "0";
-    previewContainer.classList.remove("is-truncated");
-    previewContainer.innerHTML = "";
+    clearTimeout(hoverTimer);
+    clearTimeout(leaveTimer);
+    requestToken++;
+    desiredItem = null;
+    renderedItem = null;
+    hoveredItem = null;
+    focusedItem = null;
+    panelHovered = false;
+    cancelTransition();
+    if (content) observer.unobserve(content);
+    content = null;
+    container.replaceChildren();
+    container.classList.remove("is-truncated");
   }
 
-  archiveList.addEventListener(
-    "pointerenter",
-    () => loadPreviews().catch(() => {}),
-    { once: true },
-  );
+  function updateTarget() {
+    clearTimeout(leaveTimer);
+    if (!enabled.matches) return;
+    const item = focusedItem || hoveredItem;
+    if (!item) {
+      if (panelHovered || panel.contains(document.activeElement)) return;
+      clearTimeout(hoverTimer);
+      hoverTimer = 0;
+      requestToken++;
+      desiredItem = renderedItem;
+      leaveTimer = setTimeout(clear, 150);
+      return;
+    }
+    if (item.hidden) return;
+    if (desiredItem === item) {
+      if (focusedItem && hoverTimer) {
+        clearTimeout(hoverTimer);
+        hoverTimer = 0;
+        render(item, requestToken);
+      }
+      return;
+    }
+    clearTimeout(hoverTimer);
+    hoverTimer = 0;
+    desiredItem = item;
+    const token = ++requestToken;
+    if (renderedItem === item) return;
+    if (focusedItem) render(item, token);
+    else hoverTimer = setTimeout(() => {
+      hoverTimer = 0;
+      render(item, token);
+    }, 100);
+  }
 
-  let resizeRaf = 0;
-  const resizeObserver = new ResizeObserver(() => {
-    if (!currentHoverNode) return;
-    if (resizeRaf) cancelAnimationFrame(resizeRaf);
-    resizeRaf = requestAnimationFrame(() => {
-      if (currentHoverNode) fitPreview(renderToken);
-    });
+  function itemFrom(node) {
+    if (!(node instanceof Element)) return null;
+    const item = node.closest(".archive-item");
+    return item && item.parentElement === list ? item : null;
+  }
+
+  list.addEventListener("pointerenter", (event) => {
+    if (enabled.matches && event.pointerType !== "touch") loadPreviews().catch(() => {});
+  }, { passive: true });
+  list.addEventListener("pointerover", (event) => {
+    if (event.pointerType === "touch") return;
+    hoveredItem = itemFrom(event.target);
+    updateTarget();
+  }, { passive: true });
+  list.addEventListener("pointerout", (event) => {
+    if (event.pointerType === "touch") return;
+    hoveredItem = itemFrom(event.relatedTarget);
+    updateTarget();
+  }, { passive: true });
+  list.addEventListener("focusin", (event) => {
+    focusedItem = itemFrom(event.target);
+    updateTarget();
   });
-  const rightCols = document.querySelector(".archive-right-cols");
-  if (rightCols) resizeObserver.observe(rightCols);
-
-  archiveItems.forEach((item) => {
-    item.addEventListener("mouseenter", () => {
-      if (item.hidden) return;
-      if (leaveTimeout) clearTimeout(leaveTimeout);
-      if (hoverTimeout) clearTimeout(hoverTimeout);
-
-      if (currentHoverNode === item) {
-        previewContainer.style.opacity = "1";
-        return;
-      }
-
-      currentHoverNode = item;
-      previewContainer.style.opacity = "0";
-      hoverTimeout = setTimeout(() => {
-        hoverTimeout = null;
-        if (currentHoverNode === item) renderForItem(item);
-      }, 100);
-    });
-
-    item.addEventListener("mouseleave", () => {
-      if (hoverTimeout) {
-        clearTimeout(hoverTimeout);
-        hoverTimeout = null;
-        if (currentHoverNode === item) currentHoverNode = null;
-      }
-      if (currentHoverNode === item) {
-        leaveTimeout = setTimeout(() => {
-          previewContainer.style.opacity = "0";
-          currentHoverNode = null;
-          renderToken++;
-          setTimeout(() => {
-            if (!currentHoverNode) {
-              previewContainer.classList.remove("is-truncated");
-              previewContainer.innerHTML = "";
-            }
-          }, 200);
-        }, 150);
-      }
-    });
+  list.addEventListener("focusout", (event) => {
+    focusedItem = itemFrom(event.relatedTarget);
+    updateTarget();
   });
-
+  panel.addEventListener("pointerenter", () => { panelHovered = true; updateTarget(); });
+  panel.addEventListener("pointerleave", () => { panelHovered = false; updateTarget(); });
+  panel.addEventListener("focusin", () => { clearTimeout(leaveTimer); });
+  panel.addEventListener("focusout", () => { queueMicrotask(updateTarget); });
+  enabled.addEventListener("change", () => {
+    clear();
+    if (enabled.matches) {
+      focusedItem = itemFrom(document.activeElement);
+      updateTarget();
+    }
+  });
+  reducedMotion.addEventListener("change", cancelTransition);
   return { clear };
 }

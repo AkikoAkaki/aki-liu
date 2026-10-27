@@ -4,12 +4,15 @@
 {{- /* CSS reads only html[data-theme]: the stored choice, else the system
        preference (kept in sync until the visitor picks a theme). */ -}}
 <script>(function(){var d=document.documentElement,m=window.matchMedia('(prefers-color-scheme: dark)');function apply(){var t=null;try{t=localStorage.getItem('theme');}catch(_){}d.setAttribute('data-theme',t==='dark'||t==='light'?t:(m.matches?'dark':'light'));}apply();if(m.addEventListener){m.addEventListener('change',apply);}if(window.self!==window.top){d.classList.add('is-iframe');}}())</script>
+{{- $isArchive := partial "is-archive.html" . -}}
 {{- /* Fonts */ -}}
-<link rel="preconnect" href="https://fonts.googleapis.com">
+{{- if not $isArchive -}}<link rel="preconnect" href="https://fonts.googleapis.com">{{- end -}}
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Preload core brand font to avoid FOUT/FOIT -->
 <link rel="preload" href="/fonts/switzer/Switzer-Regular.woff2" as="font" type="font/woff2" crossorigin>
+{{- if not $isArchive -}}
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Serif+SC:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+{{- end -}}
 
 {{- /* CSS pipeline: global base bundle + route-level styles */ -}}
 {{- $base := resources.Get "css/base.css" -}}
@@ -19,6 +22,18 @@
 {{- $search := resources.Get "css/search.css" -}}
 {{- $style := slice $base $layout $components $motion $search | resources.Concat "css/bundle.css" | resources.Minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+
+{{- if $isArchive -}}
+    {{- $archiveStyle := resources.Get "css/archive.css" | resources.Minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $archiveStyle.RelPermalink }}" integrity="{{ $archiveStyle.Data.Integrity }}">
+    <link rel="preload" href="https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
+    {{- if eq .Section "textlab" -}}
+    <link rel="preload" href="https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438weI_wC-ZF.woff2" as="font" type="font/woff2" crossorigin>
+    {{- end -}}
+    <script>if(new URLSearchParams(location.search).has('tags')||new URLSearchParams(location.search).has('years'))document.documentElement.setAttribute('data-archive-restoring','');</script>
+    {{- $archiveJS := resources.Get "js/archive.js" | js.Build (dict "targetPath" "js/archive.js") | resources.Minify | fingerprint -}}
+    <script defer src="{{ $archiveJS.RelPermalink }}" integrity="{{ $archiveJS.Data.Integrity }}"></script>
+{{- end -}}
 
 {{- if eq .Section "about" -}}
     {{- $aboutStyle := resources.Get "css/about.css" | resources.Minify | fingerprint -}}

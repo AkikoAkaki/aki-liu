@@ -1,0 +1,521 @@
+/* Archive font faces never replace text after its first render. */
+@font-face {
+    font-family: "Archive Switzer";
+    src: url("/fonts/switzer/Switzer-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-display: optional;
+}
+
+@font-face {
+    font-family: "Archive Switzer";
+    src: url("/fonts/switzer/Switzer-Medium.woff2") format("woff2");
+    font-weight: 500;
+    font-display: optional;
+}
+
+@font-face {
+    font-family: "Archive Switzer";
+    src: url("/fonts/switzer/Switzer-Semibold.woff2") format("woff2");
+    font-weight: 600;
+    font-display: optional;
+}
+
+@font-face {
+    font-family: "Archive Newsreader";
+    src: url("https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438weI_wC-ZF.woff2") format("woff2");
+    font-weight: 400;
+    font-display: optional;
+}
+
+@font-face {
+    font-family: "Archive Mono";
+    src: url("https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2") format("woff2");
+    font-weight: 400 500;
+    font-display: optional;
+}
+
+.archive-page {
+    --font-sans: "Archive Switzer", var(--font-cjk-sans), sans-serif;
+    --font-ui: var(--font-sans);
+    --font-serif: "Archive Newsreader", var(--font-cjk-serif), serif;
+    --font-mono: "Archive Mono", monospace;
+}
+
+/* URL filters are restored by an inline script directly after the list. */
+[data-archive-restoring] .archive-page :is(.archive-main-col, .archive-filters-container) {
+    visibility: hidden;
+}
+
+.archive-page .site-container {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1800px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    grid-template-areas: "filters" "articles";
+    padding: 6rem 1.25rem 2.5rem;
+    gap: 2rem;
+    align-content: start;
+    align-items: start;
+}
+
+.archive-page .site-sidebar {
+    display: block;
+    grid-area: filters;
+    justify-self: stretch;
+    min-width: 0;
+    padding: 0;
+}
+
+.archive-page .site-main {
+    display: block;
+    grid-area: articles;
+    min-width: 0;
+    padding: 0;
+}
+
+.archive-page .site-sidebar-right,
+.archive-page .site-sidebar-bottom {
+    display: none;
+}
+
+.archive-page .archive-left-col {
+    min-height: 0;
+}
+
+.archive-page .archive-years-desktop {
+    display: flex;
+}
+
+.archive-page .archive-logo-container {
+    margin-bottom: 2rem;
+}
+
+.archive-page .archive-intro-text :is(em, i) {
+    line-height: 1;
+}
+
+.archive-page .archive-main-col {
+    position: relative;
+}
+
+.archive-page :is(.archive-tag-item, .archive-year-item, .item-title):focus-visible {
+    outline: 2px solid var(--color-heading);
+    outline-offset: 3px;
+    border-radius: 3px;
+}
+
+.archive-page .filter-item-label,
+.archive-page .filter-item-label::after {
+    will-change: auto;
+    backface-visibility: visible;
+}
+
+@media (min-width: 769px) {
+    .archive-page .site-container {
+        grid-template-columns: minmax(10rem, 2fr) minmax(0, 7fr);
+        grid-template-rows: auto;
+        grid-template-areas: "filters articles";
+        padding: 10rem 3vw 2rem;
+        gap: 4vw;
+    }
+
+    .archive-page .archive-logo-container {
+        margin-bottom: 4rem;
+    }
+}
+
+@media (min-width: 1201px) {
+    .archive-page .site-container {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 5fr) minmax(0, 3fr);
+        grid-template-areas: "filters articles preview";
+    }
+
+    .archive-page .site-sidebar-right {
+        display: block;
+        grid-area: preview;
+        justify-self: stretch;
+        align-self: stretch;
+        min-width: 0;
+        margin: 0;
+    }
+
+    .archive-right-cols {
+        position: sticky;
+        top: 10rem;
+        height: calc(100vh - 12rem);
+        height: calc(100svh - 12rem);
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .archive-view-col {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 0;
+    }
+}
+
+.archive-list-header {
+    display: grid;
+    line-height: 1.5;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 2rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    color: var(--color-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.archive-list {
+    position: relative;
+    overflow-anchor: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.archive-item {
+    display: grid;
+    line-height: 1.5;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 2rem;
+    align-items: center;
+    position: relative;
+    padding: 0.4rem 0;
+}
+
+.archive-item[hidden] {
+    display: none;
+}
+
+.archive-item .item-hover-arrow {
+    position: absolute;
+    left: -0.2rem;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    color: var(--color-heading);
+    opacity: 0;
+    transform: translate(-10px, -50%);
+    transition: opacity 0.2s ease 0.05s, transform 0.2s var(--ease-standard) 0.05s;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.archive-item .item-hover-arrow svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+.archive-item:is(:hover, :focus-within) .item-hover-arrow {
+    opacity: 1;
+    transform: translate(0, -50%);
+    transition: opacity 0.2s ease 0.25s, transform 0.2s var(--ease-standard) 0.25s;
+}
+
+.archive-item .item-year {
+    grid-column: 1;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-heading);
+    text-decoration: none;
+    display: inline-block;
+    max-width: 100%;
+    position: relative;
+    padding: 0.2rem 0.4rem;
+    margin-left: -0.4rem;
+    transition: transform 0.2s var(--ease-standard) 0.05s;
+    z-index: 1;
+}
+
+.archive-item:is(:hover, :focus-within) .item-year {
+    transform: translateX(22px);
+    transition: transform 0.2s var(--ease-standard) 0.25s;
+}
+
+.archive-item .item-title-wrapper {
+    grid-column: 2;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.archive-item .item-title {
+    overflow-wrap: anywhere;
+    font-weight: 400;
+    text-decoration: none;
+    color: var(--color-heading);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    display: inline-block;
+    max-width: 100%;
+    position: relative;
+    padding: 0.2rem 0.4rem;
+    margin-left: -0.4rem;
+    z-index: 1;
+}
+
+.archive-item .item-year::after,
+.archive-item .item-title::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-bg-muted, #f4f4f4);
+    border-radius: 4px;
+    z-index: -1;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.12s var(--ease-standard) 0.35s;
+}
+
+.archive-item:is(:hover, :focus-within) .item-year::after,
+.archive-item:is(:hover, :focus-within) .item-title::after {
+    transform: scaleX(1);
+    transition: transform 0.12s var(--ease-standard) 0.46s;
+}
+
+.item-tag-dots {
+    display: inline-flex;
+    gap: 3px;
+    align-items: center;
+    margin-left: 5px;
+    transform: translateY(-0.35em);
+}
+
+#archive-preview-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-top: 1.5rem;
+    overflow: hidden;
+    position: relative;
+}
+
+#archive-preview-container.is-truncated::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 5rem;
+    pointer-events: none;
+    background: linear-gradient(
+        to bottom,
+        rgba(var(--bg-rgb), 0),
+        var(--bg-color) 88%
+    );
+}
+
+#archive-preview-container .preview-title {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--color-heading);
+}
+
+#archive-preview-container .preview-summary {
+    font-style: normal;
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-heading);
+}
+
+#archive-preview-container img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 45vh;
+    object-fit: contain;
+    border-radius: 2px;
+    margin: 1.5rem 0;
+    display: block;
+}
+
+#archive-preview-container hr {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin: 2rem auto;
+    width: 30%;
+}
+
+#archive-preview-container .preview-summary p {
+    margin-bottom: 1rem;
+}
+
+#archive-preview-container .preview-summary h1,
+#archive-preview-container .preview-summary h2,
+#archive-preview-container .preview-summary h3,
+#archive-preview-container .preview-summary h4,
+#archive-preview-container .preview-summary h5,
+#archive-preview-container .preview-summary h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1.4;
+    color: var(--color-heading);
+    margin: 0.75rem 0 0.4rem;
+    scroll-margin-top: 0;
+}
+
+#archive-preview-container .preview-summary figure.local-video,
+#archive-preview-container .preview-summary video,
+#archive-preview-container .preview-summary audio,
+#archive-preview-container .preview-summary iframe {
+    display: none;
+}
+
+#archive-preview-container .preview-summary figure:not(.local-video) {
+    margin: 1rem 0;
+    width: 100%;
+}
+
+#archive-preview-container .preview-summary figure:not(.local-video) img {
+    margin: 0;
+}
+
+#archive-preview-container .preview-summary figure figcaption,
+#archive-preview-container .preview-summary .figure-caption {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: var(--color-muted);
+    text-align: left;
+}
+
+#archive-preview-container .preview-summary figure figcaption p,
+#archive-preview-container .preview-summary .figure-caption p {
+    margin: 0;
+}
+
+#archive-preview-container .preview-summary figure figcaption strong,
+#archive-preview-container .preview-summary .figure-caption strong {
+    font-weight: 600;
+}
+
+#archive-preview-container .preview-summary figure figcaption em,
+#archive-preview-container .preview-summary .figure-caption em {
+    font-style: italic;
+}
+
+.archive-exits {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.archive-exits .archive-item {
+    position: absolute;
+    margin: 0;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+.preview-content {
+    display: flow-root;
+}
+
+.preview-outgoing {
+    position: absolute;
+    inset: 0 0 auto;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .archive-page .archive-logo-container {
+        margin-bottom: 1.25rem;
+    }
+
+    .archive-page .archive-filter-section .archive-col-header {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .archive-page .archive-filters-container {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 0.75rem;
+    }
+
+    .archive-page .archive-tags-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.35rem 1.5rem;
+    }
+
+    .archive-page .archive-years-desktop {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        min-width: 0;
+        gap: 0.25rem 1.25rem;
+    }
+
+    .archive-page .archive-stats-minimal {
+        grid-template-columns: max-content max-content;
+        justify-content: start;
+        column-gap: 1.25rem;
+        padding-top: 0.25rem;
+    }
+
+    .archive-page .archive-intro-section {
+        margin-bottom: 2rem;
+    }
+
+    .archive-list-header,
+    .archive-item {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.15rem;
+    }
+
+    .archive-list-header .header-col-year {
+        display: none;
+    }
+
+    .archive-item {
+        padding: 0.75rem 0;
+    }
+
+    .archive-item .item-title-wrapper {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .archive-item .item-year {
+        grid-column: 1;
+        grid-row: 2;
+        width: max-content;
+        font-size: 0.75rem;
+        color: var(--color-secondary);
+        transform: none;
+    }
+
+    .archive-item:is(:hover, :focus-within) .item-year {
+        transform: none;
+    }
+
+    .archive-item .item-hover-arrow {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .archive-page :is(.filter-item-label, .filter-hover-arrow, .filter-active-close, .item-year, .item-title, .item-hover-arrow),
+    .archive-page .filter-item-label::after,
+    .archive-item .item-year::after,
+    .archive-item .item-title::after {
+        transition: none;
+    }
+}
