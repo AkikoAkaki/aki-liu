@@ -1,466 +1,316 @@
-import { escapeHtml, tagToSlug } from "./modules/dom-utils.js";
+import { escapeHtml } from "./modules/dom-utils.js";
 import { matches, QUERIES } from "./modules/media.js";
+import { loadKatex, renderMath } from "./modules/katex.js";
 
-(function () {
-    const root = document.querySelector('.microblog-page');
-    if (!root) return;
+const root = document.querySelector('.microblog-page');
+if (root) initMicroblog(root);
 
-    const feedURL = root.dataset.feedUrl || '/microblog/feed.json';
+function initMicroblog(root) {
     const deck = root.querySelector('.microblog-deck');
     const PAGE_SIZE = 30;
-    const STAGGER_MS = 40;
-    const COMPRESSION_THRESHOLD = 0.96;
+    const columns = new Map();
+    const images = new WeakSet();
+    const mathCards = new WeakSet();
+    let sequence = 0;
+    let feedPromise;
+    let feed;
 
-    let feedData = null;
-    let feedPromise = null;
-    let columnSeq = 1;
-    let compressionFrame = 0;
-    const COLUMN_REFLOW_MS = 300;
-    const layoutAnimations = new WeakMap();
+    const observer = new IntersectionObserver(entries => {
+        for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const state = columns.get(entry.target.closest('.mb-column').dataset.mbColumnId);
+            if (state?.wanted && state.phase === 'ready') loadMore(state);
+        }
+    }, { rootMargin: '400px 0px' });
+
+    function enhanceCards(element) {
+        for (const image of element.querySelectorAll('img[data-mb-image]')) {
+            if (images.has(image)) continue;
+            images.add(image);
+            const show = () => image.classList.remove('is-loading');
+            const ready = () => image.decode().catch(() => {}).then(show);
+            if (image.complete) {
+                if (image.naturalWidth) ready();
+                continue;
+            }
+            image.classList.add('is-loading');
+            image.addEventListener('load', ready, { once: true });
+            image.addEventListener('error', show, { once: true });
+        }
+        const pending = [...element.querySelectorAll('[data-mb-math]')].filter(card => !mathCards.has(card));
+        if (pending.length) {
+            pending.forEach(card => mathCards.add(card));
+            loadKatex(root.dataset.katexBase).then(() => {
+                pending.filter(card => card.isConnected).forEach(renderMath);
+            }).catch(() => pending.forEach(card => mathCards.delete(card)));
+        }
+    }
+
+    function readFeed(data) {
+        if (!data || !Array.isArray(data.entries) || !data.tags || typeof data.tags !== 'object') {
+            throw new Error('Invalid microblog feed');
+        }
+        const seen = new Set();
+        for (const entry of data.entries) {
+            if (!entry || typeof entry.id !== 'string' || typeof entry.html !== 'string'
+                || typeof entry.year !== 'string' || !Array.isArray(entry.tags)
+                || !entry.tags.every(tag => typeof tag === 'string') || seen.has(entry.id)) {
+                throw new Error('Invalid microblog entry');
+            }
+            seen.add(entry.id);
+        }
+        feed = data;
+        return data;
+    }
 
     function loadFeed() {
-        if (feedData) return Promise.resolve(feedData);
-        if (feedPromise) return feedPromise;
-        feedPromise = fetch(feedURL, { credentials: 'same-origin' })
-            .then(r => {
-                if (!r.ok) throw new Error(`Feed request failed: ${r.status}`);
-                return r.json();
-            })
-            .then(data => {
-                if (!data || !Array.isArray(data.entries)) throw new Error('Invalid feed');
-                feedData = data;
-                return feedData;
-            })
-            .finally(() => {
-                feedPromise = null;
-            });
+        if (!feedPromise) {
+            feedPromise = fetch(root.dataset.feedUrl, { credentials: 'same-origin' })
+                .then(response => {
+                    if (!response.ok) throw new Error(`Feed request failed: ${response.status}`);
+                    return response.json();
+                })
+                .then(readFeed)
+                .catch(error => { feedPromise = null; throw error; });
+        }
         return feedPromise;
     }
 
-    function loadColumn(column, tag, year = '', onLoaded = () => {}) {
-        column.setAttribute('aria-busy', 'true');
-        const feedEl = column.querySelector('[data-mb-feed]');
-        feedEl.replaceChildren();
-        loadFeed().then(() => {
-            if (!column.isConnected) return;
-            hydrateColumn(column, tag, year);
-            onLoaded();
-        }).catch(() => {
-            if (!column.isConnected) return;
-            const message = document.createElement('div');
-            message.className = 'mb-column-empty';
-            message.setAttribute('role', 'alert');
-            message.textContent = 'Unable to load entries. ';
-            const retry = document.createElement('button');
-            retry.type = 'button';
-            retry.className = 'mb-feed-retry';
-            retry.textContent = 'Retry';
-            retry.addEventListener('click', () => loadColumn(column, tag, year, onLoaded));
-            message.appendChild(retry);
-            feedEl.replaceChildren(message);
-        }).finally(() => {
-            column.removeAttribute('aria-busy');
-        });
+    function updateControls(state, message = '') {
+        const element = state.element;
+        const loading = state.phase === 'loading';
+        element.setAttribute('aria-busy', String(loading));
+        const button = element.querySelector('[data-mb-more]');
+        button.hidden = state.done;
+        button.disabled = loading;
+        button.textContent = state.phase === 'error' ? 'Retry' : loading ? 'Loading…' : 'Load more';
+        element.querySelector('[data-mb-status]').textContent = message;
     }
 
-    function formatDate(iso) {
+    async function loadMore(state) {
+        if (!state.wanted || state.done || state.phase === 'loading') return;
+        state.phase = 'loading';
+        updateControls(state, state.next ? '' : 'Loading entries…');
         try {
-            const d = new Date(iso);
-            if (isNaN(d.getTime())) return iso;
-            const pad = n => String(n).padStart(2, '0');
-            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            const data = await loadFeed();
+            if (columns.get(state.id) !== state) return;
+            state.entries ??= data.entries.filter(entry => state.type === 'all'
+                || (state.type === 'year' ? entry.year === state.key : entry.tags.includes(state.key)));
+            const fragment = document.createDocumentFragment();
+            for (const entry of state.entries.slice(state.next, state.next + PAGE_SIZE)) {
+                const template = document.createElement('template');
+                template.innerHTML = entry.html;
+                fragment.appendChild(template.content);
+            }
+            state.element.querySelector('[data-mb-feed]').appendChild(fragment);
+            state.next = Math.min(state.next + PAGE_SIZE, state.entries.length);
+            state.done = state.next === state.entries.length;
+            state.phase = 'ready';
+            state.element.querySelector('[data-mb-column-count]').textContent = state.entries.length;
+            state.element.querySelector('[data-mb-column-unit]').textContent = state.entries.length === 1 ? 'Entry' : 'Entries';
+            updateControls(state, state.entries.length ? '' : 'Nothing here yet.');
+            enhanceCards(state.element);
+            if (state.done) observer.unobserve(state.sentinel);
+            else if (state.wanted) observer.observe(state.sentinel);
         } catch (_) {
-            return iso;
+            if (columns.get(state.id) !== state) return;
+            state.phase = 'error';
+            updateControls(state, 'Unable to load more entries. Your current entries are still available.');
         }
     }
 
-    function entriesForTag(slug) {
-        if (!feedData) return [];
-        if (!slug) return feedData.entries;
-        return feedData.entries.filter(e => (e.tags || []).some(t => tagToSlug(t) === slug));
-    }
-
-    function tagLabel(slug, fallback = slug) {
-        const el = document.querySelector(`.archive-tag-item[data-tag="${CSS.escape(slug)}"] .tag-name`);
-        return el ? el.textContent.trim() : fallback;
-    }
-
-    function entriesForYear(year) {
-        if (!feedData) return [];
-        return feedData.entries.filter(e => {
-            const d = new Date(e.date);
-            return !isNaN(d.getTime()) && String(d.getFullYear()) === String(year);
-        });
-    }
-
-    function buildImageGrid(images) {
-        if (!images || !images.length) return '';
-        const n = images.length;
-        const cls = n === 1 ? 'is-one'
-            : n === 2 ? 'is-two'
-            : n === 3 ? 'is-three'
-            : n === 4 ? 'is-four'
-            : 'is-many';
-        const visible = n > 5 ? images.slice(0, 4) : images;
-        const overflow = n > 5 ? n - 4 : 0;
-        const cells = visible.map((img, i) => {
-            const ratio = img.w && img.h ? `${img.w} / ${img.h}` : '4 / 3';
-            const overflowBadge = (overflow > 0 && i === visible.length - 1)
-                ? `<span class="mb-img-overflow">+${overflow}</span>`
-                : '';
-            return `<div class="mb-img-cell" style="--mb-img-ratio: ${ratio}">
-                <img src="${escapeHtml(img.src)}" alt="${escapeHtml(img.alt || '')}" loading="lazy" decoding="async" width="${img.w || ''}" height="${img.h || ''}">
-                ${overflowBadge}
-            </div>`;
-        }).join('');
-        return `<div class="mb-card-images ${cls}" data-mb-image-count="${n}">${cells}</div>`;
-    }
-
-    function renderTagDots(tags) {
-        if (!tags || !tags.length) return '';
-        const dots = tags.map(t => {
-            const slug = tagToSlug(t);
-            const label = tagLabel(slug, t);
-            return `<a class="mb-card-tag-dot" href="?cols=${encodeURIComponent(slug)}" data-mb-tag="${escapeHtml(slug)}" data-mb-tag-label="${escapeHtml(label)}" title="${escapeHtml(label)}">
-                <span class="item-dot" data-tag="${escapeHtml(slug)}"></span>
-            </a>`;
-        }).join('');
-        return `<div class="mb-card-tag-dots">${dots}</div>`;
-    }
-
-    function renderCard(entry) {
-        const card = document.createElement('article');
-        card.className = 'mb-card';
-        card.dataset.mbId = entry.id || entry.slug || '';
-        card.innerHTML = `
-            <header class="mb-card-header">
-                <div class="mb-card-meta">
-                    <div class="mb-card-date-wrapper">
-                        <time class="mb-card-date" datetime="${escapeHtml(entry.date)}">${formatDate(entry.date)}</time>
-                        ${renderTagDots(entry.tags)}
-                    </div>
-                </div>
-            </header>
-            <div class="mb-card-body">${entry.html || ''}</div>
-            ${buildImageGrid(entry.images)}
-        `;
-        return card;
-    }
-
-    function appendBatch(column, entries, startIdx) {
-        const feedEl = column.querySelector('[data-mb-feed]');
-        if (!feedEl) return;
-        const slice = entries.slice(startIdx, startIdx + PAGE_SIZE);
-        const frag = document.createDocumentFragment();
-        const newCards = [];
-        slice.forEach((entry, i) => {
-            const card = renderCard(entry);
-            card.style.setProperty('--mb-stagger-delay', `${i * STAGGER_MS}ms`);
-            card.classList.add('is-entering');
-            frag.appendChild(card);
-            newCards.push(card);
-        });
-        feedEl.appendChild(frag);
-        requestAnimationFrame(() => {
-            newCards.forEach(c => {
-                c.classList.add('is-entered');
-                c.classList.remove('is-entering');
-            });
-        });
-        const nextIdx = startIdx + slice.length;
-        column.dataset.mbNextIdx = String(nextIdx);
-        const done = nextIdx >= entries.length;
-        const sentinel = column.querySelector('[data-mb-sentinel]');
-        if (sentinel) sentinel.dataset.mbDone = done ? 'true' : 'false';
-    }
-
-    function hydrateColumn(column, tag, year = '') {
-        const entries = year ? entriesForYear(year) : entriesForTag(tag);
-        const countEl = column.querySelector('[data-mb-column-count]');
-        if (countEl) countEl.textContent = entries.length;
-        const unitEl = column.querySelector('[data-mb-column-unit]');
-        if (unitEl) unitEl.textContent = entries.length === 1 ? 'Entry' : 'Entries';
-        
-        const feedEl = column.querySelector('[data-mb-feed]');
-        if (feedEl) feedEl.innerHTML = '';
-        column.dataset.mbNextIdx = '0';
-
-        if (!entries.length) {
-            const empty = document.createElement('div');
-            empty.className = 'mb-column-empty';
-            empty.textContent = year ? `Nothing in ${year} yet.`
-                : tag ? `Nothing tagged #${tag} yet.` : 'Nothing yet.';
-            feedEl.appendChild(empty);
-            const sentinel = column.querySelector('[data-mb-sentinel]');
-            if (sentinel) sentinel.dataset.mbDone = 'true';
+    function animate(state, frames, finish = () => {}) {
+        state.animation?.cancel();
+        state.animation = null;
+        if (matches(QUERIES.reducedMotion)) {
+            finish();
             return;
         }
-
-        appendBatch(column, entries, 0);
-        attachInfiniteScroll(column, entries);
+        const animation = state.element.animate(frames, {
+            duration: 300,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            fill: 'both'
+        });
+        state.animation = animation;
+        animation.finished.then(() => {
+            if (state.animation !== animation) return;
+            state.animation = null;
+            animation.cancel();
+            finish();
+        }, () => {});
     }
 
-    const observers = new WeakMap();
-    function attachInfiniteScroll(column, entries) {
-        const sentinel = column.querySelector('[data-mb-sentinel]');
-        if (!sentinel) return;
-        const existing = observers.get(column);
-        if (existing) existing.disconnect();
-        const observer = new IntersectionObserver(handles => {
-            handles.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                if (sentinel.dataset.mbDone === 'true') return;
-                const next = parseInt(column.dataset.mbNextIdx || '0', 10);
-                appendBatch(column, entries, next);
-            });
-        }, { root: getScrollRoot(column), rootMargin: '400px 0px' });
-        observer.observe(sentinel);
-        observers.set(column, observer);
-    }
-
-    function getScrollRoot(column) {
-        return column.classList.contains('mb-column-main') ? null : column;
-    }
-
-    function updateColumnCompression() {
-        if (!deck) return;
-        if (matches(QUERIES.mobile)) {
-            deck.classList.remove('is-compressed');
-            return;
+    function syncURL(push = true) {
+        const wanted = [...columns.values()].filter(state => state.type !== 'all' && state.wanted);
+        const url = new URL(location.href);
+        for (const [parameter, type] of [['cols', 'tag'], ['years', 'year']]) {
+            const keys = wanted.filter(state => state.type === type).map(state => state.key);
+            if (keys.length) url.searchParams.set(parameter, keys.join(','));
+            else url.searchParams.delete(parameter);
         }
-
-        deck.classList.remove('is-compressed');
-        void deck.offsetWidth;
-
-        const columns = [...deck.querySelectorAll('.mb-column')];
-        const gap = parseFloat(getComputedStyle(deck).columnGap || getComputedStyle(deck).gap) || 0;
-        const totalColumnWidth = columns.reduce((sum, column) => sum + column.getBoundingClientRect().width, 0)
-            + Math.max(0, columns.length - 1) * gap;
-        const shouldCompress = columns.length > 1 && totalColumnWidth > deck.clientWidth * COMPRESSION_THRESHOLD;
-        deck.classList.toggle('is-compressed', shouldCompress);
-    }
-
-    function scheduleColumnCompression() {
-        if (compressionFrame) cancelAnimationFrame(compressionFrame);
-        compressionFrame = requestAnimationFrame(() => {
-            compressionFrame = 0;
-            updateColumnCompression();
-        });
-    }
-
-    function getActiveColumns() {
-        return [...deck.querySelectorAll('.mb-column:not(.mb-column-ghost)')];
-    }
-
-    function captureColumnRects(columns = getActiveColumns()) {
-        const rects = new Map();
-        columns.forEach(column => {
-            rects.set(column, column.getBoundingClientRect());
-        });
-        return rects;
-    }
-
-    function animateColumnReflow(beforeRects, columns = getActiveColumns()) {
-        columns.forEach(column => {
-            if (!beforeRects.has(column)) return;
-            if (column.classList.contains('is-entering') || column.classList.contains('is-leaving')) return;
-            if (typeof column.animate !== 'function') return;
-
-            const before = beforeRects.get(column);
-            const after = column.getBoundingClientRect();
-            const deltaX = before.left - after.left;
-            const deltaY = before.top - after.top;
-
-            if (Math.abs(deltaX) < 0.5 && Math.abs(deltaY) < 0.5) return;
-
-            const existing = layoutAnimations.get(column);
-            if (existing) existing.cancel();
-
-            const animation = column.animate(
-                [
-                    { transform: `translate3d(${deltaX}px, ${deltaY}px, 0)` },
-                    { transform: 'translate3d(0, 0, 0)' }
-                ],
-                {
-                    duration: COLUMN_REFLOW_MS,
-                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-                    fill: 'both'
-                }
-            );
-
-            layoutAnimations.set(column, animation);
-            const clear = () => {
-                if (layoutAnimations.get(column) === animation) {
-                    layoutAnimations.delete(column);
-                }
-            };
-            animation.addEventListener('finish', clear, { once: true });
-            animation.addEventListener('cancel', clear, { once: true });
-        });
-    }
-
-    function openColumn(type, key, label = key, updateHistory = true) {
-        const value = type === 'year' ? String(key) : tagToSlug(key || '');
-        if (!value) return;
-        const existing = deck.querySelector(`.mb-column[data-mb-${type}="${CSS.escape(value)}"]`);
-        if (existing) {
-            existing.classList.add('is-pulsing');
-            setTimeout(() => existing.classList.remove('is-pulsing'), 600);
-            return existing;
+        if (wanted.some(state => state.type === 'tag') && wanted.some(state => state.type === 'year')) {
+            url.searchParams.set('order', wanted.map(state => state.id).join(','));
+        } else url.searchParams.delete('order');
+        const next = url.pathname + url.search + url.hash;
+        if (next !== location.pathname + location.search + location.hash) {
+            history[push ? 'pushState' : 'replaceState'](null, '', next);
         }
+        syncSidebar();
+    }
 
-        const column = document.createElement('section');
-        column.className = `mb-column mb-column-${type} is-entering`;
-        column.dataset.mbColumnId = `${type}-${columnSeq++}`;
-        column.setAttribute(`data-mb-${type}`, value);
-        column.innerHTML = `
+    function syncSidebar() {
+        for (const item of document.querySelectorAll('.archive-tag-item, .archive-year-item')) {
+            const state = columns.get(item.dataset.year ? `year:${item.dataset.year}` : `tag:${item.dataset.tag}`);
+            const active = !!state?.wanted;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-expanded', String(active));
+            if (state) item.setAttribute('aria-controls', state.element.id);
+            else item.removeAttribute('aria-controls');
+        }
+    }
+
+    function destroy(state) {
+        state.animation?.cancel();
+        observer.unobserve(state.sentinel);
+        columns.delete(state.id);
+        state.element.remove();
+    }
+
+    function closeColumn(state, push = true) {
+        if (!state.wanted || state.type === 'all') return;
+        const style = getComputedStyle(state.element);
+        const from = { opacity: style.opacity, transform: style.transform };
+        state.wanted = false;
+        if (state.element.contains(document.activeElement)) {
+            const selector = state.type === 'year' ? `.archive-year-item[data-year="${CSS.escape(state.key)}"]`
+                : `.archive-tag-item[data-tag="${CSS.escape(state.key)}"]`;
+            [...document.querySelectorAll(selector)].find(item => item.getClientRects().length)?.focus({ preventScroll: true });
+        }
+        state.element.inert = true;
+        state.element.setAttribute('aria-hidden', 'true');
+        state.element.classList.add('is-leaving');
+        observer.unobserve(state.sentinel);
+        if (push) syncURL();
+        animate(state, [from, { opacity: 0, transform: 'translate3d(24px, 0, 0)' }], () => {
+            if (!state.wanted) destroy(state);
+        });
+    }
+
+    function labelFor(type, key) {
+        if (type === 'year') return key;
+        const item = document.querySelector(`.archive-tag-item[data-tag="${CSS.escape(key)}"] .tag-name`);
+        return item?.textContent.trim() || feed?.tags[key] || key;
+    }
+
+    function openColumn(type, key, push = true) {
+        const id = `${type}:${key}`;
+        let state = columns.get(id);
+        if (state) {
+            if (!state.wanted) {
+                const style = getComputedStyle(state.element);
+                const from = { opacity: style.opacity, transform: style.transform };
+                state.wanted = true;
+                state.element.inert = false;
+                state.element.removeAttribute('aria-hidden');
+                state.element.classList.remove('is-leaving');
+                animate(state, [from, { opacity: 1, transform: 'none' }]);
+                if (!state.done) observer.observe(state.sentinel);
+                if (push) syncURL();
+            }
+            return state;
+        }
+        const label = labelFor(type, key);
+        const element = document.createElement('section');
+        element.className = `mb-column mb-column-${type}`;
+        element.dataset.mbColumnId = id;
+        element.id = `microblog-column-${++sequence}`;
+        element.setAttribute('aria-label', label);
+        element.innerHTML = `
             <div class="mb-column-content">
                 <div class="mb-column-header">
-                    <span class="mb-column-title">${escapeHtml(label)}</span>
-                    <span class="mb-column-meta"><span class="mb-column-count" data-mb-column-count>0</span> <span data-mb-column-unit>Entries</span></span>
-                    <button class="mb-column-close" type="button" data-mb-close aria-label="Close column">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M17 7L7 17"/><path d="M7 7l10 10"/></svg>
+                    <h2 class="mb-column-title">${escapeHtml(label)}</h2>
+                    <span class="mb-column-meta"><span data-mb-column-count>…</span> <span data-mb-column-unit>Entries</span></span>
+                    <button class="mb-column-close" type="button" data-mb-close aria-label="Close ${escapeHtml(label)} column">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" width="14" height="14" aria-hidden="true"><path d="M17 7L7 17M7 7l10 10"/></svg>
                     </button>
                 </div>
                 <div class="mb-column-feed" data-mb-feed></div>
                 <div class="mb-column-sentinel" data-mb-sentinel aria-hidden="true"></div>
-            </div>
-        `;
-        deck.appendChild(column);
-        loadColumn(column, type === 'tag' ? value : '', type === 'year' ? value : '');
-        void column.getBoundingClientRect();
-        scheduleColumnCompression();
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                column.classList.remove('is-entering');
-                column.classList.add('is-entered');
-            });
-        });
-        column.querySelector('[data-mb-close]').addEventListener('click', () => closeColumn(column));
-        syncURL(updateHistory);
-        return column;
+                <div class="mb-column-controls">
+                    <button class="mb-feed-more" type="button" data-mb-more>Load more</button>
+                    <p class="mb-column-status" data-mb-status role="status" aria-live="polite"></p>
+                </div>
+            </div>`;
+        state = { id, type, key, element, wanted: true, phase: 'ready', next: 0, done: false,
+            sentinel: element.querySelector('[data-mb-sentinel]'), entries: null, animation: null };
+        columns.set(id, state);
+        deck.appendChild(element);
+        loadMore(state);
+        animate(state, [{ opacity: 0, transform: 'translate3d(24px, 0, 0)' }, { opacity: 1, transform: 'none' }]);
+        if (push) syncURL();
+        return state;
     }
 
-    function closeColumn(column) {
-        if (!column || column.classList.contains('mb-column-main')) return;
-        const beforeRects = captureColumnRects();
-        column.classList.add('is-leaving');
-
-        setTimeout(() => {
-            column.remove();
-            updateColumnCompression();
-            animateColumnReflow(beforeRects);
-            syncURL();
-        }, COLUMN_REFLOW_MS);
-    }
-
-    function syncURL(updateHistory = true) {
-        const slugs = getActiveColumns()
-            .filter(c => c.classList.contains('mb-column-tag'))
-            .map(c => c.dataset.mbTag)
-            .filter(Boolean);
-        const years = getActiveColumns()
-            .filter(c => c.classList.contains('mb-column-year'))
-            .map(c => c.dataset.mbYear)
-            .filter(Boolean);
-
-        const url = new URL(window.location.href);
-        if (slugs.length) {
-            url.searchParams.set('cols', slugs.join(','));
-        } else {
-            url.searchParams.delete('cols');
+    function restoreURL() {
+        const parameters = new URLSearchParams(location.search);
+        const wanted = new Map();
+        for (const [parameter, type, selector, attribute] of [
+            ['cols', 'tag', '.archive-tag-item', 'tag'], ['years', 'year', '.archive-year-item', 'year']
+        ]) {
+            const known = new Set([...document.querySelectorAll(selector)].map(item => item.dataset[attribute]));
+            for (const key of (parameters.get(parameter) || '').split(',')) {
+                if (known.has(key)) wanted.set(`${type}:${key}`, { type, key });
+            }
         }
-        if (years.length) {
-            url.searchParams.set('years', years.join(','));
-        } else {
-            url.searchParams.delete('years');
+        const ordered = new Map();
+        for (const id of (parameters.get('order') || '').split(',')) {
+            if (wanted.has(id)) ordered.set(id, wanted.get(id));
         }
-
-        document.querySelectorAll('.archive-tag-item').forEach(el => {
-            el.classList.toggle('active', slugs.includes(el.dataset.tag));
-        });
-        document.querySelectorAll('.archive-year-item').forEach(el => {
-            el.classList.toggle('active', years.includes(el.dataset.year));
-        });
-
-        const next = url.pathname + (url.search ? url.search : '') + url.hash;
-        if (updateHistory && next !== window.location.pathname + window.location.search + window.location.hash) {
-            history.pushState({ cols: slugs, years }, '', next);
+        for (const [id, spec] of wanted) ordered.set(id, spec);
+        for (const state of [...columns.values()]) {
+            if (state.type !== 'all' && (!ordered.has(state.id) || !state.wanted)) destroy(state);
         }
-    }
-
-    function restoreFromURL() {
-        const params = new URLSearchParams(window.location.search);
-        const cols = (params.get('cols') || '').split(',').map(s => s.trim()).filter(Boolean);
-        const years = (params.get('years') || '').split(',').map(s => s.trim()).filter(Boolean);
-        const tags = feedData ? feedData.tags || [] : [];
-        cols.forEach(slug => {
-            const raw = tags.find(t => tagToSlug(t) === slug) || slug;
-            openColumn('tag', slug, tagLabel(slug, raw), false);
-        });
-        years.forEach(year => openColumn('year', year, year, false));
+        for (const { type, key } of ordered.values()) openColumn(type, key, false);
+        const main = columns.get('__all__');
+        const sorted = new Map([['__all__', main]]);
+        for (const id of ordered.keys()) sorted.set(id, columns.get(id));
+        columns.clear();
+        for (const [id, state] of sorted) {
+            columns.set(id, state);
+            if (deck.children[columns.size - 1] !== state.element) deck.appendChild(state.element);
+        }
         syncURL(false);
     }
 
-    function bindSidebarTags() {
-        const sidebar = document.querySelector('.archive-tags-list');
-        if (!sidebar) return;
-        sidebar.addEventListener('click', e => {
-            const tagItem = e.target.closest('.archive-tag-item');
-            if (!tagItem) return;
-            e.preventDefault();
-            openColumn('tag', tagItem.dataset.tag, tagLabel(tagItem.dataset.tag));
-        });
-    }
+    const mainElement = deck.querySelector('.mb-column-main');
+    const mainState = { id: '__all__', type: 'all', key: '', element: mainElement, wanted: true,
+        phase: 'ready', next: mainElement.querySelectorAll('.mb-card').length,
+        done: false, entries: null, animation: null, sentinel: mainElement.querySelector('[data-mb-sentinel]') };
+    mainElement.id = 'microblog-column-all';
+    mainState.done = mainState.next >= Number(mainElement.querySelector('[data-mb-column-count]').textContent);
+    columns.set(mainState.id, mainState);
+    updateControls(mainState);
+    enhanceCards(mainElement);
+    if (!mainState.done) observer.observe(mainState.sentinel);
 
-    function bindSidebarYears() {
-        document.querySelectorAll('.archive-years-list').forEach(list => {
-            list.addEventListener('click', e => {
-                const yearItem = e.target.closest('.archive-year-item');
-                if (!yearItem || !yearItem.dataset.year) return;
-                e.preventDefault();
-                openColumn('year', yearItem.dataset.year);
-            });
-        });
-    }
-
-    function bindCardTagClicks() {
-        deck.addEventListener('click', e => {
-            const tag = e.target.closest('.mb-card-tag-dot');
-            if (!tag) return;
-            e.preventDefault();
-            openColumn('tag', tag.dataset.mbTag, tag.dataset.mbTagLabel || tag.dataset.mbTag);
-        });
-    }
-
-    function bindPopstate() {
-        window.addEventListener('popstate', () => {
-            deck.querySelectorAll('.mb-column-tag, .mb-column-year').forEach(c => c.remove());
-            scheduleColumnCompression();
-            restoreFromURL();
-        });
-    }
-
-    function bindResize() {
-        window.addEventListener('resize', scheduleColumnCompression);
-    }
-
-    function init() {
-        const mainColumn = deck.querySelector('.mb-column-main');
-        loadColumn(mainColumn, '', '', () => {
-            restoreFromURL();
-            scheduleColumnCompression();
-        });
-        bindSidebarTags();
-        bindSidebarYears();
-        bindCardTagClicks();
-        bindPopstate();
-        bindResize();
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init, { once: true });
-    } else {
-        init();
-    }
-})();
+    document.addEventListener('click', event => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const button = event.target.closest('[data-mb-close], [data-mb-more]');
+        if (button && deck.contains(button)) {
+            const state = columns.get(button.closest('.mb-column').dataset.mbColumnId);
+            if (button.hasAttribute('data-mb-close')) closeColumn(state);
+            else loadMore(state);
+            return;
+        }
+        const item = event.target.closest('.archive-tag-item, .archive-year-item, .mb-card-tag-dot');
+        if (!item) return;
+        event.preventDefault();
+        const type = item.dataset.year ? 'year' : 'tag';
+        const key = item.dataset.year || item.dataset.tag || item.dataset.mbTag;
+        const state = columns.get(`${type}:${key}`);
+        if (state?.wanted && !item.classList.contains('mb-card-tag-dot')) closeColumn(state);
+        else openColumn(type, key);
+    });
+    window.addEventListener('popstate', restoreURL);
+    restoreURL();
+}

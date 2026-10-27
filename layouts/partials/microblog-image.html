@@ -1,0 +1,29 @@
+{{- $image := . -}}
+{{- $source := $image.RelPermalink -}}
+{{- $srcset := "" -}}
+{{- $width := 0 -}}
+{{- $height := 0 -}}
+{{- $renderedSource := $source -}}
+{{- $subtype := lower $image.MediaType.SubType -}}
+{{- if ne $subtype "svg" -}}
+    {{- $width = $image.Width -}}
+    {{- $height = $image.Height -}}
+    {{- if ne $subtype "gif" -}}
+        {{- $renderedSource = (partial "post-image.html" $image).RelPermalink -}}
+        {{- $sizes := slice -}}
+        {{- range slice 480 800 1040 -}}
+            {{- if lt . $image.Width -}}
+                {{- $variant := $image.Resize (printf "%dx webp q82" .) -}}
+                {{- $sizes = $sizes | append (printf "%s %dw" $variant.RelPermalink $variant.Width) -}}
+            {{- end -}}
+        {{- end -}}
+        {{- $spec := cond (gt $image.Width 1040) "resize 1040x webp q82" "webp q82" -}}
+        {{- $full := $image.Process $spec -}}
+        {{- $source = $full.RelPermalink -}}
+        {{- $width = $full.Width -}}
+        {{- $height = $full.Height -}}
+        {{- $sizes = $sizes | append (printf "%s %dw" $source $width) -}}
+        {{- $srcset = delimit ($sizes | uniq) ", " -}}
+    {{- end -}}
+{{- end -}}
+{{- return (dict "src" $source "srcset" $srcset "width" $width "height" $height "original" $image.RelPermalink "rendered" $renderedSource) -}}

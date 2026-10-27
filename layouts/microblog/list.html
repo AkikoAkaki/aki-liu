@@ -17,7 +17,9 @@
 
 {{ define "main" }}
 {{- $entries := .Store.Get "entries" -}}
-{{- $feedURL := printf "%sfeed.json" .RelPermalink -}}
+{{- $payload := partialCached "microblog-feed-data.html" . .Language.Lang -}}
+{{- $version := sha256 ($payload | jsonify) -}}
+{{- $feedURL := printf "%sfeed.json?v=%s" .RelPermalink (substr $version 0 12) -}}
 <div class="archive-main-col">
     {{ if .Content }}
     <div class="archive-intro-section">
@@ -28,36 +30,27 @@
     </div>
     {{ end }}
 
-    <section class="microblog-page" data-feed-url="{{ $feedURL }}">
+    <section class="microblog-page" data-feed-url="{{ $feedURL }}" data-katex-base="{{ partialCached "katex-base.html" "katex-base" }}">
         <div class="microblog-deck" id="microblog-deck" role="region" aria-label="Microblog feed">
-            <div class="mb-column mb-column-main" data-mb-column-id="__all__" data-mb-tag="">
+            <div class="mb-column mb-column-main" data-mb-column-id="__all__" data-mb-tag="" aria-label="All entries">
                 <div class="mb-column-content">
                     <div class="mb-column-header">
-                        <span class="mb-column-title">All</span>
+                        <h2 class="mb-column-title">All</h2>
                         <span class="mb-column-meta"><span class="mb-column-count" data-mb-column-count>{{ len $entries }}</span> <span data-mb-column-unit>{{ if eq (len $entries) 1 }}Entry{{ else }}Entries{{ end }}</span></span>
                     </div>
-                    <div class="mb-column-feed" data-mb-feed></div>
+                    <div class="mb-column-feed" data-mb-feed>
+                        {{- range first 30 $entries -}}{{ partialCached "microblog-card.html" . .RelPermalink }}{{- end -}}
+                    </div>
                     <div class="mb-column-sentinel" data-mb-sentinel aria-hidden="true"></div>
+                    <div class="mb-column-controls">
+                        <button class="mb-feed-more" type="button" data-mb-more hidden>Load more</button>
+                        <p class="mb-column-status" data-mb-status role="status" aria-live="polite"></p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{- /* noscript fallback: most recent 20 entries as plain text + permalinks */ -}}
-        <noscript>
-            <div class="microblog-noscript">
-                <p class="mb-noscript-hint">JavaScript is disabled. Showing the most recent {{ if gt (len $entries) 20 }}20{{ else }}{{ len $entries }}{{ end }} fragments.</p>
-                <ol class="mb-noscript-list">
-                    {{- range first 20 $entries }}
-                    <li>
-                        <a href="{{ .RelPermalink }}">
-                            <time>{{ .Date.Format "2006-01-02 · 15:04" }}</time>
-                            <span class="mb-noscript-text">{{ .Plain | truncate 200 }}</span>
-                        </a>
-                    </li>
-                    {{- end }}
-                </ol>
-            </div>
-        </noscript>
+        <noscript><p class="mb-noscript-hint">Showing the latest {{ if gt (len $entries) 30 }}30{{ else }}{{ len $entries }}{{ end }} entries. <a href="{{ printf "%sindex.xml" .RelPermalink }}">Read the complete feed via RSS.</a></p></noscript>
     </section>
 </div>
 {{ end }}
