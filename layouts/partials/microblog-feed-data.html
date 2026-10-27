@@ -1,0 +1,14 @@
+{{- $entries := partial "microblog-entries.html" . -}}
+{{- $items := slice -}}
+{{- $tags := dict -}}
+{{- range $entries -}}
+    {{- $slugs := slice -}}
+    {{- range .Params.tags -}}
+        {{- $slug := . | urlize -}}
+        {{- $slugs = $slugs | append $slug -}}
+        {{- $tags = merge $tags (dict $slug (partial "tag-label.html" . | strings.TrimSpace)) -}}
+    {{- end -}}
+    {{- $card := partialCached "microblog-card.html" . .RelPermalink -}}
+    {{- $items = $items | append (dict "id" .RelPermalink "year" (.PublishDate.Format "2006") "tags" $slugs "html" $card) -}}
+{{- end -}}
+{{- return (dict "entries" $items "tags" $tags "count" (len $items)) -}}

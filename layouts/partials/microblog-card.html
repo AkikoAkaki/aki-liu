@@ -1,0 +1,50 @@
+{{- $page := . -}}
+{{- $html := $page.Content -}}
+{{- $gallery := slice -}}
+{{- range $page.Resources.ByType "image" -}}
+    {{- $image := partialCached "microblog-image.html" . .RelPermalink -}}
+    {{- $referenced := or (strings.Contains $html $image.original) (strings.Contains $html $image.rendered) -}}
+    {{- if $referenced -}}
+        {{- $attributes := printf `src="%s" data-mb-image` (htmlEscape $image.src) -}}
+        {{- with $image.srcset -}}
+            {{- $attributes = printf `%s srcset="%s" sizes="(max-width: 768px) calc(100vw - 90px), 466px"` $attributes (htmlEscape .) -}}
+        {{- end -}}
+        {{- range slice $image.rendered $image.original | uniq -}}
+            {{- $html = replace $html (printf `src="%s"` (htmlEscape .)) $attributes -}}
+        {{- end -}}
+    {{- else -}}
+        {{- $gallery = $gallery | append $image -}}
+    {{- end -}}
+{{- end -}}
+<article class="mb-card" data-mb-id="{{ $page.RelPermalink }}"{{ if partial "page-has-math.html" $page }} data-mb-math{{ end }}>
+    <header class="mb-card-header">
+        <div class="mb-card-meta">
+            <div class="mb-card-date-wrapper">
+                <a class="mb-card-permalink" href="{{ $page.RelPermalink }}"><time class="mb-card-date" datetime="{{ $page.Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ $page.Date.Format "2006-01-02 · 15:04" }}</time></a>
+                {{- with $page.Params.tags }}
+                <div class="mb-card-tag-dots">
+                    {{- range . -}}
+                    {{- $slug := . | urlize -}}
+                    {{- $label := partial "tag-label.html" . -}}
+                    <a class="mb-card-tag-dot" href="?cols={{ $slug | urlquery }}" data-mb-tag="{{ $slug }}" aria-label="{{ $label }}" title="{{ $label }}"><span class="item-dot" data-tag="{{ $slug }}" aria-hidden="true"></span></a>
+                    {{- end }}
+                </div>
+                {{- end }}
+            </div>
+        </div>
+    </header>
+    <div class="mb-card-body">{{ $html | safeHTML }}</div>
+    {{- with $gallery -}}
+    {{- $count := len . -}}
+    {{- $classes := slice "is-one" "is-two" "is-three" "is-four" -}}
+    {{- $class := "is-many" -}}
+    {{- if le $count 4 -}}{{- $class = index $classes (sub $count 1) -}}{{- end -}}
+    <div class="mb-card-images {{ $class }}" data-mb-image-count="{{ $count }}">
+        {{- range . }}
+        <a class="mb-img-cell" href="{{ .original }}" style="--mb-img-ratio: {{ if .width }}{{ .width }} / {{ .height }}{{ else }}4 / 3{{ end }}" aria-label="Open image">
+            <img src="{{ .src }}"{{ with .srcset }} srcset="{{ . }}" sizes="{{ if eq $count 1 }}(max-width: 768px) calc(100vw - 90px), 466px{{ else }}(max-width: 768px) calc((100vw - 94px) / 2), 231px{{ end }}"{{ end }} alt="" loading="lazy" decoding="async"{{ if .width }} width="{{ .width }}" height="{{ .height }}"{{ end }} data-mb-image>
+        </a>
+        {{- end }}
+    </div>
+    {{- end }}
+</article>
