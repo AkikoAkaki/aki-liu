@@ -11,6 +11,10 @@ export function initAboutPinboard() {
   if (!canvas || !summary) return;
   const pinboard = canvas.closest(".af-pinboard-section");
   const cards = [...document.querySelectorAll(".af-card-position")];
+  cards.forEach((el) => {
+    const angle = parseFloat(el.style.getPropertyValue("--pin-rot"));
+    el.style.setProperty("--hover-rot", angle < 0 ? "-0.8deg" : "0.8deg");
+  });
   const fliers = [...summary.querySelectorAll("[data-flier]")].map((el) => ({
     el,
     slot: el.parentElement,
@@ -23,6 +27,7 @@ export function initAboutPinboard() {
     if (!context.conditions.desktop) return;
     const drags = new Map();
     let flight = null;
+    let textMotion = [];
     let topZ = 40;
     let phase = "waiting";
     canvas.dataset.phase = phase;
@@ -72,7 +77,8 @@ export function initAboutPinboard() {
       phase = "flying";
       canvas.dataset.phase = phase;
       const blocks = [...summary.querySelectorAll(".af-now-block")];
-      const elements = [...blocks, pinboard, ...fliers.map(({ el }) => el)];
+      const firstRects = blocks.map((block) => block.getBoundingClientRect());
+      const elements = [pinboard, ...fliers.map(({ el }) => el)];
       const state = context.conditions.reduced ? null : Flip.getState(elements);
       const widths = fliers.map(({ el }) => el.offsetWidth);
 
@@ -94,11 +100,20 @@ export function initAboutPinboard() {
         finishFlight();
         return;
       }
+      // Text adopts its final wrapping once, then moves without scaling the glyphs.
+      textMotion = blocks.map((block, position) => {
+        const first = firstRects[position];
+        const last = block.getBoundingClientRect();
+        return block.animate([
+          { transform: `translate(${first.left - last.left}px, ${first.top - last.top}px)` },
+          { transform: "none" },
+        ], { duration: 620, easing: "cubic-bezier(0.65, 0, 0.35, 1)" });
+      });
       flight = Flip.from(state, {
         duration: 0.78,
         ease: "power3.inOut",
         nested: true,
-        scale: true,
+        scale: false,
         onComplete: finishFlight,
       });
     });
@@ -115,7 +130,10 @@ export function initAboutPinboard() {
       const width = canvas.getBoundingClientRect().width;
       if (Math.abs(width - canvasWidth) < 1) return;
       canvasWidth = width;
-      if (phase === "flying") flight?.progress(1);
+      if (phase === "flying") {
+        flight?.progress(1);
+        textMotion.forEach((animation) => animation.finish());
+      }
       drags.forEach((drag, el) => drag.applyBounds(bounds(el)));
     });
     resize.observe(canvas);
@@ -124,6 +142,7 @@ export function initAboutPinboard() {
       observer.disconnect();
       resize.disconnect();
       flight?.kill();
+      textMotion.forEach((animation) => animation.cancel());
       drags.forEach((drag) => drag.kill());
       fliers.forEach(({ el, slot }) => slot.appendChild(el));
       cards.forEach((el) => {

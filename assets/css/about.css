@@ -29,12 +29,23 @@ body.section-about .site-main {
     padding: 0 56px 110px;
 }
 
-body.section-about .af-page .reveal-on-scroll,
-body.section-about .af-page .reveal-pin {
+.af-enter {
     opacity: 1;
-    transform: none;
-    transition: none;
-    will-change: auto;
+    transition: opacity 420ms ease-out;
+}
+
+.af-enter.is-enter-pending {
+    opacity: 0;
+}
+
+@keyframes about-title-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes about-photo-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .af-photo-base img {
@@ -44,39 +55,12 @@ body.section-about .af-page .reveal-pin {
     object-fit: cover;
 }
 
-.af-default-caption {
+.af-photo-wrap > .af-default-caption {
     opacity: 1;
     transform: translate(0, -50%);
 }
 
-.af-gallery-controls {
-    position: absolute;
-    right: 12px;
-    bottom: 12px;
-    z-index: 40;
-    display: none;
-    gap: 4px;
-}
-
-.is-gallery-ready .af-gallery-controls {
-    display: flex;
-}
-
-.af-gallery-controls button {
-    display: grid;
-    place-items: center;
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--color-divider);
-    border-radius: 50%;
-    background: var(--bg-color);
-    color: var(--color-heading);
-    font: 16px/1 var(--font-sans);
-    cursor: pointer;
-}
-
 .af-photo-wrap:focus-visible,
-.af-gallery-controls button:focus-visible,
 .af-card-surface:focus-visible {
     outline: 2px solid var(--color-heading);
     outline-offset: 5px;
@@ -114,22 +98,20 @@ body.section-about .af-page .reveal-pin {
     letter-spacing: -0.015em;
     color: var(--color-heading);
     margin: 0;
-    animation: motion-sweep var(--motion-sweep-slow) var(--motion-ease-sweep)
-        forwards;
+    animation: about-title-in 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .af-display-row h1:nth-of-type(1) {
-    animation-delay: 0.1s;
+    animation-delay: 60ms;
 }
 
 .af-display-row .af-h-r {
-    animation-duration: 1s;
-    animation-delay: 0.6s;
+    animation-delay: 120ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .af-display-row h1 {
-        clip-path: none;
+    .af-display-row h1,
+    .af-center-band {
         animation: none;
     }
 }
@@ -149,6 +131,7 @@ body.section-about .af-page .reveal-pin {
     align-items: end;
     gap: 56px;
     padding-top: 64px;
+    animation: about-photo-in 540ms ease-out 100ms both;
 }
 
 body.section-about.about-sequence-open .af-center-band {
@@ -168,7 +151,8 @@ body.section-about.about-sequence-open .site-wrapper {
     cursor: ns-resize;
 }
 
-.af-photo-wrap.is-sequence-open {
+.af-photo-wrap.is-sequence-open,
+.af-photo-wrap.is-sequence-closing {
     z-index: 4100;
 }
 
@@ -177,15 +161,18 @@ body.section-about.about-sequence-open .site-wrapper {
 }
 
 .af-photo-base {
-    transition: opacity 120ms ease;
+    position: relative;
+    height: 100%;
 }
 
-.af-photo-wrap.is-sequence-open .af-photo-base {
-    opacity: 0;
+.af-photo-base .af-photo-incoming {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
 }
 
 .af-photo-wrap.is-sequence-open .af-default-caption {
-    opacity: 0 !important;
+    opacity: 0;
 }
 
 .af-sequence-layer {
@@ -199,7 +186,8 @@ body.section-about.about-sequence-open .site-wrapper {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 150ms ease, visibility 150ms;
+    background: var(--bg-color);
+    transition: opacity 220ms ease, visibility 220ms;
 }
 
 .af-photo-wrap.is-sequence-open .af-sequence-layer {
@@ -376,18 +364,9 @@ body.section-about.about-sequence-open .site-wrapper {
 .af-enrollment-slip {
     position: relative;
     color: var(--color-heading);
-    transition:
-        transform 0.4s var(--ease-out-expo),
-        box-shadow 0.25s ease;
 }
 
-.af-origin-label:hover {
-    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.06);
-}
 
-.af-enrollment-slip:hover {
-    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.06);
-}
 
 .af-flier-slot[data-slot-for="coordinates"] {
     grid-area: coordinates;
@@ -790,15 +769,6 @@ body.section-about.about-sequence-open .site-wrapper {
         0 1px 3px rgba(0, 0, 0, 0.05),
         0 14px 28px rgba(0, 0, 0, 0.07);
     border: 1px solid rgba(0, 0, 0, 0.04);
-    transition:
-        transform 0.4s var(--ease-out-expo),
-        box-shadow 0.25s ease;
-}
-.af-polaroid:hover {
-    box-shadow:
-        0 1px 0 rgba(0, 0, 0, 0.04) inset,
-        0 4px 8px rgba(0, 0, 0, 0.06),
-        0 28px 48px rgba(0, 0, 0, 0.1);
 }
 .af-polaroid-caption {
     position: absolute;
@@ -823,7 +793,6 @@ body.section-about.about-sequence-open .site-wrapper {
     font-style: italic;
     color: var(--color-heading);
     letter-spacing: 0.003em;
-    transition: transform 0.4s var(--ease-out-expo);
 }
 .af-notebook::before {
     content: "";
@@ -853,7 +822,6 @@ body.section-about.about-sequence-open .site-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: transform 0.4s var(--ease-out-expo);
 }
 .af-book-title {
     font-style: italic;
@@ -881,7 +849,6 @@ body.section-about.about-sequence-open .site-wrapper {
     font: 400 9px/1.55 var(--font-sans);
     color: var(--color-muted);
     letter-spacing: 0.04em;
-    transition: transform 0.4s var(--ease-out-expo);
 }
 .af-cv-card-head {
     font: 700 10px/1 var(--font-sans);
@@ -922,14 +889,6 @@ body.section-about.about-sequence-open .site-wrapper {
     color: inherit;
     display: block;
     z-index: 5;
-    transition:
-        transform 0.4s var(--ease-out-expo),
-        box-shadow 0.25s ease;
-}
-.af-courses-card:hover {
-    box-shadow:
-        0 4px 8px rgba(0, 0, 0, 0.06),
-        0 28px 48px rgba(0, 0, 0, 0.1);
 }
 .af-courses-card-punch {
     position: absolute;
@@ -1057,17 +1016,17 @@ body.section-about.about-sequence-open .site-wrapper {
     margin: 0;
     rotate: var(--pin-rot, 0deg);
     transform: none;
-    transition: rotate 240ms var(--ease-out-expo),
-        transform 240ms var(--ease-out-expo), box-shadow 240ms ease;
+    transition: rotate 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .af-card-position > a.af-card-surface {
     display: block;
 }
 
-.af-card-position:not(.is-flying):hover > .af-card-surface {
-    rotate: 0deg;
-    transform: translateY(-4px);
+@media (hover: hover) and (pointer: fine) {
+    .af-card-position:not(.is-flying):not([data-dragging]):hover > .af-card-surface {
+        rotate: calc(var(--pin-rot, 0deg) + var(--hover-rot, 0.8deg));
+    }
 }
 
 .af-card-position.is-flying > .af-card-surface {
@@ -1242,6 +1201,7 @@ body.section-about.about-sequence-open .site-wrapper {
 
 @media (prefers-reduced-motion: reduce) {
     .af-page .af-card-position > .af-card-surface,
+    .af-page .af-enter,
     .af-page .af-photo-base,
     .af-page .af-sequence-layer {
         transition: none;
