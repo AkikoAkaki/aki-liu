@@ -1,4 +1,5 @@
 import EmblaCarousel from "./vendor-embla-8.6.0.js";
+import { gsap } from "./vendor-gsap-3.13.0.js";
 import { media, QUERIES } from "./media.js";
 
 export function initAboutGallery() {
@@ -15,15 +16,16 @@ export function initAboutGallery() {
   const decoded = new Map();
   let index = Number(root.dataset.initialIndex);
   let coverIndex = index;
-  let anchorIndex = index;
   let carousel = null;
   let expanded = false;
+  let settling = false;
   let pointerInside = false;
   let keyboardActive = false;
   let openRequest = 0;
+  let closeRequest = 0;
   let coverRequest = 0;
   let coverTransition = null;
-  let gesture = { time: 0, direction: 0, distance: 0, consumed: false };
+  let snapTween = null;
 
   const wrap = (value) => (value + items.length) % items.length;
 
@@ -56,7 +58,7 @@ export function initAboutGallery() {
       cover.alt = image.alt;
       coverIndex = position;
       root.style.aspectRatio = ratio;
-      describe(position);
+      if (!expanded || settling) describe(position);
     };
 
     if (!animate || reducedMotion.matches || coverIndex === position) {
@@ -106,16 +108,59 @@ export function initAboutGallery() {
     }
   }
 
+  function syncScroll() {
+    const engine = carousel.internalEngine();
+    engine.animation.stop();
+    const position = engine.offsetLocation.get();
+    engine.location.set(position);
+    engine.previousLocation.set(position);
+    engine.target.set(position);
+    engine.scrollBody.useDuration(0);
+    return engine;
+  }
+
+  function moveBy(distance) {
+    const engine = syncScroll();
+    const delta = engine.options.loop ? distance % engine.limit.length : distance;
+    engine.scrollTo.distance(delta, false);
+  }
+
+  function snapTo(position) {
+    const engine = syncScroll();
+    const distance = engine.scrollTarget.byIndex(position, 0).distance;
+    if (Math.abs(distance) < 0.01) return Promise.resolve();
+    const motion = { offset: 0 };
+    let previous = 0;
+    return new Promise((resolve) => {
+      snapTween = gsap.to(motion, {
+        offset: distance, duration: 0.36, ease: "power3.out",
+        onUpdate() {
+          moveBy(motion.offset - previous);
+          previous = motion.offset;
+        },
+        onComplete: resolve,
+        onInterrupt: resolve,
+      });
+    });
+  }
+
   async function open() {
-    if (!carousel || expanded) return;
+    if (!carousel) return;
+    closeRequest += 1;
+    snapTween?.kill();
+    settling = false;
+    if (expanded) return;
+    const wasVisible = root.classList.contains("is-sequence-closing");
     const request = ++openRequest;
     const ready = await Promise.all(images.map((_, position) => loadImage(position)));
     if (request !== openRequest || !carousel || !ready[index] || (!pointerInside && !keyboardActive)) return;
     const rect = root.getBoundingClientRect();
     const center = rect.top + rect.height / 2;
     // Include all visible neighbors before asking Embla to position its loop boundaries.
-    viewport.style.height = `${Math.ceil(2 * Math.max(center, innerHeight - center) + 56)}px`;
-    carousel.reInit({ startIndex: index });
+    if (!wasVisible) {
+      viewport.style.height = `${Math.ceil(2 * Math.max(center, innerHeight - center) + 56)}px`;
+      carousel.reInit({ startIndex: index });
+    }
     expanded = true;
     describe(index);
     root.classList.remove("is-sequence-closing");
@@ -123,21 +168,30 @@ export function initAboutGallery() {
     document.body.classList.add("about-sequence-open");
   }
 
-  function close(immediate = false) {
-    const wasExpanded = expanded;
+  async function close(immediate = false) {
     openRequest += 1;
-    expanded = false;
-    root.classList.remove("is-sequence-open");
-    if (carousel) describe(anchorIndex);
+    if (!immediate && (!expanded || settling)) return;
+    const request = ++closeRequest;
     if (immediate) {
+      snapTween?.kill();
+      expanded = false;
+      settling = false;
+      root.classList.remove("is-sequence-open");
       root.classList.remove("is-sequence-closing");
       document.body.classList.remove("about-sequence-open");
       return;
     }
-    if (!wasExpanded && !root.classList.contains("is-sequence-closing")) return;
+    settling = true;
+    const engine = syncScroll();
+    const nearest = engine.scrollTarget.byDistance(0, false).index;
+    await Promise.all([snapTo(nearest), showCover(nearest, true)]);
+    if (request !== closeRequest || !carousel) return;
+    expanded = false;
+    settling = false;
+    root.classList.remove("is-sequence-open");
     root.classList.add("is-sequence-closing");
     Promise.allSettled(viewport.getAnimations().map((animation) => animation.finished)).then(() => {
-      if (expanded) return;
+      if (expanded || request !== closeRequest) return;
       root.classList.remove("is-sequence-closing");
       document.body.classList.remove("about-sequence-open");
     });
@@ -148,7 +202,6 @@ export function initAboutGallery() {
     coverTransition?.animations.forEach((animation) => animation.finish());
     carousel?.destroy();
     carousel = null;
-    anchorIndex = index;
     showCover(index);
     const useSequence = desktop.matches && !reducedMotion.matches;
     root.classList.toggle("is-tap-gallery", !useSequence);
@@ -197,22 +250,15 @@ export function initAboutGallery() {
     event.preventDefault();
   });
   root.addEventListener("wheel", (event) => {
-    if (!expanded || event.ctrlKey || event.metaKey || !event.cancelable ||
+    if (!expanded || (!pointerInside && !keyboardActive) || event.ctrlKey || event.metaKey || !event.cancelable ||
         Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
     event.preventDefault();
-    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? root.clientHeight : 1;
+    closeRequest += 1;
+    snapTween?.kill();
+    settling = false;
+    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1;
     const distance = event.deltaY * unit;
-    const direction = Math.sign(distance);
-    const time = performance.now();
-    if (time - gesture.time > 160 || direction !== gesture.direction) {
-      gesture = { time, direction, distance: 0, consumed: false };
-    }
-    gesture.time = time;
-    gesture.distance += distance;
-    if (!gesture.consumed && Math.abs(gesture.distance) >= 48) {
-      gesture.consumed = true;
-      goTo(index + direction);
-    }
+    moveBy(-distance);
   }, { passive: false });
   desktop.addEventListener("change", configure);
   reducedMotion.addEventListener("change", configure);

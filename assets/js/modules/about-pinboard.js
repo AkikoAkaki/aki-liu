@@ -9,7 +9,8 @@ export function initAboutPinboard() {
   const canvas = document.getElementById("about-pinboard-canvas");
   const summary = document.getElementById("about-summary");
   if (!canvas || !summary) return;
-  const pinboard = canvas.closest(".af-pinboard-section");
+  const blocks = [...summary.querySelectorAll(".af-now-block")];
+  const layoutStyles = new Map([summary, canvas, ...blocks].map((el) => [el, el.style.cssText]));
   const cards = [...document.querySelectorAll(".af-card-position")];
   cards.forEach((el) => {
     const angle = parseFloat(el.style.getPropertyValue("--pin-rot"));
@@ -27,7 +28,6 @@ export function initAboutPinboard() {
     if (!context.conditions.desktop) return;
     const drags = new Map();
     let flight = null;
-    let textMotion = [];
     let topZ = 40;
     let phase = "waiting";
     canvas.dataset.phase = phase;
@@ -64,6 +64,9 @@ export function initAboutPinboard() {
     canvas.querySelectorAll(".af-card-position").forEach(makeDraggable);
 
     function finishFlight() {
+      summary.style.removeProperty("height");
+      canvas.style.removeProperty("height");
+      canvas.style.removeProperty("min-height");
       phase = "landed";
       canvas.dataset.phase = phase;
       fliers.forEach(({ el }) => {
@@ -76,11 +79,19 @@ export function initAboutPinboard() {
       if (phase !== "waiting") return;
       phase = "flying";
       canvas.dataset.phase = phase;
-      const blocks = [...summary.querySelectorAll(".af-now-block")];
       const firstRects = blocks.map((block) => block.getBoundingClientRect());
-      const elements = [pinboard, ...fliers.map(({ el }) => el)];
-      const state = context.conditions.reduced ? null : Flip.getState(elements);
+      const summaryHeight = summary.offsetHeight;
+      const canvasHeight = canvas.offsetHeight;
+      const blockWidths = blocks.map((block) => block.offsetWidth);
+      const state = context.conditions.reduced ? null : Flip.getState(fliers.map(({ el }) => el));
       const widths = fliers.map(({ el }) => el.offsetWidth);
+
+      // Reserve the old flow before moving cards; text keeps its original wrapping.
+      summary.style.height = `${summaryHeight}px`;
+      summary.style.setProperty("--summary-width", `${Math.max(...blockWidths)}px`);
+      canvas.style.height = `${canvasHeight}px`;
+      canvas.style.minHeight = "0px";
+      blocks.forEach((block, position) => { block.style.width = `${blockWidths[position]}px`; });
 
       fliers.forEach(({ el, target }, position) => {
         canvas.appendChild(el);
@@ -96,26 +107,30 @@ export function initAboutPinboard() {
       summary.classList.add("is-flown");
       canvas.classList.add("is-loaded");
 
+      summary.style.removeProperty("height");
+      const finalSummaryHeight = summary.offsetHeight;
+      summary.style.height = `${summaryHeight}px`;
+      canvas.style.removeProperty("height");
+      canvas.style.removeProperty("min-height");
+      const finalCanvasHeight = canvas.offsetHeight;
+      canvas.style.height = `${canvasHeight}px`;
+      canvas.style.minHeight = "0px";
+
       if (context.conditions.reduced) {
         finishFlight();
         return;
       }
-      // Text adopts its final wrapping once, then moves without scaling the glyphs.
-      textMotion = blocks.map((block, position) => {
+      const timing = { duration: 0.78, ease: "power3.inOut" };
+      flight = gsap.timeline({ onComplete: finishFlight });
+      blocks.forEach((block, position) => {
         const first = firstRects[position];
         const last = block.getBoundingClientRect();
-        return block.animate([
-          { transform: `translate(${first.left - last.left}px, ${first.top - last.top}px)` },
-          { transform: "none" },
-        ], { duration: 620, easing: "cubic-bezier(0.65, 0, 0.35, 1)" });
+        flight.fromTo(block, { x: first.left - last.left, y: first.top - last.top },
+          { x: 0, y: 0, ...timing, clearProps: "transform" }, 0);
       });
-      flight = Flip.from(state, {
-        duration: 0.78,
-        ease: "power3.inOut",
-        nested: true,
-        scale: false,
-        onComplete: finishFlight,
-      });
+      flight.to(summary, { height: finalSummaryHeight, ...timing }, 0);
+      flight.to(canvas, { height: finalCanvasHeight, ...timing }, 0);
+      flight.add(Flip.from(state, { ...timing, scale: false }), 0);
     });
 
     const observer = new IntersectionObserver((entries) => {
@@ -132,7 +147,6 @@ export function initAboutPinboard() {
       canvasWidth = width;
       if (phase === "flying") {
         flight?.progress(1);
-        textMotion.forEach((animation) => animation.finish());
       }
       drags.forEach((drag, el) => drag.applyBounds(bounds(el)));
     });
@@ -142,7 +156,6 @@ export function initAboutPinboard() {
       observer.disconnect();
       resize.disconnect();
       flight?.kill();
-      textMotion.forEach((animation) => animation.cancel());
       drags.forEach((drag) => drag.kill());
       fliers.forEach(({ el, slot }) => slot.appendChild(el));
       cards.forEach((el) => {
@@ -150,6 +163,7 @@ export function initAboutPinboard() {
         el.classList.remove("is-flying");
         delete el.dataset.dragging;
       });
+      layoutStyles.forEach((style, el) => { el.style.cssText = style; });
       summary.classList.remove("is-flown");
       canvas.classList.remove("is-loaded");
       delete canvas.dataset.phase;

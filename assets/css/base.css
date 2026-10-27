@@ -782,14 +782,14 @@ body.menu-cursor-hidden * {
         transition:
             opacity 0.18s ease,
             transform 0.35s var(--ease-out-expo),
-            visibility 0s linear 0.35s !important;
+            visibility 0s linear 0.35s;
     }
 
     .menu-link {
         transition:
             opacity 0.18s ease,
             transform 0.3s var(--ease-out-expo),
-            background-color 0.2s ease !important;
+            background-color 0.2s ease;
     }
 
     .menu-link::before,
