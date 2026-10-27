@@ -16,12 +16,71 @@
 }
 
 
+.home-page {
+    --home-glass-fill: rgb(250 251 250 / 42%);
+    --home-glass-sheen: rgb(255 255 255 / 6%);
+    --home-glass-edge: rgb(255 255 255 / 32%);
+    --home-glass-shadow: inset 0 1px 0 rgb(255 255 255 / 25%);
+}
+
+:root[data-theme="dark"] .home-page {
+    --home-glass-fill: rgb(14 20 21 / 52%);
+    --home-glass-sheen: rgb(179 213 210 / 3%);
+    --home-glass-edge: rgb(207 231 227 / 10%);
+    --home-glass-shadow: inset 0 1px 0 rgb(226 245 242 / 5%);
+}
+
+.home-glass {
+    background: linear-gradient(145deg, var(--home-glass-sheen), transparent 60%), var(--home-glass-fill);
+    border: 1px solid var(--home-glass-edge);
+    border-radius: 24px;
+    box-shadow: var(--home-glass-shadow);
+    -webkit-backdrop-filter: blur(20px) saturate(130%);
+    backdrop-filter: blur(20px) saturate(130%);
+    box-sizing: border-box;
+}
+
+.reading-haze {
+    position: relative;
+    z-index: 0;
+}
+
+.reading-haze::before {
+    content: "";
+    position: absolute;
+    inset: -2rem -2.5rem;
+    z-index: -1;
+    pointer-events: none;
+    background: color-mix(in srgb, var(--bg-color) 66%, transparent);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    mask-image:
+        linear-gradient(to right, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent),
+        linear-gradient(to bottom, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+    mask-composite: intersect;
+}
+
 .home-container {
     display: flex;
     flex-direction: column;
     gap: 8rem;
     padding-top: 2rem;
     padding-bottom: 8rem;
+}
+
+/* The sticky canvas fills one viewport throughout the page. Its negative
+   margin keeps it out of the layout; the inset leaves Safari's edges clear. */
+.home-page .home-field {
+    --field-top: max(2px, env(safe-area-inset-top, 0px));
+    --field-bottom: max(2px, env(safe-area-inset-bottom, 0px));
+    --field-height: calc(100svh - var(--field-top) - var(--field-bottom));
+    position: sticky !important;
+    inset: auto !important;
+    top: var(--field-top) !important;
+    width: 100% !important;
+    height: var(--field-height) !important;
+    flex: none;
+    margin-bottom: calc(-1 * var(--field-height));
 }
 
 @media (max-width: 768px) {
@@ -66,6 +125,16 @@
     width: 85%;
     height: auto;
     display: block;
+}
+
+:root[data-theme="dark"] .home-page .hero-svg {
+    filter: invert(1);
+}
+
+.intro-copy {
+    width: 100%;
+    max-width: 600px;
+    display: flow-root;
 }
 
 .bio-text {
@@ -145,14 +214,15 @@
         line-height: 1.45;
         margin-bottom: 1rem;
     }
+
+    .work-grid .work-item-role {
+        white-space: normal;
+    }
 }
 
 
 .work-table-section {
     margin-bottom: 0;
-    opacity: 0;
-    animation: motion-rise 0.6s ease forwards;
-    animation-delay: 0.1s;
     width: 100%;
     position: relative;
 }
@@ -166,12 +236,6 @@
     max-width: 920px;
     margin: 0 auto;
     transform: translateX(2rem);
-}
-
-@media (max-width: 900px) {
-    .work-grid {
-        transform: none;
-    }
 }
 
 .work-column {
@@ -223,15 +287,10 @@
 }
 
 .nav-panel {
-    background-color: var(
-        --footer-reveal-bg
-    );
-    border: none;
     border-radius: 28px;
     padding: 8px;
     width: 100%;
     max-width: 280px;
-    box-shadow: none;
     margin-top: -1.25rem;
     margin-bottom: -1.25rem;
     height: calc(100% + 2.5rem);
@@ -241,7 +300,6 @@
 }
 
 .nav-panel-content {
-    background-color: var(--bg-color);
     border-radius: 20px;
     padding: 1.5rem;
     height: 100%;
@@ -482,6 +540,7 @@ a.nav-panel-subitem:hover {
         grid-template-columns: minmax(0, 1fr);
         gap: 3.5rem;
         max-width: 680px;
+        transform: none;
     }
 
     .work-column {
@@ -582,9 +641,6 @@ a.nav-panel-subitem:hover {
 
 .now-section {
     margin-top: 0;
-    opacity: 0;
-    animation: motion-rise 0.6s ease forwards;
-    animation-delay: 0.2s;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -600,14 +656,7 @@ a.nav-panel-subitem:hover {
 }
 
 .now-card-expandable {
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
     border-radius: 20px;
-    box-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.02),
-        0 6px 12px rgba(0, 0, 0, 0.03),
-        inset 0 1px 1px rgba(255, 255, 255, 0.8),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.03);
     overflow: hidden;
     transition:
         box-shadow 0.3s ease,
@@ -617,11 +666,7 @@ a.nav-panel-subitem:hover {
 }
 
 .now-card-expandable:hover {
-    box-shadow:
-        0 4px 8px rgba(0, 0, 0, 0.03),
-        0 8px 16px rgba(0, 0, 0, 0.04),
-        inset 0 1px 1px rgba(255, 255, 255, 0.9),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.04);
+    border-color: color-mix(in srgb, var(--color-heading) 24%, var(--home-glass-edge));
 }
 
 .now-card-header {

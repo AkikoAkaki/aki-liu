@@ -1,11 +1,11 @@
-import { initFluidEngine } from "./modules/fluid-init.js";
+import { initHomeField } from "./modules/home-field.js";
 import { initHomeHoverPreview } from "./modules/home-preview.js";
 import { matches, QUERIES } from "./modules/media.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initExpandableCards();
   initHomeHoverPreview();
-  initFluidEngine();
+  initHomeField();
   const navContent = document.querySelector(".nav-panel-content");
   const leftCol = document.querySelector(".work-column:not(.nav-panel-column)");
   if (!navContent || !leftCol) return;

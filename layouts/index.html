@@ -28,6 +28,7 @@
         <div class="author-name-svg-wrapper">
             <img src="{{ $heroHref }}" alt="{{ $data.intro.name }}" class="hero-svg" width="1880" height="1000">
         </div>
+        <div class="intro-copy reading-haze">
         {{- range $index, $para := $data.intro.bio }}
         {{- $paragraph := $para -}}
         {{- range $from, $to := $internalHrefReplacements -}}
@@ -37,6 +38,7 @@
             {{- if eq $index 0 }}<em>{{ $data.intro.tagline }}</em>. {{ end }}{{ $paragraph | safeHTML }}
         </p>
         {{- end }}
+        </div>
     </section>
 
     {{/* Work grid section */}}
@@ -45,7 +47,7 @@
             {{/* Left column: Experience, Project, About */}}
             <div class="work-column">
                 {{- range $cell := $data.grid.left }}
-                <div class="work-cell">
+                <div class="work-cell reading-haze">
                     <h3 class="work-col-title">
                         {{- if $cell.link -}}
                         <a href="{{ $cell.link | relLangURL }}">{{ $cell.title }}</a>
@@ -96,7 +98,7 @@
 
             {{/* Right column: Section navigation */}}
             <div class="work-column nav-panel-column">
-                <div class="nav-panel">
+                <div class="nav-panel home-glass">
                     <div class="nav-panel-content">
                         <div class="nav-panel-header">Navigation</div>
                         <nav class="nav-panel-list">
@@ -133,7 +135,7 @@
     <section class="now-section">
         <div class="now-cards-container">
             {{- range $index, $card := $data.now.cards }}
-            <div class="now-card-expandable is-collapsed">
+            <div class="now-card-expandable home-glass is-collapsed">
                 <button class="now-card-header" type="button" aria-expanded="false" aria-controls="now-card-{{ $index }}">
                     <span class="nc-title-collapsed">{{ .title }}</span>
                     <span class="nc-title-expanded">{{ .title }}</span>
