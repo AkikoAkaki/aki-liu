@@ -151,9 +151,14 @@ document.addEventListener('DOMContentLoaded', function () {
         let touchStartY = 0;
         let trackingTouch = false;
         const drawerContent = sidebarToc.querySelector('.post-toc-content');
+        const drawerToggle = sidebarToc.querySelector('.post-toc-toggle');
         const setDrawerOpen = (open) => {
+            const isDrawer = matches(QUERIES.tablet);
+            const hadFocus = drawerContent && drawerContent.contains(document.activeElement);
             sidebarToc.classList.toggle('is-drawer-open', open);
-            if (drawerContent) drawerContent.inert = matches(QUERIES.tablet) && !open;
+            if (drawerToggle) drawerToggle.setAttribute('aria-expanded', String(open));
+            if (drawerContent) drawerContent.inert = isDrawer && !open;
+            if (isDrawer && !open && hadFocus && drawerToggle) drawerToggle.focus({ preventScroll: true });
         };
         setDrawerOpen(sidebarToc.classList.contains('is-drawer-open'));
         window.matchMedia(QUERIES.tablet).addEventListener('change', () => setDrawerOpen(false));
@@ -258,6 +263,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+
+        if (drawerToggle) {
+            drawerToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                setDrawerOpen(!sidebarToc.classList.contains('is-drawer-open'));
+                dismissHint();
+            });
+        }
 
         sidebarToc.addEventListener('click', (e) => {
             const isMobile = matches(QUERIES.tablet);

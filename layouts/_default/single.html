@@ -48,7 +48,8 @@
     </div>
     {{ if .Store.Get "hasTOC" }}
     <aside class="post-toc post-toc--sidebar" data-tag="{{ .Store.Get "firstTag" }}" aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
-        <div class="post-toc-content">
+        <button type="button" class="post-toc-toggle" aria-controls="post-toc-content" aria-expanded="false" aria-label="{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}"></button>
+        <div class="post-toc-content" id="post-toc-content">
             <div class="post-toc-header">{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}</div>
             {{ .Store.Get "toc" }}
         </div>

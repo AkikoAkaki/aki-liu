@@ -25,7 +25,7 @@ export function initHomeField() {
     },
   });
 
-  const canvas = host.querySelector(":scope > canvas[data-ascii-kit]");
+  const canvas = field.field?.canvas;
   if (!canvas) return;
   canvas.classList.add("home-field");
   host.prepend(canvas);
