@@ -1,0 +1,39 @@
+{{- $pages := where (where .Pages "Kind" "page") "Params.hidden" "!=" true -}}
+{{- $initialTags := slice -}}
+{{- if and (eq .Kind "term") (eq .Type "tags") -}}
+    {{- $pages = where .Site.RegularPages "Section" "in" .Site.MainSections -}}
+    {{- $initialTags = slice (.Data.Term | urlize) -}}
+{{- else if and (eq .Language.Lang "en") (eq (len $pages) 0) -}}
+    {{- with .Sites.Default.GetPage "section" .Section -}}
+        {{- $pages = where .Pages "Kind" "page" -}}
+    {{- end -}}
+{{- end -}}
+{{- $pages = (where $pages "Params.hidden" "!=" true).ByPublishDate.Reverse -}}
+{{- $entries := slice -}}
+{{- $years := slice -}}
+{{- $visibleYears := slice -}}
+{{- $count := 0 -}}
+{{- range $pages -}}
+    {{- $tags := slice -}}
+    {{- range .GetTerms "tags" -}}
+        {{- $tags = $tags | append (.LinkTitle | urlize) -}}
+    {{- end -}}
+    {{- $year := .Date.Format "2006" -}}
+    {{- $visible := or (eq (len $initialTags) 0) (gt (len (intersect $tags $initialTags)) 0) -}}
+    {{- $entries = $entries | append (dict "page" . "tags" $tags "year" $year "visible" $visible) -}}
+    {{- $years = $years | append $year -}}
+    {{- if $visible -}}
+        {{- $count = add $count 1 -}}
+        {{- $visibleYears = $visibleYears | append $year -}}
+    {{- end -}}
+{{- end -}}
+{{- return (dict
+    "context" .
+    "regularPages" $pages
+    "entries" $entries
+    "years" (sort (uniq $years) "value" "desc")
+    "tagSlice" (partial "tag-sidebar-data.html" (dict "pages" $pages))
+    "initialTags" $initialTags
+    "entryCount" $count
+    "yearCount" (len (uniq $visibleYears))
+) -}}

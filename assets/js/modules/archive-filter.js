@@ -1,325 +1,128 @@
 import { initArchivePreview } from "./archive-preview.js";
+import {
+  archiveEntries,
+  readArchiveFilters,
+  updateArchiveView,
+  syncArchiveURL,
+} from "./archive-state.js";
 import { media, QUERIES } from "./media.js";
 
 export function initArchiveFilter() {
-  const archiveList = document.querySelector(
-    ".archive-list[data-archive-filter-root]",
-  );
-  if (!archiveList) return;
-  const archiveItems = [...archiveList.querySelectorAll(".archive-item")];
-  if (!archiveItems.length) return;
+  const list = document.querySelector("[data-archive-filter-root]");
+  if (!list) return;
+  const entries = archiveEntries(list);
+  const preview = initArchivePreview(list);
+  const reducedMotion = media(QUERIES.reducedMotion);
+  const controls = [...document.querySelectorAll(".archive-tag-item[data-tag], .archive-year-item[data-year]")];
+  const motions = new Map();
+  let exitLayer = null;
+  let filters = readArchiveFilters(list);
 
-  const preview = initArchivePreview(archiveList, archiveItems);
-  if (document.body.classList.contains("section-microblog")) return;
-
-  const tagControls = [
-    ...document.querySelectorAll(".archive-tag-item[data-tag]"),
-  ];
-  const yearControls = [
-    ...document.querySelectorAll(".archive-year-item[data-year]"),
-  ];
-  const entryStat = document.querySelector(
-    '[data-archive-stat="entries"]',
-  );
-  const yearStat = document.querySelector('[data-archive-stat="years"]');
-  const reduceMotionQuery = media(QUERIES.reducedMotion);
-  const selectedTags = new Set();
-  const selectedYears = new Set();
-  let filterToken = 0;
-  const validTags = new Set(
-    tagControls
-      .map((el) => normalizeToken(el.dataset.tag))
-      .filter(Boolean),
-  );
-  const validYears = new Set(
-    yearControls
-      .map((el) => normalizeYear(el.dataset.year))
-      .filter(Boolean),
-  );
-  const initialTags = parseList(archiveList.dataset.archiveInitialTags)
-    .map(normalizeToken)
-    .filter(Boolean);
-  const allowedURLTags = new Set([...validTags, ...initialTags]);
-
-  function normalizeToken(value) {
-    return String(value || "")
-      .trim()
-      .toLowerCase();
+  function cancelMotion() {
+    motions.forEach((animation) => animation.cancel());
+    motions.clear();
+    exitLayer?.remove();
+    exitLayer = null;
   }
 
-  function normalizeYear(value) {
-    const year = String(value || "").trim();
-    return /^\d{4}$/.test(year) ? year : "";
-  }
-
-  function parseList(value) {
-    return String(value || "")
-      .split(",")
-      .map((part) => part.trim())
-      .filter(Boolean);
-  }
-
-  function itemTags(item) {
-    return parseList(item.dataset.archiveTags).map(normalizeToken);
-  }
-
-  function itemYear(item) {
-    return normalizeYear(item.dataset.archiveYear);
-  }
-
-  function readFiltersFromURL(useInitialTags) {
-    const params = new URLSearchParams(window.location.search);
-    const urlTags = parseList(params.get("tags"))
-      .map(normalizeToken)
-      .filter((tag) => allowedURLTags.has(tag));
-    const urlYears = parseList(params.get("years"))
-      .map(normalizeYear)
-      .filter((year) => validYears.has(year));
-    const tags =
-      urlTags.length || params.has("tags") || !useInitialTags
-        ? urlTags
-        : initialTags;
-
-    selectedTags.clear();
-    selectedYears.clear();
-    tags.forEach((tag) => selectedTags.add(tag));
-    urlYears.forEach((year) => selectedYears.add(year));
-  }
-
-  function matchesFilters(item) {
-    const tags = itemTags(item);
-    const year = itemYear(item);
-    const matchesTag =
-      selectedTags.size === 0 ||
-      tags.some((tag) => selectedTags.has(tag));
-    const matchesYear =
-      selectedYears.size === 0 || selectedYears.has(year);
-    return matchesTag && matchesYear;
-  }
-
-  function matchingItems() {
-    return archiveItems.filter(matchesFilters);
-  }
-
-  function updateFilterControls() {
-    tagControls.forEach((el) => {
-      el.classList.toggle(
-        "active",
-        selectedTags.has(normalizeToken(el.dataset.tag)),
-      );
+  function animate(element, keyframes, duration, removeOnFinish = false) {
+    const animation = element.animate(keyframes, {
+      duration,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
     });
-    yearControls.forEach((el) => {
-      el.classList.toggle(
-        "active",
-        selectedYears.has(normalizeYear(el.dataset.year)),
-      );
-    });
-  }
-
-  function updateStats(items) {
-    if (entryStat) entryStat.textContent = String(items.length);
-    if (yearStat) {
-      const years = new Set(items.map(itemYear).filter(Boolean));
-      yearStat.textContent = String(years.size);
-    }
-  }
-
-  function syncURL(replace) {
-    const url = new URL(window.location.href);
-    const tags = [...selectedTags].sort();
-    const years = [...selectedYears].sort().reverse();
-    if (tags.length) {
-      url.searchParams.set("tags", tags.join(","));
-    } else {
-      url.searchParams.delete("tags");
-    }
-    if (years.length) {
-      url.searchParams.set("years", years.join(","));
-    } else {
-      url.searchParams.delete("years");
-    }
-
-    const next = url.pathname + (url.search ? url.search : "") + url.hash;
-    const current =
-      window.location.pathname +
-      window.location.search +
-      window.location.hash;
-    if (next !== current) {
-      const state = { archiveTags: tags, archiveYears: years };
-      if (replace) {
-        history.replaceState(state, "", next);
-      } else {
-        history.pushState(state, "", next);
+    motions.set(element, animation);
+    animation.addEventListener("finish", () => {
+      if (motions.get(element) !== animation) return;
+      motions.delete(element);
+      if (removeOnFinish) element.remove();
+      if (!motions.size) {
+        exitLayer?.remove();
+        exitLayer = null;
       }
+    }, { once: true });
+  }
+
+  function applyFilters(withMotion = true) {
+    const moving = withMotion && !reducedMotion.matches;
+    const before = new Map();
+    if (moving) {
+      entries.filter(({ element }) => !element.hidden).forEach(({ element }) => {
+        before.set(element, {
+          rect: element.getBoundingClientRect(),
+          opacity: Number(getComputedStyle(element).opacity),
+        });
+      });
     }
-  }
 
-  function captureRects(items) {
-    const rects = new Map();
-    items.forEach((item) =>
-      rects.set(item, item.getBoundingClientRect()),
-    );
-    return rects;
-  }
-
-  function animateReflow(beforeRects, items) {
-    items.forEach((item) => {
-      const before = beforeRects.get(item);
-      if (!before || typeof item.animate !== "function") return;
-      const after = item.getBoundingClientRect();
-      const dx = before.left - after.left;
-      const dy = before.top - after.top;
-      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
-      item.animate(
-        [
-          { transform: `translate3d(${dx}px, ${dy}px, 0)` },
-          { transform: "translate3d(0, 0, 0)" },
-        ],
-        {
-          duration: 260,
-          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-        },
-      );
-    });
-  }
-
-  function animateEntering(items) {
-    items.forEach((item) => {
-      if (typeof item.animate !== "function") {
-        item.style.opacity = "";
-        item.style.transform = "";
-        return;
-      }
-      const animation = item.animate(
-        [
-          { opacity: 0, transform: "translateY(6px)" },
-          { opacity: 1, transform: "translateY(0)" },
-        ],
-        {
-          duration: 220,
-          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-        },
-      );
-      animation.addEventListener(
-        "finish",
-        () => {
-          item.style.opacity = "";
-          item.style.transform = "";
-        },
-        { once: true },
-      );
-    });
-  }
-
-  function finishFilterTransition(
-    token,
-    beforeRects,
-    toShow,
-    matchedSet,
-  ) {
-    if (token !== filterToken) return;
-    toShow.forEach((item) => {
-      item.hidden = false;
-      item.style.opacity = "0";
-      item.style.transform = "translateY(6px)";
-    });
-
-    requestAnimationFrame(() => {
-      if (token !== filterToken) return;
-      const matched = archiveItems.filter((item) => matchedSet.has(item));
-      animateReflow(beforeRects, matched);
-      animateEntering(toShow);
-    });
-  }
-
-  function applyFilters(options = {}) {
-    const token = ++filterToken;
-    const animate =
-      options.animate !== false && !reduceMotionQuery.matches;
-    const matched = matchingItems();
-    const matchedSet = new Set(matched);
-    const visibleBefore = archiveItems.filter((item) => !item.hidden);
-    const beforeRects = captureRects(visibleBefore);
-    const toHide = visibleBefore.filter((item) => !matchedSet.has(item));
-    const toShow = matched.filter((item) => item.hidden);
-
-    matched.forEach((item) => {
-      item.classList.remove("is-filter-leaving");
-      item.style.opacity = "";
-      item.style.transform = "";
-    });
-
-    updateFilterControls();
-    updateStats(matched);
+    cancelMotion();
+    const matched = updateArchiveView(entries, filters);
     preview.clear();
-    if (options.updateURL) syncURL(Boolean(options.replaceURL));
+    if (!moving) return;
 
-    if (!animate) {
-      archiveItems.forEach((item) => {
-        item.hidden = !matchedSet.has(item);
-        item.classList.remove("is-filter-leaving");
-        item.style.opacity = "";
-        item.style.transform = "";
-      });
-      return;
-    }
+    // Read final geometry before starting any animations.
+    const after = new Map(matched.map(({ element }) => [element, element.getBoundingClientRect()]));
+    const origin = list.getBoundingClientRect();
+    before.forEach(({ rect, opacity }, element) => {
+      if (!element.hidden || rect.bottom < 0 || rect.top > innerHeight) return;
+      if (!exitLayer) {
+        exitLayer = document.createElement("div");
+        exitLayer.className = "archive-exits";
+        exitLayer.inert = true;
+        exitLayer.setAttribute("aria-hidden", "true");
+        list.append(exitLayer);
+      }
+      const ghost = element.cloneNode(true);
+      ghost.hidden = false;
+      ghost.style.left = (rect.left - origin.left) + "px";
+      ghost.style.top = (rect.top - origin.top) + "px";
+      ghost.style.width = rect.width + "px";
+      ghost.style.height = rect.height + "px";
+      exitLayer.append(ghost);
+      animate(ghost, [
+        { opacity, transform: "translateY(0)" },
+        { opacity: 0, transform: "translateY(-6px)" },
+      ], 160, true);
+    });
 
-    if (!toHide.length) {
-      finishFilterTransition(token, beforeRects, toShow, matchedSet);
-      return;
-    }
-
-    toHide.forEach((item) => item.classList.add("is-filter-leaving"));
-    window.setTimeout(() => {
-      if (token !== filterToken) return;
-      toHide.forEach((item) => {
-        item.hidden = true;
-        item.classList.remove("is-filter-leaving");
-      });
-      finishFilterTransition(token, beforeRects, toShow, matchedSet);
-    }, 190);
+    matched.forEach(({ element }) => {
+      const previous = before.get(element);
+      const rect = after.get(element);
+      const dx = previous ? previous.rect.left - rect.left : 0;
+      const dy = previous ? previous.rect.top - rect.top : 6;
+      const opacity = previous ? previous.opacity : 0;
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5 && opacity === 1) return;
+      animate(element, [
+        { opacity, transform: "translate3d(" + dx + "px," + dy + "px,0)" },
+        { opacity: 1, transform: "translate3d(0,0,0)" },
+      ], previous ? 260 : 220);
+    });
   }
 
-  tagControls.forEach((control) => {
+  controls.forEach((control) => {
+    control.setAttribute("role", "button");
+    control.setAttribute("aria-controls", list.id);
     control.addEventListener("click", (event) => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
-      const tag = normalizeToken(control.dataset.tag);
-      if (!validTags.has(tag)) return;
-      if (selectedTags.has(tag)) {
-        selectedTags.delete(tag);
-      } else {
-        selectedTags.add(tag);
-      }
-      applyFilters({ updateURL: true });
+      const selected = control.dataset.tag !== undefined ? filters.tags : filters.years;
+      const value = control.dataset.tag ?? control.dataset.year;
+      if (selected.has(value)) selected.delete(value);
+      else selected.add(value);
+      syncArchiveURL(list, filters);
+      applyFilters();
     });
-  });
-
-  yearControls.forEach((control) => {
-    control.addEventListener("click", (event) => {
+    control.addEventListener("keydown", (event) => {
+      if (event.key !== " ") return;
       event.preventDefault();
-      const year = normalizeYear(control.dataset.year);
-      if (!validYears.has(year)) return;
-      if (selectedYears.has(year)) {
-        selectedYears.delete(year);
-      } else {
-        selectedYears.add(year);
-      }
-      applyFilters({ updateURL: true });
+      control.click();
     });
   });
 
   window.addEventListener("popstate", () => {
-    readFiltersFromURL(false);
-    applyFilters({ animate: true });
+    filters = readArchiveFilters(list);
+    applyFilters();
   });
-
-  const hadURLTags = new URLSearchParams(window.location.search).has(
-    "tags",
-  );
-  readFiltersFromURL(true);
-  applyFilters({
-    animate: false,
-    updateURL: initialTags.length > 0 && !hadURLTags,
-    replaceURL: true,
-  });
+  window.addEventListener("resize", cancelMotion, { passive: true });
+  reducedMotion.addEventListener("change", cancelMotion);
+  applyFilters(false);
 }

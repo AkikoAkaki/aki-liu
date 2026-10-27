@@ -284,8 +284,8 @@ body {
 }
 
 
-.kind-section .site-container,
-.kind-term .site-container {
+.kind-section:where(:not(.archive-page)) .site-container,
+.kind-term:where(:not(.archive-page)) .site-container {
     grid-template-columns: 2fr 5fr 3fr;
     grid-template-rows: auto minmax(0, 1fr);
     padding-top: 10rem;
@@ -297,33 +297,28 @@ body {
     align-items: start;
 }
 
-.section-weeknotes.kind-section .site-container {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.kind-section .site-sidebar,
-.kind-section .site-sidebar-right,
-.kind-term .site-sidebar,
-.kind-term .site-sidebar-right {
+.kind-section:where(:not(.archive-page)) .site-sidebar,
+.kind-section:where(:not(.archive-page)) .site-sidebar-right,
+.kind-term:where(:not(.archive-page)) .site-sidebar,
+.kind-term:where(:not(.archive-page)) .site-sidebar-right {
     display: block;
     grid-row: 1;
     justify-self: stretch;
     padding-right: 0;
 }
 
-.kind-section .site-main,
-.kind-term .site-main {
+.kind-section:where(:not(.archive-page)) .site-main,
+.kind-term:where(:not(.archive-page)) .site-main {
     grid-row: 1;
 }
 
-.kind-section .site-sidebar-right,
-.kind-term .site-sidebar-right {
+.kind-section:where(:not(.archive-page)) .site-sidebar-right,
+.kind-term:where(:not(.archive-page)) .site-sidebar-right {
     align-self: stretch;
 }
 
-.kind-section .site-sidebar-bottom,
-.kind-term .site-sidebar-bottom {
+.kind-section:where(:not(.archive-page)) .site-sidebar-bottom,
+.kind-term:where(:not(.archive-page)) .site-sidebar-bottom {
     display: block;
     grid-column: 1;
     grid-row: 2;
@@ -333,39 +328,6 @@ body {
     z-index: 100;
     padding-bottom: 0;
     pointer-events: none;
-}
-
-.archive-right-cols {
-    display: block;
-    width: 100%;
-    position: relative;
-    max-height: calc(100vh - 6rem);
-    overflow: hidden;
-    padding-bottom: 2rem;
-    z-index: 60;
-    scrollbar-width: none;
-}
-
-.archive-view-col {
-    height: 100%;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-@media (min-width: 1201px) {
-    .kind-section .archive-right-cols,
-    .kind-term .archive-right-cols {
-        position: sticky;
-        top: 10rem;
-        height: calc(100vh - 12rem);
-        max-height: none;
-        padding-bottom: 0;
-    }
-}
-
-.archive-right-cols::-webkit-scrollbar {
-    display: none;
 }
 
 .archive-col-header {
@@ -492,64 +454,64 @@ body {
         padding-right: 1rem;
     }
 
-    .kind-section .site-container,
-    .kind-term .site-container {
+    .kind-section:where(:not(.archive-page)) .site-container,
+    .kind-term:where(:not(.archive-page)) .site-container {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
         padding-top: 6rem;
         row-gap: 0.5rem;
     }
 
-    .kind-section .site-sidebar,
-    .kind-term .site-sidebar,
-    .kind-section .site-main,
-    .kind-term .site-main,
-    .kind-section .archive-left-col,
-    .kind-term .archive-left-col,
-    .kind-section .archive-main-col,
-    .kind-term .archive-main-col {
+    .kind-section:where(:not(.archive-page)) .site-sidebar,
+    .kind-term:where(:not(.archive-page)) .site-sidebar,
+    .kind-section:where(:not(.archive-page)) .site-main,
+    .kind-term:where(:not(.archive-page)) .site-main,
+    .kind-section:where(:not(.archive-page)) .archive-left-col,
+    .kind-term:where(:not(.archive-page)) .archive-left-col,
+    .kind-section:where(:not(.archive-page)) .archive-main-col,
+    .kind-term:where(:not(.archive-page)) .archive-main-col {
         display: contents;
     }
 
-    .kind-section .archive-logo-container,
-    .kind-term .archive-logo-container {
+    .kind-section:where(:not(.archive-page)) .archive-logo-container,
+    .kind-term:where(:not(.archive-page)) .archive-logo-container {
         order: 1;
         margin-bottom: 0.5rem;
     }
 
-    .kind-section .archive-intro-section,
-    .kind-term .archive-intro-section {
+    .kind-section:where(:not(.archive-page)) .archive-intro-section,
+    .kind-term:where(:not(.archive-page)) .archive-intro-section {
         order: 2;
         margin-top: 0;
         margin-bottom: 0.25rem;
     }
 
-    .kind-section .archive-filter-section,
-    .kind-term .archive-filter-section {
+    .kind-section:where(:not(.archive-page)) .archive-filter-section,
+    .kind-term:where(:not(.archive-page)) .archive-filter-section {
         order: 3;
         margin-top: 0.5rem;
         margin-bottom: 0.5rem;
     }
 
-    .kind-section .archive-list-header,
-    .kind-term .archive-list-header {
+    .kind-section:where(:not(.archive-page)) .archive-list-header,
+    .kind-term:where(:not(.archive-page)) .archive-list-header {
         order: 4;
         margin-top: 1rem;
         margin-bottom: 0.25rem;
     }
 
-    .kind-section .archive-list,
-    .kind-term .archive-list {
+    .kind-section:where(:not(.archive-page)) .archive-list,
+    .kind-term:where(:not(.archive-page)) .archive-list {
         order: 5;
     }
 
-    .kind-section .site-sidebar-right,
-    .kind-term .site-sidebar-right {
+    .kind-section:where(:not(.archive-page)) .site-sidebar-right,
+    .kind-term:where(:not(.archive-page)) .site-sidebar-right {
         display: none;
     }
 
-    .kind-section .site-sidebar-bottom,
-    .kind-term .site-sidebar-bottom {
+    .kind-section:where(:not(.archive-page)) .site-sidebar-bottom,
+    .kind-term:where(:not(.archive-page)) .site-sidebar-bottom {
         order: 6;
         grid-row: auto;
         position: static;

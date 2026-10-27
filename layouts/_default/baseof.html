@@ -2,6 +2,7 @@
 <html lang="{{ .Language.Lang }}">
 <head>
     {{- $homePage := .Site.Home -}}
+    {{- $isArchive := partial "is-archive.html" . -}}
     {{- /* Section URLs for the menu and the search palette commands. */ -}}
     {{- $sectionURLs := dict -}}
     {{- range slice "textlab" "notes" "weeknotes" "microblog" "influences" -}}
@@ -17,7 +18,7 @@
     {{ partial "head/assets.html" . }}
     <link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
 </head>
-<body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} type-{{ .Type }} kind-{{ .Kind }}{{ if and (eq .Kind "page") (lt .WordCount 600) }} post-short{{ end }}">
+<body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} type-{{ .Type }} kind-{{ .Kind }}{{ if $isArchive }} archive-page{{ end }}{{ if and (eq .Kind "page") (lt .WordCount 600) }} post-short{{ end }}">
     <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="edge-fade" aria-hidden="true"></div>
     <div class="site-wrapper">
@@ -30,6 +31,10 @@
         <aside class="site-sidebar-bottom">{{ block "sidebar-bottom" . }}{{ end }}</aside>
         <aside class="site-sidebar-right">{{ block "sidebar-right" . }}{{ end }}</aside>
     </div>
+    {{- if $isArchive -}}
+        {{- $archiveBoot := resources.Get "js/archive-boot.js" | js.Build | resources.Minify -}}
+        <script>{{ $archiveBoot.Content | safeJS }}</script>
+    {{- end -}}
     </div><!-- /.site-wrapper -->
 
     <footer class="site-footer">

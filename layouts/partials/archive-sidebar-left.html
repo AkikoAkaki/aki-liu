@@ -2,10 +2,15 @@
 {{ $regularPages := .regularPages }}
 {{ $years := .years }}
 {{ $tagSlice := .tagSlice }}
+{{ $entryCount := len $regularPages }}
+{{ $yearCount := len $years }}
+{{ if isset . "entryCount" }}{{ $entryCount = .entryCount }}{{ end }}
+{{ if isset . "yearCount" }}{{ $yearCount = .yearCount }}{{ end }}
+{{ $initialTags := .initialTags | default (slice) }}
 <div class="archive-left-col">
     <div class="archive-logo-container">
         <a href="{{ $context.Site.Home.RelPermalink }}">
-            <img src="{{ "Hero.svg" | relURL }}" alt="Aki Liu" class="archive-hero-svg">
+            <img src="{{ "Hero.svg" | relURL }}" alt="Aki Liu" class="archive-hero-svg" width="1880" height="1000">
         </a>
         <div class="archive-page-subtitle">{{ partial "page-title.html" $context }}</div>
     </div>
@@ -17,7 +22,7 @@
             <div class="archive-tags-list">
                 {{ range $tagSlice }}
                     {{ $href := printf "/tags/%s/" (.name | urlize) | relLangURL }}
-                    <a href="{{ $href }}" class="archive-tag-item" data-tag="{{ .name | urlize }}">
+                    <a href="{{ $href }}" class="archive-tag-item{{ if in $initialTags (.name | urlize) }} active{{ end }}" data-tag="{{ .name | urlize }}">
                         <span class="filter-hover-arrow filter-hover-arrow--left">{{ partial "icons/hover-arrow.html" . }}</span>
                         <span class="filter-active-close filter-active-close--left" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"><path d="M7 7l10 10"/><path d="M17 7L7 17"/></svg>
@@ -37,14 +42,14 @@
                     </a>
                 {{ end }}
             </div>
-            <div class="archive-stats-minimal">
+            <div class="archive-stats-minimal" aria-live="polite" aria-atomic="true">
                 <div class="stat-item stat-item--entries">
                     <span class="archive-stat-label">Entries:</span>
-                    <span data-archive-stat="entries">{{ len $regularPages }}</span>
+                    <span data-archive-stat="entries">{{ $entryCount }}</span>
                 </div>
                 <div class="stat-item stat-item--years">
                     <span class="archive-stat-label">Years:</span>
-                    <span data-archive-stat="years">{{ len $years }}</span>
+                    <span data-archive-stat="years">{{ $yearCount }}</span>
                 </div>
             </div>
         </div>
