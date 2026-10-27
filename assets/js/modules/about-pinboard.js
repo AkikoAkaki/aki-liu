@@ -79,19 +79,15 @@ export function initAboutPinboard() {
       if (phase !== "waiting") return;
       phase = "flying";
       canvas.dataset.phase = phase;
-      const firstRects = blocks.map((block) => block.getBoundingClientRect());
       const summaryHeight = summary.offsetHeight;
       const canvasHeight = canvas.offsetHeight;
-      const blockWidths = blocks.map((block) => block.offsetWidth);
-      const state = context.conditions.reduced ? null : Flip.getState(fliers.map(({ el }) => el));
+      const state = context.conditions.reduced ? null : Flip.getState([...blocks, ...fliers.map(({ el }) => el)]);
       const widths = fliers.map(({ el }) => el.offsetWidth);
 
-      // Reserve the old flow before moving cards; text keeps its original wrapping.
+      // Keep both regions in flow while Flip moves and resizes the text blocks.
       summary.style.height = `${summaryHeight}px`;
-      summary.style.setProperty("--summary-width", `${Math.max(...blockWidths)}px`);
       canvas.style.height = `${canvasHeight}px`;
       canvas.style.minHeight = "0px";
-      blocks.forEach((block, position) => { block.style.width = `${blockWidths[position]}px`; });
 
       fliers.forEach(({ el, target }, position) => {
         canvas.appendChild(el);
@@ -122,15 +118,9 @@ export function initAboutPinboard() {
       }
       const timing = { duration: 0.78, ease: "power3.inOut" };
       flight = gsap.timeline({ onComplete: finishFlight });
-      blocks.forEach((block, position) => {
-        const first = firstRects[position];
-        const last = block.getBoundingClientRect();
-        flight.fromTo(block, { x: first.left - last.left, y: first.top - last.top },
-          { x: 0, y: 0, ...timing, clearProps: "transform" }, 0);
-      });
       flight.to(summary, { height: finalSummaryHeight, ...timing }, 0);
       flight.to(canvas, { height: finalCanvasHeight, ...timing }, 0);
-      flight.add(Flip.from(state, { ...timing, scale: false }), 0);
+      flight.add(Flip.from(state, { ...timing, absolute: blocks, scale: false }), 0);
     });
 
     const observer = new IntersectionObserver((entries) => {

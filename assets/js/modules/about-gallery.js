@@ -26,6 +26,10 @@ export function initAboutGallery() {
   let coverRequest = 0;
   let coverTransition = null;
   let snapTween = null;
+  let wheelTween = null;
+  const wheelMotion = { offset: 0 };
+  let wheelTarget = 0;
+  let wheelPosition = 0;
 
   const wrap = (value) => (value + items.length) % items.length;
 
@@ -100,6 +104,7 @@ export function initAboutGallery() {
   }
 
   function goTo(position) {
+    stopWheel();
     if (carousel) carousel.scrollTo(wrap(position));
     else {
       index = wrap(position);
@@ -123,6 +128,27 @@ export function initAboutGallery() {
     const engine = syncScroll();
     const delta = engine.options.loop ? distance % engine.limit.length : distance;
     engine.scrollTo.distance(delta, false);
+  }
+
+  function stopWheel() {
+    wheelTween?.kill();
+    wheelTween = null;
+    wheelMotion.offset = 0;
+    wheelTarget = 0;
+    wheelPosition = 0;
+  }
+
+  function scrollWheel(distance) {
+    wheelTarget += distance;
+    wheelTween?.kill();
+    wheelTween = gsap.to(wheelMotion, {
+      offset: wheelTarget, duration: 0.09, ease: "power2.out",
+      onUpdate() {
+        moveBy(wheelMotion.offset - wheelPosition);
+        wheelPosition = wheelMotion.offset;
+      },
+      onComplete: stopWheel,
+    });
   }
 
   function snapTo(position) {
@@ -171,6 +197,7 @@ export function initAboutGallery() {
   async function close(immediate = false) {
     openRequest += 1;
     if (!immediate && (!expanded || settling)) return;
+    stopWheel();
     const request = ++closeRequest;
     if (immediate) {
       snapTween?.kill();
@@ -258,7 +285,7 @@ export function initAboutGallery() {
     settling = false;
     const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1;
     const distance = event.deltaY * unit;
-    moveBy(-distance);
+    scrollWheel(-distance);
   }, { passive: false });
   desktop.addEventListener("change", configure);
   reducedMotion.addEventListener("change", configure);

@@ -343,7 +343,6 @@ body.section-about.about-sequence-open .site-wrapper {
 .af-now-block--secondary {
     grid-area: now-secondary;
     width: min(100%, 600px);
-    padding: 0 18px 0 0;
 }
 
 .af-now-kicker {
@@ -354,7 +353,7 @@ body.section-about.about-sequence-open .site-wrapper {
 }
 
 .af-now-prose {
-    max-width: 420px;
+    max-width: 560px;
 }
 
 .af-now-prose--secondary {
@@ -960,7 +959,7 @@ body.section-about.about-sequence-open .site-wrapper {
 
 
 #about-summary.is-flown {
-    grid-template-columns: minmax(0, var(--summary-width, 640px));
+    grid-template-columns: minmax(0, 560px);
     grid-template-areas:
         "now-primary"
         "now-secondary";
@@ -973,6 +972,7 @@ body.section-about.about-sequence-open .site-wrapper {
 #about-summary.is-flown .af-now-block--primary,
 #about-summary.is-flown .af-now-block--secondary {
     grid-area: auto;
+    width: 100%;
     max-width: 100%;
     justify-self: center;
 }
