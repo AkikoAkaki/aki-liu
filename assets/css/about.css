@@ -260,14 +260,10 @@ body.section-about.about-sequence-open .site-wrapper {
         transform 280ms var(--ease-out-expo);
 }
 
-.af-sequence-caption--left {
-    right: calc(100% + 28px);
-    text-align: right;
-    transform: translate(8px, -50%);
-}
-
 .af-sequence-caption--right {
     left: calc(100% + 28px);
+    width: max-content;
+    white-space: nowrap;
     text-align: left;
     transform: translate(-8px, -50%);
 }
@@ -290,14 +286,6 @@ body.section-about.about-sequence-open .site-wrapper {
     display: block;
     font: 600 12px/1.35 var(--font-sans);
     letter-spacing: 0.02em;
-}
-
-.af-sequence-caption-note {
-    display: block;
-    margin-top: 8px;
-    font: 500 10px/1.35 var(--font-sans);
-    letter-spacing: 0.04em;
-    color: rgba(0, 0, 0, 0.38);
 }
 
 @media (prefers-reduced-motion: reduce) {

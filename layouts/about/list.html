@@ -23,8 +23,7 @@
             {{ $processed = .Process "webp q82" }}
           {{ end }}
           {{ $alt := strings.TrimSuffix (path.Ext $entry.file) $entry.file }}
-          {{ $format := cond (gt $processed.Height $processed.Width) "Portrait" "Landscape" }}
-          {{ $valid_images = $valid_images | append (dict "name" $entry.file "alt" $alt "title" $entry.title "format" $format "image" $processed) }}
+          {{ $valid_images = $valid_images | append (dict "name" $entry.file "alt" $alt "title" $entry.title "image" $processed) }}
         {{ else }}
           {{ errorf "About photo not found: %s" $entry.file }}
         {{ end }}
@@ -39,31 +38,21 @@
           <img src="{{ $random_name.image.RelPermalink }}" alt="{{ $random_name.alt }}" fetchpriority="high" width="{{ $random_name.image.Width }}" height="{{ $random_name.image.Height }}">
           <div class="ab-photo-label"><span>LIU — STUDIO</span><span>2025</span></div>
         </div>
-        <div class="af-sequence-caption af-sequence-caption--left af-default-caption">
-          <span class="af-sequence-caption-kicker" data-cover-caption="archive">Personal archive</span>
-          <span class="af-sequence-caption-text" data-cover-caption="title">{{ $random_name.title }}</span>
-        </div>
         <div class="af-sequence-caption af-sequence-caption--right af-default-caption">
           <span class="af-sequence-caption-kicker" data-cover-caption="number">{{ printf "%02d" (add $img_index 1) }}</span>
-          <span class="af-sequence-caption-text" data-cover-caption="format">{{ $random_name.format }}</span>
-          <span class="af-sequence-caption-note" data-cover-caption="count">{{ len $valid_images }} photographs</span>
+          <span class="af-sequence-caption-text" data-cover-caption="title">{{ $random_name.title }}</span>
         </div>
         {{/* The base image and live status expose the current photo; the expanded strip is decorative. */}}
         <div class="af-sequence-layer" aria-hidden="true">
           <div class="af-sequence-track" data-about-sequence-track>
             {{ range $index, $photo := $valid_images }}
               <figure class="af-sequence-item{{ if eq $index $img_index }} is-current{{ end }}">
-                <figcaption class="af-sequence-caption af-sequence-caption--left">
-                  <span class="af-sequence-caption-kicker" data-caption="archive">Personal archive</span>
-                  <span class="af-sequence-caption-text" data-caption="title">{{ $photo.title }}</span>
-                </figcaption>
                 <div class="af-sequence-photo" style="{{ printf "aspect-ratio: %d/%d;" $photo.image.Width $photo.image.Height | safeCSS }}">
                   <img data-src="{{ $photo.image.RelPermalink }}" alt="{{ $photo.alt }}" decoding="async" width="{{ $photo.image.Width }}" height="{{ $photo.image.Height }}">
                 </div>
                 <figcaption class="af-sequence-caption af-sequence-caption--right">
                   <span class="af-sequence-caption-kicker" data-caption="number">{{ printf "%02d" (add $index 1) }}</span>
-                  <span class="af-sequence-caption-text" data-caption="format">{{ $photo.format }}</span>
-                  <span class="af-sequence-caption-note" data-caption="count">{{ len $valid_images }} photographs</span>
+                  <span class="af-sequence-caption-text" data-caption="title">{{ $photo.title }}</span>
                 </figcaption>
               </figure>
             {{ end }}

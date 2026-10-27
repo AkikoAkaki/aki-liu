@@ -200,8 +200,8 @@ body.post-short {
     --toc-node-size: 7px;
     --toc-line-width: 2px;
     --toc-viewport-gap: 24px;
-    --toc-sticky-top: 5.5rem;
-    --toc-max-height: calc(100vh - var(--toc-sticky-top) - var(--toc-viewport-gap));
+    --toc-sticky-top: 24px;
+    --toc-max-height: calc(100vh - 2 * var(--toc-viewport-gap));
     --toc-row-center-y: 0.925rem;
     --toc-node-color: var(--footer-reveal-bg);
     background-color: var(--footer-reveal-bg);
@@ -422,7 +422,48 @@ body.post-short {
 
 .post-toc--sidebar {
     display: block;
-    margin-top: 1.5rem;
+    margin-top: 0;
+}
+
+@media (min-width: 1201px) {
+    .site-main:has(> .post-single) {
+        grid-column: 2 / -1;
+    }
+
+    .post-single {
+        display: grid;
+        grid-template-columns: 650px minmax(0, 1fr);
+        column-gap: 2rem;
+        align-items: start;
+    }
+
+    .post-single > .post-content {
+        width: 100%;
+    }
+
+    .post-content > :first-child {
+        margin-top: 0;
+    }
+
+    .post-content > blockquote:first-child > :first-child {
+        margin-top: 0;
+    }
+
+    .post-content > :last-child {
+        margin-bottom: 0;
+    }
+
+    .post-content > :is(ul, ol):last-child > li:last-child,
+    .post-content > blockquote:last-child > :last-child {
+        margin-bottom: 0;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .post-toc {
+        transition: none;
+    }
 }
 
 @media (max-width: 1200px) {

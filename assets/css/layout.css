@@ -61,6 +61,8 @@
     --footer-background:
         radial-gradient(circle at 20% 8%, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0) 36%),
         linear-gradient(180deg, rgb(247, 247, 247) 0%, rgb(240, 240, 240) 44%, var(--footer-edge-color) 100%);
+    --footer-backdrop:
+        linear-gradient(180deg, var(--footer-edge-color) 0%, rgb(240, 240, 240) 30%, rgb(247, 247, 247) 60%, rgb(240, 240, 240) 82%, var(--footer-edge-color) 100%);
     --footer-signature-filter: none;
     --footer-curve: 40px;
 }
@@ -73,6 +75,8 @@
     --footer-background:
         radial-gradient(circle at 20% 8%, rgba(76, 72, 68, 0.32) 0%, rgba(76, 72, 68, 0) 40%),
         linear-gradient(180deg, rgb(18, 18, 19) 0%, rgb(24, 23, 26) 42%, var(--footer-edge-color) 100%);
+    --footer-backdrop:
+        linear-gradient(180deg, var(--footer-edge-color) 0%, rgb(24, 23, 26) 30%, rgb(18, 18, 19) 60%, rgb(24, 23, 26) 82%, var(--footer-edge-color) 100%);
     --footer-signature-filter: invert(1) brightness(1.8);
 }
 
@@ -97,6 +101,10 @@ body {
     flex-direction: column;
     overflow: clip;
     transform-origin: center bottom;
+}
+
+.archive-page .site-wrapper {
+    min-height: calc(100vh + var(--footer-curve));
 }
 
 .site-container {
@@ -153,6 +161,13 @@ body {
    900px breakpoint, where the post TOC stops being position: fixed inside the
    page and a transform would trap it. */
 @media (min-width: 901px) {
+    /* The strips beside the narrowed page and the footer share one gradient
+       pinned to the screen, so there is no seam where they meet. */
+    html,
+    .site-footer {
+        background: var(--footer-backdrop) fixed;
+    }
+
     @keyframes footer-reveal-page {
         from {
             border-bottom-left-radius: 0;

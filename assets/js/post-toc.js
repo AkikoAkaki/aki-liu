@@ -34,8 +34,27 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    const sidebarToc = document.querySelector('.post-toc--sidebar');
+    const postContent = document.querySelector('.post-content');
+    const layoutTop = (element) => {
+        let top = 0;
+        for (; element; element = element.offsetParent) top += element.offsetTop;
+        return top;
+    };
+    let sidebarStartTop = 0;
+    let sidebarCenterTop = 24;
+    const positionSidebarToc = () => {
+        if (!sidebarToc || matches(QUERIES.tocCollapsed)) return;
+        const progress = Math.min(1, Math.max(0, window.scrollY) / (window.innerHeight * 0.5));
+        const top = sidebarStartTop < sidebarCenterTop
+            ? sidebarStartTop + (sidebarCenterTop - sidebarStartTop) * progress
+            : sidebarCenterTop;
+        const nextTop = `${top}px`;
+        if (sidebarToc.style.getPropertyValue('--toc-sticky-top') !== nextTop) {
+            sidebarToc.style.setProperty('--toc-sticky-top', nextTop);
+        }
+    };
     const fitSidebarToc = () => {
-        const sidebarToc = document.querySelector('.post-toc--sidebar');
         if (!sidebarToc) return;
 
         if (matches(QUERIES.tocCollapsed)) {
@@ -44,30 +63,14 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        if (!sidebarToc.dataset.baseTop) {
-            sidebarToc.dataset.baseTop = `${parseFloat(getComputedStyle(sidebarToc).top) || 0}`;
-        }
-        if (!sidebarToc.dataset.normalTop) {
-            sidebarToc.dataset.normalTop = `${sidebarToc.offsetTop || (sidebarToc.getBoundingClientRect().top + window.scrollY)}`;
-        }
-
-        const rect = sidebarToc.getBoundingClientRect();
         const viewportGap = 24;
-        const baseTop = parseFloat(sidebarToc.dataset.baseTop) || 0;
-        const normalTop = parseFloat(sidebarToc.dataset.normalTop) || 0;
-        const centeredTop = Math.max(viewportGap, (baseTop + viewportGap) / 2);
-        const isStuck = window.scrollY >= normalTop - centeredTop;
-        const stickyTop = isStuck ? centeredTop : baseTop;
-        const availableHeight = Math.max(1, window.innerHeight - (isStuck ? stickyTop : rect.top) - viewportGap);
-
-        const nextTop = `${Math.floor(stickyTop)}px`;
-        const nextHeight = `${Math.floor(availableHeight)}px`;
-        if (sidebarToc.style.getPropertyValue('--toc-sticky-top') !== nextTop) {
-            sidebarToc.style.setProperty('--toc-sticky-top', nextTop);
-        }
+        const nextHeight = `${Math.max(1, window.innerHeight - viewportGap * 2)}px`;
         if (sidebarToc.style.getPropertyValue('--toc-max-height') !== nextHeight) {
             sidebarToc.style.setProperty('--toc-max-height', nextHeight);
         }
+        sidebarCenterTop = Math.max(viewportGap, (window.innerHeight - sidebarToc.offsetHeight) / 2);
+        if (postContent) sidebarStartTop = layoutTop(postContent);
+        positionSidebarToc();
     };
 
     const links = Array.from(document.querySelectorAll('.post-toc a'));
@@ -125,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const onScrollOrResize = () => {
         if (ticking) return;
         window.requestAnimationFrame(() => {
-            fitSidebarToc();
+            positionSidebarToc();
             highlightActiveHeading();
             ticking = false;
         });
@@ -133,21 +136,16 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     window.addEventListener('scroll', onScrollOrResize, { passive: true });
-    window.addEventListener('resize', onScrollOrResize);
-    if (document.fonts) document.fonts.ready.then(onScrollOrResize);
-
-    setTimeout(() => {
+    const onLayoutChange = () => {
         fitSidebarToc();
-        highlightActiveHeading();
-    }, 100);
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            fitSidebarToc();
-            highlightActiveHeading();
-        }, 150);
-    });
+        onScrollOrResize();
+    };
+    window.addEventListener('resize', onLayoutChange);
+    if (document.fonts) document.fonts.ready.then(onLayoutChange);
+    window.addEventListener('load', onLayoutChange);
+    if (sidebarToc) new ResizeObserver(onLayoutChange).observe(sidebarToc.querySelector('.post-toc-content'));
+    onLayoutChange();
 
-    const sidebarToc = document.querySelector('.post-toc--sidebar');
     if (sidebarToc) {
         let touchStartX = 0;
         let touchStartY = 0;

@@ -46,11 +46,6 @@
     <div class="post-content">
         {{ .Content }}
     </div>
-</article>
-
-{{ end }}
-
-{{ define "sidebar-right" }}
     {{ if .Store.Get "hasTOC" }}
     <aside class="post-toc post-toc--sidebar" data-tag="{{ .Store.Get "firstTag" }}" aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
         <div class="post-toc-content">
@@ -59,4 +54,5 @@
         </div>
     </aside>
     {{ end }}
+</article>
 {{ end }}
