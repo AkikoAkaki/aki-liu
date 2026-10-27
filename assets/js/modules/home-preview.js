@@ -128,7 +128,7 @@ export function initHomeHoverPreview() {
     }
   }
 
-  function showPreview(item, token) {
+  async function showPreview(item, token) {
     if (!item || token !== hoverToken || activeItem !== item) return;
 
     const url = item.getAttribute("data-preview");
@@ -139,28 +139,27 @@ export function initHomeHoverPreview() {
       const activeLayer = layers[activeLayerIndex];
       const nextLayer = layers[nextLayerIndex];
 
-      currentUrl = url;
       nextLayer.src = url;
       nextLayer.alt =
         item.querySelector(".work-item-title")?.textContent?.trim() || "";
 
-      const syncSizeAndPosition = () => {
-        applyPreviewSize(nextLayer);
-        measurePreview();
-        placePreview();
-      };
-
-      if (nextLayer.complete && nextLayer.naturalWidth > 0) {
-        syncSizeAndPosition();
-      } else {
-        nextLayer.addEventListener("load", syncSizeAndPosition, {
-          once: true,
-        });
+      try {
+        await nextLayer.decode();
+      } catch {
+        if (token === hoverToken && activeItem === item) hidePreview();
+        return;
       }
+
+      if (token !== hoverToken || activeItem !== item) return;
+
+      applyPreviewSize(nextLayer);
+      measurePreview();
+      placePreview();
 
       nextLayer.classList.add("is-active");
       activeLayer.classList.remove("is-active");
       activeLayerIndex = nextLayerIndex;
+      currentUrl = url;
     }
 
     measurePreview();
@@ -200,8 +199,12 @@ export function initHomeHoverPreview() {
         hidePreview();
       }
     });
-    item.addEventListener("focusin", () => {
+    item.addEventListener("focusin", (event) => {
+      if (!event.target.matches(":focus-visible")) return;
       if (item.hasAttribute("data-preview")) {
+        const rect = item.getBoundingClientRect();
+        latestPointerX = rect.left;
+        latestPointerY = rect.top;
         schedulePreview(item);
       } else {
         hidePreview();
@@ -212,8 +215,10 @@ export function initHomeHoverPreview() {
   scope.addEventListener("mousemove", schedulePosition);
   scope.addEventListener("mouseleave", hidePreview);
   scope.addEventListener("focusout", (event) => {
-    if (!scope.contains(event.relatedTarget)) hidePreview();
+    if (!scope.contains(event.relatedTarget) && !scope.matches(":hover")) hidePreview();
   });
+
+  window.addEventListener("scroll", hidePreview, { passive: true });
 
   document.addEventListener("pointermove", handleDocumentPointerMove, {
     passive: true,
@@ -224,6 +229,7 @@ export function initHomeHoverPreview() {
       if (currentPreviewImage) {
         applyPreviewSize(currentPreviewImage);
         measurePreview();
+        placePreview();
       }
     },
     { passive: true },
