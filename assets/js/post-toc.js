@@ -60,70 +60,65 @@ document.addEventListener('DOMContentLoaded', function () {
         const stickyTop = isStuck ? centeredTop : baseTop;
         const availableHeight = Math.max(1, window.innerHeight - (isStuck ? stickyTop : rect.top) - viewportGap);
 
-        sidebarToc.style.setProperty('--toc-sticky-top', `${Math.floor(stickyTop)}px`);
-        sidebarToc.style.setProperty('--toc-max-height', `${Math.floor(availableHeight)}px`);
+        const nextTop = `${Math.floor(stickyTop)}px`;
+        const nextHeight = `${Math.floor(availableHeight)}px`;
+        if (sidebarToc.style.getPropertyValue('--toc-sticky-top') !== nextTop) {
+            sidebarToc.style.setProperty('--toc-sticky-top', nextTop);
+        }
+        if (sidebarToc.style.getPropertyValue('--toc-max-height') !== nextHeight) {
+            sidebarToc.style.setProperty('--toc-max-height', nextHeight);
+        }
     };
 
     const links = Array.from(document.querySelectorAll('.post-toc a'));
-    const headings = links
-        .map((link) => {
-            const id = link.getAttribute('href').slice(1);
-            try {
-                return document.getElementById(decodeURIComponent(id)) || document.getElementById(id);
-            } catch(e) {
-                return document.getElementById(id);
-            }
-        })
-        .filter(Boolean);
-
-    const scrollToHeading = (link) => {
-        const id = link.getAttribute('href').slice(1);
+    const headingForLink = (link) => {
+        const href = link.getAttribute('href');
+        if (!href || !href.startsWith('#')) return null;
+        const id = href.slice(1);
         try {
-            const target = document.getElementById(decodeURIComponent(id)) || document.getElementById(id);
-            if (target) {
-                const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
-                const offsetPosition = targetPosition - window.innerHeight * 0.25;
-                window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-            }
-        } catch(e) {}
+            return document.getElementById(decodeURIComponent(id)) || document.getElementById(id);
+        } catch(e) {
+            return document.getElementById(id);
+        }
     };
+    const entries = links.map((link) => ({ link, heading: headingForLink(link) }));
+    const headings = [...new Set(entries.map(({ heading }) => heading).filter(Boolean))];
 
     links.forEach((link) => {
         link.addEventListener('click', (e) => {
+            if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+            const target = headingForLink(link);
+            if (!target) return;
             e.preventDefault();
-            scrollToHeading(link);
+            if (location.hash !== link.hash) history.pushState(null, '', link.hash);
+            const targetPosition = target.getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({
+                top: targetPosition - window.innerHeight * 0.25,
+                behavior: matches(QUERIES.reducedMotion) ? 'instant' : 'smooth',
+            });
         });
     });
 
+    let activeHeading = null;
     const highlightActiveHeading = () => {
         let current = null;
-        const scrollPos = window.scrollY + window.innerHeight * 0.26;
+        const readingLine = window.innerHeight * 0.26;
 
         for (let i = headings.length - 1; i >= 0; i--) {
-            if (headings[i] && headings[i].offsetTop <= scrollPos) {
+            if (headings[i].getBoundingClientRect().top <= readingLine) {
                 current = headings[i];
                 break;
             }
         }
 
-        links.forEach((link) => link.classList.remove('is-active'));
-
-        if (current) {
-            const currentIdDecoded = decodeURIComponent(current.id);
-            const activeLinks = links.filter((link) => {
-                const href = link.getAttribute('href');
-                if (!href || !href.startsWith('#')) return false;
-                try {
-                    return decodeURIComponent(href.slice(1)) === currentIdDecoded;
-                } catch(e) {
-                    return href.slice(1) === current.id;
-                }
-            });
-            
-            activeLinks.forEach((link) => {
-                link.classList.add('is-active');
-            });
-        }
+        if (current === activeHeading) return;
+        activeHeading = current;
+        entries.forEach(({ link, heading }) => {
+            const active = current !== null && heading === current;
+            link.classList.toggle('is-active', active);
+            if (active) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+        });
     };
 
     let ticking = false;
@@ -137,8 +132,9 @@ document.addEventListener('DOMContentLoaded', function () {
         ticking = true;
     };
 
-    window.addEventListener('scroll', onScrollOrResize);
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
     window.addEventListener('resize', onScrollOrResize);
+    if (document.fonts) document.fonts.ready.then(onScrollOrResize);
 
     setTimeout(() => {
         fitSidebarToc();
@@ -155,6 +151,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (sidebarToc) {
         let touchStartX = 0;
         let touchStartY = 0;
+        let trackingTouch = false;
+        const drawerContent = sidebarToc.querySelector('.post-toc-content');
+        const setDrawerOpen = (open) => {
+            sidebarToc.classList.toggle('is-drawer-open', open);
+            if (drawerContent) drawerContent.inert = matches(QUERIES.tablet) && !open;
+        };
+        setDrawerOpen(sidebarToc.classList.contains('is-drawer-open'));
+        window.matchMedia(QUERIES.tablet).addEventListener('change', () => setDrawerOpen(false));
 
         const HINT_KEY = 'toc-drawer-hint-seen';
         let hintEl = null;
@@ -163,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const dismissHint = () => {
             if (hintEl && hintEl.classList.contains('is-visible')) {
                 hintEl.classList.remove('is-visible');
-                localStorage.setItem(HINT_KEY, 'true');
+                try { localStorage.setItem(HINT_KEY, 'true'); } catch(e) {}
                 clearTimeout(hintTimer);
                 setTimeout(() => {
                     if (hintEl) {
@@ -175,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         const initTooltip = () => {
-            if (localStorage.getItem(HINT_KEY)) return;
+            try { if (localStorage.getItem(HINT_KEY)) return; } catch(e) {}
 
             const isMobile = matches(QUERIES.tablet);
             if (!isMobile) return;
@@ -199,13 +203,20 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(initTooltip, 300);
 
         document.addEventListener('touchstart', (e) => {
+            trackingTouch = false;
+            if (!matches(QUERIES.tablet) || e.touches.length !== 1) return;
+            const scrollingContent = e.target.closest('pre, .table-wrapper, .katex-display, input, textarea, select, [contenteditable="true"]');
+            if (scrollingContent && (scrollingContent.matches('input, textarea, select, [contenteditable="true"]') || scrollingContent.scrollWidth > scrollingContent.clientWidth)) return;
             touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
+            trackingTouch = true;
             
             dismissHint();
         }, { passive: true });
 
         const handleTouchEnd = (e) => {
+            if (!trackingTouch || !e.changedTouches.length) return;
+            trackingTouch = false;
             const touchEndX = e.changedTouches[0].clientX;
             const touchEndY = e.changedTouches[0].clientY;
             const deltaX = touchEndX - touchStartX;
@@ -218,17 +229,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isOpen = sidebarToc.classList.contains('is-drawer-open');
                 if (deltaX < 0 && !isOpen) {
                     if (touchStartX > window.innerWidth * 0.25) {
-                        sidebarToc.classList.add('is-drawer-open');
+                        setDrawerOpen(true);
                         dismissHint();
                     }
                 } else if (deltaX > 0 && isOpen) {
-                    sidebarToc.classList.remove('is-drawer-open');
+                    setDrawerOpen(false);
                 }
             }
         };
 
         document.addEventListener('touchend', handleTouchEnd, { passive: true });
-        document.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+        document.addEventListener('touchcancel', () => { trackingTouch = false; }, { passive: true });
 
         document.addEventListener('click', (e) => {
             const isMobile = matches(QUERIES.tablet);
@@ -239,11 +250,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (isOpen) {
                 if (!clickedToc) {
-                    sidebarToc.classList.remove('is-drawer-open');
+                    setDrawerOpen(false);
                 }
             } else {
+                if (e.target.closest('a, button, input, textarea, select, [contenteditable="true"]')) return;
                 if (e.clientX > window.innerWidth - 32 && e.clientY > window.innerHeight * 0.1 && e.clientY < window.innerHeight * 0.9) {
-                    sidebarToc.classList.add('is-drawer-open');
+                    setDrawerOpen(true);
                     dismissHint();
                 }
             }
@@ -255,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const isOpen = sidebarToc.classList.contains('is-drawer-open');
             if (!isOpen) {
-                sidebarToc.classList.add('is-drawer-open');
+                setDrawerOpen(true);
                 dismissHint();
                 e.stopPropagation();
             }
@@ -267,12 +279,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 const isMobile = matches(QUERIES.tablet);
                 if (isMobile) {
                     setTimeout(() => {
-                        sidebarToc.classList.remove('is-drawer-open');
+                        setDrawerOpen(false);
                     }, 150);
                 }
             });
         });
 
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && matches(QUERIES.tablet) && sidebarToc.classList.contains('is-drawer-open')) {
+                setDrawerOpen(false);
+            }
+        });
         window.addEventListener('scroll', dismissHint, { passive: true });
     }
 });
