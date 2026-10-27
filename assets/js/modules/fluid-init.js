@@ -1,4 +1,5 @@
 import { FluidEngine } from "./fluid-engine.js";
+import { media, QUERIES } from "./media.js";
 
 export function initFluidEngine() {
   const wrapper = document.querySelector(".author-name-svg-wrapper");
@@ -54,4 +55,9 @@ export function initFluidEngine() {
   }
 
   document.addEventListener("visibilitychange", handleVisibilityChange);
+  media(QUERIES.reducedMotion).addEventListener("change", (event) => {
+    engine.reduced = event.matches;
+    engine.pause();
+    startIfVisible();
+  });
 }

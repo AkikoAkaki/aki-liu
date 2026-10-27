@@ -39,8 +39,10 @@ export class FluidEngine {
         this.canvas.addEventListener('webglcontextlost', this.handleContextLost, false);
         this.canvas.addEventListener('webglcontextrestored', this.handleContextRestored, false);
         
-        this.setupWebGL();
-        if (!this.gl) return false;
+        if (!this.setupWebGL()) {
+            this.canvas.remove();
+            return false;
+        }
         
         window.addEventListener('mousemove', this.handleMouseMove, { passive: true });
         document.addEventListener('mouseleave', this.handleMouseLeave, { passive: true });
@@ -57,7 +59,7 @@ export class FluidEngine {
     
     setupWebGL() {
         this.gl = this.canvas.getContext('webgl');
-        if (!this.gl) return;
+        if (!this.gl) return false;
         this.gl.clearColor(0, 0, 0, 0);
         
         const vert = [
@@ -105,7 +107,7 @@ export class FluidEngine {
             '  float g=0.80+f*0.22;',
             '  g=clamp(g,0.0,1.0);',
             '  float dist=length(uv-vec2(0.5));',
-            '  float alpha=smoothstep(0.5,0.05,dist)*0.62;',
+            '  float alpha=(1.0-smoothstep(0.05,0.5,dist))*0.62;',
             '  vec3 color=vec3(g);',
             '  gl_FragColor=vec4(color*alpha,alpha);',
             '}'
@@ -113,18 +115,44 @@ export class FluidEngine {
         
         const compile = (type, src) => {
             const s = this.gl.createShader(type);
+            if (!s) return null;
             this.gl.shaderSource(s, src);
             this.gl.compileShader(s);
+            if (!this.gl.getShaderParameter(s, this.gl.COMPILE_STATUS)) {
+                this.gl.deleteShader(s);
+                return null;
+            }
             return s;
         };
         
+        const vertex = compile(this.gl.VERTEX_SHADER, vert);
+        const fragment = compile(this.gl.FRAGMENT_SHADER, frag);
         this.prog = this.gl.createProgram();
-        this.gl.attachShader(this.prog, compile(this.gl.VERTEX_SHADER, vert));
-        this.gl.attachShader(this.prog, compile(this.gl.FRAGMENT_SHADER, frag));
+        if (!vertex || !fragment || !this.prog) {
+            if (vertex) this.gl.deleteShader(vertex);
+            if (fragment) this.gl.deleteShader(fragment);
+            if (this.prog) this.gl.deleteProgram(this.prog);
+            this.prog = null;
+            return false;
+        }
+        this.gl.attachShader(this.prog, vertex);
+        this.gl.attachShader(this.prog, fragment);
         this.gl.linkProgram(this.prog);
+        this.gl.deleteShader(vertex);
+        this.gl.deleteShader(fragment);
+        if (!this.gl.getProgramParameter(this.prog, this.gl.LINK_STATUS)) {
+            this.gl.deleteProgram(this.prog);
+            this.prog = null;
+            return false;
+        }
         this.gl.useProgram(this.prog);
         
         const buf = this.gl.createBuffer();
+        if (!buf) {
+            this.gl.deleteProgram(this.prog);
+            this.prog = null;
+            return false;
+        }
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buf);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), this.gl.STATIC_DRAW);
         const loc = this.gl.getAttribLocation(this.prog, 'a_pos');
@@ -139,6 +167,7 @@ export class FluidEngine {
         this.uMouse = this.gl.getUniformLocation(this.prog, 'u_mouse');
         this.uVel   = this.gl.getUniformLocation(this.prog, 'u_vel');
         this.uHover = this.gl.getUniformLocation(this.prog, 'u_hover');
+        return true;
     }
     
     handleContextLost(e) {
@@ -152,7 +181,11 @@ export class FluidEngine {
     
     handleContextRestored() {
         this.isContextLost = false;
-        this.setupWebGL();
+        if (!this.setupWebGL()) {
+            this.pause();
+            this.canvas.style.opacity = '0';
+            return;
+        }
         this.doResize();
         if (!this.isPaused) {
             this.start();
@@ -160,7 +193,7 @@ export class FluidEngine {
     }
     
     handleMouseMove(e) {
-        if (this.isPaused) return;
+        if (this.isPaused || this.reduced || this.isContextLost) return;
         const rx = (e.clientX / window.innerWidth  - 0.5) * 2;
         const ry = (e.clientY / window.innerHeight - 0.5) * 2;
         this.tx = -rx * 14; 
@@ -187,7 +220,7 @@ export class FluidEngine {
     }
     
     doResize() {
-        if (!this.gl || !this.canvas || !this.wrapper || !this.intro) return;
+        if (!this.gl || this.isContextLost || !this.canvas || !this.wrapper || !this.intro) return;
         const wr = this.wrapper.getBoundingClientRect();
         const ir = this.intro.getBoundingClientRect();
         const cw = wr.width  * 1.55;
@@ -206,13 +239,13 @@ export class FluidEngine {
         this.canvas.height = Math.round(ch * scale);
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
         
-        if (this.isPaused && !this.reduced) {
+        if (this.reduced && !this.isPaused) {
             this.renderFrame();
         }
     }
     
     start() {
-        if (!this.gl) return;
+        if (!this.gl || !this.prog || this.isContextLost) return;
         this.isPaused = false;
         
         if (this.reduced) {
@@ -234,7 +267,7 @@ export class FluidEngine {
     }
     
     renderFrame() {
-        if (!this.gl) return;
+        if (!this.gl || !this.prog || this.isContextLost) return;
         
         if (!this.reduced) {
             this.cx += (this.tx - this.cx) * 0.1; 

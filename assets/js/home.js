@@ -11,7 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!navContent || !leftCol) return;
 
   function updateNavGap() {
-    if (!matches(QUERIES.homeDesktop)) return;
+    if (!matches(QUERIES.homeDesktop)) {
+      navContent.style.removeProperty("--nav-flow-gap");
+      return;
+    }
     const groups = navContent.querySelectorAll(".nav-panel-group");
     const list = navContent.querySelector(".nav-panel-list");
     if (!list) return;
@@ -53,10 +56,17 @@ document.addEventListener("DOMContentLoaded", () => {
 function initExpandableCards() {
     const cardHeaders = document.querySelectorAll(".now-card-header");
     cardHeaders.forEach((button) => {
+      const card = button.parentElement;
+      const panel = document.getElementById(button.getAttribute("aria-controls"));
       button.addEventListener("click", () => {
-        const card = button.parentElement;
-        card.classList.toggle("is-expanded");
-        card.classList.toggle("is-collapsed");
+        const expanded = button.getAttribute("aria-expanded") !== "true";
+        if (!expanded && panel.contains(document.activeElement)) {
+          button.focus({ preventScroll: true });
+        }
+        button.setAttribute("aria-expanded", String(expanded));
+        panel.inert = !expanded;
+        card.classList.toggle("is-expanded", expanded);
+        card.classList.toggle("is-collapsed", !expanded);
       });
     });
 }

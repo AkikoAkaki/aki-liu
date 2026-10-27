@@ -916,6 +916,19 @@ a.nav-panel-subitem:hover {
         animation: none;
     }
 
+    .work-table-section,
+    .now-section {
+        opacity: 1;
+        transform: none;
+        animation: none;
+    }
+
+    .now-card-expandable,
+    .now-card-header,
+    .now-card-content-wrapper {
+        transition: none;
+    }
+
     .home-hover-preview,
     .home-hover-preview-img,
     .work-item[data-preview] .work-item-title,
