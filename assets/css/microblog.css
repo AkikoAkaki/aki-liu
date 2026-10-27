@@ -27,7 +27,8 @@
     padding-top: 10rem;
     padding-left: 3vw;
     padding-right: 3vw;
-    width: calc(100% - 6vw);
+    width: 100%;
+    box-sizing: border-box;
     max-width: 1800px;
     gap: 4vw;
     align-content: start;
@@ -65,6 +66,8 @@
     position: relative;
     z-index: 45;
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     padding: 0 0 120px;
     box-sizing: border-box;
 }
@@ -95,21 +98,18 @@
     align-items: stretch;
     justify-content: flex-start;
     gap: var(--mb-col-gap);
-    width: 100%;
+    width: calc(100% + 52px);
+    box-sizing: border-box;
     overflow-x: auto;
     overflow-y: visible;
     padding: 18px 34px 64px 18px;
     margin: -18px -34px -64px -18px;
     scroll-snap-type: x proximity;
     scrollbar-width: thin;
-    transition: justify-content var(--mb-anim) var(--mb-ease);
-}
-
-.microblog-deck:has(.mb-column-tag) {
-    justify-content: flex-start;
 }
 
 .mb-column {
+    box-sizing: border-box;
     flex: 0 0 var(--mb-col-width);
     display: flex;
     flex-direction: column;
@@ -123,12 +123,6 @@
     border-radius: 28px;
     box-shadow: none;
     overflow: hidden;
-    transition:
-        flex-basis var(--mb-anim) var(--mb-ease),
-        min-width var(--mb-anim) var(--mb-ease),
-        max-width var(--mb-anim) var(--mb-ease),
-        opacity 0.46s var(--mb-ease),
-        transform 0.46s var(--mb-ease);
 }
 
 .mb-column-content {
@@ -145,18 +139,6 @@
 .mb-column-main {
     flex-basis: min(520px, 100%);
     max-width: 520px;
-}
-
-.microblog-deck.is-compressed .mb-column {
-    flex-basis: clamp(280px, 20vw, 340px);
-    min-width: clamp(280px, 20vw, 340px);
-    max-width: 340px;
-}
-
-.microblog-deck.is-compressed .mb-column-main {
-    flex-basis: clamp(300px, 22vw, 360px);
-    min-width: clamp(300px, 22vw, 360px);
-    max-width: 360px;
 }
 
 .mb-column-header {
@@ -249,27 +231,8 @@
     width: 100%;
 }
 
-.mb-column.is-entering {
-    opacity: 0;
-    transform: translate3d(56px, 0, 0);
-}
-
-.mb-column.is-entered {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-}
-
 .mb-column.is-leaving {
-    opacity: 0;
-    transform: translate3d(56px, 0, 0);
-    transition: opacity 0.3s var(--mb-ease), transform 0.3s var(--mb-ease);
     pointer-events: none;
-}
-
-.mb-column.is-entering .mb-card {
-    opacity: 1;
-    transform: none;
-    transition: none;
 }
 
 .mb-column.is-pulsing .mb-column-header {
@@ -287,11 +250,6 @@
     padding: var(--mb-card-pad-y) var(--mb-card-pad-x);
     border-radius: var(--mb-card-radius);
     background: transparent;
-    opacity: 0;
-    transform: translateY(8px);
-    transition:
-        opacity 0.4s var(--mb-ease) var(--mb-stagger-delay, 0ms),
-        transform 0.4s var(--mb-ease) var(--mb-stagger-delay, 0ms);
 }
 
 .mb-card + .mb-card::before {
@@ -308,16 +266,9 @@
     background-position: center;
 }
 
-.mb-card.is-entered {
-    opacity: 1;
-    transform: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
-    .mb-card {
-        opacity: 1;
-        transform: none;
-        transition: none;
+    .mb-column.is-pulsing .mb-column-header {
+        animation: none;
     }
 }
 
@@ -785,15 +736,34 @@
     }
 
     .section-microblog.kind-section .site-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         grid-template-rows: auto;
         padding-top: 6rem;
         gap: 3rem;
     }
 
     .section-microblog.kind-section .site-main {
+        display: block;
         grid-column: 1;
         grid-row: auto;
+        order: 4;
+    }
+
+    .section-microblog.kind-section .archive-main-col {
+        display: block;
+        min-width: 0;
+    }
+
+    .section-microblog.kind-section .archive-years-desktop {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        grid-column: 1 / -1;
+        gap: 1rem;
+    }
+
+    .section-microblog.kind-section .site-sidebar-bottom {
+        display: none;
     }
 
     .microblog-page {
@@ -801,6 +771,7 @@
     }
 
     .microblog-deck {
+        width: 100%;
         gap: var(--mb-col-gap);
         padding: 2px 0 36px;
         margin: 0;
@@ -814,14 +785,6 @@
         max-width: var(--mb-col-width);
         min-height: calc(100vh - 9rem);
         scroll-snap-align: center;
-    }
-
-    .microblog-deck.is-compressed .mb-column,
-    .microblog-deck.is-compressed .mb-column-main,
-    .microblog-deck:has(.mb-column-tag) .mb-column-main {
-        flex: 0 0 var(--mb-col-width);
-        min-width: var(--mb-col-width);
-        max-width: var(--mb-col-width);
     }
 
     .mb-column-header {
@@ -845,7 +808,7 @@
 
 @media (max-width: 480px) {
     .section-microblog.kind-section .site-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         grid-template-rows: auto;
         padding-top: 6rem;
         gap: 3rem;

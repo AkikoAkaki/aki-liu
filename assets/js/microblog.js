@@ -8,15 +8,12 @@ import { matches, QUERIES } from "./modules/media.js";
     const feedURL = root.dataset.feedUrl || '/microblog/feed.json';
     const deck = root.querySelector('.microblog-deck');
     const PAGE_SIZE = 30;
-    const STAGGER_MS = 40;
-    const COMPRESSION_THRESHOLD = 0.96;
 
     let feedData = null;
     let feedPromise = null;
     let columnSeq = 1;
-    let compressionFrame = 0;
     const COLUMN_REFLOW_MS = 300;
-    const layoutAnimations = new WeakMap();
+    const columnAnimations = new WeakMap();
 
     function loadFeed() {
         if (feedData) return Promise.resolve(feedData);
@@ -152,21 +149,10 @@ import { matches, QUERIES } from "./modules/media.js";
         if (!feedEl) return;
         const slice = entries.slice(startIdx, startIdx + PAGE_SIZE);
         const frag = document.createDocumentFragment();
-        const newCards = [];
-        slice.forEach((entry, i) => {
-            const card = renderCard(entry);
-            card.style.setProperty('--mb-stagger-delay', `${i * STAGGER_MS}ms`);
-            card.classList.add('is-entering');
-            frag.appendChild(card);
-            newCards.push(card);
+        slice.forEach(entry => {
+            frag.appendChild(renderCard(entry));
         });
         feedEl.appendChild(frag);
-        requestAnimationFrame(() => {
-            newCards.forEach(c => {
-                c.classList.add('is-entered');
-                c.classList.remove('is-entering');
-            });
-        });
         const nextIdx = startIdx + slice.length;
         column.dataset.mbNextIdx = String(nextIdx);
         const done = nextIdx >= entries.length;
@@ -213,43 +199,13 @@ import { matches, QUERIES } from "./modules/media.js";
                 const next = parseInt(column.dataset.mbNextIdx || '0', 10);
                 appendBatch(column, entries, next);
             });
-        }, { root: getScrollRoot(column), rootMargin: '400px 0px' });
+        }, { root: null, rootMargin: '400px 0px' });
         observer.observe(sentinel);
         observers.set(column, observer);
     }
 
-    function getScrollRoot(column) {
-        return column.classList.contains('mb-column-main') ? null : column;
-    }
-
-    function updateColumnCompression() {
-        if (!deck) return;
-        if (matches(QUERIES.mobile)) {
-            deck.classList.remove('is-compressed');
-            return;
-        }
-
-        deck.classList.remove('is-compressed');
-        void deck.offsetWidth;
-
-        const columns = [...deck.querySelectorAll('.mb-column')];
-        const gap = parseFloat(getComputedStyle(deck).columnGap || getComputedStyle(deck).gap) || 0;
-        const totalColumnWidth = columns.reduce((sum, column) => sum + column.getBoundingClientRect().width, 0)
-            + Math.max(0, columns.length - 1) * gap;
-        const shouldCompress = columns.length > 1 && totalColumnWidth > deck.clientWidth * COMPRESSION_THRESHOLD;
-        deck.classList.toggle('is-compressed', shouldCompress);
-    }
-
-    function scheduleColumnCompression() {
-        if (compressionFrame) cancelAnimationFrame(compressionFrame);
-        compressionFrame = requestAnimationFrame(() => {
-            compressionFrame = 0;
-            updateColumnCompression();
-        });
-    }
-
     function getActiveColumns() {
-        return [...deck.querySelectorAll('.mb-column:not(.mb-column-ghost)')];
+        return [...deck.querySelectorAll('.mb-column:not(.is-leaving)')];
     }
 
     function captureColumnRects(columns = getActiveColumns()) {
@@ -260,42 +216,65 @@ import { matches, QUERIES } from "./modules/media.js";
         return rects;
     }
 
-    function animateColumnReflow(beforeRects, columns = getActiveColumns()) {
-        columns.forEach(column => {
-            if (!beforeRects.has(column)) return;
-            if (column.classList.contains('is-entering') || column.classList.contains('is-leaving')) return;
-            if (typeof column.animate !== 'function') return;
+    function animateColumn(column, keyframes, onFinish = () => {}) {
+        columnAnimations.get(column)?.cancel();
+        columnAnimations.delete(column);
+        if (matches(QUERIES.reducedMotion)) {
+            onFinish();
+            return;
+        }
 
-            const before = beforeRects.get(column);
-            const after = column.getBoundingClientRect();
+        const animation = column.animate(keyframes, {
+            duration: COLUMN_REFLOW_MS,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            fill: 'both'
+        });
+        columnAnimations.set(column, animation);
+        animation.finished.then(() => {
+            if (columnAnimations.get(column) !== animation) return;
+            columnAnimations.delete(column);
+            animation.cancel();
+            onFinish();
+        }, () => {});
+    }
+
+    function revealColumn(column) {
+        const style = getComputedStyle(column);
+        const from = { opacity: style.opacity, transform: style.transform };
+        column.classList.remove('is-leaving');
+        column.inert = false;
+        animateColumn(column, [from, { opacity: 1, transform: 'none' }]);
+    }
+
+    function showColumn(column) {
+        const left = column.offsetLeft;
+        if (left >= deck.scrollLeft && left + column.offsetWidth <= deck.scrollLeft + deck.clientWidth) return;
+        const inset = parseFloat(getComputedStyle(deck).paddingLeft) || 0;
+        deck.scrollTo({
+            left: left - inset,
+            behavior: matches(QUERIES.reducedMotion) ? 'instant' : 'smooth'
+        });
+    }
+
+    function animateColumnReflow(beforeRects) {
+        const moves = getActiveColumns().map(column => ({
+            column,
+            before: beforeRects.get(column),
+            after: column.getBoundingClientRect()
+        }));
+        moves.forEach(({ column, before, after }) => {
+            if (!before) return;
             const deltaX = before.left - after.left;
             const deltaY = before.top - after.top;
 
             if (Math.abs(deltaX) < 0.5 && Math.abs(deltaY) < 0.5) return;
 
-            const existing = layoutAnimations.get(column);
-            if (existing) existing.cancel();
-
-            const animation = column.animate(
+            animateColumn(column,
                 [
                     { transform: `translate3d(${deltaX}px, ${deltaY}px, 0)` },
                     { transform: 'translate3d(0, 0, 0)' }
-                ],
-                {
-                    duration: COLUMN_REFLOW_MS,
-                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-                    fill: 'both'
-                }
+                ]
             );
-
-            layoutAnimations.set(column, animation);
-            const clear = () => {
-                if (layoutAnimations.get(column) === animation) {
-                    layoutAnimations.delete(column);
-                }
-            };
-            animation.addEventListener('finish', clear, { once: true });
-            animation.addEventListener('cancel', clear, { once: true });
         });
     }
 
@@ -304,13 +283,18 @@ import { matches, QUERIES } from "./modules/media.js";
         if (!value) return;
         const existing = deck.querySelector(`.mb-column[data-mb-${type}="${CSS.escape(value)}"]`);
         if (existing) {
+            if (existing.classList.contains('is-leaving')) {
+                revealColumn(existing);
+                syncURL(updateHistory);
+            }
+            if (updateHistory) showColumn(existing);
             existing.classList.add('is-pulsing');
             setTimeout(() => existing.classList.remove('is-pulsing'), 600);
             return existing;
         }
 
         const column = document.createElement('section');
-        column.className = `mb-column mb-column-${type} is-entering`;
+        column.className = `mb-column mb-column-${type}`;
         column.dataset.mbColumnId = `${type}-${columnSeq++}`;
         column.setAttribute(`data-mb-${type}`, value);
         column.innerHTML = `
@@ -328,30 +312,29 @@ import { matches, QUERIES } from "./modules/media.js";
         `;
         deck.appendChild(column);
         loadColumn(column, type === 'tag' ? value : '', type === 'year' ? value : '');
-        void column.getBoundingClientRect();
-        scheduleColumnCompression();
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                column.classList.remove('is-entering');
-                column.classList.add('is-entered');
-            });
-        });
+        animateColumn(column, [
+            { opacity: 0, transform: 'translate3d(24px, 0, 0)' },
+            { opacity: 1, transform: 'none' }
+        ]);
+        if (updateHistory) showColumn(column);
         column.querySelector('[data-mb-close]').addEventListener('click', () => closeColumn(column));
         syncURL(updateHistory);
         return column;
     }
 
     function closeColumn(column) {
-        if (!column || column.classList.contains('mb-column-main')) return;
-        const beforeRects = captureColumnRects();
+        if (!column || column.classList.contains('mb-column-main') || column.classList.contains('is-leaving')) return;
+        const style = getComputedStyle(column);
+        const from = { opacity: style.opacity, transform: style.transform };
         column.classList.add('is-leaving');
-
-        setTimeout(() => {
+        column.inert = true;
+        syncURL();
+        animateColumn(column, [from, { opacity: 0, transform: 'translate3d(24px, 0, 0)' }], () => {
+            const beforeRects = captureColumnRects();
+            observers.get(column)?.disconnect();
             column.remove();
-            updateColumnCompression();
             animateColumnReflow(beforeRects);
-            syncURL();
-        }, COLUMN_REFLOW_MS);
+        });
     }
 
     function syncURL(updateHistory = true) {
@@ -435,27 +418,24 @@ import { matches, QUERIES } from "./modules/media.js";
 
     function bindPopstate() {
         window.addEventListener('popstate', () => {
-            deck.querySelectorAll('.mb-column-tag, .mb-column-year').forEach(c => c.remove());
-            scheduleColumnCompression();
+            deck.querySelectorAll('.mb-column-tag, .mb-column-year').forEach(column => {
+                columnAnimations.get(column)?.cancel();
+                observers.get(column)?.disconnect();
+                column.remove();
+            });
             restoreFromURL();
         });
-    }
-
-    function bindResize() {
-        window.addEventListener('resize', scheduleColumnCompression);
     }
 
     function init() {
         const mainColumn = deck.querySelector('.mb-column-main');
         loadColumn(mainColumn, '', '', () => {
             restoreFromURL();
-            scheduleColumnCompression();
         });
         bindSidebarTags();
         bindSidebarYears();
         bindCardTagClicks();
         bindPopstate();
-        bindResize();
     }
 
     if (document.readyState === 'loading') {
