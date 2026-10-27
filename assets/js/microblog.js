@@ -299,10 +299,23 @@ import { matches, QUERIES } from "./modules/media.js";
         });
     }
 
+    function findColumn(type, value) {
+        return deck.querySelector(`.mb-column[data-mb-${type}="${CSS.escape(value)}"]`);
+    }
+
+    function toggleColumn(type, key, label = key) {
+        const existing = findColumn(type, key);
+        if (existing) {
+            closeColumn(existing);
+            return;
+        }
+        openColumn(type, key, label);
+    }
+
     function openColumn(type, key, label = key, updateHistory = true) {
         const value = type === 'year' ? String(key) : tagToSlug(key || '');
         if (!value) return;
-        const existing = deck.querySelector(`.mb-column[data-mb-${type}="${CSS.escape(value)}"]`);
+        const existing = findColumn(type, value);
         if (existing) {
             existing.classList.add('is-pulsing');
             setTimeout(() => existing.classList.remove('is-pulsing'), 600);
@@ -342,7 +355,7 @@ import { matches, QUERIES } from "./modules/media.js";
     }
 
     function closeColumn(column) {
-        if (!column || column.classList.contains('mb-column-main')) return;
+        if (!column || column.classList.contains('mb-column-main') || column.classList.contains('is-leaving')) return;
         const beforeRects = captureColumnRects();
         column.classList.add('is-leaving');
 
@@ -409,7 +422,7 @@ import { matches, QUERIES } from "./modules/media.js";
             const tagItem = e.target.closest('.archive-tag-item');
             if (!tagItem) return;
             e.preventDefault();
-            openColumn('tag', tagItem.dataset.tag, tagLabel(tagItem.dataset.tag));
+            toggleColumn('tag', tagItem.dataset.tag, tagLabel(tagItem.dataset.tag));
         });
     }
 
@@ -419,7 +432,7 @@ import { matches, QUERIES } from "./modules/media.js";
                 const yearItem = e.target.closest('.archive-year-item');
                 if (!yearItem || !yearItem.dataset.year) return;
                 e.preventDefault();
-                openColumn('year', yearItem.dataset.year);
+                toggleColumn('year', yearItem.dataset.year);
             });
         });
     }
