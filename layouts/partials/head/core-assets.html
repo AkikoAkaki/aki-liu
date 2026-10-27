@@ -5,13 +5,27 @@
        preference (kept in sync until the visitor picks a theme). */ -}}
 <script>(function(){var d=document.documentElement,m=window.matchMedia('(prefers-color-scheme: dark)');function apply(){var t=null;try{t=localStorage.getItem('theme');}catch(_){}d.setAttribute('data-theme',t==='dark'||t==='light'?t:(m.matches?'dark':'light'));}apply();if(m.addEventListener){m.addEventListener('change',apply);}if(window.self!==window.top){d.classList.add('is-iframe');}}())</script>
 {{- $isArchive := partial "is-archive.html" . -}}
-{{- /* Fonts */ -}}
-{{- if not $isArchive -}}<link rel="preconnect" href="https://fonts.googleapis.com">{{- end -}}
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+{{- /* Fonts. The homepage self-hosts its Latin fonts (css/fonts-latin.css)
+       and asks Google only for Noto Serif SC, and only when its text has Han
+       characters. Other pages keep the Google stylesheet. */ -}}
+{{- $googleFontsURL := "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Serif+SC:wght@400;500&display=swap" -}}
+{{- if .IsHome -}}
+    {{- $googleFontsURL = "" -}}
+    {{- if findRE `\p{Han}` (jsonify site.Data.homepage) 1 -}}
+        {{- $googleFontsURL = "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500&display=swap" -}}
+    {{- end -}}
+{{- else if $isArchive -}}
+    {{- $googleFontsURL = "" -}}
+{{- end -}}
+{{- with $googleFontsURL -}}<link rel="preconnect" href="https://fonts.googleapis.com">{{- end -}}
+{{- if or $googleFontsURL $isArchive -}}<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>{{- end -}}
 <!-- Preload core brand font to avoid FOUT/FOIT -->
 <link rel="preload" href="/fonts/switzer/Switzer-Regular.woff2" as="font" type="font/woff2" crossorigin>
-{{- if not $isArchive -}}
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Serif+SC:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+{{- if .IsHome -}}
+<link rel="preload" href="/fonts/switzer/Switzer-Medium.woff2" as="font" type="font/woff2" crossorigin>
+{{- end -}}
+{{- with $googleFontsURL -}}
+<link href="{{ . }}" rel="stylesheet" media="print" onload="this.media='all'">
 {{- end -}}
 
 {{- /* CSS pipeline: global base bundle + route-level styles */ -}}
@@ -41,8 +55,7 @@
 {{- end -}}
 
 {{- if .IsHome -}}
-    {{- $home := resources.Get "css/home.css" -}}
-    {{- $homeStyle := $home | resources.Minify | fingerprint -}}
+    {{- $homeStyle := slice (resources.Get "css/fonts-latin.css") (resources.Get "css/home.css") | resources.Concat "css/home.css" | resources.Minify | fingerprint -}}
     <link rel="stylesheet" href="{{ $homeStyle.RelPermalink }}" integrity="{{ $homeStyle.Data.Integrity }}">
 {{- end -}}
 
@@ -81,7 +94,9 @@
 
 {{- if .IsHome -}}
     {{- $homeJS := resources.Get "js/home.js" | js.Build (dict "targetPath" "js/home.js") | resources.Minify | fingerprint -}}
-    <script defer src="{{ $homeJS.RelPermalink }}" integrity="{{ $homeJS.Data.Integrity }}"></script>
+    {{- /* home.js loads the field after the page has loaded. */ -}}
+    {{- $homeFieldJS := resources.Get "js/home-field.js" | js.Build (dict "targetPath" "js/home-field.js") | resources.Minify | fingerprint -}}
+    <script defer src="{{ $homeJS.RelPermalink }}" integrity="{{ $homeJS.Data.Integrity }}" data-field-src="{{ $homeFieldJS.RelPermalink }}" data-field-integrity="{{ $homeFieldJS.Data.Integrity }}"></script>
 {{- end -}}
 
 {{- if or (eq .Section "dashboard") (eq .Type "dashboard") -}}

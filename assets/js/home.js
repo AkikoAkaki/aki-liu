@@ -1,11 +1,12 @@
-import { initHomeField } from "./modules/home-field.js";
 import { initHomeHoverPreview } from "./modules/home-preview.js";
 import { matches, QUERIES } from "./modules/media.js";
+
+const homeScript = document.currentScript;
 
 document.addEventListener("DOMContentLoaded", () => {
   initExpandableCards();
   initHomeHoverPreview();
-  initHomeField();
+  loadHomeField();
   const navContent = document.querySelector(".nav-panel-content");
   const leftCol = document.querySelector(".work-column:not(.nav-panel-column)");
   if (!navContent || !leftCol) return;
@@ -69,4 +70,24 @@ function initExpandableCards() {
         card.classList.toggle("is-collapsed", !expanded);
       });
     });
+}
+
+// The field library is the largest script on the page. Fetch and start it
+// once the page has loaded and the main thread is idle, so it never delays
+// the first paint or early input.
+function loadHomeField() {
+  const src = homeScript?.dataset.fieldSrc;
+  if (!src) return;
+  const start = () => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.integrity = homeScript.dataset.fieldIntegrity;
+    document.head.append(script);
+  };
+  const whenIdle = () => {
+    if ("requestIdleCallback" in window) requestIdleCallback(start, { timeout: 1000 });
+    else setTimeout(start, 50);
+  };
+  if (document.readyState === "complete") whenIdle();
+  else window.addEventListener("load", whenIdle, { once: true });
 }

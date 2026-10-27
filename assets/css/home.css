@@ -84,6 +84,13 @@
     height: var(--field-height) !important;
     flex: none;
     margin-bottom: calc(-1 * var(--field-height));
+    animation: home-field-in 0.6s ease backwards;
+}
+
+/* The field starts after page load, so it fades in rather than popping. The
+   missing "to" frame animates to the opacity the library sets inline. */
+@keyframes home-field-in {
+    from { opacity: 0; }
 }
 
 @media (max-width: 768px) {
@@ -954,6 +961,10 @@ a.nav-panel-subitem:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .home-page .home-field {
+        animation: none;
+    }
+
     .author-name-svg-wrapper {
         clip-path: none;
         opacity: 1;

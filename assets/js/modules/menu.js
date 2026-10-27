@@ -268,7 +268,9 @@ export function initExpandingMenu() {
   const magneticLinks = menuPanel
     ? [...menuPanel.querySelectorAll(".menu-link")]
     : [];
-  let lastScrollY = window.scrollY || 0;
+  // Unset until the first scroll. Reading scrollY here would force a layout
+  // while the page is still loading.
+  let lastScrollY = null;
   let scrollRafId = 0;
   const hideThreshold = 24;
 
@@ -332,7 +334,7 @@ export function initExpandingMenu() {
     }
 
     const currentScrollY = window.scrollY || 0;
-    const delta = currentScrollY - lastScrollY;
+    const delta = lastScrollY === null ? 0 : currentScrollY - lastScrollY;
 
     if (currentScrollY <= hideThreshold) {
       menuBar.classList.remove("is-scrolled-away");
