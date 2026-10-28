@@ -47,9 +47,11 @@ export function initArchiveFilter() {
     const before = new Map();
     if (moving) {
       entries.filter(({ element }) => !element.hidden).forEach(({ element }) => {
+        const rect = element.getBoundingClientRect();
+        const inViewport = rect.bottom >= 0 && rect.top <= innerHeight;
         before.set(element, {
-          rect: element.getBoundingClientRect(),
-          opacity: Number(getComputedStyle(element).opacity),
+          rect,
+          opacity: inViewport ? Number(getComputedStyle(element).opacity) : 1,
         });
       });
     }
@@ -87,6 +89,7 @@ export function initArchiveFilter() {
     matched.forEach(({ element }) => {
       const previous = before.get(element);
       const rect = after.get(element);
+      if (rect.bottom < 0 || rect.top > innerHeight) return;
       const dx = previous ? previous.rect.left - rect.left : 0;
       const dy = previous ? previous.rect.top - rect.top : 6;
       const opacity = previous ? previous.opacity : 0;

@@ -1,6 +1,27 @@
 import EmblaCarousel from "./vendor-embla-8.6.0.js";
-import { gsap } from "./vendor-gsap-3.13.0.js";
 import { media, QUERIES } from "./media.js";
+
+// These scalar tweens retain GSAP's cubic/quartic ease-out without its runtime.
+function tweenOffset(motion, { offset, duration, power, onUpdate, onComplete, onInterrupt }) {
+  const from = motion.offset;
+  const start = performance.now();
+  let frame;
+  let finished = false;
+  function tick(now) {
+    const progress = Math.min(1, (now - start) / (duration * 1000));
+    motion.offset = from + (offset - from) * (1 - (1 - progress) ** power);
+    onUpdate();
+    if (progress < 1) frame = requestAnimationFrame(tick);
+    else { finished = true; onComplete?.(); }
+  }
+  frame = requestAnimationFrame(tick);
+  return { kill() {
+    if (finished) return;
+    finished = true;
+    cancelAnimationFrame(frame);
+    onInterrupt?.();
+  } };
+}
 
 export function initAboutGallery() {
   const root = document.querySelector("[data-about-sequence]");
@@ -141,8 +162,8 @@ export function initAboutGallery() {
   function scrollWheel(distance) {
     wheelTarget += distance;
     wheelTween?.kill();
-    wheelTween = gsap.to(wheelMotion, {
-      offset: wheelTarget, duration: 0.09, ease: "power2.out",
+    wheelTween = tweenOffset(wheelMotion, {
+      offset: wheelTarget, duration: 0.09, power: 3,
       onUpdate() {
         moveBy(wheelMotion.offset - wheelPosition);
         wheelPosition = wheelMotion.offset;
@@ -158,8 +179,8 @@ export function initAboutGallery() {
     const motion = { offset: 0 };
     let previous = 0;
     return new Promise((resolve) => {
-      snapTween = gsap.to(motion, {
-        offset: distance, duration: 0.36, ease: "power3.out",
+      snapTween = tweenOffset(motion, {
+        offset: distance, duration: 0.36, power: 4,
         onUpdate() {
           moveBy(motion.offset - previous);
           previous = motion.offset;

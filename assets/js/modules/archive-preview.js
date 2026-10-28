@@ -3,14 +3,13 @@ import { media, QUERIES } from "./media.js";
 
 export function initArchivePreview(list) {
   const container = document.getElementById("archive-preview-container");
-  const source = list.dataset.archivePreviewSrc;
-  if (!container || !source) return { clear() {} };
+  if (!container) return { clear() {} };
 
   const enabled = media("(min-width: 1201px)");
   const reducedMotion = media(QUERIES.reducedMotion);
   const panel = container.closest(".site-sidebar-right");
   const katexBase = list.dataset.katexBase;
-  let previews = null;
+  const previews = new Map();
   let hoveredItem = null;
   let focusedItem = null;
   let desiredItem = null;
@@ -23,20 +22,22 @@ export function initArchivePreview(list) {
   let content = null;
   const transitions = [];
 
-  function loadPreviews() {
-    if (!previews) {
-      previews = fetch(source)
+  function loadPreview(item) {
+    const source = item?.dataset.archivePreviewSrc;
+    if (!source) return Promise.resolve(null);
+    if (!previews.has(source)) {
+      const request = fetch(source)
         .then((response) => {
           if (!response.ok) throw new Error("HTTP " + response.status);
           return response.json();
         })
-        .then((entries) => new Map(entries.map((entry) => [entry.url, entry])))
         .catch((error) => {
-          previews = null;
+          previews.delete(source);
           throw error;
         });
+      previews.set(source, request);
     }
-    return previews;
+    return previews.get(source);
   }
 
   function fitPreview() {
@@ -79,8 +80,7 @@ export function initArchivePreview(list) {
   async function render(item, token) {
     let entry;
     try {
-      const url = item.querySelector(".item-title").getAttribute("href");
-      entry = (await loadPreviews()).get(url);
+      entry = await loadPreview(item);
       if (entry?.math) await loadKatex(katexBase);
     } catch {
       if (token === requestToken) desiredItem = null;
@@ -168,12 +168,10 @@ export function initArchivePreview(list) {
     return item && item.parentElement === list ? item : null;
   }
 
-  list.addEventListener("pointerenter", (event) => {
-    if (enabled.matches && event.pointerType !== "touch") loadPreviews().catch(() => {});
-  }, { passive: true });
   list.addEventListener("pointerover", (event) => {
     if (event.pointerType === "touch") return;
     hoveredItem = itemFrom(event.target);
+    if (enabled.matches) loadPreview(hoveredItem).catch(() => {});
     updateTarget();
   }, { passive: true });
   list.addEventListener("pointerout", (event) => {

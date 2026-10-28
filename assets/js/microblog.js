@@ -12,8 +12,8 @@ function initMicroblog(root) {
     const images = new WeakSet();
     const mathCards = new WeakSet();
     let sequence = 0;
-    let feedPromise;
     let feed;
+    const chunks = new Map();
 
     const observer = new IntersectionObserver(entries => {
         for (const entry of entries) {
@@ -46,12 +46,10 @@ function initMicroblog(root) {
         }
     }
 
-    function readFeed(data) {
-        if (!data || !Array.isArray(data.entries) || !data.tags || typeof data.tags !== 'object') {
-            throw new Error('Invalid microblog feed');
-        }
+    function readChunk(entries) {
+        if (!Array.isArray(entries)) throw new Error('Invalid microblog entries');
         const seen = new Set();
-        for (const entry of data.entries) {
+        for (const entry of entries) {
             if (!entry || typeof entry.id !== 'string' || typeof entry.html !== 'string'
                 || typeof entry.year !== 'string' || !Array.isArray(entry.tags)
                 || !entry.tags.every(tag => typeof tag === 'string') || seen.has(entry.id)) {
@@ -59,21 +57,22 @@ function initMicroblog(root) {
             }
             seen.add(entry.id);
         }
-        feed = data;
-        return data;
+        return entries;
+    }
+
+    function loadChunk(url) {
+        if (!chunks.has(url)) {
+            const request = fetch(url, { credentials: 'same-origin' }).then(response => {
+                if (!response.ok) throw new Error(`Microblog page request failed: ${response.status}`);
+                return response.json();
+            }).then(readChunk).catch(error => { chunks.delete(url); throw error; });
+            chunks.set(url, request);
+        }
+        return chunks.get(url);
     }
 
     function loadFeed() {
-        if (!feedPromise) {
-            feedPromise = fetch(root.dataset.feedUrl, { credentials: 'same-origin' })
-                .then(response => {
-                    if (!response.ok) throw new Error(`Feed request failed: ${response.status}`);
-                    return response.json();
-                })
-                .then(readFeed)
-                .catch(error => { feedPromise = null; throw error; });
-        }
-        return feedPromise;
+        return feed ??= JSON.parse(root.querySelector('[data-mb-feed-index]').textContent);
     }
 
     function updateControls(state, message = '') {
@@ -92,24 +91,27 @@ function initMicroblog(root) {
         state.phase = 'loading';
         updateControls(state, state.next ? '' : 'Loading entries…');
         try {
-            const data = await loadFeed();
+            const data = loadFeed();
             if (columns.get(state.id) !== state) return;
-            state.entries ??= data.entries.filter(entry => state.type === 'all'
-                || (state.type === 'year' ? entry.year === state.key : entry.tags.includes(state.key)));
+            const column = data.columns[state.type === 'all' ? '__all__' : state.id];
+            if (!column) throw new Error('Unknown microblog column');
+            const url = column.pages[Math.floor(state.next / PAGE_SIZE)];
+            const entries = url ? await loadChunk(url) : [];
+            if (columns.get(state.id) !== state) return;
             const fragment = document.createDocumentFragment();
-            for (const entry of state.entries.slice(state.next, state.next + PAGE_SIZE)) {
+            for (const entry of entries) {
                 const template = document.createElement('template');
                 template.innerHTML = entry.html;
                 fragment.appendChild(template.content);
             }
+            enhanceCards(fragment);
             state.element.querySelector('[data-mb-feed]').appendChild(fragment);
-            state.next = Math.min(state.next + PAGE_SIZE, state.entries.length);
-            state.done = state.next === state.entries.length;
+            state.next += entries.length;
+            state.done = state.next >= column.count;
             state.phase = 'ready';
-            state.element.querySelector('[data-mb-column-count]').textContent = state.entries.length;
-            state.element.querySelector('[data-mb-column-unit]').textContent = state.entries.length === 1 ? 'Entry' : 'Entries';
-            updateControls(state, state.entries.length ? '' : 'Nothing here yet.');
-            enhanceCards(state.element);
+            state.element.querySelector('[data-mb-column-count]').textContent = column.count;
+            state.element.querySelector('[data-mb-column-unit]').textContent = column.count === 1 ? 'Entry' : 'Entries';
+            updateControls(state, column.count ? '' : 'Nothing here yet.');
             if (state.done) observer.unobserve(state.sentinel);
             else if (state.wanted) observer.observe(state.sentinel);
         } catch (_) {
@@ -242,7 +244,7 @@ function initMicroblog(root) {
                 </div>
             </div>`;
         state = { id, type, key, element, wanted: true, phase: 'ready', next: 0, done: false,
-            sentinel: element.querySelector('[data-mb-sentinel]'), entries: null, animation: null };
+            sentinel: element.querySelector('[data-mb-sentinel]'), animation: null };
         columns.set(id, state);
         deck.appendChild(element);
         loadMore(state);
@@ -285,7 +287,7 @@ function initMicroblog(root) {
     const mainElement = deck.querySelector('.mb-column-main');
     const mainState = { id: '__all__', type: 'all', key: '', element: mainElement, wanted: true,
         phase: 'ready', next: mainElement.querySelectorAll('.mb-card').length,
-        done: false, entries: null, animation: null, sentinel: mainElement.querySelector('[data-mb-sentinel]') };
+        done: false, animation: null, sentinel: mainElement.querySelector('[data-mb-sentinel]') };
     mainElement.id = 'microblog-column-all';
     mainState.done = mainState.next >= Number(mainElement.querySelector('[data-mb-column-count]').textContent);
     columns.set(mainState.id, mainState);

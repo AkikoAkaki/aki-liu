@@ -8,12 +8,13 @@ import { renderMath } from "./modules/katex.js";
 const searchSrc = document.currentScript?.dataset.searchSrc;
 
 document.addEventListener("DOMContentLoaded", () => {
-  const generalMagnetEls = [
-    ...document.querySelectorAll(
-      ".data-link, .mb-tag-chip, .menu-trigger",
-    ),
-  ];
-  initMagneticHover(generalMagnetEls, { magnetX: 4, magnetY: 3 });
+  const magnets = new WeakSet();
+  document.addEventListener("pointerover", (event) => {
+    const element = event.target.closest(".mb-tag-chip");
+    if (!element || magnets.has(element)) return;
+    magnets.add(element);
+    initMagneticHover([element], { magnetX: 4, magnetY: 3 });
+  }, { capture: true, passive: true });
 
   initExpandingMenu();
   initTableWrapping();

@@ -1,8 +1,3 @@
-{{- $previewSrc := "" -}}
-{{- range first 1 .regularPages -}}
-    {{- /* English lists can display Chinese pages when no translation exists. */ -}}
-    {{- $previewSrc = (partialCached "archive-preview-index.html" .Site .Language.Lang).RelPermalink -}}
-{{- end -}}
 {{- $tags := slice -}}
 {{- range .tagSlice -}}{{- $tags = $tags | append (.name | urlize) -}}{{- end -}}
 
@@ -10,11 +5,10 @@
      data-archive-initial-tags="{{ delimit .initialTags "," }}"
      data-archive-valid-tags="{{ delimit $tags "," }}"
      data-archive-valid-years="{{ delimit .years "," }}"
-     data-archive-preview-src="{{ $previewSrc }}"
      data-katex-base="{{ partialCached "katex-base.html" "katex-base" }}">
     {{ range .entries }}
         {{- $page := .page -}}
-        <article class="archive-item" data-archive-year="{{ .year }}" data-archive-tags="{{ delimit .tags "," }}"{{ if not .visible }} hidden{{ end }}>
+        <article class="archive-item" data-archive-preview-src="{{ (partialCached "archive-preview-entry.html" $page $page.RelPermalink).RelPermalink }}" data-archive-year="{{ .year }}" data-archive-tags="{{ delimit .tags "," }}"{{ if not .visible }} hidden{{ end }}>
             <div class="item-hover-arrow" aria-hidden="true">
                 {{ partialCached "icons/hover-arrow.html" "hover-arrow" }}
             </div>

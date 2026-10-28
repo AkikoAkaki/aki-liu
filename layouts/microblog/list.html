@@ -17,9 +17,7 @@
 
 {{ define "main" }}
 {{- $entries := .Store.Get "entries" -}}
-{{- $payload := partialCached "microblog-feed-data.html" . .Language.Lang -}}
-{{- $version := sha256 ($payload | jsonify) -}}
-{{- $feedURL := printf "%sfeed.json?v=%s" .RelPermalink (substr $version 0 12) -}}
+{{- $feedIndex := partialCached "microblog-feed-index.html" . .Language.Lang -}}
 <div class="archive-main-col">
     {{ if .Content }}
     <div class="archive-intro-section">
@@ -30,7 +28,8 @@
     </div>
     {{ end }}
 
-    <section class="microblog-page" data-feed-url="{{ $feedURL }}" data-katex-base="{{ partialCached "katex-base.html" "katex-base" }}">
+    <section class="microblog-page" data-katex-base="{{ partialCached "katex-base.html" "katex-base" }}">
+        <script type="application/json" data-mb-feed-index>{{ $feedIndex | jsonify | safeJS }}</script>
         <div class="microblog-deck" id="microblog-deck" role="region" aria-label="Microblog feed">
             <div class="mb-column mb-column-main" data-mb-column-id="__all__" data-mb-tag="" aria-label="All entries">
                 <div class="mb-column-content">

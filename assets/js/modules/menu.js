@@ -39,42 +39,51 @@ export function initMagneticHover(elements, opts) {
 
     el._magnetState = state;
 
+    const written = new Map();
+    state.written = written;
+    function writeVar(name, value) {
+      if (written.get(name) === value) return;
+      written.set(name, value);
+      el.style.setProperty(name, value);
+    }
+
     function setVars() {
-      el.style.setProperty(
+      writeVar(
         "--menu-magnet-x",
         `${state.current.x.toFixed(3)}px`,
       );
-      el.style.setProperty(
+      writeVar(
         "--menu-magnet-y",
         `${state.current.y.toFixed(3)}px`,
       );
-      el.style.setProperty(
+      writeVar(
         "--menu-content-x",
         `${state.current.contentX.toFixed(3)}px`,
       );
-      el.style.setProperty(
+      writeVar(
         "--menu-content-y",
         `${state.current.contentY.toFixed(3)}px`,
       );
-      el.style.setProperty(
+      writeVar(
         "--menu-cursor-x",
         `${state.current.cursorX.toFixed(3)}px`,
       );
-      el.style.setProperty(
+      writeVar(
         "--menu-cursor-y",
         `${state.current.cursorY.toFixed(3)}px`,
       );
-      el.style.setProperty(
+      writeVar(
         "--menu-fill-scale",
         state.current.fill.toFixed(4),
       );
-      el.style.setProperty(
+      writeVar(
         "--menu-fill-opacity",
         state.current.opacity.toFixed(4),
       );
     }
 
     function resetVars() {
+      written.clear();
       [
         "--menu-magnet-x",
         "--menu-magnet-y",
@@ -237,6 +246,7 @@ export function resetMagneticHover(elements) {
       state.rafId = 0;
     }
     if (state) {
+      state.written.clear();
       state.active = false;
       state.rect = null;
       Object.keys(state.current).forEach((key) => {
@@ -273,6 +283,7 @@ export function initExpandingMenu() {
   let lastScrollY = null;
   let scrollRafId = 0;
   const hideThreshold = 24;
+  let linksInitialized = false;
 
   function getCollapsedHeight() {
     const computed = window.getComputedStyle(menuBar);
@@ -289,6 +300,10 @@ export function initExpandingMenu() {
   }
 
   function open() {
+    if (!linksInitialized) {
+      initMagneticLinks();
+      linksInitialized = true;
+    }
     syncOpenHeight();
     menuBar.classList.add("is-animating");
     menuBar.classList.add("is-open");
@@ -426,6 +441,5 @@ export function initExpandingMenu() {
     if (document.hidden) resetMagneticLinks();
   });
 
-  initMagneticLinks();
   // The first scroll establishes the restored position without forcing startup layout.
 }

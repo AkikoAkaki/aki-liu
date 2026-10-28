@@ -102,17 +102,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    let headingTops = [];
     let activeHeading = null;
     const highlightActiveHeading = () => {
         let current = null;
         const readingLine = window.innerHeight * 0.26;
 
-        for (let i = headings.length - 1; i >= 0; i--) {
-            if (headings[i].getBoundingClientRect().top <= readingLine) {
-                current = headings[i];
-                break;
-            }
+        const boundary = window.scrollY + readingLine;
+        let low = 0, high = headingTops.length;
+        while (low < high) {
+            const middle = (low + high) >>> 1;
+            if (headingTops[middle] <= boundary) low = middle + 1;
+            else high = middle;
         }
+        if (low) current = headings[low - 1];
 
         if (current === activeHeading) return;
         activeHeading = current;
@@ -138,12 +141,15 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('scroll', onScrollOrResize, { passive: true });
     const onLayoutChange = () => {
         fitSidebarToc();
+        const scrollTop = window.scrollY;
+        headingTops = headings.map(heading => heading.getBoundingClientRect().top + scrollTop);
         onScrollOrResize();
     };
     window.addEventListener('resize', onLayoutChange);
     if (document.fonts) document.fonts.ready.then(onLayoutChange);
     window.addEventListener('load', onLayoutChange);
     if (sidebarToc) new ResizeObserver(onLayoutChange).observe(sidebarToc.querySelector('.post-toc-content'));
+    if (postContent) new ResizeObserver(onLayoutChange).observe(postContent);
     onLayoutChange();
 
     if (sidebarToc) {

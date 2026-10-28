@@ -14,6 +14,9 @@ export function initFooterRevealFallback() {
   const curve = parseFloat(getComputedStyle(footer).getPropertyValue("--footer-curve")) || 40;
   let frame = 0;
   let pinned = false;
+  let nearFooter = false;
+  let lastProgress = -1;
+  let lastDesktop = desktop.matches;
 
   // While the footer is coming into view, its content is position: fixed to
   // the bottom of the screen. Moving it with a transform on every scroll event
@@ -40,6 +43,9 @@ export function initFooterRevealFallback() {
     // 0 when the footer's top edge reaches the bottom of the screen,
     // 1 when the footer is fully on screen.
     const progress = Math.min(Math.max((window.innerHeight - footer.getBoundingClientRect().top) / footer.offsetHeight, 0), 1);
+    if (progress === lastProgress && desktop.matches === lastDesktop && pinned === (progress < 1)) return;
+    lastProgress = progress;
+    lastDesktop = desktop.matches;
     const eased = 1 - (1 - progress) ** 3;
 
     page.style.borderBottomLeftRadius = `${curve * eased}px`;
@@ -52,7 +58,14 @@ export function initFooterRevealFallback() {
     if (!frame) frame = requestAnimationFrame(update);
   };
 
-  window.addEventListener("scroll", schedule, { passive: true });
+  const observer = new IntersectionObserver(([entry]) => {
+    nearFooter = entry.isIntersecting;
+    schedule();
+  }, { rootMargin: "100px 0px" });
+  observer.observe(footer);
+  window.addEventListener("scroll", () => {
+    if (nearFooter) schedule();
+  }, { passive: true });
   window.addEventListener("resize", () => {
     setPinned(false);
     schedule();

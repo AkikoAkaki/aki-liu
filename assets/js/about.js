@@ -1,6 +1,30 @@
 import { media, QUERIES } from "./modules/media.js";
 import { initAboutGallery } from "./modules/about-gallery.js";
-import { initAboutPinboard } from "./modules/about-pinboard.js";
+const pinboardSrc = document.currentScript?.dataset.pinboardSrc;
+
+function initPinboardLoader() {
+  const canvas = document.getElementById("about-pinboard-canvas");
+  if (!canvas || !pinboardSrc) return;
+  const desktop = media(QUERIES.aboutDesktop);
+  let pending = false;
+  let initialized = false;
+  const observer = new IntersectionObserver(async entries => {
+    if (!desktop.matches || pending || initialized || !entries.some(entry => entry.isIntersecting)) return;
+    pending = true;
+    try {
+      const { initAboutPinboard } = await import(pinboardSrc);
+      initAboutPinboard();
+      initialized = true;
+      observer.disconnect();
+      desktop.removeEventListener("change", watch);
+    } catch (error) {
+      console.error("Pinboard could not load", error);
+    } finally { pending = false; }
+  }, { rootMargin: "600px 0px" });
+  function watch() { observer.unobserve(canvas); observer.observe(canvas); }
+  desktop.addEventListener("change", watch);
+  watch();
+}
 
 function initScrollReveal() {
   const motion = media(QUERIES.reducedMotion);
@@ -33,6 +57,6 @@ function initScrollReveal() {
 
 document.addEventListener("DOMContentLoaded", () => {
   initAboutGallery();
-  initAboutPinboard();
+  initPinboardLoader();
   initScrollReveal();
 });

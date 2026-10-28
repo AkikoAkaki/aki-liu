@@ -5,10 +5,9 @@
        preference (kept in sync until the visitor picks a theme). */ -}}
 <script>(function(){var d=document.documentElement,m=window.matchMedia('(prefers-color-scheme: dark)');function apply(){var t=null;try{t=localStorage.getItem('theme');}catch(_){}d.setAttribute('data-theme',t==='dark'||t==='light'?t:(m.matches?'dark':'light'));}apply();if(m.addEventListener){m.addEventListener('change',apply);}if(window.self!==window.top){d.classList.add('is-iframe');}}())</script>
 {{- $isArchive := partial "is-archive.html" . -}}
-{{- /* Fonts. The homepage self-hosts its Latin fonts (css/fonts-latin.css)
-       and asks Google only for Noto Serif SC, and only when its text has Han
-       characters. Other pages keep the Google stylesheet. */ -}}
-{{- $googleFontsURL := "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Serif+SC:wght@400;500&display=swap" -}}
+{{- /* Latin fonts use the same self-hosted files as the homepage.
+       Keep the existing Noto Serif SC subsets for Chinese text. */ -}}
+{{- $googleFontsURL := "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500&display=swap" -}}
 {{- if .IsHome -}}
     {{- $googleFontsURL = "" -}}
     {{- if findRE `\p{Han}` (jsonify site.Data.homepage) 1 -}}
@@ -27,6 +26,10 @@
 {{- with $googleFontsURL -}}
 <link href="{{ . }}" rel="stylesheet" media="print" onload="this.media='all'">
 {{- end -}}
+{{- if and (not .IsHome) (not $isArchive) -}}
+    {{- $latinFonts := resources.Get "css/fonts-latin.css" | resources.Minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $latinFonts.RelPermalink }}" integrity="{{ $latinFonts.Data.Integrity }}">
+{{- end -}}
 
 {{- /* CSS pipeline: global base bundle + route-level styles */ -}}
 {{- $base := resources.Get "css/base.css" -}}
@@ -40,7 +43,7 @@
 {{- if $isArchive -}}
     {{- $archiveStyle := resources.Get "css/archive.css" | resources.Minify | fingerprint -}}
     <link rel="stylesheet" href="{{ $archiveStyle.RelPermalink }}" integrity="{{ $archiveStyle.Data.Integrity }}">
-    <link rel="preload" href="https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/jetbrainsmono/v24/latin-normal.woff2" as="font" type="font/woff2" crossorigin>
     {{- if eq .Section "textlab" -}}
     <link rel="preload" href="https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438weI_wC-ZF.woff2" as="font" type="font/woff2" crossorigin>
     {{- end -}}
@@ -89,8 +92,9 @@
 {{- end -}}
 
 {{- if and (eq .Section "about") (eq .Kind "section") -}}
-    {{- $aboutJS := resources.Get "js/about.js" | js.Build (dict "targetPath" "js/about.js") | resources.Minify | fingerprint -}}
-    <script defer src="{{ $aboutJS.RelPermalink }}" integrity="{{ $aboutJS.Data.Integrity }}"></script>
+    {{- $aboutJS := resources.Get "js/about.js" | js.Build (dict "minify" true "targetPath" "js/about.js") | resources.Minify | fingerprint -}}
+    {{- $pinboardJS := resources.Get "js/modules/about-pinboard.js" | js.Build (dict "format" "esm" "minify" true "targetPath" "js/about-pinboard.js") | fingerprint -}}
+    <script defer src="{{ $aboutJS.RelPermalink }}" integrity="{{ $aboutJS.Data.Integrity }}" data-pinboard-src="{{ $pinboardJS.RelPermalink }}"></script>
 {{- end -}}
 
 {{- if .IsHome -}}

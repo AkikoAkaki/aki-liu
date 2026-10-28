@@ -1,0 +1,25 @@
+{{- $payload := partialCached "microblog-feed-data.html" . .Language.Lang -}}
+{{- $groups := dict "__all__" $payload.entries -}}
+{{- range $payload.entries -}}
+    {{- $entry := . -}}
+    {{- $keys := slice (printf "year:%s" .year) -}}
+    {{- range .tags -}}{{- $keys = $keys | append (printf "tag:%s" .) -}}{{- end -}}
+    {{- range $keys | uniq -}}
+        {{- $items := index $groups . | default slice -}}
+        {{- $groups = merge $groups (dict . ($items | append $entry)) -}}
+    {{- end -}}
+{{- end -}}
+{{- $columns := dict -}}
+{{- $lang := .Language.Lang -}}
+{{- range $key, $entries := $groups -}}
+    {{- $pages := slice -}}
+    {{- if gt (len $entries) 0 -}}
+        {{- range $offset := seq 0 30 (sub (len $entries) 1) -}}
+            {{- $path := printf "microblog-data/%s/%s-%d.json" $lang (substr (sha256 $key) 0 12) $offset -}}
+            {{- $chunk := resources.FromString $path (jsonify (first 30 (after $offset $entries))) | fingerprint -}}
+            {{- $pages = $pages | append $chunk.RelPermalink -}}
+        {{- end -}}
+    {{- end -}}
+    {{- $columns = merge $columns (dict $key (dict "count" (len $entries) "pages" $pages)) -}}
+{{- end -}}
+{{- return (dict "columns" $columns "tags" $payload.tags) -}}

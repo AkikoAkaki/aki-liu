@@ -1,0 +1,5 @@
+{{- $html := .Content | truncate 800 -}}
+{{- $maybeMath := or (in $html "$") (in $html "\\(") (in $html "\\[") -}}
+{{- $entry := dict "url" .RelPermalink "title" .Title "html" $html "math" (and $maybeMath (partial "page-has-math.html" .)) -}}
+{{- $path := printf "data/archive-preview/%s.json" (substr (sha256 .RelPermalink) 0 12) -}}
+{{- return (resources.FromString $path (jsonify $entry) | fingerprint) -}}

@@ -92,7 +92,19 @@ const open = async (path, { width, height, mobile, theme }) => {
 };
 const scrollTo = (fraction) => evaluate(`(async () => {
   window.__edgeState && (window.__edgeState.userScrolled = true);
-  for (let i = 0; i < 2; i++) { scrollTo(0, (document.documentElement.scrollHeight - innerHeight) * ${fraction}); await new Promise(r => setTimeout(r, 300)); }
+  const bottom = ${fraction} === 1;
+  let stable = 0;
+  // Microblog can append another page each time its sentinel enters view.
+  for (let i = 0; i < (bottom ? 30 : 2); i++) {
+    const height = document.documentElement.scrollHeight;
+    scrollTo(0, (height - innerHeight) * ${fraction});
+    await new Promise(r => setTimeout(r, 300));
+    const nextHeight = document.documentElement.scrollHeight;
+    const loading = document.querySelector('.mb-column[aria-busy="true"]');
+    if (bottom && nextHeight === height && !loading && Math.abs(scrollY + innerHeight - nextHeight) <= 1) {
+      if (++stable === 2) break;
+    } else stable = 0;
+  }
 })()`);
 
 // ---------- WebKit edge sampler (runs in the page) ----------

@@ -259,6 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const i = Math.round(((px - padL) / innerW) * (data.length - 1));
       if (i < 0 || i >= data.length) return;
 
+      if (i === activeIdx) return;
       activeIdx = i;
 
       if (firstMove) {
