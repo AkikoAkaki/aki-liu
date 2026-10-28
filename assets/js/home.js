@@ -8,9 +8,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const leftCol = document.querySelector(".work-column:not(.nav-panel-column)");
   if (!navContent || !leftCol) return;
 
+  let raf = 0, pendingGap = null;
+  function writeGap(value) {
+    pendingGap = value;
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      if (pendingGap === null) navContent.style.removeProperty("--nav-flow-gap");
+      else navContent.style.setProperty("--nav-flow-gap", pendingGap);
+    });
+  }
+
   function updateNavGap() {
     if (!matches(QUERIES.homeDesktop)) {
-      navContent.style.removeProperty("--nav-flow-gap");
+      writeGap(null);
       return;
     }
     const groups = navContent.querySelectorAll(".nav-panel-group");
@@ -30,25 +41,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const gap = slots > 0 ? Math.max(6, Math.round(free / slots)) : 12;
-    navContent.style.setProperty("--nav-flow-gap", gap + "px");
+    writeGap(gap + "px");
   }
 
-  let raf = 0;
-  function schedule() {
-    if (raf) return;
-    raf = requestAnimationFrame(() => {
-      raf = 0;
-      updateNavGap();
-    });
-  }
-
-  window.addEventListener("resize", schedule);
-  schedule();
+  window.addEventListener("resize", updateNavGap);
   if (window.ResizeObserver) {
-    const observer = new ResizeObserver(schedule);
+    // Read after layout; commit the spacing in the next frame.
+    const observer = new ResizeObserver(updateNavGap);
     observer.observe(leftCol);
     observer.observe(navContent);
-  }
+  } else requestAnimationFrame(updateNavGap);
 });
 
 function initExpandableCards() {

@@ -35,6 +35,8 @@ export function initHomeHoverPreview() {
   scope.addEventListener(
     "pointerenter",
     () => {
+      const connection = navigator.connection;
+      if (connection?.saveData || /^(slow-2g|2g|3g)$/.test(connection?.effectiveType)) return;
       items.forEach((item) => {
         const preload = new Image();
         preload.decoding = "async";
@@ -234,5 +236,4 @@ export function initHomeHoverPreview() {
     },
     { passive: true },
   );
-  measurePreview();
 }

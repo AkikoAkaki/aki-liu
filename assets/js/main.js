@@ -2,9 +2,10 @@ import { initExpandingMenu, initMagneticHover } from "./modules/menu.js";
 import { initFooterRevealFallback } from "./modules/footer-reveal.js";
 import { initTableWrapping } from "./modules/post-enhancements.js";
 import { initPrefetcher } from "./modules/prefetch.js";
-import { initSearchPalette } from "./modules/search-palette.js";
+import { initSearchLoader } from "./modules/search-loader.js";
 
 import { renderMath } from "./modules/katex.js";
+const searchSrc = document.currentScript?.dataset.searchSrc;
 
 document.addEventListener("DOMContentLoaded", () => {
   const generalMagnetEls = [
@@ -17,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initExpandingMenu();
   initTableWrapping();
   initFooterRevealFallback();
-  initSearchPalette();
+  initSearchLoader(searchSrc);
   initPrefetcher();
   if (typeof window.renderMathInElement === "function") renderMath(document.body);
 });

@@ -79,8 +79,9 @@
 {{- end -}}
 
 {{- /* JS entrypoints use ES module imports; keep them behind Hugo js.Build. */ -}}
-{{- $mainJS := resources.Get "js/main.js" | js.Build (dict "targetPath" "js/main.js") | resources.Minify | fingerprint -}}
-<script defer src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}"></script>
+{{- $mainJS := resources.Get "js/main.js" | js.Build (dict "minify" true "targetPath" "js/main.js") | resources.Minify | fingerprint -}}
+{{- $searchJS := resources.Get "js/modules/search-palette.js" | js.Build (dict "format" "esm" "minify" true "targetPath" "js/search-palette.js") | fingerprint -}}
+<script defer src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" data-search-src="{{ $searchJS.RelPermalink }}"></script>
 
 {{- if and (eq .Section "microblog") (eq .Kind "section") -}}
     {{- $microblogJS := resources.Get "js/microblog.js" | js.Build (dict "targetPath" "js/microblog.js") | resources.Minify | fingerprint -}}
@@ -93,12 +94,13 @@
 {{- end -}}
 
 {{- if .IsHome -}}
-    {{- $homeJS := resources.Get "js/home.js" | js.Build (dict "targetPath" "js/home.js") | resources.Minify | fingerprint -}}
+    {{- $homeJS := resources.Get "js/home.js" | js.Build (dict "minify" true "targetPath" "js/home.js") | resources.Minify | fingerprint -}}
     {{- /* The field renderer runs separately from the page's UI thread. */ -}}
-    {{- $homeFieldJS := resources.Get "js/home-field.js" | js.Build (dict "targetPath" "js/home-field.js") | resources.Minify | fingerprint -}}
-    {{- $homeFieldWorker := resources.Get "js/home-field-worker.js" | js.Build (dict "targetPath" "js/home-field-worker.js") | resources.Minify | fingerprint -}}
+    {{- $homeFieldJS := resources.Get "js/home-field.js" | js.Build (dict "minify" true "targetPath" "js/home-field.js") | resources.Minify | fingerprint -}}
+    {{- $homeFieldWorker := resources.Get "js/home-field-worker.js" | js.Build (dict "minify" true "targetPath" "js/home-field-worker.js") | resources.Minify | fingerprint -}}
+    {{- $homeFieldFallback := resources.Get "js/modules/home-field-renderer.js" | js.Build (dict "format" "esm" "minify" true "targetPath" "js/home-field-fallback.js") | fingerprint -}}
     <script defer src="{{ $homeJS.RelPermalink }}" integrity="{{ $homeJS.Data.Integrity }}"></script>
-    <script defer src="{{ $homeFieldJS.RelPermalink }}" integrity="{{ $homeFieldJS.Data.Integrity }}" data-worker-src="{{ $homeFieldWorker.RelPermalink }}"></script>
+    <script defer src="{{ $homeFieldJS.RelPermalink }}" integrity="{{ $homeFieldJS.Data.Integrity }}" data-worker-src="{{ $homeFieldWorker.RelPermalink }}" data-fallback-src="{{ $homeFieldFallback.RelPermalink }}"></script>
 {{- end -}}
 
 {{- if or (eq .Section "dashboard") (eq .Type "dashboard") -}}

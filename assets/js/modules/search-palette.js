@@ -570,4 +570,5 @@ export function initSearchPalette() {
     .forEach((k) => {
       k.textContent = isMac ? "⌘K" : "Ctrl K";
     });
+  return { open };
 }

@@ -262,14 +262,16 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
   function tick(now) {
     frame = 0;
     if (destroyed || lost || !settings.visible) return;
-    // Match the upstream idle render budget, without limiting active fluid input.
+    // The slowly evolving field needs fewer updates while idle. Fluid input
+    // retains its full render budget; CSS fades remain compositor-driven.
     const lowPower = navigator.hardwareConcurrency <= 2 || navigator.deviceMemory <= 2 || navigator.connection?.saveData;
-    if (last && !dirty && !splat && now >= wakeUntil && now - last < 1000 / (lowPower ? 30 : 60) - 2) {
+    if (last && !dirty && !splat && now >= wakeUntil && now - last < 1000 / (lowPower ? 15 : 20) - 2) {
       schedule(); return;
     }
-    const dt = Math.min(1 / 30, Math.max(1 / 480, last ? (now - last) / 1000 : 1 / 60));
+    const elapsed = last ? (now - last) / 1000 : 1 / 60;
+    const dt = Math.min(1 / 30, Math.max(1 / 480, elapsed));
     last = now;
-    if (!settings.reduced) time += dt * 0.8;
+    if (!settings.reduced) time += Math.min(elapsed, 0.25) * 0.8;
     dirty = false;
     step(dt, now); render();
     // Keep at most one GPU frame in flight. A fast Worker must not build a

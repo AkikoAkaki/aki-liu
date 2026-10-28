@@ -1,10 +1,11 @@
-import { createFieldRenderer } from "./home-field-renderer.js";
 import { media, QUERIES } from "./media.js";
 import { characters, makeAtlas } from "./home-field-atlas.js";
 
-export function initHomeField(workerSrc) {
+export async function initHomeField(workerSrc, fallbackSrc) {
   const host = document.querySelector(".site-wrapper");
   if (!host || !document.querySelector(".home-container")) return;
+  const offscreen = workerSrc && HTMLCanvasElement.prototype.transferControlToOffscreen && typeof Worker === "function";
+  const createFieldRenderer = offscreen ? null : (await import(fallbackSrc)).createFieldRenderer;
   const canvas = document.createElement("canvas");
   canvas.className = "home-field";
   canvas.setAttribute("aria-hidden", "true");
@@ -15,6 +16,7 @@ export function initHomeField(workerSrc) {
   let worker = null, renderer = null, surface = null;
   let disposed = false, version = 0, sizeKey = "", pointerFrame = 0;
   let initialized = false, latestPointer = null;
+  let width = 0, height = 0;
 
   function send(message, transfer = []) {
     if (disposed) return;
@@ -41,7 +43,6 @@ export function initHomeField(workerSrc) {
     };
   }
   async function geometry(restart = false) {
-    const width = canvas.clientWidth, height = canvas.clientHeight;
     if (!width || !height || disposed) return;
     const ratio = Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(8294400 / (width * height)));
     const key = `${width}:${height}:${ratio}`;
@@ -80,7 +81,13 @@ export function initHomeField(workerSrc) {
     pointerFrame = 0;
     send({ type: "pointer", point: null });
   }
-  function resized() { geometry().catch(fail); }
+  function resized(entries) {
+    if (entries?.[0]) {
+      width = Math.round(entries[0].contentRect.width);
+      height = Math.round(entries[0].contentRect.height);
+    }
+    geometry().catch(fail);
+  }
   function pageHide(event) { if (event.persisted) send({ type: "update", settings: { visible: false } }); else dispose(); }
   function fail(error) { console.error("Homepage field:", error); dispose(); }
   function dispose() {
@@ -96,7 +103,7 @@ export function initHomeField(workerSrc) {
   }
   const observer = new ResizeObserver(resized);
   const theme = new MutationObserver(syncState);
-  if (workerSrc && canvas.transferControlToOffscreen && typeof Worker === "function") {
+  if (offscreen) {
     worker = new Worker(workerSrc, { name: "homepage-field" });
     worker.onmessage = ({ data }) => receive(data);
     worker.onerror = fail;
