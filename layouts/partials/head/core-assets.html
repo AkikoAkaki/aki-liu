@@ -94,9 +94,11 @@
 
 {{- if .IsHome -}}
     {{- $homeJS := resources.Get "js/home.js" | js.Build (dict "targetPath" "js/home.js") | resources.Minify | fingerprint -}}
-    {{- /* home.js loads the field after the page has loaded. */ -}}
+    {{- /* The field renderer runs separately from the page's UI thread. */ -}}
     {{- $homeFieldJS := resources.Get "js/home-field.js" | js.Build (dict "targetPath" "js/home-field.js") | resources.Minify | fingerprint -}}
-    <script defer src="{{ $homeJS.RelPermalink }}" integrity="{{ $homeJS.Data.Integrity }}" data-field-src="{{ $homeFieldJS.RelPermalink }}" data-field-integrity="{{ $homeFieldJS.Data.Integrity }}"></script>
+    {{- $homeFieldWorker := resources.Get "js/home-field-worker.js" | js.Build (dict "targetPath" "js/home-field-worker.js") | resources.Minify | fingerprint -}}
+    <script defer src="{{ $homeJS.RelPermalink }}" integrity="{{ $homeJS.Data.Integrity }}"></script>
+    <script defer src="{{ $homeFieldJS.RelPermalink }}" integrity="{{ $homeFieldJS.Data.Integrity }}" data-worker-src="{{ $homeFieldWorker.RelPermalink }}"></script>
 {{- end -}}
 
 {{- if or (eq .Section "dashboard") (eq .Type "dashboard") -}}

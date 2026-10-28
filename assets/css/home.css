@@ -70,11 +70,12 @@
     padding-bottom: 8rem;
 }
 
-/* The sticky canvas fills one viewport throughout the page. Its negative
+/* Match the canvas before the library initializes it, so its first GPU
+   allocation uses the viewport instead of the full page. Its negative
    margin keeps it out of the layout; the top inset leaves the status bar
    clear. It runs to the bottom edge of the large viewport so no blank band
    appears when Safari's toolbar collapses. */
-.home-page .home-field {
+.home-page .site-wrapper > canvas {
     --field-top: max(2px, env(safe-area-inset-top, 0px));
     --field-height: calc(100lvh - var(--field-top));
     position: sticky !important;
@@ -85,10 +86,15 @@
     flex: none;
     margin-bottom: calc(-1 * var(--field-height));
     animation: home-field-in 0.6s ease backwards;
+    animation-play-state: paused;
 }
 
-/* The field starts after page load, so it fades in rather than popping. The
-   missing "to" frame animates to the opacity the library sets inline. */
+.home-page .site-wrapper > canvas.is-ready {
+    animation-play-state: running;
+}
+
+/* Start the fade when the first rendered frame is ready. The missing "to"
+   frame animates to the opacity the library sets inline. */
 @keyframes home-field-in {
     from { opacity: 0; }
 }
@@ -961,7 +967,7 @@ a.nav-panel-subitem:hover {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .home-page .home-field {
+    .home-page .site-wrapper > canvas {
         animation: none;
     }
 

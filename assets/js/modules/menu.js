@@ -427,5 +427,8 @@ export function initExpandingMenu() {
   });
 
   initMagneticLinks();
-  updateScrollState();
+  // Let the first layout paint before reading scrollY for restored positions.
+  scrollRafId = requestAnimationFrame(() => {
+    scrollRafId = requestAnimationFrame(updateScrollState);
+  });
 }
