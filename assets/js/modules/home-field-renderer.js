@@ -262,10 +262,11 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
   function tick(now) {
     frame = 0;
     if (destroyed || lost || !settings.visible) return;
-    // The slowly evolving field needs fewer updates while idle. Fluid input
-    // retains its full render budget; CSS fades remain compositor-driven.
-    const lowPower = navigator.hardwareConcurrency <= 2 || navigator.deviceMemory <= 2 || navigator.connection?.saveData;
-    if (last && !dirty && !splat && now >= wakeUntil && now - last < 1000 / (lowPower ? 15 : 20) - 2) {
+    // Capacity comes from the main thread: WorkerNavigator omits deviceMemory.
+    // Constrained devices keep a 15 fps ceiling during pointer interaction too.
+    // Normal devices retain the idle 20 fps budget and full interaction rate.
+    if (last && !dirty && (settings.lowResource || (!splat && now >= wakeUntil)) &&
+        now - last < 1000 / (settings.lowResource ? 15 : 20) - 2) {
       schedule(); return;
     }
     const elapsed = last ? (now - last) / 1000 : 1 / 60;

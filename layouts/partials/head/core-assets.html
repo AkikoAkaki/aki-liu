@@ -5,26 +5,11 @@
        preference (kept in sync until the visitor picks a theme). */ -}}
 <script>(function(){var d=document.documentElement,m=window.matchMedia('(prefers-color-scheme: dark)');function apply(){var t=null;try{t=localStorage.getItem('theme');}catch(_){}d.setAttribute('data-theme',t==='dark'||t==='light'?t:(m.matches?'dark':'light'));}apply();if(m.addEventListener){m.addEventListener('change',apply);}if(window.self!==window.top){d.classList.add('is-iframe');}}())</script>
 {{- $isArchive := partial "is-archive.html" . -}}
-{{- /* Latin fonts use the same self-hosted files as the homepage.
-       Keep the existing Noto Serif SC subsets for Chinese text. */ -}}
-{{- $googleFontsURL := "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500&display=swap" -}}
-{{- if .IsHome -}}
-    {{- $googleFontsURL = "" -}}
-    {{- if findRE `\p{Han}` (jsonify site.Data.homepage) 1 -}}
-        {{- $googleFontsURL = "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500&display=swap" -}}
-    {{- end -}}
-{{- else if $isArchive -}}
-    {{- $googleFontsURL = "" -}}
-{{- end -}}
-{{- with $googleFontsURL -}}<link rel="preconnect" href="https://fonts.googleapis.com">{{- end -}}
-{{- if or $googleFontsURL $isArchive -}}<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>{{- end -}}
+{{- if $isArchive -}}<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>{{- end -}}
 <!-- Preload core brand font to avoid FOUT/FOIT -->
 <link rel="preload" href="/fonts/switzer/Switzer-Regular.woff2" as="font" type="font/woff2" crossorigin>
 {{- if .IsHome -}}
 <link rel="preload" href="/fonts/switzer/Switzer-Medium.woff2" as="font" type="font/woff2" crossorigin>
-{{- end -}}
-{{- with $googleFontsURL -}}
-<link href="{{ . }}" rel="stylesheet" media="print" onload="this.media='all'">
 {{- end -}}
 {{- if and (not .IsHome) (not $isArchive) -}}
     {{- $latinFonts := resources.Get "css/fonts-latin.css" | resources.Minify | fingerprint -}}

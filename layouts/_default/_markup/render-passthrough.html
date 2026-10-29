@@ -1,0 +1,7 @@
+{{- if and site.Params.enableKaTeX (partial "page-has-math.html" .Page) -}}
+  {{- $opts := dict "output" "htmlAndMathml" "displayMode" (eq .Type "block") "strict" "ignore" "throwOnError" false -}}
+  {{- transform.ToMath .Inner $opts -}}
+{{- else -}}
+  {{- $delimiter := cond (eq .Type "block") "$$" "$" -}}
+  {{- printf "%s%s%s" $delimiter .Inner $delimiter -}}
+{{- end -}}

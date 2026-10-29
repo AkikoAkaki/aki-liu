@@ -11,6 +11,15 @@
   {{- $url = relURL $src -}}
 {{- end -}}
 {{- $poster := .Get "poster" -}}
+{{- $posterWidth := 0 -}}
+{{- $posterHeight := 0 -}}
+{{- if not $poster -}}
+  {{- with .Page.Resources.GetMatch (printf "%s.poster.webp" (strings.TrimSuffix (path.Ext $src) $src)) -}}
+    {{- $poster = .RelPermalink -}}
+    {{- $posterWidth = .Width -}}
+    {{- $posterHeight = .Height -}}
+  {{- end -}}
+{{- end -}}
 {{- $caption := .Get "caption" -}}
 {{- $preload := default "metadata" (.Get "preload") -}}
 {{- $type := .Get "type" -}}
@@ -32,8 +41,10 @@
 {{- $mutedEnabled := or (partial "is-truthy.html" $mutedParam) (and $autoplayEnabled (eq $mutedParam "")) -}}
 {{- $loopEnabled := partial "is-truthy.html" $loop -}}
 {{- $playsinlineEnabled := or (eq $playsinline "") (partial "is-truthy.html" $playsinline) -}}
+{{- $lazy := and (not $autoplayEnabled) (not (.Get "preload")) $poster -}}
+{{- if $lazy -}}{{- $preload = "none" -}}{{- end -}}
 <figure class="local-video{{ with .Get "class" }} {{ . }}{{ end }}">
-  <video class="local-video__media" controls preload="{{ $preload }}" {{ if $autoplayEnabled }}autoplay{{ end }} {{ if $mutedEnabled }}muted{{ end }} {{ if $loopEnabled }}loop{{ end }} {{ if $playsinlineEnabled }}playsinline{{ end }}{{ with $poster }} poster="{{ . }}"{{ end }}>
+  <video class="local-video__media"{{ if $posterWidth }} width="{{ $posterWidth }}" height="{{ $posterHeight }}" style="height: auto"{{ end }} controls preload="{{ $preload }}"{{ if $lazy }} data-lazy-video{{ end }} {{ if $autoplayEnabled }}autoplay{{ end }} {{ if $mutedEnabled }}muted{{ end }} {{ if $loopEnabled }}loop{{ end }} {{ if $playsinlineEnabled }}playsinline{{ end }}{{ with $poster }} poster="{{ . }}"{{ end }}>
     <source src="{{ $url }}#t=0.001"{{ with $type }} type="{{ . }}"{{ end }}>
     Sorry, your browser cannot play this video.
   </video>

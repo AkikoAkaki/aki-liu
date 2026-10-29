@@ -1,0 +1,33 @@
+{{- /* Article images retain the existing 1400px WebP fallback and intrinsic
+       dimensions. Smaller candidates only change the downloaded resource. */ -}}
+{{- $resource := . -}}
+{{- $image := partial "post-image.html" $resource -}}
+{{- $width := 0 -}}
+{{- $height := 0 -}}
+{{- $srcset := "" -}}
+{{- $sizes := "" -}}
+{{- $subType := lower $resource.MediaType.SubType -}}
+{{- if ne $subType "svg" -}}
+    {{- $width = $image.Width -}}
+    {{- $height = $image.Height -}}
+    {{- if ne $subType "gif" -}}
+        {{- $candidates := slice -}}
+        {{- range slice 480 800 1040 -}}
+            {{- if lt . $width -}}
+                {{- $candidate := $resource.Resize (printf "%dx webp q82" .) -}}
+                {{- $candidates = $candidates | append (printf "%s %dw" $candidate.RelPermalink $candidate.Width) -}}
+            {{- end -}}
+        {{- end -}}
+        {{- if $candidates -}}
+            {{- $candidates = $candidates | append (printf "%s %dw" $image.RelPermalink $width) -}}
+            {{- $srcset = delimit $candidates ", " -}}
+            {{- $columnWidth := math.Min $width 680 | int -}}
+            {{- $tabletWidth := math.Min $width 650 | int -}}
+            {{- /* layout.css changes padding at 480/768px and uses a 650px
+                   center column. post.css keeps body text in the 650px
+                   left column above 1200px. */ -}}
+            {{- $sizes = printf "(max-width: 480px) min(%dpx, calc(100vw - 2rem)), (max-width: 768px) min(%dpx, calc(100vw - 2.5rem)), (max-width: 900px) %dpx, %dpx" $columnWidth $columnWidth $columnWidth $tabletWidth -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- return (dict "url" $image.RelPermalink "width" $width "height" $height "srcset" $srcset "sizes" $sizes) -}}

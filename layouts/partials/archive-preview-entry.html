@@ -1,5 +1,6 @@
 {{- $html := .Content | truncate 800 -}}
-{{- $maybeMath := or (in $html "$") (in $html "\\(") (in $html "\\[") -}}
-{{- $entry := dict "url" .RelPermalink "title" .Title "html" $html "math" (and $maybeMath (partial "page-has-math.html" .)) -}}
+{{- $hasMath := in $html `class="katex` -}}
+{{- $runtime := and site.Params.enableKaTeX (partial "page-has-math.html" .) (partial "html-needs-math-runtime.html" $html) -}}
+{{- $entry := dict "url" .RelPermalink "title" .Title "html" $html "math" (or $hasMath $runtime) "mathRuntime" $runtime -}}
 {{- $path := printf "data/archive-preview/%s.json" (substr (sha256 .RelPermalink) 0 12) -}}
 {{- return (resources.FromString $path (jsonify $entry) | fingerprint) -}}

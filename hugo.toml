@@ -84,3 +84,9 @@ mainSections = ["notes", "textlab", "weeknotes"]
     startLevel = 1
     endLevel = 6
     ordered = false
+
+# Publish bundle resources only when a template uses their URL.
+# Processed WebP images and local videos remain published; unused originals do not.
+[cascade]
+  [cascade.build]
+    publishResources = false

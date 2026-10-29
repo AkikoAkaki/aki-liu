@@ -135,7 +135,7 @@
 
 :root {
     --font-cjk-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC";
-    --font-cjk-serif: "Songti SC", "Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun";
+    --font-cjk-serif: "Songti SC", "STSong", "Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun";
     --font-serif: "Newsreader", var(--font-cjk-serif), serif;
     --font-editorial: "PP Editorial Old", var(--font-serif);
     --font-mono: "JetBrains Mono", monospace;
@@ -823,4 +823,47 @@ body.menu-cursor-hidden * {
         padding-right: 20px;
         padding-bottom: 20px;
     }
+}
+
+/* Magnetic layers need the promotion hint only while interacting/settling. */
+.mb-tag-chip:not(.is-magnetic):not(.is-settling),
+.mb-tag-chip:not(.is-magnetic):not(.is-settling)::before,
+.menu-link:not(.is-magnetic):not(.is-settling)::before,
+.menu-link:not(.is-magnetic):not(.is-settling) .menu-link-content {
+    will-change: auto;
+}
+
+/* Device capacity/save-data and reduced-transparency are hints, not live RAM usage. */
+:root[data-low-resource] .menu-bar,
+:root[data-low-resource] .home-glass,
+:root[data-low-resource] .reading-haze::before,
+:root[data-low-resource] .af-origin-label,
+:root[data-low-resource] .menu-link::before,
+:root[data-low-resource] .mb-tag-chip::before {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+
+:root[data-low-resource] .menu-bar {
+    background: var(--bg-color) !important;
+}
+
+:root[data-low-resource] .home-glass {
+    background: var(--home-glass-solid, var(--bg-color));
+}
+
+:root[data-low-resource] .reading-haze::before {
+    background: var(--bg-color);
+}
+
+:root[data-low-resource] .af-origin-label {
+    background: #fff;
+}
+
+:root[data-low-resource] :is(.menu-bar, .menu-trigger-title, .menu-panel,
+    .menu-search-panel, .menu-link, .menu-link-content, .mb-tag-chip,
+    .reveal-on-scroll, .reveal-pin, .home-hover-preview, .home-hover-preview-img),
+:root[data-low-resource] .menu-link::before,
+:root[data-low-resource] .mb-tag-chip::before {
+    will-change: auto;
 }

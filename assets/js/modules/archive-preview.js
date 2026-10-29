@@ -1,4 +1,5 @@
-import { loadKatex, renderMath } from "./katex.js";
+import { loadKatexStyles, loadKatexRuntime, renderMath } from "./katex.js";
+import { isResourceConstrained } from "./resource-mode.js";
 import { media, QUERIES } from "./media.js";
 
 export function initArchivePreview(list) {
@@ -32,12 +33,21 @@ export function initArchivePreview(list) {
           return response.json();
         })
         .catch((error) => {
-          previews.delete(source);
+          if (previews.get(source) === request) previews.delete(source);
           throw error;
         });
       previews.set(source, request);
+    } else {
+      const cached = previews.get(source);
+      previews.delete(source);
+      previews.set(source, cached);
     }
-    return previews.get(source);
+    const request = previews.get(source);
+    const limit = isResourceConstrained() ? 4 : 12;
+    while (previews.size > limit) {
+      previews.delete(previews.keys().next().value);
+    }
+    return request;
   }
 
   function fitPreview() {
@@ -73,7 +83,7 @@ export function initArchivePreview(list) {
     summary.className = "preview-summary raw-content-preview";
     summary.append(template.content);
     next.append(title, summary);
-    if (entry.math) renderMath(next);
+    if (entry.mathRuntime) renderMath(next);
     return next;
   }
 
@@ -81,7 +91,8 @@ export function initArchivePreview(list) {
     let entry;
     try {
       entry = await loadPreview(item);
-      if (entry?.math) await loadKatex(katexBase);
+      if (entry?.mathRuntime) await loadKatexRuntime(katexBase);
+      else if (entry?.math) await loadKatexStyles(katexBase);
     } catch {
       if (token === requestToken) desiredItem = null;
       return;

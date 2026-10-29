@@ -16,7 +16,7 @@
         {{- $gallery = $gallery | append $image -}}
     {{- end -}}
 {{- end -}}
-<article class="mb-card" data-mb-id="{{ $page.RelPermalink }}"{{ if partial "page-has-math.html" $page }} data-mb-math{{ end }}>
+<article class="mb-card" data-mb-id="{{ $page.RelPermalink }}"{{ if and site.Params.enableKaTeX (partial "page-has-math.html" $page) (partial "html-needs-math-runtime.html" $html) }} data-mb-math-runtime{{ end }}>
     <header class="mb-card-header">
         <div class="mb-card-meta">
             <div class="mb-card-date-wrapper">

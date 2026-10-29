@@ -1,5 +1,6 @@
 {{- $coreAssetsKey := printf "%s|%s|%s|%s|%t|%t" .Language.Lang .Kind .Section .Type .IsHome .IsPage -}}
 {{- partialCached "head/core-assets.html" . $coreAssetsKey -}}
+{{- partial "head/cjk-fonts.html" . -}}
 
 {{- /* KaTeX (per-page gating is handled inside the partial) */ -}}
 {{- $siteKaTeX := or .Site.Params.enablekatex .Site.Params.enableKaTeX -}}

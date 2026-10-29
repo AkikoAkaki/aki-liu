@@ -1,76 +1,54 @@
+import { isResourceConstrained } from './resource-mode.js';
+
 export function initPrefetcher() {
-    const conn = navigator.connection;
-    if (conn && (conn.saveData || /2g|3g/.test(conn.effectiveType))) {
-        return;
+  const prefetchedUrls = new Set();
+  let hoverTimeout;
+  const supportsRules = typeof HTMLScriptElement.supports === 'function' &&
+    HTMLScriptElement.supports('speculationrules');
+
+  function allowed() {
+    const connection = navigator.connection;
+    return !document.hidden && !isResourceConstrained() &&
+      !/^(slow-2g|2g|3g)$/.test(connection?.effectiveType) &&
+      prefetchedUrls.size < 3;
+  }
+
+  function targetUrl(link) {
+    if (!link?.href || link.hasAttribute('download') ||
+        (link.target && link.target !== '_self') || link.dataset.noPrefetch !== undefined) return;
+    try {
+      const url = new URL(link.href, location.href);
+      // Only static page URLs: no downloads, query actions, or same-page anchors.
+      if (!/^https?:$/.test(url.protocol) || url.origin !== location.origin ||
+          url.search || url.pathname === location.pathname ||
+          (!url.pathname.endsWith('/') && !url.pathname.endsWith('.html'))) return;
+      url.hash = '';
+      if (!prefetchedUrls.has(url.href)) return url.href;
+    } catch (_) {}
+  }
+
+  function prefetch(link) {
+    if (!allowed()) return;
+    const href = targetUrl(link);
+    if (!href) return;
+    const node = document.createElement(supportsRules ? 'script' : 'link');
+    if (supportsRules) {
+      node.type = 'speculationrules';
+      node.textContent = JSON.stringify({ prefetch: [{ urls: [href] }] });
+    } else {
+      node.rel = 'prefetch';
+      node.href = href;
     }
+    document.head.appendChild(node);
+    prefetchedUrls.add(href);
+  }
 
-    const prefetchedUrls = new Set();
-    let hoverTimeout = null;
-
-    function isPrefetchable(link) {
-        if (!link || !link.href) return false;
-        
-        try {
-            const url = new URL(link.href);
-            
-            if (url.origin !== window.location.origin) return false;
-            
-            if (url.pathname === window.location.pathname && url.hash) return false;
-            
-            if (link.target === '_blank') return false;
-            
-            const idx = url.pathname.lastIndexOf('.');
-            if (idx !== -1) {
-                const ext = url.pathname.substring(idx).toLowerCase();
-                const ignoredExtensions = ['.pdf', '.zip', '.png', '.jpg', '.jpeg', '.gif', '.mp4', '.xml', '.json', '.txt', '.gz', '.svg'];
-                if (ignoredExtensions.some(ignored => ext.endsWith(ignored))) return false;
-            }
-            
-            if (url.protocol !== 'http:' && url.protocol !== 'https:') return false;
-            
-            if (prefetchedUrls.has(url.pathname)) return false;
-            
-
-            return true;
-        } catch (_) {
-            return false;
-        }
-    }
-
-    function doPrefetch(urlPath) {
-        if (prefetchedUrls.has(urlPath)) return;
-        
-        const linkElem = document.createElement('link');
-        linkElem.rel = 'prefetch';
-        linkElem.href = urlPath;
-        document.head.appendChild(linkElem);
-        
-        prefetchedUrls.add(urlPath);
-    }
-
-    document.body.addEventListener('mouseover', (e) => {
-        const link = e.target.closest('a');
-        if (!link || !isPrefetchable(link)) return;
-
-        if (hoverTimeout) clearTimeout(hoverTimeout);
-
-        hoverTimeout = setTimeout(() => {
-            const url = new URL(link.href);
-            doPrefetch(url.pathname);
-        }, 65);
-    }, { passive: true });
-
-    document.body.addEventListener('mouseout', () => {
-        if (hoverTimeout) {
-            clearTimeout(hoverTimeout);
-        }
-    }, { passive: true });
-
-    document.body.addEventListener('touchstart', (e) => {
-        const link = e.target.closest('a');
-        if (!link || !isPrefetchable(link)) return;
-
-        const url = new URL(link.href);
-        doPrefetch(url.pathname);
-    }, { passive: true });
+  document.body.addEventListener('mouseover', (event) => {
+    clearTimeout(hoverTimeout);
+    const link = event.target.closest('a');
+    if (allowed() && targetUrl(link)) hoverTimeout = setTimeout(() => prefetch(link), 100);
+  }, { passive: true });
+  document.body.addEventListener('mouseout', () => clearTimeout(hoverTimeout), { passive: true });
+  document.body.addEventListener('focusin', (event) => prefetch(event.target.closest('a')));
+  document.body.addEventListener('touchstart', (event) => prefetch(event.target.closest('a')), { passive: true });
 }

@@ -1,5 +1,6 @@
 import { media, QUERIES } from "./media.js";
 import { characters, makeAtlas } from "./home-field-atlas.js";
+import { isResourceConstrained } from "./resource-mode.js";
 
 export async function initHomeField(workerSrc, fallbackSrc) {
   const host = document.querySelector(".site-wrapper");
@@ -39,13 +40,16 @@ export async function initHomeField(workerSrc, fallbackSrc) {
       dark: document.documentElement.dataset.theme === "dark",
       mobile: innerWidth < 760,
       reduced: reduced.matches,
+      lowResource: document.documentElement.hasAttribute("data-low-resource") || isResourceConstrained() || navigator.hardwareConcurrency <= 2,
       visible: !document.hidden,
     };
   }
   async function geometry(restart = false) {
     if (!width || !height || disposed) return;
-    const ratio = Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(8294400 / (width * height)));
-    const key = `${width}:${height}:${ratio}`;
+    const lowResource = state().lowResource;
+    const ratio = Math.min(devicePixelRatio || 1, lowResource ? 1 : 1.5,
+      Math.sqrt((lowResource ? 2073600 : 8294400) / (width * height)));
+    const key = `${width}:${height}:${ratio}:${lowResource}`;
     if (!restart && key === sizeKey) return;
     sizeKey = key;
     const current = ++version;
@@ -102,7 +106,10 @@ export async function initHomeField(workerSrc, fallbackSrc) {
     window.removeEventListener("resize", resized); window.removeEventListener("pagehide", pageHide); window.removeEventListener("pageshow", syncState);
   }
   const observer = new ResizeObserver(resized);
-  const theme = new MutationObserver(syncState);
+  const theme = new MutationObserver((records) => {
+    if (records.some((record) => record.attributeName === "data-low-resource")) geometry().catch(fail);
+    else syncState();
+  });
   if (offscreen) {
     worker = new Worker(workerSrc, { name: "homepage-field" });
     worker.onmessage = ({ data }) => receive(data);
@@ -111,7 +118,7 @@ export async function initHomeField(workerSrc, fallbackSrc) {
     canvas.dataset.renderer = "worker-field";
   } else canvas.dataset.renderer = "direct-field";
   observer.observe(canvas);
-  theme.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  theme.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-low-resource"] });
   reduced.addEventListener("change", syncState);
   host.addEventListener("pointermove", move, { passive: true });
   host.addEventListener("pointerleave", leave, { passive: true });

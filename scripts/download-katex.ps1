@@ -3,7 +3,7 @@
 
 # Versioned directory: /lib/ is cached as immutable (vercel.json). After an
 # upgrade, update layouts/partials/katex-base.html to the new directory.
-$katexVersion = "0.16.8"
+$katexVersion = "0.16.21"
 $baseDir = "static/lib/katex-$katexVersion"
 $fontsDir = "$baseDir/fonts"
 
@@ -17,8 +17,8 @@ $cdnBase = "https://cdn.jsdelivr.net/npm/katex@$katexVersion/dist"
 
 # 2. Files to download
 $coreFiles = @(
-    @{ Url = "$cdnBase/katex.min.css"; Out = "$baseDir/katex.min.css" },
-    @{ Url = "$cdnBase/katex.min.js"; Out = "$baseDir/katex.min.js" },
+    @{ Url = "$cdnBase/katex.min.css"; Out = "$baseDir/katex.min.css" }
+    @{ Url = "$cdnBase/katex.min.js"; Out = "$baseDir/katex.min.js" }
     @{ Url = "$cdnBase/contrib/auto-render.min.js"; Out = "$baseDir/auto-render.min.js" }
 )
 
@@ -46,9 +46,9 @@ $fonts = @(
     "KaTeX_Typewriter-Regular.woff2"
 )
 
-Write-Host "Starting downloading KaTeX core stylesheets and scripts..." -ForegroundColor Cyan
+Write-Host "Downloading KaTeX stylesheet..." -ForegroundColor Cyan
 
-# Download JS / CSS
+# Download CSS
 foreach ($file in $coreFiles) {
     Write-Host "Downloading $($file.Url) -> $($file.Out)" -ForegroundColor Gray
     try {
@@ -73,3 +73,10 @@ foreach ($font in $fonts) {
 }
 
 Write-Host "KaTeX assets localization completed successfully!" -ForegroundColor Green
+
+# Only WOFF2 is published; remove legacy CSS sources after a refresh.
+$cssPath = Join-Path $baseDir 'katex.min.css'
+$css = [IO.File]::ReadAllText($cssPath)
+$css = $css -replace ',url\([^)]*\) format\("(?:woff|truetype)"\)', ''
+[IO.File]::WriteAllText($cssPath, $css)
+Invoke-WebRequest -Uri "https://cdn.jsdelivr.net/npm/katex@$katexVersion/LICENSE" -OutFile (Join-Path $baseDir 'LICENSE') -UseBasicParsing

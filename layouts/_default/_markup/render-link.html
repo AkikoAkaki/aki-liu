@@ -20,4 +20,15 @@
         {{- $internal = and .IsPage (ne .RelPermalink $.Page.RelPermalink) -}}
     {{- end -}}
 {{- end -}}
-<a href="{{ $destination | safeURL }}"{{ if $external }} class="md-link md-link--external"{{ else if $internal }} class="md-link md-link--internal"{{ end }}{{ with .Title }} title="{{ . }}"{{ end }}>{{- if or $external $internal -}}{{- $iconURL := "favicon.svg" | relURL -}}{{- if $external -}}{{- $iconURL = printf "https://www.google.com/s2/favicons?domain=%s&sz=32" ($reference.Hostname | urlquery) -}}{{- end -}}<img class="md-link-icon" src="{{ $iconURL | safeURL }}" alt="" width="14" height="14" loading="lazy" referrerpolicy="no-referrer" decoding="async" onerror="this.remove()">{{- end -}}{{ .Text | safeHTML }}</a>
+<a href="{{ $destination | safeURL }}"{{ if $external }} class="md-link md-link--external"{{ else if $internal }} class="md-link md-link--internal"{{ end }}{{ with .Title }} title="{{ . }}"{{ end }}>
+{{- if or $external $internal -}}
+    {{- $iconURL := "favicon.svg" | relURL -}}
+    {{- if $external -}}
+        {{- $icon := resources.Get (printf "icons/external/%s.png" (crypto.SHA256 $reference.Hostname)) -}}
+        {{- if not $icon -}}{{- $icon = resources.Get "icons/external-link.svg" -}}{{- end -}}
+        {{- $icon = $icon | resources.Copy (printf "images/link-icons/%s" (path.Base $icon.Name)) -}}
+        {{- $iconURL = ($icon | fingerprint).RelPermalink -}}
+    {{- end -}}
+    <img class="md-link-icon" src="{{ $iconURL | safeURL }}" alt="" width="14" height="14" loading="lazy" decoding="async" onerror="this.remove()">
+{{- end -}}
+{{- .Text | safeHTML -}}</a>

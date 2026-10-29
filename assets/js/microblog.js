@@ -1,6 +1,7 @@
 import { escapeHtml } from "./modules/dom-utils.js";
+import { isResourceConstrained } from "./modules/resource-mode.js";
+import { loadKatexRuntime, renderMath } from "./modules/katex.js";
 import { matches, QUERIES } from "./modules/media.js";
-import { loadKatex, renderMath } from "./modules/katex.js";
 
 const root = document.querySelector('.microblog-page');
 if (root) initMicroblog(root);
@@ -37,10 +38,10 @@ function initMicroblog(root) {
             image.addEventListener('load', ready, { once: true });
             image.addEventListener('error', show, { once: true });
         }
-        const pending = [...element.querySelectorAll('[data-mb-math]')].filter(card => !mathCards.has(card));
+        const pending = [...element.querySelectorAll('[data-mb-math-runtime]')].filter(card => !mathCards.has(card));
         if (pending.length) {
             pending.forEach(card => mathCards.add(card));
-            loadKatex(root.dataset.katexBase).then(() => {
+            loadKatexRuntime(root.dataset.katexBase).then(() => {
                 pending.filter(card => card.isConnected).forEach(renderMath);
             }).catch(() => pending.forEach(card => mathCards.delete(card)));
         }
@@ -65,10 +66,22 @@ function initMicroblog(root) {
             const request = fetch(url, { credentials: 'same-origin' }).then(response => {
                 if (!response.ok) throw new Error(`Microblog page request failed: ${response.status}`);
                 return response.json();
-            }).then(readChunk).catch(error => { chunks.delete(url); throw error; });
+            }).then(readChunk).catch(error => {
+                if (chunks.get(url) === request) chunks.delete(url);
+                throw error;
+            });
             chunks.set(url, request);
+        } else {
+            const cached = chunks.get(url);
+            chunks.delete(url);
+            chunks.set(url, cached);
         }
-        return chunks.get(url);
+        const request = chunks.get(url);
+        const limit = isResourceConstrained() ? 2 : 8;
+        while (chunks.size > limit) {
+            chunks.delete(chunks.keys().next().value);
+        }
+        return request;
     }
 
     function loadFeed() {

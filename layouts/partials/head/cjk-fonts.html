@@ -1,0 +1,35 @@
+{{- /* Content-dependent font gating stays outside cached core assets. */ -}}
+{{- $needsCJK := eq .Language.Lang "zh" -}}
+{{- if .IsHome -}}
+    {{- $needsCJK = gt (len (findRE `\p{Han}` (jsonify site.Data.homepage) 1)) 0 -}}
+{{- else if not $needsCJK -}}
+    {{- $needsCJK = gt (len (findRE `\p{Han}` (printf "%s %s" .Title (.Content | plainify)) 1)) 0 -}}
+    {{- if and (not $needsCJK) (partial "is-archive.html" .) -}}
+        {{- $archive := partialCached "archive-data.html" . .Path .Language.Lang -}}
+        {{- range $archive.regularPages -}}
+            {{- /* Match precisely the rendered preview excerpt, not an entire
+                   article that the visitor has not opened. */ -}}
+            {{- if findRE `\p{Han}` (printf "%s %s" .Title (.Content | truncate 800 | plainify)) 1 -}}
+                {{- $needsCJK = true -}}
+                {{- break -}}
+            {{- end -}}
+        {{- end -}}
+        {{- range $archive.tagSlice -}}
+            {{- if findRE `\p{Han}` (partial "tag-label.html" .name) 1 -}}
+                {{- $needsCJK = true -}}
+                {{- break -}}
+            {{- end -}}
+        {{- end -}}
+    {{- else if and (not $needsCJK) (eq .Section "microblog") (not .IsPage) -}}
+        {{- range partial "microblog-entries.html" . -}}
+            {{- if findRE `\p{Han}` (.Content | plainify) 1 -}}
+                {{- $needsCJK = true -}}
+                {{- break -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- if $needsCJK -}}
+    {{- $cjkFonts := resources.Get "css/fonts-cjk.css" | resources.Minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $cjkFonts.RelPermalink }}" integrity="{{ $cjkFonts.Data.Integrity }}">
+{{- end -}}

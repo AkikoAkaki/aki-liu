@@ -29,19 +29,23 @@
 {{- $imgURL := $src -}}
 {{- $imgWidth := 0 -}}
 {{- $imgHeight := 0 -}}
+{{- $imgSrcset := "" -}}
+{{- $imgSizes := "" -}}
 
 {{- with $resource -}}
-  {{- $img := partial "post-image.html" . -}}
-  {{- $imgURL = $img.RelPermalink -}}
-  {{- $imgWidth = $img.Width -}}
-  {{- $imgHeight = $img.Height -}}
+  {{- $img := partial "post-image-srcset.html" . -}}
+  {{- $imgURL = $img.url -}}
+  {{- $imgWidth = $img.width -}}
+  {{- $imgHeight = $img.height -}}
+  {{- $imgSrcset = $img.srcset -}}
+  {{- $imgSizes = $img.sizes -}}
 {{- end -}}
 
 <figure{{ with .Get "class" }} class="{{ . }}"{{ end }}>
   {{- if $link -}}
   <a href="{{ $link }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
   {{- end -}}
-  <img src="{{ $imgURL | safeURL }}" alt="{{ $alt }}" loading="lazy" decoding="async"{{ with $title }} title="{{ . }}"{{ end }}{{ if gt $imgWidth 0 }} width="{{ $imgWidth }}"{{ end }}{{ if gt $imgHeight 0 }} height="{{ $imgHeight }}"{{ end }}>
+  <img src="{{ $imgURL | safeURL }}"{{ with $imgSrcset }} srcset="{{ . }}" sizes="{{ $imgSizes }}"{{ end }} alt="{{ $alt }}" loading="lazy" decoding="async"{{ with $title }} title="{{ . }}"{{ end }}{{ if gt $imgWidth 0 }} width="{{ $imgWidth }}" style="width: {{ $imgWidth }}px"{{ end }}{{ if gt $imgHeight 0 }} height="{{ $imgHeight }}"{{ end }}>
   {{- if $link -}}
   </a>
   {{- end -}}

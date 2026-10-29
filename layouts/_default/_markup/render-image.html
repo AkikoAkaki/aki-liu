@@ -9,8 +9,8 @@
 {{- end -}}
 
 {{- if $resource -}}
-  {{- $img := partial "post-image.html" $resource -}}
-<img src="{{ $img.RelPermalink }}" alt="{{ $alt }}" loading="lazy" decoding="async" width="{{ $img.Width }}" height="{{ $img.Height }}"{{ with $title }} title="{{ . }}"{{ end }}>
+  {{- $img := partial "post-image-srcset.html" $resource -}}
+<img src="{{ $img.url }}"{{ with $img.srcset }} srcset="{{ . }}" sizes="{{ $img.sizes }}"{{ end }} alt="{{ $alt }}" loading="lazy" decoding="async"{{ if gt $img.width 0 }} width="{{ $img.width }}" height="{{ $img.height }}" style="width: {{ $img.width }}px"{{ end }}{{ with $title }} title="{{ . }}"{{ end }}>
 {{- else -}}
 <img src="{{ $dest | safeURL }}" alt="{{ $alt }}" loading="lazy" decoding="async"{{ with $title }} title="{{ . }}"{{ end }}>
 {{- end -}}
