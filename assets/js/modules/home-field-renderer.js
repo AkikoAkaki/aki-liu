@@ -264,9 +264,9 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
     if (destroyed || lost || !settings.visible) return;
     // Capacity comes from the main thread: WorkerNavigator omits deviceMemory.
     // Constrained devices keep a 15 fps ceiling during pointer interaction too.
-    // Normal devices retain the idle 20 fps budget and full interaction rate.
-    if (last && !dirty && (settings.lowResource || (!splat && now >= wakeUntil)) &&
-        now - last < 1000 / (settings.lowResource ? 15 : 20) - 2) {
+    // Cap interaction at 60 fps so high-refresh screens leave room for the page compositor.
+    const fps = settings.lowResource ? 15 : (!splat && now >= wakeUntil) ? 20 : 60;
+    if (last && !dirty && now - last < 1000 / fps - 2) {
       schedule(); return;
     }
     const elapsed = last ? (now - last) / 1000 : 1 / 60;
