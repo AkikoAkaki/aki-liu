@@ -1,15 +1,5 @@
 [
     {
-        "stamp":  "20260219-213923",
-        "label":  "2026-02-19 21:39:23",
-        "buildMs":  327,
-        "cacheRatio":  11.64,
-        "brokenLinks":  0,
-        "zhPages":  124,
-        "enPages":  30,
-        "commit":  "68a97d0"
-    },
-    {
         "stamp":  "20260219-214042",
         "label":  "2026-02-19 21:40:42",
         "buildMs":  273,
@@ -298,5 +288,15 @@
         "zhPages":  245,
         "enPages":  120,
         "commit":  "4862e45"
+    },
+    {
+        "stamp":  "20261103-105325",
+        "label":  "2026-11-03 10:53:25",
+        "buildMs":  1133,
+        "cacheRatio":  24.71,
+        "brokenLinks":  0,
+        "zhPages":  243,
+        "enPages":  118,
+        "commit":  "ff38afa"
     }
 ]
