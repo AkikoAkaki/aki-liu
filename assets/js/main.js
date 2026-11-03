@@ -1,5 +1,4 @@
 import { initExpandingMenu, initMagneticHover } from "./modules/menu.js";
-import { initFooterRevealFallback } from "./modules/footer-reveal.js";
 import { initTableWrapping } from "./modules/post-enhancements.js";
 import { initPrefetcher } from "./modules/prefetch.js";
 import { initLocalVideos } from "./modules/video-loading.js";
@@ -21,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initExpandingMenu();
   initTableWrapping();
   initLocalVideos();
-  initFooterRevealFallback();
   initSearchLoader(searchSrc);
   initPrefetcher();
 });

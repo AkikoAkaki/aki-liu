@@ -17,6 +17,7 @@ export async function initHomeField(workerSrc, fallbackSrc) {
   let worker = null, renderer = null, surface = null;
   let disposed = false, version = 0, sizeKey = "", pointerFrame = 0;
   let initialized = false, latestPointer = null;
+  let scrolling = false, scrollTimer = 0;
   let width = 0, height = 0;
 
   function send(message, transfer = []) {
@@ -42,6 +43,7 @@ export async function initHomeField(workerSrc, fallbackSrc) {
       reduced: reduced.matches,
       lowResource: document.documentElement.hasAttribute("data-low-resource") || isResourceConstrained() || navigator.hardwareConcurrency <= 2,
       visible: !document.hidden,
+      scrolling,
     };
   }
   async function geometry(restart = false) {
@@ -80,6 +82,16 @@ export async function initHomeField(workerSrc, fallbackSrc) {
       send({ type: "pointer", point: x >= -0.05 && x <= 1.05 && y >= -0.05 && y <= 1.05 ? [x, y] : null });
     });
   }
+  function scrolled() {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      scrolling = false;
+      send({ type: "update", settings: { scrolling } });
+    }, 140);
+    if (scrolling) return;
+    scrolling = true;
+    send({ type: "update", settings: { scrolling } });
+  }
   function leave() {
     if (pointerFrame) cancelAnimationFrame(pointerFrame);
     pointerFrame = 0;
@@ -98,9 +110,11 @@ export async function initHomeField(workerSrc, fallbackSrc) {
     if (disposed) return;
     disposed = true;
     if (pointerFrame) cancelAnimationFrame(pointerFrame);
+    clearTimeout(scrollTimer);
     worker?.terminate(); renderer?.destroy(); canvas.remove();
     observer.disconnect(); theme.disconnect();
     host.removeEventListener("pointermove", move); host.removeEventListener("pointerleave", leave);
+    window.removeEventListener("scroll", scrolled);
     reduced.removeEventListener("change", syncState);
     document.removeEventListener("visibilitychange", syncState);
     window.removeEventListener("resize", resized); window.removeEventListener("pagehide", pageHide); window.removeEventListener("pageshow", syncState);
@@ -122,6 +136,7 @@ export async function initHomeField(workerSrc, fallbackSrc) {
   reduced.addEventListener("change", syncState);
   host.addEventListener("pointermove", move, { passive: true });
   host.addEventListener("pointerleave", leave, { passive: true });
+  window.addEventListener("scroll", scrolled, { passive: true });
   document.addEventListener("visibilitychange", syncState);
   window.addEventListener("resize", resized);
   window.addEventListener("pagehide", pageHide);

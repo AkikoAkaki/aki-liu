@@ -17,6 +17,10 @@ export function createFieldRenderer(canvas, initial, report) {
 
   // All GPU synchronization stays in this renderer, normally inside a Worker.
   const floating = !!(gl.getExtension("EXT_color_buffer_float") || gl.getExtension("EXT_color_buffer_half_float"));
+  // Shader linking shares the GPU process with page compositing. With this
+  // extension the driver links on its own threads and we poll for completion,
+  // so a cold shader cache cannot freeze the page's first animations.
+  const parallel = gl.getExtension("KHR_parallel_shader_compile");
   const shaders = [];
   const programs = [];
   function compile(type, source) {
@@ -32,19 +36,26 @@ export function createFieldRenderer(canvas, initial, report) {
     gl.attachShader(p, v);
     gl.attachShader(p, compile(gl.FRAGMENT_SHADER, source));
     gl.linkProgram(p);
+    const result = { p, uniforms: null };
+    programs.push(result);
+    return result;
+  }
+  function linked(result) {
+    if (result.uniforms) return true;
+    const p = result.p;
+    if (parallel && !gl.getProgramParameter(p, parallel.COMPLETION_STATUS_KHR)) return false;
     if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
     const uniforms = {};
     for (let i = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS) - 1; i >= 0; i--) {
       const name = gl.getActiveUniform(p, i).name.replace(/\[0\]$/, "");
       uniforms[name] = gl.getUniformLocation(p, name);
     }
-    const result = { p, uniforms };
-    programs.push(result);
-    return result;
+    result.uniforms = uniforms;
+    return true;
   }
   const tone = program(flow(!floating));
   const composite = program(glyph);
-  let fluid = null, encoded = null, fluidReady = false;
+  let fluid = null, encoded = null, fluidQueue = null, fluidReady = false;
   const encodedSource = `#version 300 es
 precision highp float;
 uniform sampler2D uPrevious;
@@ -69,7 +80,7 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
   let frame = 0, last = 0, time = 0, wakeUntil = 0;
   let pointer = null, splat = null;
   let ready = false, lost = false, destroyed = false, dirty = true;
-  let fence = null, fenceTimer = 0, fluidTimer = 0;
+  let fence = null, fenceTimer = 0, warmTimer = 0;
   const requestFrame = globalThis.requestAnimationFrame?.bind(globalThis) || ((fn) => setTimeout(() => fn(performance.now()), 16));
   const cancelFrame = globalThis.cancelAnimationFrame?.bind(globalThis) || clearTimeout;
 
@@ -141,14 +152,26 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
       curl = target(fluidWidth, fluidHeight);
     }
   }
+  // The fluid only reacts to the pointer, so its programs compile after the
+  // opening animations, or on the first pointer move if that comes sooner.
+  // Without parallel compilation each link stalls the GPU process, and a cold
+  // shader cache turns eight links into a half-second freeze. So the queue
+  // compiles one program per rendered frame and pauses while the page scrolls.
   function prepareFluid() {
-    if (destroyed || lost || fluidReady || settings.reduced || !settings.visible) return;
-    if (floating) fluid = Object.fromEntries(Object.entries(fluidShaders).map(([key, source]) => [key, program(source)]));
-    else encoded = program(encodedSource);
+    if (destroyed || lost || fluidQueue || settings.reduced || !settings.visible) return;
+    fluidQueue = floating ? Object.entries(fluidShaders) : [["encoded", encodedSource]];
+    fluid = {};
+    schedule();
+  }
+  function compileFluid() {
+    if (fluidReady || !fluidQueue) return;
+    const pending = Object.values(fluid).find((p) => !p.uniforms);
+    if (pending && !linked(pending)) return;
+    const next = fluidQueue.shift();
+    if (next) { fluid[next[0]] = program(next[1]); return; }
+    encoded = fluid.encoded;
     allocateFluid();
     fluidReady = true;
-    dirty = true;
-    schedule();
   }
   function use(p, target, width, height) {
     gl.useProgram(p.p);
@@ -254,14 +277,17 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
     if (!ready) {
       ready = true;
       report({ type: "ready" });
-      // Present the field before warming the interaction-only programs.
-      fluidTimer = setTimeout(prepareFluid, 32);
+      warmTimer = setTimeout(prepareFluid, 1200);
     }
     if (!settings.reduced || dirty) schedule();
   }
   function tick(now) {
     frame = 0;
     if (destroyed || lost || !settings.visible) return;
+    // Hold the current frame while the page scrolls: the compositor needs the
+    // GPU for every scrolled frame, and a frozen background is not noticed.
+    if (settings.scrolling && ready) return;
+    if (!linked(tone) || !linked(composite)) { schedule(); return; }
     // Capacity comes from the main thread: WorkerNavigator omits deviceMemory.
     // Constrained devices keep a 15 fps ceiling during pointer interaction too.
     // Cap interaction at 60 fps so high-refresh screens leave room for the page compositor.
@@ -269,6 +295,7 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
     if (last && !dirty && now - last < 1000 / fps - 2) {
       schedule(); return;
     }
+    compileFluid();
     const elapsed = last ? (now - last) / 1000 : 1 / 60;
     const dt = Math.min(1 / 30, Math.max(1 / 480, elapsed));
     last = now;
@@ -295,17 +322,17 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
       if (next.visible === false && frame) { cancelFrame(frame); frame = 0; }
       last = 0;
       if (settings.reduced) pointer = splat = null;
-      else if (ready && !fluidReady) fluidTimer = setTimeout(prepareFluid, 0);
       schedule();
     },
     pointer(point) {
       if (settings.reduced) return;
+      if (point && ready) prepareFluid();
       if (point && pointer) splat = { from: splat?.from || pointer, to: point };
       pointer = point;
       schedule();
     },
     destroy() {
-      destroyed = true; if (frame) cancelFrame(frame); clearTimeout(fenceTimer); clearTimeout(fluidTimer);
+      destroyed = true; if (frame) cancelFrame(frame); clearTimeout(fenceTimer); clearTimeout(warmTimer);
       canvas.removeEventListener("webglcontextlost", onLost); canvas.removeEventListener("webglcontextrestored", onRestored);
       if (fence) gl.deleteSync(fence);
       releaseTargets(); gl.deleteTexture(atlas); gl.deleteTexture(neutral); gl.deleteVertexArray(vao);
