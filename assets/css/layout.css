@@ -47,12 +47,16 @@
 
 
 /* Footer reveal
-   The footer sits in normal flow under the page; nothing here is fixed.
-   iOS Safari 26 paints its status bar and toolbar areas with the background
-   of fixed elements touching the screen edges, and keeps a <footer>'s color
-   even after it is hidden, so a fixed footer layer tints the toolbar grey for
-   the rest of the visit. The "page lifts off the footer" look comes from
-   scroll-driven animations bound to the footer's own view timeline. */
+   The page lifts off the footer: the footer content stays pinned to the
+   bottom of the screen while the page scrolls up and uncovers it.
+   Desktop pins it with position: sticky. The browser moves sticky elements
+   on its scroll thread in step with the page, so nothing trails the scroll.
+   iOS Safari 26 tints its toolbar from sticky and fixed elements at the
+   screen edges and keeps that color after they leave, so narrow and touch
+   screens counter-scroll the content with a scroll-driven transform instead;
+   the footer itself stays in normal flow. The page's rounded bottom is
+   static: animating border-radius or scaling the page repaints the whole
+   page on the main thread every frame and trails the scroll. */
 :root {
     --footer-text: #23211f;
     --footer-text-soft: rgba(35, 33, 31, 0.72);
@@ -63,6 +67,7 @@
         linear-gradient(180deg, rgb(247, 247, 247) 0%, rgb(240, 240, 240) 44%, var(--footer-edge-color) 100%);
     --footer-backdrop:
         linear-gradient(180deg, var(--footer-edge-color) 0%, rgb(240, 240, 240) 30%, rgb(247, 247, 247) 60%, rgb(240, 240, 240) 82%, var(--footer-edge-color) 100%);
+    --footer-backdrop-mid: rgb(244, 244, 244);
     --footer-signature-filter: none;
     --footer-curve: 40px;
 }
@@ -77,12 +82,12 @@
         linear-gradient(180deg, rgb(18, 18, 19) 0%, rgb(24, 23, 26) 42%, var(--footer-edge-color) 100%);
     --footer-backdrop:
         linear-gradient(180deg, var(--footer-edge-color) 0%, rgb(24, 23, 26) 30%, rgb(18, 18, 19) 60%, rgb(24, 23, 26) 82%, var(--footer-edge-color) 100%);
+    --footer-backdrop-mid: rgb(21, 20, 22);
     --footer-signature-filter: invert(1) brightness(1.8);
 }
 
-/* The canvas takes the footer's bottom color, so overscroll past the end and
-   the strips beside the narrowed page match the footer. The page itself is
-   painted by .site-wrapper. */
+/* The canvas takes the footer's bottom color, so overscroll past the end
+   matches the footer. The page itself is painted by .site-wrapper. */
 html {
     background-color: var(--footer-edge-color);
 }
@@ -100,7 +105,8 @@ body {
     display: flex;
     flex-direction: column;
     overflow: clip;
-    transform-origin: center bottom;
+    border-bottom-left-radius: var(--footer-curve);
+    border-bottom-right-radius: var(--footer-curve);
 }
 
 .archive-page .site-wrapper {
@@ -111,73 +117,52 @@ body {
     flex-grow: 1;
 }
 
+/* The footer box reaches up behind the last screen of the page by
+   --footer-pin-room, which gives the sticky content room to stay pinned
+   while the page covers it. Layout height is unchanged: the negative margin
+   and the spacer cancel out. */
 .site-footer {
+    --footer-pin-room: 100lvh;
     position: relative;
     z-index: 1;
-    margin-top: calc(-1 * var(--footer-curve));
-    padding-top: var(--footer-curve);
+    margin-top: calc(-1 * (var(--footer-curve) + var(--footer-pin-room)));
     overflow: clip;
     color: var(--footer-text);
-    background: var(--footer-background);
+    background-color: var(--footer-backdrop-mid);
     view-timeline: --site-footer block;
 }
 
+.site-footer::before {
+    content: "";
+    display: block;
+    height: calc(var(--footer-curve) + var(--footer-pin-room));
+}
+
 .footer-content {
+    position: sticky;
+    bottom: 0;
+    /* A screen-tall gradient anchored to the pinned bottom edge: it stays
+       still while the page uncovers it. */
+    background: var(--footer-backdrop) center bottom / 100% 100lvh no-repeat;
     padding: 6rem 4vw calc(3rem + env(safe-area-inset-bottom, 0px));
     display: flex;
     flex-direction: column;
     gap: 6rem;
 }
 
-@supports (animation-timeline: view()) {
-    /* Rounded bottom edge grows as the footer comes into view. */
-    .site-wrapper {
-        animation: footer-reveal-page cubic-bezier(0.25, 1, 0.5, 1) both;
-        animation-timeline: --site-footer;
-        animation-range: entry 0% entry 100%;
-    }
-
-    /* Footer content stays pinned to the bottom of the screen while the page
-       slides up, so it reads as being uncovered rather than scrolled in. */
-    .footer-content {
-        animation: footer-reveal-content linear both;
-        animation-timeline: --site-footer;
-        animation-range: entry 0% entry 100%;
-    }
-}
-
-@keyframes footer-reveal-page {
-    from {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-    }
-    to {
-        border-bottom-left-radius: var(--footer-curve);
-        border-bottom-right-radius: var(--footer-curve);
-    }
-}
-
-/* Desktop also narrows the page slightly as it lifts. Starts above the
-   900px breakpoint, where the post TOC stops being position: fixed inside the
-   page and a transform would trap it. */
-@media (min-width: 901px) {
-    /* The strips beside the narrowed page and the footer share one gradient
-       pinned to the screen, so there is no seam where they meet. */
-    html,
-    .site-footer {
-        background: var(--footer-backdrop) fixed;
-    }
-
-    @keyframes footer-reveal-page {
-        from {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-            transform: none;
+@media (max-width: 900px), (pointer: coarse) {
+    @supports (animation-timeline: view()) {
+        .site-footer {
+            --footer-pin-room: 0px;
+            background: var(--footer-background);
         }
-        to {
-            border-bottom-left-radius: var(--footer-curve);
-            border-bottom-right-radius: var(--footer-curve);
-            transform: scaleX(0.956);
+
+        .footer-content {
+            position: static;
+            background: none;
+            animation: footer-reveal-content linear both;
+            animation-timeline: --site-footer;
+            animation-range: entry 0% entry 100%;
         }
     }
 }

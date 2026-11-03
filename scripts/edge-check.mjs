@@ -234,27 +234,29 @@ for (const theme of ["light", "dark"]) {
   }
 }
 
-// Reveal animation follows the scroll: start state mid-page, end state at the bottom.
+// Reveal: the footer content stays pinned to the bottom of the screen while
+// the page scrolls off it (sticky on desktop, scroll-driven on narrow screens),
+// and the page itself never transforms, so nothing trails the scroll.
 if (firstArticle) {
-  for (const viewport of [{ ...phone, narrows: false }, { width: 850, height: 900, mobile: false, narrows: false }, { width: 1440, height: 900, mobile: false, narrows: true }]) {
+  for (const viewport of [phone, { width: 850, height: 900, mobile: false }, { width: 1440, height: 900, mobile: false }]) {
     const where = `reveal ${viewport.width}px`;
     await open(firstArticle, { ...viewport, theme: "light" });
-    const state = () => evaluate(`(() => { const s = getComputedStyle(document.querySelector('.site-wrapper')); return { radius: s.borderBottomLeftRadius, transform: s.transform }; })()`);
-    // Start state: footer fully below the screen (skipped if the page is too short for that).
-    const beforeFooter = await evaluate(`(async () => {
-      const y = document.querySelector('.site-footer').getBoundingClientRect().top + scrollY - innerHeight - 100;
-      if (y <= 0) return false;
-      scrollTo(0, y); await new Promise(r => setTimeout(r, 300)); return true;
+    const state = () => evaluate(`(() => {
+      const s = getComputedStyle(document.querySelector('.site-wrapper'));
+      const content = document.querySelector('.footer-content');
+      return { radius: s.borderBottomLeftRadius, transform: s.transform, bottom: Math.round(content.getBoundingClientRect().bottom), half: content.offsetHeight / 2 };
     })()`);
-    if (beforeFooter) {
-      const start = await state();
-      if (start.radius !== "0px") fail(where, `corners are ${start.radius} before the footer is visible, expected 0px`);
-    }
+    await evaluate(`(async () => {
+      scrollTo(0, document.documentElement.scrollHeight - innerHeight - document.querySelector('.footer-content').offsetHeight / 2);
+      await new Promise(r => setTimeout(r, 300));
+    })()`);
+    const mid = await state();
+    if (Math.abs(mid.bottom - viewport.height) > 1) fail(where, `footer content is not pinned halfway through the reveal (bottom ${mid.bottom}px of ${viewport.height}px)`);
+    if (mid.transform !== "none") fail(where, `page transforms during the reveal (${mid.transform})`);
     await scrollTo(1);
     const bottom = await state();
     if (bottom.radius === "0px") fail(where, "corners stay square at the bottom");
-    const narrowed = /^matrix\(0\.9/.test(bottom.transform);
-    if (narrowed !== viewport.narrows) fail(where, viewport.narrows ? "page does not narrow at the bottom" : `page narrows at the bottom (${bottom.transform})`);
+    if (Math.abs(bottom.bottom - viewport.height) > 1) fail(where, `footer content does not end at the bottom (${bottom.bottom}px of ${viewport.height}px)`);
   }
 }
 
