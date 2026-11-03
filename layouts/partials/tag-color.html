@@ -1,0 +1,2 @@
+{{- /* Dot color for a tag from data/tags.yaml; empty leaves the CSS default. */ -}}
+{{- return ((index site.Data.tags (urlize .) | default dict).color | default "") -}}

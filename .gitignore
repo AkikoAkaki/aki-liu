@@ -7,11 +7,6 @@
 /assets/jsconfig.json
 hugo_stats.json
 
-# Generated observability reports (keep README/script tracked)
-/reports/metrics/latest.json
-/reports/metrics/latest.html
-/reports/metrics/history/
-
 # OS files
 .DS_Store
 Thumbs.db

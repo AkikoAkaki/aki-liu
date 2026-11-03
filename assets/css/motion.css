@@ -1,9 +1,7 @@
 
 :root {
     --motion-rise-fast: 0.3s;
-    --motion-rise-slow: 0.5s;
     --motion-sweep-fast: 0.6s;
-    --motion-sweep-slow: 0.9s;
 
 
     --motion-ease-rise: var(--ease-out-expo);
@@ -35,52 +33,5 @@
         clip-path: inset(-0.25em 0% -0.25em 0);
         filter: blur(0);
         opacity: 1;
-    }
-}
-
-
-.reveal-on-scroll {
-    opacity: 0;
-    transform: translateY(20px);
-    transition:
-        opacity var(--motion-rise-slow) var(--motion-ease-rise),
-        transform var(--motion-rise-slow) var(--motion-ease-rise);
-    transition-delay: var(--reveal-delay, 0ms);
-    will-change: opacity, transform;
-}
-
-.reveal-on-scroll.is-revealed {
-    opacity: 1;
-    transform: none;
-}
-
-.reveal-pin {
-    opacity: 0;
-    transform: rotate(var(--pin-rot, 0deg)) translateY(20px);
-    transition:
-        opacity var(--motion-rise-slow) var(--motion-ease-rise),
-        transform var(--motion-rise-slow) var(--motion-ease-rise);
-    transition-delay: var(--reveal-delay, 0ms);
-    will-change: opacity, transform;
-}
-
-.reveal-pin.is-revealed {
-    opacity: 1;
-    transform: rotate(var(--pin-rot, 0deg)) translateY(0);
-}
-
-
-@media (prefers-reduced-motion: reduce) {
-    .reveal-on-scroll {
-        opacity: 1;
-        transform: none;
-        animation: none;
-        transition: none;
-    }
-    .reveal-pin {
-        opacity: 1;
-        transform: rotate(var(--pin-rot, 0deg));
-        animation: none;
-        transition: none;
     }
 }

@@ -109,83 +109,15 @@
     width: 7.5px;
     height: 7.5px;
     border-radius: 50%;
-    background-color: #ccc;
     display: inline-block;
     flex-shrink: 0;
     margin-left: 6px;
     transform: translateY(-0.3em);
 }
 
-.archive-tag-item[data-tag="essay"] .tag-dot,
-.item-dot[data-tag="essay"],
-.archive-tag-item[data-tag="productivity"] .tag-dot,
-.item-dot[data-tag="productivity"] {
-    background-color: #007aff;
-}
-
-.archive-tag-item[data-tag="critique"] .tag-dot,
-.item-dot[data-tag="critique"],
-.archive-tag-item[data-tag="mental-model"] .tag-dot,
-.item-dot[data-tag="mental-model"] {
-    background-color: #af52de;
-}
-
-.archive-tag-item[data-tag="poetry"] .tag-dot,
-.item-dot[data-tag="poetry"] {
-    background-color: #ff3b30;
-}
-
-.archive-tag-item[data-tag="fiction"] .tag-dot,
-.item-dot[data-tag="fiction"],
-.archive-tag-item[data-tag="product"] .tag-dot,
-.item-dot[data-tag="product"] {
-    background-color: #ffcc00;
-}
-
-.archive-tag-item[data-tag="drama"] .tag-dot,
-.item-dot[data-tag="drama"] {
-    background-color: #34c759;
-}
-
-.archive-tag-item[data-tag="translation"] .tag-dot,
-.item-dot[data-tag="translation"] {
-    background-color: #ff9500;
-}
-
-.archive-tag-item[data-tag="content-analysis"] .tag-dot,
-.item-dot[data-tag="content-analysis"] {
-    background-color: #5856d6;
-}
-.archive-tag-item[data-tag="notes"] .tag-dot,
-.item-dot[data-tag="notes"] {
-    background-color: #5856d6;
-}
-.archive-tag-item[data-tag="ai"] .tag-dot,
-.item-dot[data-tag="ai"] {
-    background-color: #5ac8fa;
-}
-
-.archive-tag-item[data-tag="mlsys"] .tag-dot,
-.item-dot[data-tag="mlsys"] {
-    background-color: #30b0c7;
-}
-
-.archive-tag-item[data-tag="lamb"] .tag-dot,
-.item-dot[data-tag="lamb"] {
-    background-color: #ff2d55;
-}
-.archive-tag-item[data-tag="morning"] .tag-dot,
-.item-dot[data-tag="morning"] {
-    background-color: #ffcc00;
-}
-.archive-tag-item[data-tag="reading"] .tag-dot,
-.item-dot[data-tag="reading"] {
-    background-color: #007aff;
-}
-
 .archive-tag-item .tag-dot,
 .item-dot {
-    background-color: #8e8e93;
+    background-color: var(--tag-color, #8e8e93);
 }
 
 .archive-years-list {

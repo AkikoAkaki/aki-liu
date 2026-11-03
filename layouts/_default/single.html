@@ -37,17 +37,14 @@
     {{ .Store.Set "toc" $toc }}
     {{ .Store.Set "hasTOC" $hasTOC }}
 
-    {{ $firstTag := "" }}
-    {{ if and .Params.tags (gt (len .Params.tags) 0) }}
-        {{ $firstTag = index .Params.tags 0 | urlize }}
-    {{ end }}
-    {{ .Store.Set "firstTag" $firstTag }}
+    {{ $tagColor := "" }}
+    {{ with .Params.tags }}{{ $tagColor = partial "tag-color.html" (index . 0) }}{{ end }}
 
     <div class="post-content">
         {{ .Content }}
     </div>
     {{ if .Store.Get "hasTOC" }}
-    <aside class="post-toc post-toc--sidebar" data-tag="{{ .Store.Get "firstTag" }}" aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
+    <aside class="post-toc post-toc--sidebar"{{ with $tagColor }} style="--tag-color: {{ . }}"{{ end }} aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
         <button type="button" class="post-toc-toggle" aria-controls="post-toc-content" aria-expanded="false" aria-label="{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}"></button>
         <div class="post-toc-content" id="post-toc-content">
             <div class="post-toc-header">{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}</div>

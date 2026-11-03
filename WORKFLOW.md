@@ -1,78 +1,34 @@
 # Site Authoring Workflow
 
----
-
-## 1. Quick start
+## Preview and build
 
 ```powershell
-hugo server -D --disableFastRender
+hugo server -D --disableFastRender   # live preview with drafts at http://localhost:1313
+hugo --gc --minify                   # production build into public/
 ```
 
-Opens a live preview at `http://localhost:1313`. The `-D` flag includes drafts.
+`public/` and `public_test/` are build output. Never commit them. If one is staged, run `git restore --staged public/ public_test/`; if one was committed, remove it with `git rm --cached`.
 
----
+## New content
 
-## 2. Local preview
+Every section uses leaf bundles: `content/<section>/<slug>/index.md`, with the page's images and videos in the same folder. A flat `content/notes/my-slug.md` cannot hold assets.
 
 ```powershell
-# Include drafts
-hugo server -D --disableFastRender
-
-# Production-equivalent (no drafts, minified)
-hugo --gc --minify
+hugo new content notes/my-slug/index.md      # Chinese (default language)
+hugo new content notes/my-slug/index.en.md   # English translation in the same bundle
 ```
 
-`public/` is the build output directory. Do not commit it.
+The translation takes its slug and URL from the bundle directory.
 
----
-
-## 3. Creating a normal article
-
-All content sections (`notes/`, `textlab/`, `influences/`) use the same leaf-bundle pattern.
+## Microblog
 
 ```powershell
-hugo new content notes/my-slug/index.md
-```
-
-This creates `content/notes/my-slug/index.md` using the archetype for that section. Edit frontmatter, write content, add assets into the same bundle directory.
-
----
-
-## 4. Creating an English translation
-
-Create the translation file alongside the Chinese `index.md` in the same bundle:
-
-```powershell
-hugo new content notes/my-slug/index.en.md
-```
-
-The slug and URL are inherited from the bundle directory. The archetype pre-fills a matching frontmatter stub.
-
----
-
-## 5. Creating a microblog entry
-
-Use the dedicated script. It creates files only and does nothing with git.
-
-```powershell
-# Now (uses current Asia/Shanghai time)
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-microblog.ps1
-
-# At a specific time
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-microblog.ps1 -At "2026-06-12T10:10:10"
-
-# With tags
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-microblog.ps1 -Tags tag1,tag2
-
-# As a draft
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-microblog.ps1 -Draft
 ```
 
-Output: `content/microblog/YYYY/MM/DD-HHMMSS/index.md`
+Options: `-At "2026-06-12T10:10:10"` (default: now in Asia/Shanghai), `-Tags tag1,tag2`, `-Draft`. The script creates `content/microblog/YYYY/MM/DD-HHMMSS/index.md` and runs no git commands. `hugo new content microblog/2026/06/12-101010` writes the same file.
 
-New entries use `/microblog/YYYYMMDDHHMMSS/`. Existing short slugs retain their original URLs.
-
-Frontmatter shape produced:
+The directory must keep the `YYYY/MM/DD-HHMMSS` shape, because the date and the slug derive from it. New entries get the URL `/microblog/YYYYMMDDHHMMSS/`; older entries keep their short slugs.
 
 ```yaml
 ---
@@ -83,155 +39,41 @@ draft: false
 ---
 ```
 
-Alternatively, use the archetype directly:
+## Media
+
+- `![alt text](image.jpg)`: the render-image hook converts the image to WebP.
+- `{{< figure src="image.jpg" alt="alt text" caption="Caption." >}}`: a bundle image with a caption.
+- `{{< localvideo src="clip.mp4" >}}`: a bundle video.
+
+About-page images use their own Hugo Pipes pipeline. Do not copy it to other pages.
+
+## Drafts
+
+`draft: true` holds a page back. Only `-D` (`--buildDrafts`) builds drafts, and Vercel does not pass it, so drafts are safe to push. Set `draft: false` before the final commit, or the page stays invisible in production.
+
+## Before pushing
 
 ```powershell
-hugo new content microblog/2026/06/12-101010
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check.ps1   # add -Audit for output sizes
 ```
 
-Either way, no git operations are performed.
+The check builds `public_test/`, warns about staged build output, and validates microblog paths and frontmatter. `-Audit` also prints the total size of images, CSS, JS, HTML and search indexes, and the ten largest files. It does not detect unused files.
 
----
+If the change touches fixed elements, the footer or page-level `overflow`, also run `node scripts/edge-check.mjs` on the same build. It needs Node 22+ and Chrome or Edge, and prints `PASS` or the failing page and step. It simulates Safari, so confirm a mobile layout fix on a real iPhone.
 
-## 6. Images and media
+Review the branch's Vercel preview URL before merging.
 
-**Standard images** (Markdown syntax):
-
-```markdown
-![alt text](image.jpg)
-```
-
-The render-image hook converts these to WebP automatically. No extra steps.
-
-**Page-bundle images with captions** (use the shortcode):
-
-```markdown
-{{< figure src="image.jpg" alt="alt text" caption="Caption text here." >}}
-```
-
-**Videos** (page-bundle assets only):
-
-```markdown
-{{< localvideo src="clip.mp4" >}}
-```
-
-**About-page images** run through a separate Hugo Pipes pipeline. Do not try to replicate that pattern elsewhere.
-
-**Do not commit assets to** `public/` **or** `public_test/`. These are build artifacts.
-
----
-
-## 7. Drafts and publishing
-
-Set `draft: true` in frontmatter to hold a piece back:
-
-```yaml
-draft: true
-```
-
-Hugo only builds drafts when invoked with `-D` / `--buildDrafts`. Vercel's production build does not use `-D`, so drafts are safe to push.
-
-To publish: change `draft: false` (or remove the field) before committing.
-
----
-
-## 8. Before pushing / before merging
-
-- Check that `public/` is not staged (`git status`).
-- Check that `public_test/` is not staged.
-- Check that any test content created during scripting is not staged.
-- Run a local production build and eyeball it:
-
-```powershell
-hugo --gc --minify
-```
-
-- Or run the local pre-push smoke check:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check.ps1
-```
-
-Add `-Audit` for a heavier media/asset check. The script builds `public_test/`, which is generated output and should not be committed.
-
-- If the change touches fixed elements, the footer, or page-level `overflow`, also run the iPhone edge check against the same build:
-
-```powershell
-node scripts/edge-check.mjs
-```
-
-It needs Node 22+ and Chrome or Edge, and prints `PASS` or the failing page and step. It simulates Safari's rules; confirm on a real iPhone before calling a mobile layout fix done.
-
-- Check the Vercel preview deployment before merging a PR. Vercel generates a preview URL for every push to a branch. Review it before hitting merge.
-
----
-
-## 9. Metrics and asset audits
-
-**Metrics report** (build timing, template performance, broken links, HTML quality):
+## Metrics
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\metrics-report.ps1
 ```
 
-Raw reports in `reports/metrics/` are local and ignored by Git. After committing code changes, run the report and rebuild the site. Commit only `data/metrics/latest.json` and `data/metrics/history_timeline.json` to publish the refreshed snapshot. Measurement scope is documented in `reports/metrics/README.md`.
+Run it after committing code changes. It builds into a temp directory, rewrites `data/metrics/latest.json`, and appends one point to `data/metrics/history_timeline.json`, which keeps the last 30. The dashboard reads only these two files, so commit them to publish the snapshot. Hugo and Vercel builds measure nothing.
 
-**Asset audit** (public directory inventory):
-
-```powershell
-hugo --gc --minify --destination public_test
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\public-asset-audit.ps1 -PublicDir .\public_test
-```
-
-Run this against a local build output. Do not commit `public_test/`.
-
----
-
-## 10. Recommended workflows
-
-### Normal article workflow
-
-1. `hugo new content notes/my-slug/index.md`
-2. Write in `content/notes/my-slug/index.md`. Add assets to same directory.
-3. `hugo server -D --disableFastRender` to preview.
-4. If translating: `hugo new content notes/my-slug/index.en.md`
-5. When ready: set `draft: false`.
-6. Commit the bundle directory only.
-7. Push branch, check Vercel preview, then merge.
-
-### Microblog safe workflow
-
-1. `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-microblog.ps1`
-2. Open the generated file, write the post.
-3. `hugo server -D --disableFastRender` to preview.
-4. When ready: confirm `draft: false` in frontmatter.
-5. `git add content/microblog/...` (stage only the new bundle).
-6. Commit and push normally.
-
-### Content-heavy / media-heavy workflow
-
-1. Create the bundle with `hugo new content`.
-2. Drop images and videos into the bundle directory.
-3. Use `figure` shortcode for captioned images, `localvideo` for video.
-4. Preview locally: `hugo server -D --disableFastRender`.
-5. Run the asset audit after a local build to catch orphaned files:
-
-```powershell
-hugo --gc --minify --destination public_test
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\public-asset-audit.ps1 -PublicDir .\public_test
-```
-
-6. Commit only `content/` assets. Do not commit `public/` or `public_test/`.
-
----
-
-## 11. Common mistakes / footguns
-
-| Mistake | What happens | Fix |
-|---|---|---|
-| Committing `public/` | Build artifacts in git history; Vercel ignores it anyway | First use `git restore --staged public/ public_test/`; if artifacts were already committed, use `git rm --cached` |
-| Using a flat path `content/notes/my-slug.md` instead of a bundle | Images and assets cannot co-locate; shortcodes may break | Always use `content/notes/my-slug/index.md` |
-| Forgetting to set `draft: false` | Post is invisible in production, even after pushing | Check frontmatter before the final commit |
-| Wrong microblog directory name format | Hugo cannot derive the slug; URL breaks | Directory must be `YYYY/MM/DD-HHMMSS`; use the script |
-| Missing `slug` field in microblog frontmatter | Public URL falls back to directory name instead of time | The script sets this automatically; double-check if hand-crafting |
-| Checking Vercel preview after merging | Regressions caught too late | Always review the preview URL on the branch before merging |
+- Build time is one local `hugo --gc --minify` run with the existing resource cache, not a cold or repeated benchmark.
+- Cache reuse share divides cached calls by all template calls, from a separate `--templateMetrics` run.
+- Page asset sizes count the local stylesheets and scripts that the initial HTML references, including vendor files under `/lib/`. Inline, remote and runtime-loaded code is excluded. Gzip figures compress each file separately.
+- The asset baseline is the `data/metrics/latest.json` at the local `origin/main` ref. The script fetches nothing.
+- Generated pages include archives and tag pages, so the count is not an article count.
+- The script stops without writing if the Git revision or status changes during the run.

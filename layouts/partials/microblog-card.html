@@ -26,7 +26,7 @@
                     {{- range . -}}
                     {{- $slug := . | urlize -}}
                     {{- $label := partial "tag-label.html" . -}}
-                    <a class="mb-card-tag-dot" href="?cols={{ $slug | urlquery }}" data-mb-tag="{{ $slug }}" aria-label="{{ $label }}" title="{{ $label }}"><span class="item-dot" data-tag="{{ $slug }}" aria-hidden="true"></span></a>
+                    <a class="mb-card-tag-dot" href="?cols={{ $slug | urlquery }}" data-mb-tag="{{ $slug }}" aria-label="{{ $label }}" title="{{ $label }}"><span class="item-dot"{{ with partial "tag-color.html" $slug }} style="--tag-color: {{ . }}"{{ end }} aria-hidden="true"></span></a>
                     {{- end }}
                 </div>
                 {{- end }}

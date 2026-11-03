@@ -1,16 +1,5 @@
-{{- /* Human-readable label for a tag slug or raw tag name:
-       "complex-analysis" -> "Complex Analysis", "mlsys" -> "MLSys".
+{{- /* Human-readable label for a tag slug or raw tag name: the label in
+       data/tags.yaml, else title case ("complex-analysis" -> "Complex Analysis").
        Display only; URLs, data-tag attributes and filter keys stay slugs. */ -}}
-{{- $acronyms := dict
-    "ai" "AI"
-    "cs" "CS"
-    "gpu" "GPU"
-    "llm" "LLM"
-    "ml" "ML"
-    "mlsys" "MLSys"
--}}
-{{- $words := slice -}}
-{{- range split (replace (printf "%v" .) "-" " " | title) " " -}}
-    {{- $words = $words | append (index $acronyms (lower .) | default .) -}}
-{{- end -}}
-{{- return (delimit $words " ") -}}
+{{- $label := replace (printf "%v" .) "-" " " | title -}}
+{{- return ((index site.Data.tags (urlize .) | default dict).label | default $label) -}}

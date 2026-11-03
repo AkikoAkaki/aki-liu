@@ -140,11 +140,8 @@
     --font-editorial: "PP Editorial Old", var(--font-serif);
     --font-mono: "JetBrains Mono", monospace;
     --font-sans: "Switzer", var(--font-cjk-sans), sans-serif;
-    --font-ui: "Switzer", var(--font-cjk-sans), sans-serif;
 
-    --type-intro: 400 clamp(1.2rem, 2vw, 1.6rem)/1.6 var(--font-serif);
     --type-data: 500 12px/16px var(--font-mono);
-    --type-heading: 400 16px/24px var(--font-sans);
     --type-l: 400 16px/1.8 var(--font-sans);
     --type-s: 400 14px/1.6 var(--font-sans);
 
@@ -174,7 +171,6 @@
     --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 
     --panel-shell-bg: rgba(236, 236, 236, 0.14);
-    --panel-shell-border: rgba(var(--text-rgb), 0.1);
     --panel-shell-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
     --panel-shell-backdrop: blur(32px) saturate(180%);
     --panel-shell-radius: 16px;
@@ -202,7 +198,6 @@
     --post-table-hover: rgba(255, 255, 255, 0.03);
 
     --panel-shell-bg: rgba(255, 255, 255, 0.07);
-    --panel-shell-border: rgba(255, 255, 255, 0.08);
     --panel-shell-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
 }
 
@@ -862,7 +857,7 @@ body.menu-cursor-hidden * {
 
 :root[data-low-resource] :is(.menu-bar, .menu-trigger-title, .menu-panel,
     .menu-search-panel, .menu-link, .menu-link-content, .mb-tag-chip,
-    .reveal-on-scroll, .reveal-pin, .home-hover-preview, .home-hover-preview-img),
+    .home-hover-preview, .home-hover-preview-img),
 :root[data-low-resource] .menu-link::before,
 :root[data-low-resource] .mb-tag-chip::before {
     will-change: auto;
