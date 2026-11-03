@@ -29,7 +29,6 @@ mainSections = ["notes", "textlab", "weeknotes"]
 
 [taxonomies]
   tag = "tags"
-  category = "categories"
 
 # Flatten microblog URLs: nested year/month dirs in content stay private.
 [permalinks]

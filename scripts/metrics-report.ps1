@@ -6,8 +6,6 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-. (Join-Path $PSScriptRoot "metrics-html.ps1")
-
 function Invoke-HugoCapture {
     param(
         [Parameter(Mandatory = $true)]
@@ -282,7 +280,6 @@ function Analyze-BuiltHtml {
             'weeknotes' { 'Weeknotes' }
             'microblog' { 'Microblog' }
             'tags' { 'Tags' }
-            'categories' { 'Categories' }
             default { 'Other' }
         }
         if (-not $pageGroups.ContainsKey($label)) {
@@ -418,95 +415,6 @@ function Analyze-BuiltHtml {
     }
 }
 
-function New-Delta {
-    param(
-        $Current,
-        $Previous
-    )
-
-    if ($null -eq $Previous) {
-        return @{
-            hasBaseline = $false
-        }
-    }
-
-    return @{
-        hasBaseline             = $true
-        buildMsDelta            = [math]::Round(($Current.build.totalMs - $Previous.build.totalMs), 3)
-        brokenLinksDelta        = ($Current.quality.brokenInternalReferenceCount - $Previous.quality.brokenInternalReferenceCount)
-        invalidCanonicalCountDelta   = ($Current.quality.invalidCanonicalCount - $Previous.quality.invalidCanonicalCount)
-        templateCacheRatioDelta = [math]::Round(($Current.templates.aggregateCacheRatio - $Previous.templates.aggregateCacheRatio), 3)
-    }
-}
-
-function Get-HistorySeries {
-    param(
-        [string]$HistoryDir,
-        [string]$TimelinePath,
-        [int]$Limit = 30
-    )
-
-    $files = Get-ChildItem -Path $HistoryDir -Filter "*.json" -File -ErrorAction SilentlyContinue |
-        Sort-Object Name
-
-    $series = @{}
-    if (Test-Path -LiteralPath $TimelinePath) {
-        foreach ($point in (Get-Content -Raw -LiteralPath $TimelinePath | ConvertFrom-Json)) {
-            $series[$point.stamp] = $point
-        }
-    }
-    foreach ($file in $files) {
-        try {
-            $item = Get-Content -Raw -Path $file.FullName | ConvertFrom-Json
-        }
-        catch {
-            continue
-        }
-
-        if (-not $item.quality.PSObject.Properties['brokenInternalReferenceCount']) { continue }
-        $stamp = $file.BaseName
-        $label = $stamp -replace '^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})$', '$1-$2-$3 $4:$5:$6'
-
-        $buildMs = 0.0
-        $cacheRatio = 0.0
-        $brokenLinks = 0
-        $zhPages = 0
-        $enPages = 0
-        $commit = "unknown"
-        try { $buildMs = [double]$item.build.totalMs } catch {}
-        try { $cacheRatio = [double]$item.templates.aggregateCacheRatio } catch {}
-        try { $brokenLinks = [int]$item.quality.brokenInternalReferenceCount } catch {}
-        try { $zhPages = [int]$item.build.zhPages } catch {}
-        try { $enPages = [int]$item.build.enPages } catch {}
-        try { $commit = [string]$item.git.commit } catch {}
-        if ($buildMs -le 0) {
-            continue
-        }
-
-        $series[$stamp] = [pscustomobject]@{
-            stamp       = $stamp
-            label       = $label
-            buildMs     = [math]::Round($buildMs, 3)
-            cacheRatio  = [math]::Round($cacheRatio, 3)
-            brokenLinks = $brokenLinks
-            zhPages     = $zhPages
-            enPages     = $enPages
-            commit      = $commit
-        }
-    }
-
-    foreach ($point in $series.Values) {
-        $point.label = $point.stamp -replace '^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})$', '$1-$2-$3 $4:$5:$6'
-    }
-    return @($series.Values | Sort-Object stamp | Select-Object -Last $Limit)
-}
-
-$reportsDir = Join-Path $ProjectRoot "reports\metrics"
-$historyDir = Join-Path $reportsDir "history"
-$assetAuditJsonPath = Join-Path $reportsDir "public-assets.json"
-New-Item -ItemType Directory -Path $reportsDir -Force | Out-Null
-New-Item -ItemType Directory -Path $historyDir -Force | Out-Null
-
 $measurementHead = Invoke-GitCapture -Arguments @("rev-parse", "HEAD") -Root $ProjectRoot
 $measurementStatus = Invoke-GitCapture -Arguments @("status", "--porcelain", "--untracked-files=all") -Root $ProjectRoot
 $gitContext = @{
@@ -525,7 +433,6 @@ try {
     $buildOutput = Invoke-HugoCapture -Arguments @("--gc", "--minify", "--destination", $tempDest) -Root $ProjectRoot
     $quality = Analyze-BuiltHtml -DestRoot $tempDest
     $quality.pageBundles.baseline = Get-AssetBaseline -Current $quality.pageBundles -Root $ProjectRoot
-    & (Join-Path $ProjectRoot "scripts\public-asset-audit.ps1") -PublicDir $tempDest -JsonOut $assetAuditJsonPath -Quiet
 }
 finally {
     if (Test-Path $tempDest) {
@@ -571,56 +478,33 @@ $metrics = @{
     quality         = $quality
 }
 
-$latestJsonPath = Join-Path $reportsDir "latest.json"
-$latestHtmlPath = Join-Path $reportsDir "latest.html"
+if ($metrics.build.totalMs -le 0) { throw "Could not read the build time from the Hugo output." }
 
-$previous = $null
-if (Test-Path $latestJsonPath) {
-    try {
-        # Keep compatibility with Windows PowerShell, which lacks -AsHashtable.
-        $previous = Get-Content -Raw $latestJsonPath | ConvertFrom-Json
-        if (-not $previous.quality.PSObject.Properties['brokenInternalReferenceCount']) {
-            $previous = $null
-        }
-    }
-    catch {
-        $previous = $null
-    }
-}
-
-$delta = New-Delta -Current $metrics -Previous $previous
-
-$json = $metrics | ConvertTo-Json -Depth 8
+$dataDir = Join-Path $ProjectRoot "data\metrics"
+$historyPath = Join-Path $dataDir "history_timeline.json"
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-[System.IO.File]::WriteAllText($latestJsonPath, $json, $utf8NoBom)
 
-$stamp = (Get-Date).ToString("yyyyMMdd-HHmmss")
-$historyJsonPath = Join-Path $historyDir "$stamp.json"
-[System.IO.File]::WriteAllText($historyJsonPath, $json, $utf8NoBom)
+$stamp = Get-Date
+$history = @()
+if (Test-Path -LiteralPath $historyPath) {
+    $history = Get-Content -Raw -LiteralPath $historyPath | ConvertFrom-Json
+}
+$history = @(@($history) + [pscustomobject]@{
+    stamp       = $stamp.ToString("yyyyMMdd-HHmmss")
+    label       = $stamp.ToString("yyyy-MM-dd HH:mm:ss")
+    buildMs     = [math]::Round($metrics.build.totalMs, 3)
+    cacheRatio  = [math]::Round($metrics.templates.aggregateCacheRatio, 3)
+    brokenLinks = $metrics.quality.brokenInternalReferenceCount
+    zhPages     = $metrics.build.zhPages
+    enPages     = $metrics.build.enPages
+    commit      = $metrics.git.commit
+} | Select-Object -Last 30)
 
-$historyPoints = Get-HistorySeries -HistoryDir $historyDir -TimelinePath (Join-Path $ProjectRoot "data\metrics\history_timeline.json") -Limit 30
-Write-ReportHtml -Metrics $metrics -Delta $delta -Path $latestHtmlPath -HistoryPoints $historyPoints
+New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
+[System.IO.File]::WriteAllText((Join-Path $dataDir "latest.json"), ($metrics | ConvertTo-Json -Depth 8), $utf8NoBom)
+[System.IO.File]::WriteAllText($historyPath, (ConvertTo-Json -InputObject $history -Depth 8), $utf8NoBom)
 
-# Direct Hugo-accessible static data feeding
-$dataMetricsDir = Join-Path $ProjectRoot "data\metrics"
-New-Item -ItemType Directory -Path $dataMetricsDir -Force | Out-Null
-
-$dataLatestJsonPath = Join-Path $dataMetricsDir "latest.json"
-$dataHistoryJsonPath = Join-Path $dataMetricsDir "history_timeline.json"
-
-[System.IO.File]::WriteAllText($dataLatestJsonPath, $json, $utf8NoBom)
-$historyJson = ConvertTo-Json -InputObject @($historyPoints) -Depth 8
-[System.IO.File]::WriteAllText($dataHistoryJsonPath, $historyJson, $utf8NoBom)
-
-Write-Host "Metrics report generated:"
-Write-Host "  JSON        $latestJsonPath"
-Write-Host "  HTML        $latestHtmlPath"
-Write-Host "  Asset audit $assetAuditJsonPath"
-Write-Host "  History     $historyJsonPath"
-Write-Host "  Hugo latest $dataLatestJsonPath"
-Write-Host "  Hugo series $dataHistoryJsonPath"
-Write-Host ""
-Write-Host "Summary:"
+Write-Host "Metrics written to data/metrics/ ($($history.Count) history points)"
 Write-Host "  Build total: $($metrics.build.totalMs) ms"
 Write-Host "  Missing local references: $($metrics.quality.brokenInternalReferenceCount)"
 Write-Host "  Missing or invalid canonical: $($metrics.quality.invalidCanonicalCount)"

@@ -45,18 +45,14 @@ When you spawn one, write: `You are a subagent. Don't run memo.`
 
 ## Build & run
 
-```powershell
-hugo serve --disableFastRender
-hugo --gc --minify           # production build → public/
-```
-
-No `npm`, `Node.js`, or package manager needed. Hugo handles CSS/JS bundling internally.
+`WORKFLOW.md` is the authoring guide: preview and build commands, new articles and translations, microblog entries, media, drafts, pre-push checks and metrics. Hugo bundles CSS and JS itself; the site needs no `npm`, Node.js or package manager. Only `scripts/edge-check.mjs` needs Node.
 
 ## Project structure
 
 - **Multilingual**: Chinese is default (`zh`), English uses `index.en.md` alongside `index.md`. Content filenames are always Chinese; English translations live in the same directory.
-- **Content sections** (`content/`): `notes/`, `textlab/`, `influences/`. All use the same `list.html` template with the 3-column archive layout (sidebar-left → main → sidebar-right with hover preview). `mainSections` in `hugo.toml` (notes, textlab) feeds tag pages and tag search via `site.MainSections`; keep it above the first `[table]` or TOML assigns it to that table.
+- **Content sections** (`content/`): `notes/`, `textlab/` and `weeknotes/` use `list.html` with the 3-column archive layout (sidebar-left → main → sidebar-right with hover preview). `microblog/` and `about/` have their own layouts; `influences/` is a single page. `mainSections` in `hugo.toml` (notes, textlab, weeknotes) feeds archives, tag pages and tag search via `site.MainSections`; keep it above the first `[table]` or TOML assigns it to that table.
 - **Homepage**: Driven by `data/homepage.yaml`, not markdown. Template: `layouts/index.html`.
+- **Navigation**: `data/nav.yaml` lists the menu entries in order. `baseof.html` renders the menu from it and passes it to the search palette as `data-nav` JSON; the palette also lists entries marked `hidden: true`.
 - **CSS pipeline**: Global bundle concatenates `base.css` → `layout.css` → `components.css` → `motion.css` → `search.css`. Homepage loads `home.css`; single pages load a `post.css` + `syntax-highlight.css` page bundle; About, microblog, and dashboard CSS are route-conditional. All are processed via Hugo Pipes (`resources.Concat` + `resources.Minify` where applicable).
 - **JS**: `assets/js/main.js` is the global entrypoint built via Hugo's `js.Build`. `home.js`, `about.js`, `dashboard.js`, and `microblog.js` load on their respective routes; `post-toc.js` loads on single pages with a table of contents. KaTeX rendering uses `assets/js/modules/katex.js` for both articles and archive previews. Media queries live in `assets/js/modules/media.js`; search scoring and snippets live in `assets/js/modules/search-core.js`. No external bundler.
 
@@ -65,45 +61,16 @@ No `npm`, `Node.js`, or package manager needed. Hugo handles CSS/JS bundling int
 - **Images**: Non-SVG/GIF images are auto-converted to WebP via the custom render-image hook (`layouts/_default/_markup/render-image.html`). Use the `figure` shortcode for page-bundle images that need captions.
 - **Video**: Use `localvideo` shortcode with page-bundle assets.
 - **KaTeX**: Enabled globally; loaded on pages whose frontmatter sets `enableKaTeX`/`math`, or whose content has math delimiters (`layouts/partials/page-has-math.html`, `layouts/partials/head/katex.html`). Files live in a versioned directory (`static/lib/katex-<version>/`) because `/lib/` is cached as immutable; on upgrade, change `layouts/partials/katex-base.html` and `scripts/download-katex.ps1` together.
-- **Tags**: Defined in frontmatter as `tags: ["tag-name"]`. Rendered via `/tags/<name>/` using `layouts/tags/term.html`. URLs, `data-tag` attributes and filters use the slug; displayed names come from `layouts/partials/tag-label.html` (hyphens to spaces, title case, acronym map such as `mlsys` → `MLSys`). Add new acronyms there.
+- **Tags**: Defined in frontmatter as `tags: ["tag-name"]`. Rendered via `/tags/<name>/` using `layouts/tags/term.html`. URLs, `data-tag` attributes and filters use the slug. `data/tags.yaml` maps a slug to its dot color and, when title case is wrong, its label (`mlsys` → `MLSys`); templates emit the color as `style="--tag-color: …"`. A new tag needs one line there; without one it gets a grey dot and a title-case label.
 - **Archive preview**: Each article has a fingerprinted preview JSON (`layouts/partials/archive-preview-entry.html`, first 800 characters). `assets/js/modules/archive-preview.js` loads the hovered or focused article and loads KaTeX only for previews with math.
 - **Microblog pagination**: `microblog-feed-index.html` embeds column counts and fingerprinted 30-entry chunk URLs. The browser requests only the next chunk; the public `feed.json` remains complete.
-- **Fonts**: Switzer, PP Editorial Old, JetBrains Mono and general Newsreader faces are self-hosted in `static/fonts/`. Noto Serif SC and the archive's distinct Newsreader face still use Google Fonts.
+- **Fonts**: Switzer, PP Editorial Old, JetBrains Mono, Newsreader and Noto Serif SC are self-hosted in `static/fonts/`. Only the archive's distinct Newsreader face loads from Google Fonts.
 - **Goldmark**: `unsafe = true` (HTML in markdown), `hardWraps = true`; `$`, `\(`, `$$`, `\[` math passes through to KaTeX.
-- **Drafts**: Set `draft: true` in frontmatter; Hugo only publishes them with `--buildDrafts`.
+- **Microblog directories**: must be `YYYY/MM/DD-HHMMSS`; the slug and public URL derive from that directory.
 
-## Creating content
+## Checks
 
-```powershell
-hugo new content notes/my-slug/index.md
-```
-
-Use the same leaf-bundle pattern for `notes/`, `textlab/`, and `influences/`.
-
-```powershell
-hugo new content notes/my-slug/index.en.md
-```
-
-Create the English translation in the same bundle by using the filename suffix.
-
-```powershell
-hugo new content microblog/2026/06/12-101010
-```
-
-Microblog directories must be `YYYY/MM/DD-HHMMSS`; the slug and public URL derive from that directory.
-
-`powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\new-microblog.ps1` creates a correctly named microblog entry without committing or pushing.
-
-See `WORKFLOW.md` for the human authoring, preview, microblog, media, metrics, and publishing workflow.
-
-## Quality & metrics
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\metrics-report.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check.ps1
-```
-
-Generates build timing, template performance, broken link checks, and HTML quality reports in `reports/metrics/`. The check script runs a local pre-push smoke check against `public_test/`.
+`scripts/check.ps1` is the pre-push check and `scripts/metrics-report.ps1` refreshes the dashboard data in `data/metrics/`; `WORKFLOW.md` gives the commands.
 
 After changing anything fixed-positioned, the footer, `.site-wrapper`, or `overflow` on `html`/`body`, run `node scripts/edge-check.mjs` (needs Node 22+ and Chrome or Edge; reads `public_test/`). iOS Safari 26 colors its status bar and toolbar from real fixed elements at the screen edges and keeps a `<footer>`'s color after it hides; the script ports WebKit's rules and fails on content under the status bar, a tinted toolbar, a page that does not end at the footer, or nested scroll containers. Keep the footer in normal flow and keep the top fade a real element with a solid `background-color`.
 
@@ -117,12 +84,13 @@ Vercel — configured in `vercel.json`. Build command sets `--baseURL` from the 
 |---|---|
 | Hugo config | `hugo.toml` |
 | Homepage data | `data/homepage.yaml` |
+| Navigation | `data/nav.yaml` |
+| Tag colors and labels | `data/tags.yaml`, `layouts/partials/tag-label.html`, `layouts/partials/tag-color.html` |
 | Base layout | `layouts/_default/baseof.html` |
 | CSS bundle entrypoints | `layouts/partials/head/core-assets.html`, `assets/css/base.css`, `layout.css`, `components.css`, `motion.css`, `search.css` |
 | Route CSS | `assets/css/home.css`, `post.css` + `syntax-highlight.css`, `about.css`, `microblog.css`, `dashboard.css` |
 | JS entrypoints | `assets/js/main.js`, `home.js`, `about.js`, `dashboard.js`, `microblog.js`, `post-toc.js` |
 | Archive hover previews | `layouts/partials/archive-preview-entry.html`, `assets/js/modules/archive-preview.js` |
-| Tag display names | `layouts/partials/tag-label.html` |
 | Local Claude config (ignored) | `.claude/settings.local.json` |
 
 Historical engineering records and design drafts are archived in the Obsidian project folder `E:\obsidian-vault\00 系统\项目\aki-liu`; they are not build inputs.

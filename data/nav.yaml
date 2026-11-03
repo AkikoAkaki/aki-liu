@@ -1,0 +1,11 @@
+# Site navigation in menu order. The search palette lists every entry;
+# `hidden: true` keeps one out of the menu. An id is a section or page path
+# under content/; `home` is the site root.
+- { id: home, label: Home }
+- { id: about, label: About }
+- { id: textlab, label: Text Lab }
+- { id: notes, label: Notes }
+- { id: weeknotes, label: Weeknotes }
+- { id: microblog, label: Microblog }
+- { id: influences, label: Influences, hidden: true }
+- { id: dashboard, label: Dashboard }

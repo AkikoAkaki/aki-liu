@@ -1,23 +1,13 @@
 
-@keyframes hero-reveal {
-    from {
-        clip-path: inset(0 100% 0 0);
-        filter: blur(12px);
-        opacity: 1;
-    }
-    40% {
-        filter: blur(4px);
-    }
-    to {
-        clip-path: inset(0 0% 0 0);
-        filter: blur(0px);
-        opacity: 1;
-    }
+/* The hero never moves: a page-colored cover with a feathered left edge
+   slides off to the right. Moving the thin-stroked image itself, even with
+   a counter-transform, made it shimmer as each layer snapped to pixels. */
+@keyframes hero-wipe-cover {
+    to { transform: translateX(100%); }
 }
 
 
 .home-page {
-    --home-glass-fill: rgb(250 251 250 / 42%);
     --home-glass-sheen: rgb(255 255 255 / 6%);
     --home-glass-edge: rgb(255 255 255 / 32%);
     --home-glass-shadow: inset 0 1px 0 rgb(255 255 255 / 25%);
@@ -25,21 +15,30 @@
 }
 
 :root[data-theme="dark"] .home-page {
-    --home-glass-fill: rgb(14 20 21 / 52%);
     --home-glass-sheen: rgb(179 213 210 / 3%);
     --home-glass-edge: rgb(207 231 227 / 10%);
     --home-glass-shadow: inset 0 1px 0 rgb(226 245 242 / 5%);
     --home-glass-solid: color-mix(in srgb, rgb(14 20 21) 52%, var(--bg-color));
 }
 
+/* Panels over the field are painted, not blurred. A live backdrop-filter
+   over the animated field makes the compositor re-blur every panel on every
+   frame of any animation or scroll. Blurred that much, the faint field
+   averages out to the page color, so an opaque fill looks the same. */
 .home-glass {
-    background: linear-gradient(145deg, var(--home-glass-sheen), transparent 60%), var(--home-glass-fill);
+    background: linear-gradient(145deg, var(--home-glass-sheen), transparent 60%), var(--home-glass-solid);
     border: 1px solid var(--home-glass-edge);
     border-radius: 24px;
     box-shadow: var(--home-glass-shadow);
-    -webkit-backdrop-filter: blur(20px) saturate(130%);
-    backdrop-filter: blur(20px) saturate(130%);
     box-sizing: border-box;
+}
+
+/* Until the field shows its first frame, the menu sits over the plain page
+   color, where its blur changes nothing on screen but is still recomputed
+   on every frame of the intro animation. */
+.home-page:not(:has(.home-field.is-ready)) .menu-bar:not(.is-open):not(.is-search) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
 }
 
 .reading-haze {
@@ -53,9 +52,7 @@
     inset: -2rem -2.5rem;
     z-index: -1;
     pointer-events: none;
-    background: color-mix(in srgb, var(--bg-color) 66%, transparent);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
+    background: var(--bg-color);
     mask-image:
         linear-gradient(to right, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent),
         linear-gradient(to bottom, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
@@ -132,13 +129,32 @@
     margin: 0 auto 3rem auto;
     display: flex;
     justify-content: center;
-    opacity: 1;
-    clip-path: inset(0 100% 0 0);
-    animation: hero-reveal 1.6s var(--motion-ease-sweep) forwards;
+}
+
+.hero-wipe {
+    --hero-feather: clamp(64px, 12vw, 160px);
+    position: relative;
+    display: block;
+    width: 85%;
+    overflow: clip;
+}
+
+/* Starts with its solid part over the whole image and its feather just
+   outside the left edge; ends fully past the right edge. */
+.hero-wipe::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(-1 * var(--hero-feather));
+    width: calc(100% + var(--hero-feather));
+    background: linear-gradient(to right, transparent, var(--bg-color) var(--hero-feather));
+    pointer-events: none;
+    animation: hero-wipe-cover 1.6s var(--motion-ease-sweep) forwards;
 }
 
 .hero-svg {
-    width: 85%;
+    width: 100%;
     height: auto;
     display: block;
 }
@@ -204,7 +220,7 @@
         margin: 0 auto 2rem auto;
     }
 
-    .hero-svg {
+    .hero-wipe {
         width: 92%;
     }
 
@@ -221,7 +237,7 @@
         margin: 0 auto 1.5rem auto;
     }
 
-    .hero-svg {
+    .hero-wipe {
         width: 96%;
     }
 
@@ -971,10 +987,8 @@ a.nav-panel-subitem:hover {
         animation: none;
     }
 
-    .author-name-svg-wrapper {
-        clip-path: none;
-        opacity: 1;
-        animation: none;
+    .hero-wipe::after {
+        display: none;
     }
     .bio-text {
         opacity: 1;

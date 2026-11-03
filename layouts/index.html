@@ -26,7 +26,7 @@
     {{/* Intro section */}}
     <section class="intro">
         <div class="author-name-svg-wrapper">
-            <img src="{{ $heroHref }}" alt="{{ $data.intro.name }}" class="hero-svg" width="1880" height="1000">
+            <span class="hero-wipe"><img src="{{ $heroHref }}" alt="{{ $data.intro.name }}" class="hero-svg" width="1880" height="1000"></span>
         </div>
         <div class="intro-copy reading-haze">
         {{- range $index, $para := $data.intro.bio }}

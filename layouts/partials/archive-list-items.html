@@ -21,7 +21,7 @@
                     {{- with .tags -}}
                         <span class="item-tag-dots" aria-hidden="true">
                             {{- range . -}}
-                                <span class="item-dot" data-tag="{{ . }}"></span>
+                                <span class="item-dot"{{ with partial "tag-color.html" . }} style="--tag-color: {{ . }}"{{ end }}></span>
                             {{- end -}}
                         </span>
                     {{- end -}}

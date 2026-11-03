@@ -36,7 +36,6 @@
 
 .archive-page {
     --font-sans: "Archive Switzer", var(--font-cjk-sans), sans-serif;
-    --font-ui: var(--font-sans);
     --font-serif: "Archive Newsreader", var(--font-cjk-serif), serif;
     --font-mono: "Archive Mono", monospace;
 }

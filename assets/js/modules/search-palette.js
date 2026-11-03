@@ -21,7 +21,7 @@ export function initSearchPalette() {
     ? "en"
     : "zh";
   const indexUrl = root.dataset.indexUrl;
-  const sectionUrls = JSON.parse(root.dataset.sections || "{}");
+  const nav = JSON.parse(root.dataset.nav || "[]");
   const isMac = /Mac|iPhone|iPad/i.test(navigator.userAgent || "");
 
   let panel = null;
@@ -90,48 +90,16 @@ export function initSearchPalette() {
   function buildCommands(query) {
     const otherLang = lang === "zh" ? "en" : "zh";
     const list = [
-      {
-        id: "go-home",
-        label: lang === "en" ? "Go to Home" : "回到首页",
-        hint: root.dataset.homeUrl,
-        icon: "home",
-        action: () => navigate(root.dataset.homeUrl),
-      },
-      {
-        id: "go-textlab",
-        label: lang === "en" ? "Go to Text Lab" : "前往 Text Lab",
-        hint: "/textlab",
-        icon: "textlab",
-        action: () => navigate(sectionUrls.textlab),
-      },
-      {
-        id: "go-notes",
-        label: lang === "en" ? "Go to Notes" : "前往 Notes",
-        hint: "/notes",
-        icon: "notes",
-        action: () => navigate(sectionUrls.notes),
-      },
-      {
-        id: "go-weeknotes",
-        label: lang === "en" ? "Go to Weeknotes" : "前往 Weeknotes",
-        hint: "/weeknotes",
-        icon: "weeknotes",
-        action: () => navigate(sectionUrls.weeknotes),
-      },
-      {
-        id: "go-microblog",
-        label: lang === "en" ? "Go to Microblog" : "前往 Microblog",
-        hint: "/microblog",
-        icon: "microblog",
-        action: () => navigate(sectionUrls.microblog),
-      },
-      {
-        id: "go-influences",
-        label: lang === "en" ? "Go to Influences" : "前往 Influences",
-        hint: "/influences",
-        icon: "influences",
-        action: () => navigate(sectionUrls.influences),
-      },
+      ...nav.map(({ id, label, url }) => ({
+        id: `go-${id}`,
+        label:
+          id === "home"
+            ? lang === "en" ? "Go to Home" : "回到首页"
+            : lang === "en" ? `Go to ${label}` : `前往 ${label}`,
+        hint: id === "home" ? url : `/${id}`,
+        icon: id,
+        action: () => navigate(url),
+      })),
       {
         id: "theme",
         label: lang === "en" ? "Toggle dark mode" : "切换深色模式",

@@ -1,6 +1,5 @@
 
 :root {
-    --mb-feed-width: 560px;
     --mb-col-width: clamp(300px, 23vw, 390px);
     --mb-col-gap: clamp(14px, 1.8vw, 24px);
     --mb-card-pad-y: 48px;
@@ -13,7 +12,6 @@
     --mb-chip-border: rgba(var(--text-rgb), 0.18);
     --mb-ease: var(--ease-out-quint);
     --mb-anim-fast: 0.22s;
-    --mb-anim: 0.3s;
 }
 
 :root[data-theme="dark"] {
@@ -245,23 +243,6 @@
     outline-offset: 3px;
 }
 
-.mb-feed-retry {
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-.mb-column-empty {
-    padding: 40px 12px;
-    text-align: center;
-    color: var(--color-muted);
-    font: 400 13px/1.6 var(--font-sans);
-}
-
 .mb-column-sentinel {
     height: 1px;
     width: 100%;
@@ -269,15 +250,6 @@
 
 .mb-column.is-leaving {
     pointer-events: none;
-}
-
-.mb-column.is-pulsing .mb-column-header {
-    animation: mb-pulse 0.6s var(--mb-ease);
-}
-
-@keyframes mb-pulse {
-    0%, 100% { background-color: transparent; }
-    50% { background-color: rgba(var(--text-rgb), 0.06); }
 }
 
 
@@ -300,12 +272,6 @@
     background-size: 16px 100%;
     background-repeat: repeat-x;
     background-position: center;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .mb-column.is-pulsing .mb-column-header {
-        animation: none;
-    }
 }
 
 .mb-card-header {
@@ -751,7 +717,6 @@
 
 @media (max-width: 768px) {
     :root {
-        --mb-feed-width: 100%;
         --mb-col-width: calc(100vw - 32px);
         --mb-col-gap: 14px;
         --mb-card-pad-x: 20px;

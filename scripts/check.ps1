@@ -9,22 +9,6 @@ $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $Warnings = New-Object System.Collections.Generic.List[string]
 $Failures = New-Object System.Collections.Generic.List[string]
 
-function Get-RelativePath {
-    param(
-        [string]$Root,
-        [string]$Path
-    )
-
-    $rootFull = [System.IO.Path]::GetFullPath($Root)
-    if (-not $rootFull.EndsWith([System.IO.Path]::DirectorySeparatorChar)) {
-        $rootFull += [System.IO.Path]::DirectorySeparatorChar
-    }
-
-    $rootUri = New-Object System.Uri($rootFull)
-    $pathUri = New-Object System.Uri([System.IO.Path]::GetFullPath($Path))
-    return [System.Uri]::UnescapeDataString($rootUri.MakeRelativeUri($pathUri).ToString())
-}
-
 function Normalize-RepoPath {
     param([string]$Path)
 
@@ -69,13 +53,26 @@ function Invoke-CheckedCommand {
     }
 }
 
-function Invoke-AssetAudit {
-    Push-Location $ProjectRoot
-    try {
-        & (Join-Path $PSScriptRoot "public-asset-audit.ps1") -PublicDir ".\public_test" -JsonOut ".\reports\metrics\public-assets-check.json" -Quiet 2>&1 | Out-Null
+function Write-AssetSummary {
+    $root = Join-Path $ProjectRoot "public_test"
+    $files = @(Get-ChildItem -LiteralPath $root -Recurse -File)
+    $images = ".avif", ".gif", ".ico", ".jpg", ".jpeg", ".png", ".svg", ".webp"
+    $groups = [ordered]@{
+        "All files"    = $files
+        "Images"       = @($files | Where-Object { $images -contains $_.Extension.ToLowerInvariant() })
+        "CSS"          = @($files | Where-Object { $_.Extension -eq ".css" })
+        "JS"           = @($files | Where-Object { $_.Extension -eq ".js" })
+        "HTML"         = @($files | Where-Object { $_.Extension -eq ".html" })
+        "Search index" = @($files | Where-Object { $_.Name -eq "search-index.json" })
     }
-    finally {
-        Pop-Location
+    Write-Host "Asset audit: public_test/"
+    foreach ($name in $groups.Keys) {
+        $bytes = ($groups[$name] | Measure-Object -Property Length -Sum).Sum
+        Write-Host ("  {0,-13} {1,10:N1} KB  {2,5} file(s)" -f $name, ($bytes / 1KB), $groups[$name].Count)
+    }
+    Write-Host "  Largest files:"
+    foreach ($file in ($files | Sort-Object Length -Descending | Select-Object -First 10)) {
+        Write-Host ("  {0,10:N1} KB  {1}" -f ($file.Length / 1KB), (Normalize-RepoPath $file.FullName.Substring($root.Length)))
     }
 }
 
@@ -156,7 +153,7 @@ function Test-MicroblogFrontMatter {
     $files = @(Get-ChildItem -LiteralPath $microblogRoot -Recurse -Filter "index.md" -File)
     $publicSlugs = New-Object 'System.Collections.Generic.HashSet[string]'
     foreach ($file in $files) {
-        $relativePath = Normalize-RepoPath (Get-RelativePath -Root $ProjectRoot -Path $file.FullName)
+        $relativePath = Normalize-RepoPath $file.FullName.Substring($ProjectRoot.Length)
         if ($relativePath -notmatch "^content/microblog/(\d{4})/(\d{2})/(\d{2})-(\d{6})/index\.md$") {
             $Failures.Add("Invalid microblog path shape: $relativePath")
             continue
@@ -219,8 +216,7 @@ $microblogCount = Test-MicroblogFrontMatter
 Write-Host ("Microblog: checked {0} entry file(s)" -f $microblogCount)
 
 if ($Audit.IsPresent) {
-    Invoke-AssetAudit
-    Write-Host "Asset audit: wrote reports/metrics/public-assets-check.json"
+    Write-AssetSummary
 }
 else {
     Write-Host "Asset audit: skipped (use -Audit)"

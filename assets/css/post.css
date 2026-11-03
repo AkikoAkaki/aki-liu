@@ -262,46 +262,7 @@ body.post-short {
 }
 
 .post-toc {
-    --active-dot-color: #8e8e93;
-}
-.post-toc[data-tag="essay"] {
-    --active-dot-color: #007aff;
-}
-.post-toc[data-tag="productivity"] {
-    --active-dot-color: #007aff;
-}
-.post-toc[data-tag="critique"] {
-    --active-dot-color: #af52de;
-}
-.post-toc[data-tag="mental-model"] {
-    --active-dot-color: #af52de;
-}
-.post-toc[data-tag="poetry"] {
-    --active-dot-color: #ff3b30;
-}
-.post-toc[data-tag="fiction"] {
-    --active-dot-color: #ffcc00;
-}
-.post-toc[data-tag="product"] {
-    --active-dot-color: #ffcc00;
-}
-.post-toc[data-tag="drama"] {
-    --active-dot-color: #34c759;
-}
-.post-toc[data-tag="translation"] {
-    --active-dot-color: #ff9500;
-}
-.post-toc[data-tag="content-analysis"] {
-    --active-dot-color: #5856d6;
-}
-.post-toc[data-tag="notes"] {
-    --active-dot-color: #5856d6;
-}
-.post-toc[data-tag="ai"] {
-    --active-dot-color: #5ac8fa;
-}
-.post-toc[data-tag="mlsys"] {
-    --active-dot-color: #30b0c7;
+    --active-dot-color: var(--tag-color, #8e8e93);
 }
 
 .post-toc nav > ul {

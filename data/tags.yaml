@@ -1,0 +1,9 @@
+# Tag slug -> dot color and display label. A missing label falls back to
+# title case ("translation" -> "Translation"); a missing tag gets the grey default.
+essay: { color: "#007aff" }
+critique: { color: "#af52de" }
+poetry: { color: "#ff3b30" }
+fiction: { color: "#ffcc00" }
+drama: { color: "#34c759" }
+translation: { color: "#ff9500" }
+mlsys: { label: MLSys, color: "#30b0c7" }

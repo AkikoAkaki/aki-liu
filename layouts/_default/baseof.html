@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="{{ .Language.Lang }}">
 <head>
-    {{- $homePage := .Site.Home -}}
     {{- $isArchive := partial "is-archive.html" . -}}
-    {{- /* Section URLs for the menu and the search palette commands. */ -}}
-    {{- $sectionURLs := dict -}}
-    {{- range slice "textlab" "notes" "weeknotes" "microblog" "influences" -}}
-        {{- $url := printf "%s/" . | relLangURL -}}
-        {{- with site.GetPage "section" . -}}{{- $url = .RelPermalink -}}{{- end -}}
-        {{- $sectionURLs = merge $sectionURLs (dict . $url) -}}
+    {{- /* data/nav.yaml feeds both the menu and the search palette. */ -}}
+    {{- $nav := slice -}}
+    {{- range site.Data.nav -}}
+        {{- $url := printf "%s/" .id | relLangURL -}}
+        {{- with site.GetPage (cond (eq .id "home") "/" (printf "/%s" .id)) -}}{{- $url = .RelPermalink -}}{{- end -}}
+        {{- $nav = $nav | append (merge . (dict "url" $url)) -}}
     {{- end -}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -89,13 +88,9 @@
         </button>
         <nav class="menu-panel" id="menu-panel" aria-hidden="true">
             <div class="menu-panel-inner">
-                <a href="{{ $homePage.RelPermalink }}" class="menu-link{{ if .IsHome }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Home</span></span></a>
-                <a href="{{ with .Site.GetPage "section" "about" }}{{ .RelPermalink }}{{ else }}{{ "about/" | relLangURL }}{{ end }}" class="menu-link{{ if eq .Section "about" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">About</span></span></a>
-                <a href="{{ $sectionURLs.textlab }}" class="menu-link{{ if eq .Section "textlab" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Text Lab</span></span></a>
-                <a href="{{ $sectionURLs.notes }}" class="menu-link{{ if eq .Section "notes" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Notes</span></span></a>
-                <a href="{{ $sectionURLs.weeknotes }}" class="menu-link{{ if eq .Section "weeknotes" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Weeknotes</span></span></a>
-                <a href="{{ $sectionURLs.microblog }}" class="menu-link{{ if eq .Section "microblog" }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Microblog</span></span></a>
-                <a href="{{ "/dashboard/" | relLangURL }}" class="menu-link{{ if or (eq .Section "dashboard") (eq .Type "dashboard") }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">Dashboard</span></span></a>
+                {{- range $nav }}{{ if not .hidden }}
+                <a href="{{ .url }}" class="menu-link{{ if cond (eq .id "home") $.IsHome (or (eq $.Section .id) (eq $.Type .id)) }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">{{ .label }}</span></span></a>
+                {{- end }}{{ end }}
                 <a href="#search" class="menu-link menu-link--search" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
             </div>
         </nav>
@@ -115,9 +110,8 @@
         {{- end -}}
         <div class="menu-search-panel" id="menu-search-panel" aria-hidden="true"
              data-index-url="{{ "search-index.json" | relLangURL }}"
-             data-home-url="{{ $homePage.RelPermalink }}"
              data-tags-url="{{ "tags/" | relLangURL }}"
-             data-sections="{{ $sectionURLs | jsonify }}"
+             data-nav="{{ $nav | jsonify }}"
              data-language-url="{{ $languageURL }}"></div>
     </div>
 
