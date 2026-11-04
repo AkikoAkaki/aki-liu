@@ -1,7 +1,7 @@
 from pathlib import Path
 from fontTools.ttLib import TTFont
 from fontTools.subset import Options, Subsetter
-import io, subprocess, json, re, sys
+import io, subprocess, json, re, sys, hashlib
 root=Path(__file__).resolve().parents[1]
 revision='a87998cdfd6cce3d2b5abedd5971bb3f72f57e08'
 # Read originals from this immutable revision, never from generated subsets.
@@ -26,20 +26,25 @@ def ranges(values):
  return ', '.join('U+%04X'%g[0]+('-%04X'%g[-1] if len(g)>1 else '') for g in groups)
 def sync_css(metadata):
  mapping={}
+ versions={}
  for rel, item in metadata.items():
   source=Path(rel)
   for label, value in item['ranges'].items():
    target=source if label=='core' else source.with_name(source.stem+'-ext.woff2')
-   mapping['/'+target.relative_to('static').as_posix()]=value
+   url='/'+target.relative_to('static').as_posix()
+   mapping[url]=value
+   versions[url]=hashlib.sha256((root/target).read_bytes()).hexdigest()[:16]
  for name in ('base.css','fonts-latin.css','archive.css'):
   path=root/'assets/css'/name
   original=path.read_text(encoding='utf-8')
   def update(match):
    block=match.group(0)
    url=re.search(r'url\([\"\x27]?([^\"\x27)]+)',block)
-   if not url or url[1] not in mapping:
+   source_url=url[1].split('?')[0] if url else None
+   if source_url not in mapping:
     return block
-   value=mapping[url[1]]
+   block=block[:url.start(1)]+source_url+'?v='+versions[source_url]+block[url.end(1):]
+   value=mapping[source_url]
    if not value:
     raise ValueError('Empty subset still referenced in CSS: '+url[1])
    declaration='unicode-range: '+value+';'
@@ -49,6 +54,15 @@ def sync_css(metadata):
   updated=re.sub(r'@font-face\s*\{[^}]*\}',update,original)
   if updated!=original:
    path.write_text(updated,encoding='utf-8',newline='\n')
+ # Preload and CSS must use identical URLs to reuse the same font response.
+ path=root/'layouts/partials/head/core-assets.html'
+ original=path.read_text(encoding='utf-8')
+ def version_preload(match):
+  source_url=match[0].split('?')[0]
+  return source_url+'?v='+versions[source_url] if source_url in versions else match[0]
+ updated=re.sub(r'/fonts/[^\s\"\x27<>]+\.woff2(?:\?[^\s\"\x27<>]*)?',version_preload,original)
+ if updated!=original:
+  path.write_text(updated,encoding='utf-8',newline='\n')
 
 if '--css-only' in sys.argv:
  sync_css(json.loads((root/'scripts/font-subset-metadata.json').read_text(encoding='utf-8')))

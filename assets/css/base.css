@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Light-ext.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Light-ext.woff2?v=ec907a4425a297bc") format("woff2");
     font-weight: 300;
     font-style: normal;
     font-display: swap;
@@ -11,7 +11,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Light.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Light.woff2?v=bfade7e2723ed1e7") format("woff2");
     font-weight: 300;
     font-style: normal;
     font-display: swap;
@@ -20,7 +20,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-LightItalic-ext.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-LightItalic-ext.woff2?v=6c810bb32ba4b6cb") format("woff2");
     font-weight: 300;
     font-style: italic;
     font-display: swap;
@@ -29,7 +29,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-LightItalic.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-LightItalic.woff2?v=bf0197d4668c00ff") format("woff2");
     font-weight: 300;
     font-style: italic;
     font-display: swap;
@@ -38,7 +38,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Regular-ext.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Regular-ext.woff2?v=d25e040a1a99d7b8") format("woff2");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -47,7 +47,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Regular.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Regular.woff2?v=9f9ee2e506f332e5") format("woff2");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -56,7 +56,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Italic-ext.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Italic-ext.woff2?v=343c3a00b41f3ffd") format("woff2");
     font-weight: 400;
     font-style: italic;
     font-display: swap;
@@ -65,7 +65,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Italic.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Italic.woff2?v=d0f37d1305e3a0b5") format("woff2");
     font-weight: 400;
     font-style: italic;
     font-display: swap;
@@ -74,7 +74,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Medium-ext.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Medium-ext.woff2?v=5a3f1978d8003ffe") format("woff2");
     font-weight: 500;
     font-style: normal;
     font-display: swap;
@@ -83,7 +83,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Medium.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Medium.woff2?v=fd2e1c41034752b4") format("woff2");
     font-weight: 500;
     font-style: normal;
     font-display: swap;
@@ -92,7 +92,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-MediumItalic-ext.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-MediumItalic-ext.woff2?v=c5199c1c5a4a7ef2") format("woff2");
     font-weight: 500;
     font-style: italic;
     font-display: swap;
@@ -101,7 +101,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-MediumItalic.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-MediumItalic.woff2?v=cefe5481e7351dbd") format("woff2");
     font-weight: 500;
     font-style: italic;
     font-display: swap;
@@ -110,7 +110,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Semibold-ext.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Semibold-ext.woff2?v=42edfcbbbf9b93ab") format("woff2");
     font-weight: 600;
     font-style: normal;
     font-display: swap;
@@ -119,7 +119,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Semibold.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Semibold.woff2?v=b60e7619326d16af") format("woff2");
     font-weight: 600;
     font-style: normal;
     font-display: swap;
@@ -128,7 +128,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-SemiboldItalic-ext.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-SemiboldItalic-ext.woff2?v=6b787d61e3d420e2") format("woff2");
     font-weight: 600;
     font-style: italic;
     font-display: swap;
@@ -137,7 +137,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-SemiboldItalic.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-SemiboldItalic.woff2?v=ff494dfb5ef8d528") format("woff2");
     font-weight: 600;
     font-style: italic;
     font-display: swap;
@@ -146,7 +146,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Bold-ext.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Bold-ext.woff2?v=1997a120e26d02f3") format("woff2");
     font-weight: 700;
     font-style: normal;
     font-display: swap;
@@ -155,7 +155,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-Bold.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-Bold.woff2?v=3252db3a3c6e4da7") format("woff2");
     font-weight: 700;
     font-style: normal;
     font-display: swap;
@@ -164,7 +164,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-BoldItalic-ext.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-BoldItalic-ext.woff2?v=5db37f1c56585b5a") format("woff2");
     font-weight: 700;
     font-style: italic;
     font-display: swap;
@@ -173,7 +173,7 @@
 
 @font-face {
     font-family: "Switzer";
-    src: url("/fonts/switzer/Switzer-BoldItalic.woff2") format("woff2");
+    src: url("/fonts/switzer/Switzer-BoldItalic.woff2?v=33c60bf71aab5f73") format("woff2");
     font-weight: 700;
     font-style: italic;
     font-display: swap;
@@ -181,7 +181,7 @@
 }
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultralight-ext.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultralight-ext.woff2?v=ffa87ed4377a9055")
         format("woff2");
     font-weight: 200;
     font-style: normal;
@@ -191,7 +191,7 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultralight.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultralight.woff2?v=a159aa449495c0e5")
         format("woff2");
     font-weight: 200;
     font-style: normal;
@@ -201,7 +201,7 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltralightItalic-ext.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltralightItalic-ext.woff2?v=fac3659645bc9f74")
         format("woff2");
     font-weight: 200;
     font-style: italic;
@@ -211,7 +211,7 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltralightItalic.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltralightItalic.woff2?v=6e3390527ee3cb4c")
         format("woff2");
     font-weight: 200;
     font-style: italic;
@@ -221,7 +221,7 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Regular-ext.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Regular-ext.woff2?v=cfc375752e6c9dbf")
         format("woff2");
     font-weight: 400;
     font-style: normal;
@@ -231,7 +231,7 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Regular.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Regular.woff2?v=ec47a338d272e49c")
         format("woff2");
     font-weight: 400;
     font-style: normal;
@@ -241,7 +241,7 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Italic-ext.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Italic-ext.woff2?v=f164e24e1a4785c1")
         format("woff2");
     font-weight: 400;
     font-style: italic;
@@ -251,7 +251,7 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Italic.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Italic.woff2?v=572ac240fd431e59")
         format("woff2");
     font-weight: 400;
     font-style: italic;
@@ -261,7 +261,7 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultrabold-ext.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultrabold-ext.woff2?v=f3ac2bd8d771e4f7")
         format("woff2");
     font-weight: 800;
     font-style: normal;
@@ -271,7 +271,7 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultrabold.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultrabold.woff2?v=c1bf4e25ebe795a0")
         format("woff2");
     font-weight: 800;
     font-style: normal;
@@ -281,7 +281,7 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltraboldItalic-ext.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltraboldItalic-ext.woff2?v=ac3c77afcdceb04a")
         format("woff2");
     font-weight: 800;
     font-style: italic;
@@ -291,7 +291,7 @@
 
 @font-face {
     font-family: "PP Editorial Old";
-    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltraboldItalic.woff2")
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltraboldItalic.woff2?v=976f81bd20cc9ef6")
         format("woff2");
     font-weight: 800;
     font-style: italic;
