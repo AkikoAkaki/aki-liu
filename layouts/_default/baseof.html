@@ -87,11 +87,16 @@
             </span>
         </button>
         <nav class="menu-panel" id="menu-panel" aria-hidden="true">
-            <div class="menu-panel-inner">
+            {{- /* --menu-i / --menu-count drive the open and close stagger in base.css. */ -}}
+            {{- $menuCount := 1 -}}
+            {{- range $nav }}{{ if not .hidden }}{{ $menuCount = add $menuCount 1 }}{{ end }}{{ end -}}
+            {{- $menuIndex := 0 }}
+            <div class="menu-panel-inner" style="--menu-count: {{ $menuCount }}">
                 {{- range $nav }}{{ if not .hidden }}
-                <a href="{{ .url }}" class="menu-link{{ if cond (eq .id "home") $.IsHome (or (eq $.Section .id) (eq $.Type .id)) }} is-active{{ end }}"><span class="menu-link-content"><span class="menu-link-label">{{ .label }}</span></span></a>
+                <a href="{{ .url }}" class="menu-link{{ if cond (eq .id "home") $.IsHome (or (eq $.Section .id) (eq $.Type .id)) }} is-active{{ end }}" style="--menu-i: {{ $menuIndex }}"><span class="menu-link-content"><span class="menu-link-label">{{ .label }}</span></span></a>
+                {{- $menuIndex = add $menuIndex 1 }}
                 {{- end }}{{ end }}
-                <a href="#search" class="menu-link menu-link--search" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
+                <a href="#search" class="menu-link menu-link--search" style="--menu-i: {{ $menuIndex }}" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
             </div>
         </nav>
         {{- $otherLang := cond (eq .Language.Lang "en") "zh" "en" -}}

@@ -717,7 +717,7 @@
 
 @media (max-width: 768px) {
     :root {
-        --mb-col-width: calc(100vw - 32px);
+        --mb-col-width: calc(100vw - 44px);
         --mb-col-gap: 14px;
         --mb-card-pad-x: 20px;
         --mb-panel-radius: 18px;
@@ -727,6 +727,8 @@
         grid-template-columns: minmax(0, 1fr);
         grid-template-rows: auto;
         padding-top: 6rem;
+        padding-left: 22px;
+        padding-right: 22px;
         gap: 3rem;
     }
 

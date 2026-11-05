@@ -144,6 +144,21 @@
     .archive-years-mobile {
         display: flex;
     }
+
+    /* Desktop right-aligns the years and pulls the label's right padding out; on phones
+       they start at the left edge like the tags, so pull the left padding out instead. */
+    .archive-years-list {
+        align-items: flex-start;
+    }
+
+    .archive-year-item {
+        justify-content: flex-start;
+    }
+
+    .archive-year-item .filter-item-label {
+        margin-right: 0;
+        margin-left: -0.4rem;
+    }
 }
 
 .archive-year-item {
