@@ -1,5 +1,5 @@
 import { initExpandingMenu, initMagneticHover } from "./modules/menu.js";
-import { initCodeCopy, initHeadingAnchors, initTableWrapping } from "./modules/post-enhancements.js";
+import { initCodeCopy, initTableWrapping } from "./modules/post-enhancements.js";
 import { initPrefetcher } from "./modules/prefetch.js";
 import { initLocalVideos } from "./modules/video-loading.js";
 import { initSearchLoader } from "./modules/search-loader.js";
@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initExpandingMenu();
   initTableWrapping();
   initCodeCopy();
-  initHeadingAnchors();
   initLocalVideos();
   initSearchLoader(searchSrc);
   initPrefetcher();

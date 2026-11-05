@@ -800,16 +800,14 @@ body.post-short {
     transform: scale(0.94);
 }
 
-.code-copy-icon,
-.heading-anchor > * {
+.code-copy-icon {
     grid-area: 1 / 1;
     display: grid;
     place-items: center;
     transition: opacity 160ms ease-out, transform 200ms var(--ease-out-quint);
 }
 
-.post-content .code-copy svg,
-.post-content .heading-anchor svg {
+.post-content .code-copy svg {
     /* undo the figure styling .post-content gives inline SVG */
     display: block;
     margin: 0;
@@ -824,62 +822,26 @@ body.post-short {
     stroke-linejoin: round;
 }
 
-.post-content .heading-anchor svg {
-    width: 0.8em;
-    height: 0.8em;
-}
-
 .code-copy-icon.is-check,
-.heading-anchor > svg,
-.code-copy.is-done .code-copy-icon:not(.is-check),
-.heading-anchor.is-done > span {
+.code-copy.is-done .code-copy-icon:not(.is-check) {
     opacity: 0;
     transform: scale(0.6);
 }
 
-.code-copy.is-done .code-copy-icon.is-check,
-.heading-anchor.is-done > svg {
+.code-copy.is-done .code-copy-icon.is-check {
     opacity: 1;
     transform: none;
-}
-
-/* Section link: appears beside the heading on hover; click copies the URL to this section. */
-.post-content .heading-anchor {
-    display: inline-grid;
-    vertical-align: baseline;
-    margin-left: 0.35em;
-    color: var(--color-dim);
-    text-decoration: none;
-    font-size: 0.85em;
-    opacity: 0;
-    transition: opacity 150ms ease-out, color 150ms ease-out;
-}
-
-.post-content :is(h2, h3, h4):hover .heading-anchor,
-.heading-anchor:focus-visible,
-.heading-anchor.is-done {
-    opacity: 1;
-}
-
-.heading-anchor:hover {
-    color: var(--text-color);
 }
 
 @media (hover: none) {
     .code-copy {
         opacity: 1;
     }
-
-    .post-content .heading-anchor {
-        opacity: 0.4;
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .code-copy,
-    .code-copy-icon,
-    .heading-anchor,
-    .heading-anchor > * {
+    .code-copy-icon {
         transition: none;
     }
 }

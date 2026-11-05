@@ -63,22 +63,3 @@ export function initCodeCopy() {
   });
 }
 
-export function initHeadingAnchors() {
-  const label = zh() ? "复制本节链接" : "Copy link to this section";
-  const doneLabel = zh() ? "链接已复制" : "Link copied";
-  document.querySelectorAll(".post-content :is(h2, h3, h4)[id]").forEach((heading) => {
-    if (heading.closest("aside") || heading.querySelector(".heading-anchor")) return;
-    const anchor = document.createElement("a");
-    anchor.className = "heading-anchor";
-    anchor.href = `#${heading.id}`;
-    anchor.setAttribute("aria-label", label);
-    anchor.innerHTML = `<span aria-hidden="true">#</span>${ICON_DONE}`;
-    anchor.addEventListener("click", async (event) => {
-      event.preventDefault();
-      // The reader is already at this heading: update the address bar without jumping.
-      history.replaceState(history.state, "", anchor.href);
-      if (await copyText(anchor.href)) flashDone(anchor, label, doneLabel);
-    });
-    heading.appendChild(anchor);
-  });
-}
