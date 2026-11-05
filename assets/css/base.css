@@ -768,13 +768,18 @@ i {
 }
 
 .menu-link.is-active {
-    opacity: 1;
     background-color: rgba(var(--text-rgb), 0.06);
 }
 
 .menu-bar.is-open:not(.is-search) .menu-link {
     --menu-stagger-y: 0px;
     opacity: 0.55;
+}
+
+/* The current page enters with the others; staying opaque while closed made it
+   show early and then slide into place on its own. */
+.menu-bar.is-open:not(.is-search) .menu-link.is-active {
+    opacity: 1;
 }
 
 .menu-link.is-magnetic,
@@ -847,41 +852,12 @@ body.menu-cursor-hidden * {
         opacity 0.18s ease;
 }
 
-.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(1) {
-    transition-delay: 0.04s;
+/* Items enter top to bottom and leave bottom to top; --menu-i comes from baseof.html. */
+.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link {
+    transition-delay: calc(0.04s + var(--menu-i, 0) * 0.035s);
 }
-.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(2) {
-    transition-delay: 0.08s;
-}
-.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(3) {
-    transition-delay: 0.12s;
-}
-.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(4) {
-    transition-delay: 0.16s;
-}
-.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(5) {
-    transition-delay: 0.20s;
-}
-.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link:nth-child(6) {
-    transition-delay: 0.24s;
-}
-.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(1) {
-    transition-delay: 0.24s;
-}
-.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(2) {
-    transition-delay: 0.20s;
-}
-.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(3) {
-    transition-delay: 0.16s;
-}
-.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(4) {
-    transition-delay: 0.12s;
-}
-.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(5) {
-    transition-delay: 0.08s;
-}
-.menu-bar:not(.is-open) .menu-panel-inner > .menu-link:nth-child(6) {
-    transition-delay: 0.04s;
+.menu-bar:not(.is-open) .menu-panel-inner > .menu-link {
+    transition-delay: calc((var(--menu-count, 1) - 1 - var(--menu-i, 0)) * 0.03s);
 }
 
 .menu-kbd {
