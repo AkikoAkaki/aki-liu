@@ -5,6 +5,11 @@ body.section-about {
 
 body.section-about .site-container {
     grid-template-columns: 1fr;
+}
+
+/* The About landing page brings its own gutter (.af-page); Resume and Courses use the
+   site container's, like other posts. */
+body.section-about.kind-section .site-container {
     padding-left: 0;
     padding-right: 0;
 }
@@ -1108,7 +1113,7 @@ body.section-about.about-sequence-open .site-wrapper {
 
 @media (max-width: 768px) {
     .af-page {
-        padding: 0 20px 80px;
+        padding: 0 24px 80px;
     }
 
     .af-display-row {
