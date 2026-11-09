@@ -1,9 +1,7 @@
-# Site
 title = "Aki's Blog"
 baseURL = "/"
 enableRobotsTXT = true
 
-# Language
 defaultContentLanguage = "zh"
 defaultContentLanguageInSubdir = false
 hasCJKLanguage = true
@@ -21,7 +19,6 @@ mainSections = ["notes", "textlab", "weeknotes"]
     languageName = "English"
     weight = 2
 
-# Version guard for CI/build platforms.
 [module]
   [module.hugoVersion]
     extended = false
@@ -34,7 +31,6 @@ mainSections = ["notes", "textlab", "weeknotes"]
 [permalinks]
   microblog = "/microblog/:slug/"
 
-# Custom output: site-wide JSON index consumed by the client search module.
 [outputFormats]
   [outputFormats.searchindex]
     mediaType = "application/json"
@@ -51,21 +47,14 @@ mainSections = ["notes", "textlab", "weeknotes"]
   home = ["HTML", "RSS", "searchindex"]
 
 [params]
-  # KaTeX global default (page-level overrides are supported in templates).
-  enableKaTeX = true
-  # Used by SEO meta and structured data.
   description = "Aki Liu's multilingual blog on engineering, writing, and ideas."
   author = "Aki Liu"
-  # Optional absolute site URL fallback for local/preview builds.
-  # Leave empty in repo and set via environment if needed.
-  siteURL = ""
-  # Optional fallback social image URL/path for Open Graph and Twitter cards.
-  defaultSocialImage = ""
+  # Entries per microblog column page, in HTML and in the JSON chunks.
+  microblogPageSize = 30
 
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
-      # Allow trusted inline HTML in markdown content.
       unsafe = true
       hardWraps = true
 

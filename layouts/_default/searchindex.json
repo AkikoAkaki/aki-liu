@@ -1,7 +1,9 @@
 {{- /* Per-language site search index. Hugo emits one file per language. */ -}}
-{{- /* Searchable sections: site.MainSections (hugo.toml) plus influences and microblog. */ -}}
-{{- $sections := site.MainSections | append "influences" "microblog" -}}
+{{- $sections := site.MainSections | append "microblog" -}}
 {{- $pages := where site.RegularPages "Section" "in" $sections -}}
+{{- with site.GetPage "/influences" -}}
+    {{- $pages = $pages | append . -}}
+{{- end -}}
 {{- $items := slice -}}
 {{- range $pages -}}
     {{- $body := .Plain | htmlUnescape | strings.TrimSpace -}}
@@ -15,31 +17,22 @@
         {{- $summary = (substr $summary 0 280) -}}
     {{- end -}}
     {{- $tags := slice -}}
-    {{- $tagLabels := slice -}}
     {{- if and (in site.MainSections .Section) (ne .Params.hidden true) -}}
-        {{- $tags = default (slice) .Params.tags -}}
-        {{- range $tags -}}
-            {{- $tagLabels = $tagLabels | append (partial "tag-label.html" .) -}}
+        {{- range .Params.tags -}}
+            {{- $tags = $tags | append (dict "name" . "slug" (. | urlize) "label" (partial "tag-label.html" .)) -}}
         {{- end -}}
     {{- end -}}
-    {{- /* For microblog entries, synthesize title from first line of body since posts have no explicit titles. */ -}}
     {{- $title := .Title | htmlUnescape -}}
     {{- if eq .Section "microblog" -}}
-        {{- $firstLine := $body | strings.TrimSpace -}}
-        {{- if gt (len $firstLine) 70 -}}
-            {{- $title = printf "%s…" (substr $firstLine 0 70) -}}
-        {{- else -}}
-            {{- $title = $firstLine -}}
-        {{- end -}}
+        {{- $title = partial "microblog-title.html" (dict "page" . "max" 70) -}}
     {{- end -}}
     {{- $rec := dict
         "id"      (printf "%s::%s" .RelPermalink .Language.Lang)
         "title"   $title
-        "section" .Section
+        "section" (.Section | default .Title)
         "url"     .RelPermalink
         "date"    (.Date.Format "2006-01-02")
         "tags"    $tags
-        "tagLabels" $tagLabels
         "lang"    .Language.Lang
         "summary" $summary
         "body"    $body

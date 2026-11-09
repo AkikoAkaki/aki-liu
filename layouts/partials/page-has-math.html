@@ -1,18 +1,8 @@
-{{- /* Returns whether a page needs KaTeX. Front matter `enableKaTeX` or
-       `math` wins (Hugo lowercases param keys); otherwise regular pages are
-       scanned for math delimiters and list pages return false. */ -}}
-{{- $override := "" -}}
-{{- $hasOverride := false -}}
-{{- range slice "enablekatex" "math" -}}
-    {{- if and (not $hasOverride) (isset $.Params .) -}}
-        {{- $hasOverride = true -}}
-        {{- $override = index $.Params . -}}
-    {{- end -}}
-{{- end -}}
-
+{{- /* Front matter `math` wins; otherwise regular pages are scanned for math
+       delimiters and list pages return false. */ -}}
 {{- $hasMath := false -}}
-{{- if $hasOverride -}}
-    {{- $hasMath = partial "is-truthy.html" $override -}}
+{{- if isset .Params "math" -}}
+    {{- $hasMath = .Params.math -}}
 {{- else if .IsPage -}}
     {{- $raw := .RawContent -}}
     {{- if or (in $raw "$") (in $raw "\\(") (in $raw "\\[") -}}

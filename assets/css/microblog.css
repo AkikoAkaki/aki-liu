@@ -21,7 +21,7 @@
 
 .section-microblog.kind-section .site-container {
     grid-template-columns: 2fr 5fr 3fr;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto;
     padding-top: 10rem;
     padding-left: 3vw;
     padding-right: 3vw;
@@ -49,11 +49,7 @@
 }
 
 .section-microblog.kind-section .site-sidebar-bottom {
-    display: block;
-    grid-column: 1;
-    grid-row: 2;
-    align-self: end;
-    justify-self: stretch;
+    display: none;
 }
 
 .section-microblog.kind-section .site-sidebar-right {
@@ -752,10 +748,6 @@
         gap: 1rem;
     }
 
-    .section-microblog.kind-section .site-sidebar-bottom {
-        display: none;
-    }
-
     .microblog-page {
         padding: 0 0 64px;
     }
@@ -803,16 +795,8 @@
     }
 
     .section-microblog.kind-section .site-sidebar,
-    .section-microblog.kind-section .site-main,
-    .section-microblog.kind-section .site-sidebar-bottom {
+    .section-microblog.kind-section .site-main {
         grid-column: 1;
         grid-row: auto;
-    }
-
-    .section-microblog.kind-section .site-sidebar-bottom {
-        position: static;
-        margin-top: 2rem;
-        padding-bottom: 1rem;
-        pointer-events: auto;
     }
 }

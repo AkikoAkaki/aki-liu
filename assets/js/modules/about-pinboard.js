@@ -8,7 +8,6 @@ gsap.registerPlugin(Flip, Draggable);
 export function initAboutPinboard() {
   const canvas = document.getElementById("about-pinboard-canvas");
   const summary = document.getElementById("about-summary");
-  if (!canvas || !summary) return;
   const blocks = [...summary.querySelectorAll(".af-now-block")];
   const layoutStyles = new Map([summary, canvas, ...blocks].map((el) => [el, el.style.cssText]));
   const cards = [...document.querySelectorAll(".af-card-position")];
@@ -84,7 +83,6 @@ export function initAboutPinboard() {
       const state = context.conditions.reduced ? null : Flip.getState([...blocks, ...fliers.map(({ el }) => el)]);
       const widths = fliers.map(({ el }) => el.offsetWidth);
 
-      // Keep both regions in flow while Flip moves and resizes the text blocks.
       summary.style.height = `${summaryHeight}px`;
       canvas.style.height = `${canvasHeight}px`;
       canvas.style.minHeight = "0px";

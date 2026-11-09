@@ -2,7 +2,7 @@
 # `hidden: true` keeps one out of the menu. An id is a section or page path
 # under content/; `home` is the site root.
 - { id: home, label: Home }
-- { id: about, label: About }
+- { id: about, label: About, sublinks: [{ label: Courses, link: /about/courses/ }, { label: Resume, link: /about/resume/ }] }
 - { id: textlab, label: Text Lab }
 - { id: notes, label: Notes }
 - { id: weeknotes, label: Weeknotes }

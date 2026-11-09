@@ -1,16 +1,15 @@
 import { loadKatexStyles, loadKatexRuntime, renderMath } from "./katex.js";
-import { isResourceConstrained } from "./resource-mode.js";
-import { media, QUERIES } from "./media.js";
+import { createJsonCache } from "./fetch-cache.js";
+import { QUERIES } from "./media.js";
 
 export function initArchivePreview(list) {
   const container = document.getElementById("archive-preview-container");
-  if (!container) return { clear() {} };
 
-  const enabled = media("(min-width: 1201px)");
-  const reducedMotion = media(QUERIES.reducedMotion);
+  const enabled = matchMedia(QUERIES.archivePreview);
+  const reducedMotion = matchMedia(QUERIES.reducedMotion);
   const panel = container.closest(".site-sidebar-right");
   const katexBase = list.dataset.katexBase;
-  const previews = new Map();
+  const loadJson = createJsonCache(12, 4);
   let hoveredItem = null;
   let focusedItem = null;
   let desiredItem = null;
@@ -25,29 +24,7 @@ export function initArchivePreview(list) {
 
   function loadPreview(item) {
     const source = item?.dataset.archivePreviewSrc;
-    if (!source) return Promise.resolve(null);
-    if (!previews.has(source)) {
-      const request = fetch(source)
-        .then((response) => {
-          if (!response.ok) throw new Error("HTTP " + response.status);
-          return response.json();
-        })
-        .catch((error) => {
-          if (previews.get(source) === request) previews.delete(source);
-          throw error;
-        });
-      previews.set(source, request);
-    } else {
-      const cached = previews.get(source);
-      previews.delete(source);
-      previews.set(source, cached);
-    }
-    const request = previews.get(source);
-    const limit = isResourceConstrained() ? 4 : 12;
-    while (previews.size > limit) {
-      previews.delete(previews.keys().next().value);
-    }
-    return request;
+    return source ? loadJson(source) : Promise.resolve(null);
   }
 
   function fitPreview() {

@@ -1,0 +1,362 @@
+.archive-left-col {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.archive-logo-container {
+    margin-top: 0.2rem;
+    margin-bottom: 4rem;
+}
+
+.archive-hero-svg {
+    width: 140px;
+    height: auto;
+    display: block;
+}
+
+.archive-page-subtitle {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--color-secondary);
+    margin-top: 0.2rem;
+    margin-left: 0.1rem;
+}
+
+.archive-stat-label {
+    color: inherit;
+}
+
+.archive-filter-section {
+    flex: 1;
+}
+
+.archive-filters-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    column-gap: 1rem;
+    row-gap: 0.6rem;
+    align-items: start;
+}
+
+.archive-stats-minimal {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    column-gap: 1rem;
+    padding-top: 0.6rem;
+    color: var(--color-heading);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.1;
+}
+
+.stat-item {
+    display: inline-flex;
+    gap: 0.35rem;
+    align-items: baseline;
+}
+
+.stat-item--entries {
+    justify-self: start;
+}
+
+.stat-item--years {
+    justify-self: end;
+    text-align: right;
+}
+
+.stat-item--entries .archive-stat-label,
+.stat-item--years .archive-stat-label {
+    margin-right: 0.15rem;
+}
+
+.archive-tags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.archive-tag-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-decoration: none;
+    color: var(--color-heading);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    width: max-content;
+    max-width: 100%;
+    align-self: flex-start;
+    position: relative;
+    line-height: 1.1;
+    z-index: 1;
+    overflow: visible;
+    transition: color 0.2s ease;
+}
+
+.archive-tag-item .tag-dot {
+    width: 7.5px;
+    height: 7.5px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    margin-left: 6px;
+    transform: translateY(-0.3em);
+}
+
+.archive-tag-item .tag-dot,
+.item-dot {
+    background-color: var(--tag-color, #8e8e93);
+}
+
+.archive-years-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    align-items: flex-end;
+    min-width: max-content;
+}
+
+.archive-years-desktop {
+    display: flex;
+}
+
+.archive-years-mobile {
+    display: none;
+}
+
+
+.archive-year-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    text-decoration: none;
+    color: var(--color-heading);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    width: max-content;
+    position: relative;
+    line-height: 1.1;
+    z-index: 1;
+    overflow: visible;
+    transition: color 0.2s ease;
+}
+
+.filter-item-label {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    position: relative;
+    padding: 0.2rem 0.4rem;
+    z-index: 1;
+    transition: transform 0.2s var(--ease-standard) 0.05s;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+.archive-tag-item .filter-item-label {
+    margin-left: -0.4rem;
+}
+
+.archive-year-item .filter-item-label {
+    margin-right: -0.4rem;
+}
+
+@media (max-width: 768px) {
+    .archive-years-desktop {
+        display: none;
+    }
+
+    .archive-years-mobile {
+        display: flex;
+    }
+
+    /* Desktop right-aligns the years and pulls the label's right padding out; on phones
+       they start at the left edge like the tags, so pull the left padding out instead. */
+    .archive-years-list {
+        align-items: flex-start;
+    }
+
+    .archive-year-item {
+        justify-content: flex-start;
+    }
+
+    .archive-year-item .filter-item-label {
+        margin-right: 0;
+        margin-left: -0.4rem;
+    }
+}
+
+.filter-hover-arrow {
+    position: absolute;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    color: var(--color-heading);
+    opacity: 0;
+    transition: all 0.2s var(--ease-standard) 0.05s;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-hover-arrow svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
+
+.filter-active-close {
+    position: absolute;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    color: var(--color-heading);
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.16s ease;
+}
+
+.filter-active-close svg {
+    width: 100%;
+    height: 100%;
+}
+
+.filter-hover-arrow--left {
+    left: -0.2rem;
+    transform: translate(-10px, -50%);
+}
+
+.filter-hover-arrow--right {
+    right: -0.2rem;
+    transform: translate(10px, -50%) scaleX(-1);
+}
+
+.filter-active-close--left {
+    left: -0.2rem;
+    transform: translate(0, -50%);
+}
+
+.filter-active-close--right {
+    right: -0.2rem;
+    transform: translate(0, -50%);
+}
+
+.archive-tag-item:hover .filter-hover-arrow--left {
+    opacity: 1;
+    transform: translate(0, -50%);
+    transition: all 0.2s var(--ease-standard) 0.25s;
+}
+
+.archive-year-item:hover .filter-hover-arrow--right {
+    opacity: 1;
+    transform: translate(0, -50%) scaleX(-1);
+    transition: all 0.2s var(--ease-standard) 0.25s;
+}
+
+.archive-tag-item:hover .filter-item-label {
+    transform: translateX(22px);
+    transition: transform 0.2s var(--ease-standard) 0.25s;
+}
+
+.archive-year-item:hover .filter-item-label {
+    transform: translateX(-22px);
+    transition: transform 0.2s var(--ease-standard) 0.25s;
+}
+
+.filter-item-label::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-bg-muted, #f4f4f4);
+    border-radius: 4px;
+    z-index: -1;
+    transform: scaleX(0);
+    will-change: transform;
+    transition: transform 0.12s var(--ease-standard) 0.35s;
+}
+
+.archive-tag-item .filter-item-label::after {
+    transform-origin: left;
+}
+
+.archive-year-item .filter-item-label::after {
+    transform-origin: right;
+}
+
+.archive-tag-item:hover .filter-item-label::after,
+.archive-year-item:hover .filter-item-label::after {
+    transform: scaleX(1);
+    transition: transform 0.12s var(--ease-standard) 0.46s;
+}
+
+.archive-tag-item.active .filter-item-label::after,
+.archive-year-item.active .filter-item-label::after {
+    transform: scaleX(1);
+    transition: none;
+}
+
+.archive-tag-item.active,
+.archive-year-item.active {
+    font-weight: 600;
+}
+
+.archive-tag-item.active .filter-hover-arrow,
+.archive-year-item.active .filter-hover-arrow {
+    opacity: 0;
+    transition: none;
+}
+
+.archive-tag-item.active .filter-active-close,
+.archive-year-item.active .filter-active-close {
+    opacity: 1;
+}
+
+.archive-tag-item.active .filter-item-label,
+.archive-tag-item.active:hover .filter-item-label {
+    transform: translateX(22px);
+    transition: none;
+}
+
+.archive-year-item.active .filter-item-label,
+.archive-year-item.active:hover .filter-item-label {
+    transform: translateX(-22px);
+    transition: none;
+}
+
+.archive-bottom-section {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+
+.archive-intro-section {
+    margin-bottom: 3.5rem;
+}
+
+.archive-intro-text {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--color-heading);
+    max-width: 850px;
+}
+
+.item-dot {
+    width: 7.5px;
+    height: 7.5px;
+    border-radius: 50%;
+    display: inline-block;
+}

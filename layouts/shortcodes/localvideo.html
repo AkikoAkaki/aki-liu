@@ -1,54 +1,19 @@
-{{- /* Renders local video assets stored alongside the page bundle */ -}}
+{{- /* A video from the page bundle. <name>.poster.webp beside it becomes the
+       poster and defers loading until the video nears the viewport. */ -}}
 {{- $src := .Get "src" -}}
 {{- if not $src -}}
   {{- errorf "localvideo shortcode requires the 'src' parameter (called at %s)" .Position -}}
 {{- end -}}
-{{- $video := .Page.Resources.GetMatch $src -}}
-{{- $url := "" -}}
-{{- if $video -}}
-  {{- $url = $video.RelPermalink -}}
-{{- else -}}
-  {{- $url = relURL $src -}}
-{{- end -}}
-{{- $poster := .Get "poster" -}}
-{{- $posterWidth := 0 -}}
-{{- $posterHeight := 0 -}}
-{{- if not $poster -}}
-  {{- with .Page.Resources.GetMatch (printf "%s.poster.webp" (strings.TrimSuffix (path.Ext $src) $src)) -}}
-    {{- $poster = .RelPermalink -}}
-    {{- $posterWidth = .Width -}}
-    {{- $posterHeight = .Height -}}
-  {{- end -}}
-{{- end -}}
-{{- $caption := .Get "caption" -}}
-{{- $preload := default "metadata" (.Get "preload") -}}
-{{- $type := .Get "type" -}}
-{{- if not $type -}}
-  {{- $ext := strings.ToLower (strings.TrimPrefix "." (path.Ext $src)) -}}
-  {{- if eq $ext "mp4" -}}
-    {{- $type = "video/mp4" -}}
-  {{- else if eq $ext "webm" -}}
-    {{- $type = "video/webm" -}}
-  {{- else if or (eq $ext "ogg") (eq $ext "ogv") -}}
-    {{- $type = "video/ogg" -}}
-  {{- end -}}
-{{- end -}}
-{{- $autoplay := lower (default "" (.Get "autoplay")) -}}
-{{- $mutedParam := lower (default "" (.Get "muted")) -}}
-{{- $loop := lower (default "" (.Get "loop")) -}}
-{{- $playsinline := lower (default "" (.Get "playsinline")) -}}
-{{- $autoplayEnabled := partial "is-truthy.html" $autoplay -}}
-{{- $mutedEnabled := or (partial "is-truthy.html" $mutedParam) (and $autoplayEnabled (eq $mutedParam "")) -}}
-{{- $loopEnabled := partial "is-truthy.html" $loop -}}
-{{- $playsinlineEnabled := or (eq $playsinline "") (partial "is-truthy.html" $playsinline) -}}
-{{- $lazy := and (not $autoplayEnabled) (not (.Get "preload")) $poster -}}
-{{- if $lazy -}}{{- $preload = "none" -}}{{- end -}}
-<figure class="local-video{{ with .Get "class" }} {{ . }}{{ end }}">
-  <video class="local-video__media"{{ if $posterWidth }} width="{{ $posterWidth }}" height="{{ $posterHeight }}" style="height: auto"{{ end }} controls preload="{{ $preload }}"{{ if $lazy }} data-lazy-video{{ end }} {{ if $autoplayEnabled }}autoplay{{ end }} {{ if $mutedEnabled }}muted{{ end }} {{ if $loopEnabled }}loop{{ end }} {{ if $playsinlineEnabled }}playsinline{{ end }}{{ with $poster }} poster="{{ . }}"{{ end }}>
+{{- $url := relURL $src -}}
+{{- with .Page.Resources.GetMatch $src -}}{{- $url = .RelPermalink -}}{{- end -}}
+{{- $poster := .Page.Resources.GetMatch (printf "%s.poster.webp" (strings.TrimSuffix (path.Ext $src) $src)) -}}
+{{- $type := index (dict ".mp4" "video/mp4" ".webm" "video/webm") (strings.ToLower (path.Ext $src)) -}}
+<figure class="local-video">
+  <video class="local-video__media"{{ with $poster }} width="{{ .Width }}" height="{{ .Height }}" style="height: auto"{{ end }} controls preload="{{ if $poster }}none{{ else }}metadata{{ end }}"{{ if $poster }} data-lazy-video{{ end }} playsinline{{ with $poster }} poster="{{ .RelPermalink }}"{{ end }}>
     <source src="{{ $url }}#t=0.001"{{ with $type }} type="{{ . }}"{{ end }}>
     Sorry, your browser cannot play this video.
   </video>
-  {{- with $caption -}}
+  {{- with .Get "caption" -}}
     <figcaption>{{ . | markdownify }}</figcaption>
   {{- end -}}
 </figure>

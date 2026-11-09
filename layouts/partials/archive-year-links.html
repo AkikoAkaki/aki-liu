@@ -1,0 +1,12 @@
+{{- /* Year filters; the sidebar and the mobile bottom bar each render one list. */ -}}
+<div class="archive-years-list {{ .class }}">
+    {{ range .years }}
+        <a href="#" class="archive-year-item" data-year="{{ . }}">
+            <span class="filter-hover-arrow filter-hover-arrow--right">{{ partialCached "icons/hover-arrow.html" "hover-arrow" }}</span>
+            <span class="filter-active-close filter-active-close--right" aria-hidden="true">
+                {{ partialCached "icons/close.html" "close" }}
+            </span>
+            <span class="filter-item-label">{{ . }}</span>
+        </a>
+    {{ end }}
+</div>

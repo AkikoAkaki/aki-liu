@@ -7,7 +7,7 @@ hugo server -D --disableFastRender   # 本地预览，包含草稿：http://loca
 hugo --gc --minify                   # 生产构建，输出到 public/
 ```
 
-`public/` 和 `public_test/` 是构建产物，不要提交。若已暂存，运行 `git restore --staged public/ public_test/`；若已提交，使用 `git rm --cached` 移出版本控制。
+`public/` 和 `public_test/` 是构建产物，已被 `.gitignore` 忽略。
 
 ## 新建内容
 
@@ -57,7 +57,7 @@ About 页图片使用独立的 Hugo Pipes 流程，不要复制到其他页面�
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check.ps1   # 加 -Audit 检查产物大小
 ```
 
-检查会构建 `public_test/`、提示已暂存的构建产物，并验证 Microblog 路径和 frontmatter。`-Audit` 还会输出图片、CSS、JS、HTML 和搜索索引的总大小及最大的十个文件；它不检测未使用文件。
+检查会构建 `public_test/`，并验证 Microblog 路径和 frontmatter。`-Audit` 还会输出图片、CSS、JS、HTML 和搜索索引的总大小及最大的十个文件；它不检测未使用文件。
 
 如果改动涉及固定元素、页脚或页面级 `overflow`，对同一构建运行 `node scripts/edge-check.mjs`。它需要 Node 22+ 和 Chrome 或 Edge，输出 `PASS` 或失败的页面和步骤。它模拟 Safari；确认移动端布局修复前，还需用真实 iPhone 检查。
 

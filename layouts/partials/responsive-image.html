@@ -1,0 +1,31 @@
+{{- /* WebP version of an image resource, at most `cap` px wide, with its srcset.
+       SVG and GIF pass through. Expects dict "resource" and "cap". */ -}}
+{{- $resource := .resource -}}
+{{- $url := "" -}}
+{{- $width := 0 -}}
+{{- $height := 0 -}}
+{{- $srcset := "" -}}
+{{- $subType := lower $resource.MediaType.SubType -}}
+{{- /* RelPermalink publishes a file, so originals are read only when they are served. */ -}}
+{{- if in (slice "svg" "gif") $subType -}}{{- $url = $resource.RelPermalink -}}{{- end -}}
+{{- if ne $subType "svg" -}}
+    {{- $width = $resource.Width -}}
+    {{- $height = $resource.Height -}}
+    {{- if ne $subType "gif" -}}
+        {{- $full := $resource.Process (cond (gt $resource.Width .cap) (printf "resize %dx webp q82" .cap) "webp q82") -}}
+        {{- $url = $full.RelPermalink -}}
+        {{- $width = $full.Width -}}
+        {{- $height = $full.Height -}}
+        {{- $candidates := slice -}}
+        {{- range slice 480 800 1040 -}}
+            {{- if lt . $width -}}
+                {{- $candidate := $resource.Resize (printf "%dx webp q82" .) -}}
+                {{- $candidates = $candidates | append (printf "%s %dw" $candidate.RelPermalink $candidate.Width) -}}
+            {{- end -}}
+        {{- end -}}
+        {{- if $candidates -}}
+            {{- $srcset = delimit ($candidates | append (printf "%s %dw" $url $width)) ", " -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- return (dict "url" $url "width" $width "height" $height "srcset" $srcset) -}}

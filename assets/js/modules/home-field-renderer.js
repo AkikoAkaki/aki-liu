@@ -4,7 +4,22 @@ import { fluidShaders } from "./home-field-fluid.js";
 const vertex = `#version 300 es
 void main(){vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);gl_Position=vec4(p*2.-1.,0.,1.);}`;
 
-export function createFieldRenderer(canvas, initial, report) {
+export function createFieldController(report) {
+  let surface, renderer;
+  return {
+    handle({ type, canvas, settings, point }) {
+      if (type === "init") {
+        surface = canvas || surface;
+        renderer?.destroy();
+        renderer = createFieldRenderer(surface, settings, report);
+      } else if (type === "update") renderer?.update(settings);
+      else if (type === "pointer") renderer?.pointer(point);
+    },
+    destroy() { renderer?.destroy(); },
+  };
+}
+
+function createFieldRenderer(canvas, initial, report) {
   const gl = canvas.getContext("webgl2", {
     alpha: true, antialias: false, depth: false, stencil: false,
     premultipliedAlpha: true, powerPreference: "high-performance",
@@ -81,8 +96,6 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
   let pointer = null, splat = null;
   let ready = false, lost = false, destroyed = false, dirty = true;
   let fence = null, fenceTimer = 0, warmTimer = 0;
-  const requestFrame = globalThis.requestAnimationFrame?.bind(globalThis) || ((fn) => setTimeout(() => fn(performance.now()), 16));
-  const cancelFrame = globalThis.cancelAnimationFrame?.bind(globalThis) || clearTimeout;
 
   function texture(width, height, filter = gl.NEAREST, rgba8 = !floating) {
     const t = gl.createTexture();
@@ -261,7 +274,7 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
     gl.uniform2f(u.uResolution, s.width, s.height);
     gl.uniform2f(u.uCell, s.cellWidth, s.cellHeight);
     gl.uniform2f(u.uPitch, s.cellWidth, s.cellHeight);
-    gl.uniform1f(u.uColumns, s.columns);
+    gl.uniform1f(u.uColumns, s.characters);
     gl.uniform4f(u.uFade, ...ink, 0);
     draw();
   }
@@ -308,8 +321,8 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
     gl.flush();
     confirmFrame();
   }
-  function schedule() { if (!frame && !fence && !lost && settings.visible) frame = requestFrame(tick); }
-  function onLost(event) { event.preventDefault(); lost = true; if (frame) cancelFrame(frame); frame = 0; clearTimeout(fenceTimer); }
+  function schedule() { if (!frame && !fence && !lost && settings.visible) frame = requestAnimationFrame(tick); }
+  function onLost(event) { event.preventDefault(); lost = true; if (frame) cancelAnimationFrame(frame); frame = 0; clearTimeout(fenceTimer); }
   function onRestored() { report({ type: "restore" }); }
   canvas.addEventListener("webglcontextlost", onLost);
   canvas.addEventListener("webglcontextrestored", onRestored);
@@ -319,7 +332,7 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
     update(next) {
       resize(next);
       dirty = true;
-      if (next.visible === false && frame) { cancelFrame(frame); frame = 0; }
+      if (next.visible === false && frame) { cancelAnimationFrame(frame); frame = 0; }
       last = 0;
       if (settings.reduced) pointer = splat = null;
       schedule();
@@ -332,7 +345,7 @@ outColor=vec4(clamp(state.xy/6.*.5+.5,0.,1.),clamp(state.z,0.,1.),1.);}`;
       schedule();
     },
     destroy() {
-      destroyed = true; if (frame) cancelFrame(frame); clearTimeout(fenceTimer); clearTimeout(warmTimer);
+      destroyed = true; if (frame) cancelAnimationFrame(frame); clearTimeout(fenceTimer); clearTimeout(warmTimer);
       canvas.removeEventListener("webglcontextlost", onLost); canvas.removeEventListener("webglcontextrestored", onRestored);
       if (fence) gl.deleteSync(fence);
       releaseTargets(); gl.deleteTexture(atlas); gl.deleteTexture(neutral); gl.deleteVertexArray(vao);

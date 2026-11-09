@@ -32,23 +32,19 @@
 {{ define "main" }}
 <article class="post-single">
 
-    {{ $toc := .TableOfContents }}
-    {{ $hasTOC := gt (len (findRE "<li" $toc)) 0 }}
-    {{ .Store.Set "toc" $toc }}
-    {{ .Store.Set "hasTOC" $hasTOC }}
-
     {{ $tagColor := "" }}
     {{ with .Params.tags }}{{ $tagColor = partial "tag-color.html" (index . 0) }}{{ end }}
 
     <div class="post-content">
         {{ .Content }}
     </div>
-    {{ if .Store.Get "hasTOC" }}
-    <aside class="post-toc post-toc--sidebar"{{ with $tagColor }} style="--tag-color: {{ . }}"{{ end }} aria-label="{{ if eq .Language.Lang "zh" }}文章目录{{ else }}Table of contents{{ end }}">
-        <button type="button" class="post-toc-toggle" aria-controls="post-toc-content" aria-expanded="false" aria-label="{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}"></button>
+    {{ if partial "has-toc.html" . }}
+    {{ $contents := cond (eq .Language.Lang "zh") "目录" "Contents" }}
+    <aside class="post-toc post-toc--sidebar"{{ with $tagColor }} style="--tag-color: {{ . }}"{{ end }} aria-label="{{ cond (eq .Language.Lang "zh") "文章目录" "Table of contents" }}">
+        <button type="button" class="post-toc-toggle" aria-controls="post-toc-content" aria-expanded="false" aria-label="{{ $contents }}"></button>
         <div class="post-toc-content" id="post-toc-content">
-            <div class="post-toc-header">{{ if eq .Language.Lang "zh" }}目录{{ else }}Contents{{ end }}</div>
-            {{ .Store.Get "toc" }}
+            <div class="post-toc-header">{{ $contents }}</div>
+            {{ .TableOfContents }}
         </div>
     </aside>
     {{ end }}

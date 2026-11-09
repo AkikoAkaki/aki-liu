@@ -1,0 +1,298 @@
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Light-ext.woff2?v=ec907a4425a297bc") format("woff2");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000, U+000D, U+0192, U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0326, U+0394, U+03A9, U+03C0, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+2070, U+2074, U+2113, U+2126, U+212E, U+2202, U+2206, U+220F, U+2211-2212, U+2215, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+25CA, U+E166, U+E189-E18A, U+F8FF, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Light.woff2?v=bfade7e2723ed1e7") format("woff2");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-0137, U+0139-0148, U+014C-017E, U+03BC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-LightItalic-ext.woff2?v=6c810bb32ba4b6cb") format("woff2");
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000, U+000D, U+0192, U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0326, U+0394, U+03A9, U+03C0, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+2070, U+2074, U+2113, U+2126, U+212E, U+2202, U+2206, U+220F, U+2211-2212, U+2215, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+25CA, U+E166, U+E189-E18A, U+F8FF, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-LightItalic.woff2?v=bf0197d4668c00ff") format("woff2");
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-0137, U+0139-0148, U+014C-017E, U+03BC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Regular-ext.woff2?v=d25e040a1a99d7b8") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000, U+000D, U+0192, U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0326, U+0394, U+03A9, U+03C0, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+2070, U+2074, U+2113, U+2126, U+212E, U+2202, U+2206, U+220F, U+2211-2212, U+2215, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+25CA, U+E166, U+E189-E18A, U+F8FF, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Regular.woff2?v=9f9ee2e506f332e5") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-0137, U+0139-0148, U+014C-017E, U+03BC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Italic-ext.woff2?v=343c3a00b41f3ffd") format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000, U+000D, U+0192, U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0326, U+0394, U+03A9, U+03C0, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+2070, U+2074, U+2113, U+2126, U+212E, U+2202, U+2206, U+220F, U+2211-2212, U+2215, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+25CA, U+E166, U+E189-E18A, U+F8FF, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Italic.woff2?v=d0f37d1305e3a0b5") format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-0137, U+0139-0148, U+014C-017E, U+03BC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Medium-ext.woff2?v=5a3f1978d8003ffe") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000, U+000D, U+0192, U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0326, U+0394, U+03A9, U+03C0, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+2070, U+2074, U+2113, U+2126, U+212E, U+2202, U+2206, U+220F, U+2211-2212, U+2215, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+25CA, U+E166, U+E189-E18A, U+F8FF, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Medium.woff2?v=fd2e1c41034752b4") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-0137, U+0139-0148, U+014C-017E, U+03BC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-MediumItalic-ext.woff2?v=c5199c1c5a4a7ef2") format("woff2");
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000, U+000D, U+0192, U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0326, U+0394, U+03A9, U+03C0, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+2070, U+2074, U+2113, U+2126, U+212E, U+2202, U+2206, U+220F, U+2211-2212, U+2215, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+25CA, U+E166, U+E189-E18A, U+F8FF, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-MediumItalic.woff2?v=cefe5481e7351dbd") format("woff2");
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-0137, U+0139-0148, U+014C-017E, U+03BC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Semibold-ext.woff2?v=42edfcbbbf9b93ab") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000, U+000D, U+0192, U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0326, U+0394, U+03A9, U+03C0, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+2070, U+2074, U+2113, U+2126, U+212E, U+2202, U+2206, U+220F, U+2211-2212, U+2215, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+25CA, U+E166, U+E189-E18A, U+F8FF, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Semibold.woff2?v=b60e7619326d16af") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-0137, U+0139-0148, U+014C-017E, U+03BC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-SemiboldItalic-ext.woff2?v=6b787d61e3d420e2") format("woff2");
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000, U+000D, U+0192, U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0326, U+0394, U+03A9, U+03C0, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+2070, U+2074, U+2113, U+2126, U+212E, U+2202, U+2206, U+220F, U+2211-2212, U+2215, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+25CA, U+E166, U+E189-E18A, U+F8FF, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-SemiboldItalic.woff2?v=ff494dfb5ef8d528") format("woff2");
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-0137, U+0139-0148, U+014C-017E, U+03BC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Bold-ext.woff2?v=1997a120e26d02f3") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000, U+000D, U+0192, U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0326, U+0394, U+03A9, U+03C0, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+2070, U+2074, U+2113, U+2126, U+212E, U+2202, U+2206, U+220F, U+2211-2212, U+2215, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+25CA, U+E166, U+E189-E18A, U+F8FF, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-Bold.woff2?v=3252db3a3c6e4da7") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-0137, U+0139-0148, U+014C-017E, U+03BC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-BoldItalic-ext.woff2?v=5db37f1c56585b5a") format("woff2");
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000, U+000D, U+0192, U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0326, U+0394, U+03A9, U+03C0, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+2070, U+2074, U+2113, U+2126, U+212E, U+2202, U+2206, U+220F, U+2211-2212, U+2215, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+25CA, U+E166, U+E189-E18A, U+F8FF, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "Switzer";
+    src: url("/fonts/switzer/Switzer-BoldItalic.woff2?v=33c60bf71aab5f73") format("woff2");
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00B4, U+00B6-0137, U+0139-0148, U+014C-017E, U+03BC, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122;
+}
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultralight-ext.woff2?v=ffa87ed4377a9055")
+        format("woff2");
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0300-0304, U+0306-0308, U+030A-030C, U+0312, U+0326-0328, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+215B-215E, U+2191, U+2195-2199, U+2202, U+2205, U+220F, U+2211-2212, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+2460-2473, U+24EA-24F4, U+24FF, U+25CA, U+2776-277F, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultralight.woff2?v=a159aa449495c0e5")
+        format("woff2");
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00A9, U+00AB-00AC, U+00AE-00B1, U+00B4, U+00B6-00B8, U+00BB-0107, U+010A-0113, U+0116-011B, U+011E-0123, U+0126-0127, U+012A-012B, U+012E-0131, U+0136-0137, U+0139-013E, U+0141-0148, U+014A-014D, U+0150-015B, U+015E-0167, U+016A-016B, U+016E-017E, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122, U+2190, U+2192-2194;
+}
+
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltralightItalic-ext.woff2?v=fac3659645bc9f74")
+        format("woff2");
+    font-weight: 200;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0218-021B, U+02C6-02C7, U+02D8-02DD, U+0300-0304, U+0306-0308, U+030A-030C, U+0312, U+0326-0328, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+215B-215E, U+2191, U+2195-2199, U+2202, U+2205, U+220F, U+2211-2212, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+2460-2473, U+24EA-24F4, U+24FF, U+25CA, U+2776-277F, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltralightItalic.woff2?v=6e3390527ee3cb4c")
+        format("woff2");
+    font-weight: 200;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00A9, U+00AB-00AC, U+00AE-00B1, U+00B4, U+00B6-00B8, U+00BB-0107, U+010A-0113, U+0116-011B, U+011E-0123, U+0126-0127, U+012A-012B, U+012E-0131, U+0136-0137, U+0139-013E, U+0141-0148, U+014A-014D, U+0150-015B, U+015E-0167, U+016A-016B, U+016E-017E, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122, U+2190, U+2192-2194;
+}
+
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Regular-ext.woff2?v=cfc375752e6c9dbf")
+        format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0300-0304, U+0306-0308, U+030A-030C, U+0312, U+0326-0328, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+215B-215E, U+2191, U+2195-2199, U+2202, U+2205, U+220F, U+2211-2212, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+2460-2473, U+24EA-24F4, U+24FF, U+25CA, U+2776-277F, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Regular.woff2?v=ec47a338d272e49c")
+        format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00A9, U+00AB-00AC, U+00AE-00B1, U+00B4, U+00B6-00B8, U+00BB-0107, U+010A-0113, U+0116-011B, U+011E-0123, U+0126-0127, U+012A-012B, U+012E-0131, U+0136-0137, U+0139-013E, U+0141-0148, U+014A-014D, U+0150-015B, U+015E-0167, U+016A-016B, U+016E-017E, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122, U+2190, U+2192-2194;
+}
+
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Italic-ext.woff2?v=f164e24e1a4785c1")
+        format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0218-021B, U+02C6-02C7, U+02D8-02DD, U+0300-0304, U+0306-0308, U+030A-030C, U+0312, U+0326-0328, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+215B-215E, U+2191, U+2195-2199, U+2202, U+2205, U+220F, U+2211-2212, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+2460-2473, U+24EA-24F4, U+24FF, U+25CA, U+2776-277F, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Italic.woff2?v=572ac240fd431e59")
+        format("woff2");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00A9, U+00AB-00AC, U+00AE-00B1, U+00B4, U+00B6-00B8, U+00BB-0107, U+010A-0113, U+0116-011B, U+011E-0123, U+0126-0127, U+012A-012B, U+012E-0131, U+0136-0137, U+0139-013E, U+0141-0148, U+014A-014D, U+0150-015B, U+015E-0167, U+016A-016B, U+016E-017E, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122, U+2190, U+2192-2194;
+}
+
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultrabold-ext.woff2?v=f3ac2bd8d771e4f7")
+        format("woff2");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0218-021B, U+0237, U+02C6-02C7, U+02D8-02DD, U+0300-0304, U+0306-0308, U+030A-030C, U+0312, U+0326-0328, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+215B-215E, U+2191, U+2195-2199, U+2202, U+2205, U+220F, U+2211-2212, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+2460-2473, U+24EA-24F4, U+24FF, U+25CA, U+2776-277F, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-Ultrabold.woff2?v=c1bf4e25ebe795a0")
+        format("woff2");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00A9, U+00AB-00AC, U+00AE-00B1, U+00B4, U+00B6-00B8, U+00BB-0107, U+010A-0113, U+0116-011B, U+011E-0123, U+0126-0127, U+012A-012B, U+012E-0131, U+0136-0137, U+0139-013E, U+0141-0148, U+014A-014D, U+0150-015B, U+015E-0167, U+016A-016B, U+016E-017E, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122, U+2190, U+2192-2194;
+}
+
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltraboldItalic-ext.woff2?v=ac3c77afcdceb04a")
+        format("woff2");
+    font-weight: 800;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0218-021B, U+02C6-02C7, U+02D8-02DD, U+0300-0304, U+0306-0308, U+030A-030C, U+0312, U+0326-0328, U+1E80-1E85, U+1EF2-1EF3, U+2020-2021, U+2030, U+2039-203A, U+2044, U+215B-215E, U+2191, U+2195-2199, U+2202, U+2205, U+220F, U+2211-2212, U+221A, U+221E, U+222B, U+2248, U+2260, U+2264-2265, U+2460-2473, U+24EA-24F4, U+24FF, U+25CA, U+2776-277F, U+FB01-FB02;
+}
+
+@font-face {
+    font-family: "PP Editorial Old";
+    src: url("/fonts/pp_editorial_old/PPEditorialOld-UltraboldItalic.woff2?v=976f81bd20cc9ef6")
+        format("woff2");
+    font-weight: 800;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0020-007E, U+00A0-00A9, U+00AB-00AC, U+00AE-00B1, U+00B4, U+00B6-00B8, U+00BB-0107, U+010A-0113, U+0116-011B, U+011E-0123, U+0126-0127, U+012A-012B, U+012E-0131, U+0136-0137, U+0139-013E, U+0141-0148, U+014A-014D, U+0150-015B, U+015E-0167, U+016A-016B, U+016E-017E, U+2013-2014, U+2018-201A, U+201C-201E, U+2022, U+2026, U+20AC, U+2122, U+2190, U+2192-2194;
+}

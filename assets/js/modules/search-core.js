@@ -1,4 +1,4 @@
-import { escapeHtml, tagToSlug } from "./dom-utils.js";
+import { escapeHtml } from "./escape-html.js";
 
 export function prepareRecord(r) {
   return {
@@ -7,7 +7,7 @@ export function prepareRecord(r) {
     _titleTokens: tokenize(r.title),
     _bodyLower: (r.body || "").toLowerCase(),
     _summaryLower: (r.summary || "").toLowerCase(),
-    _tagsLower: (r.tags || []).map((t) => String(t).toLowerCase()),
+    _tagsLower: r.tags.map((t) => t.name.toLowerCase()),
   };
 }
 
@@ -45,7 +45,6 @@ function findToken(haystack, needle, from = 0) {
 }
 
 function countHits(haystack, needle) {
-  if (!haystack || !needle) return 0;
   let count = 0,
     idx = 0;
   while (count < 3 && (idx = findToken(haystack, needle, idx)) !== -1) {
@@ -94,35 +93,25 @@ export function searchRecords(records, tokens, lang) {
   return hits.slice(0, 30).map((h) => h.rec);
 }
 
-export function recordTagLabel(rec, i) {
-  return (rec.tagLabels && rec.tagLabels[i]) || String(rec.tags[i]);
-}
-
 export function collectTags(records, lang, query) {
   const counts = new Map();
-  for (const r of records || []) {
+  for (const r of records) {
     if (r.lang !== lang) continue;
-    (r.tags || []).forEach((t, i) => {
-      const slug = tagToSlug(t);
-      const entry = counts.get(slug) || {
-        slug,
-        raw: String(t),
-        label: recordTagLabel(r, i),
-        count: 0,
-      };
+    for (const { name, slug, label } of r.tags) {
+      const entry = counts.get(slug) || { slug, name, label, count: 0 };
       entry.count++;
       counts.set(slug, entry);
-    });
+    }
   }
-  const q = (query || "").toLowerCase();
+  const q = query.toLowerCase();
   return [...counts.values()]
     .filter(
       (t) =>
         !q ||
-        t.raw.toLowerCase().includes(q) ||
+        t.name.toLowerCase().includes(q) ||
         t.label.toLowerCase().includes(q),
     )
-    .sort((a, b) => b.count - a.count || a.raw.localeCompare(b.raw));
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
 export function highlight(text, tokens) {
@@ -130,7 +119,7 @@ export function highlight(text, tokens) {
   const ranges = [];
   for (const token of tokens) {
     let index = 0;
-    while (token && (index = findToken(lower, token, index)) !== -1) {
+    while ((index = findToken(lower, token, index)) !== -1) {
       ranges.push([index, index + token.length]);
       index += token.length;
     }
@@ -150,7 +139,7 @@ export function highlight(text, tokens) {
   return html + escapeHtml(text.slice(cursor));
 }
 
-export function makeSnippet(rec, tokens, len) {
+export function makeSnippet(rec, tokens, span) {
   const body = (rec.body || rec.summary || "").replace(/\r\n?/g, "\n");
   const lower = body.toLowerCase();
   if (!body) return "";
@@ -159,7 +148,6 @@ export function makeSnippet(rec, tokens, len) {
     const i = findToken(lower, t);
     if (i !== -1 && (pos === -1 || i < pos)) pos = i;
   }
-  const span = len || 160;
   if (body.length <= span) return highlight(body, tokens);
   const contentSpan = span - 2;
   const start = Math.max(0, Math.min(pos === -1 ? 0 : pos - Math.floor(contentSpan / 3), body.length - contentSpan));

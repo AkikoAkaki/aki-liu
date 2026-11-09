@@ -1,0 +1,6 @@
+{{- /* The <img> tag for an article image. Expects dict "resource" (may be empty),
+       "src" (used without a resource), "alt" and "title". */ -}}
+{{- $img := dict "url" .src "width" 0 "height" 0 "srcset" "" "sizes" "" -}}
+{{- with .resource -}}{{- $img = partial "post-image.html" . -}}{{- end -}}
+<img src="{{ $img.url | safeURL }}"{{ with $img.srcset }} srcset="{{ . }}" sizes="{{ $img.sizes }}"{{ end }} alt="{{ .alt }}" loading="lazy" decoding="async"{{ if gt $img.width 0 }} width="{{ $img.width }}" height="{{ $img.height }}" style="width: {{ $img.width }}px"{{ end }}{{ with .title }} title="{{ . }}"{{ end }}>
+{{- /* Trims the newline after <img>, which RSS and JSON previews would keep. */ -}}

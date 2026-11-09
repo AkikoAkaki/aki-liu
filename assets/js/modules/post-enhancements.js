@@ -31,7 +31,6 @@ async function copyText(text) {
   }
 }
 
-// Shows the done state briefly; a second click restarts the timer instead of stacking.
 function flashDone(el, label, doneLabel) {
   el.classList.add("is-done");
   el.setAttribute("aria-label", doneLabel);

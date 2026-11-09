@@ -1,40 +1,35 @@
-import { matches, QUERIES } from './modules/media.js';
+import { QUERIES } from './modules/media.js';
 
-document.addEventListener('DOMContentLoaded', function () {
-    const tocs = document.querySelectorAll('.post-toc');
-    if (!tocs.length) return;
+const drawerMode = () => matchMedia(QUERIES.tablet).matches;
+const sidebarMode = () => !matchMedia(QUERIES.tocCollapsed).matches;
 
+document.addEventListener('DOMContentLoaded', () => {
+    // Microblog entries with headings load this script but render no TOC.
+    const toc = document.querySelector('.post-toc--sidebar');
+    if (!toc) return;
+    markTocLevels(toc);
+    initTocTracking(toc);
+    initTocDrawer(toc);
+});
+
+function markTocLevels(toc) {
     const directLink = (li) => Array.from(li.children).find((child) => child.tagName === 'A');
-    const hasLinkedAncestor = (li, root) => {
-        let parent = li.parentElement ? li.parentElement.closest('li') : null;
-        while (parent && root.contains(parent)) {
+    const hasLinkedAncestor = (li) => {
+        for (let parent = li.parentElement.closest('li'); parent && toc.contains(parent); parent = parent.parentElement.closest('li')) {
             if (directLink(parent)) return true;
-            parent = parent.parentElement ? parent.parentElement.closest('li') : null;
         }
         return false;
     };
-
-    tocs.forEach((toc) => {
-        const linkedItems = Array.from(toc.querySelectorAll('li')).filter(directLink);
-        const mainItems = [];
-
-        linkedItems.forEach((li) => {
-            li.classList.remove('toc-main-li', 'toc-sub-li', 'has-subitems', 'is-last-main');
-            const isSubitem = hasLinkedAncestor(li, toc);
-            li.classList.add(isSubitem ? 'toc-sub-li' : 'toc-main-li');
-            if (!isSubitem) mainItems.push(li);
-        });
-
-        mainItems.forEach((li) => {
-            if (li.querySelector('.toc-sub-li')) li.classList.add('has-subitems');
-        });
-
-        if (mainItems.length) {
-            mainItems[mainItems.length - 1].classList.add('is-last-main');
-        }
+    const linkedItems = Array.from(toc.querySelectorAll('li')).filter(directLink);
+    const mainItems = linkedItems.filter((li) => !hasLinkedAncestor(li));
+    linkedItems.forEach((li) => li.classList.add(mainItems.includes(li) ? 'toc-main-li' : 'toc-sub-li'));
+    mainItems.forEach((li) => {
+        if (li.querySelector('.toc-sub-li')) li.classList.add('has-subitems');
     });
+    mainItems.at(-1)?.classList.add('is-last-main');
+}
 
-    const sidebarToc = document.querySelector('.post-toc--sidebar');
+function initTocTracking(toc) {
     const postContent = document.querySelector('.post-content');
     const layoutTop = (element) => {
         let top = 0;
@@ -43,44 +38,41 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     let sidebarStartTop = 0;
     let sidebarCenterTop = 24;
-    const positionSidebarToc = () => {
-        if (!sidebarToc || matches(QUERIES.tocCollapsed)) return;
+    const positionSidebar = () => {
+        if (!sidebarMode()) return;
         const progress = Math.min(1, Math.max(0, window.scrollY) / (window.innerHeight * 0.5));
         const top = sidebarStartTop < sidebarCenterTop
             ? sidebarStartTop + (sidebarCenterTop - sidebarStartTop) * progress
             : sidebarCenterTop;
         const nextTop = `${top}px`;
-        if (sidebarToc.style.getPropertyValue('--toc-sticky-top') !== nextTop) {
-            sidebarToc.style.setProperty('--toc-sticky-top', nextTop);
+        if (toc.style.getPropertyValue('--toc-sticky-top') !== nextTop) {
+            toc.style.setProperty('--toc-sticky-top', nextTop);
         }
     };
-    const fitSidebarToc = () => {
-        if (!sidebarToc) return;
-
-        if (matches(QUERIES.tocCollapsed)) {
-            sidebarToc.style.removeProperty('--toc-max-height');
-            sidebarToc.style.removeProperty('--toc-sticky-top');
+    const fitSidebar = () => {
+        if (!sidebarMode()) {
+            toc.style.removeProperty('--toc-max-height');
+            toc.style.removeProperty('--toc-sticky-top');
             return;
         }
-
         const viewportGap = 24;
         const nextHeight = `${Math.max(1, window.innerHeight - viewportGap * 2)}px`;
-        if (sidebarToc.style.getPropertyValue('--toc-max-height') !== nextHeight) {
-            sidebarToc.style.setProperty('--toc-max-height', nextHeight);
+        if (toc.style.getPropertyValue('--toc-max-height') !== nextHeight) {
+            toc.style.setProperty('--toc-max-height', nextHeight);
         }
-        sidebarCenterTop = Math.max(viewportGap, (window.innerHeight - sidebarToc.offsetHeight) / 2);
-        if (postContent) sidebarStartTop = layoutTop(postContent);
-        positionSidebarToc();
+        sidebarCenterTop = Math.max(viewportGap, (window.innerHeight - toc.offsetHeight) / 2);
+        sidebarStartTop = layoutTop(postContent);
+        positionSidebar();
     };
 
-    const links = Array.from(document.querySelectorAll('.post-toc a'));
+    const links = Array.from(toc.querySelectorAll('a'));
     const headingForLink = (link) => {
         const href = link.getAttribute('href');
         if (!href || !href.startsWith('#')) return null;
         const id = href.slice(1);
         try {
             return document.getElementById(decodeURIComponent(id)) || document.getElementById(id);
-        } catch(e) {
+        } catch (e) {
             return document.getElementById(id);
         }
     };
@@ -94,10 +86,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!target) return;
             e.preventDefault();
             if (location.hash !== link.hash) history.pushState(null, '', link.hash);
-            const targetPosition = target.getBoundingClientRect().top + window.scrollY;
             window.scrollTo({
-                top: targetPosition - window.innerHeight * 0.25,
-                behavior: matches(QUERIES.reducedMotion) ? 'instant' : 'smooth',
+                top: target.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.25,
+                behavior: matchMedia(QUERIES.reducedMotion).matches ? 'instant' : 'smooth',
             });
         });
     });
@@ -105,18 +96,14 @@ document.addEventListener('DOMContentLoaded', function () {
     let headingTops = [];
     let activeHeading = null;
     const highlightActiveHeading = () => {
-        let current = null;
-        const readingLine = window.innerHeight * 0.26;
-
-        const boundary = window.scrollY + readingLine;
+        const boundary = window.scrollY + window.innerHeight * 0.26;
         let low = 0, high = headingTops.length;
         while (low < high) {
             const middle = (low + high) >>> 1;
             if (headingTops[middle] <= boundary) low = middle + 1;
             else high = middle;
         }
-        if (low) current = headings[low - 1];
-
+        const current = low ? headings[low - 1] : null;
         if (current === activeHeading) return;
         activeHeading = current;
         entries.forEach(({ link, heading }) => {
@@ -130,183 +117,142 @@ document.addEventListener('DOMContentLoaded', function () {
     let ticking = false;
     const onScrollOrResize = () => {
         if (ticking) return;
-        window.requestAnimationFrame(() => {
-            positionSidebarToc();
+        requestAnimationFrame(() => {
+            positionSidebar();
             highlightActiveHeading();
             ticking = false;
         });
         ticking = true;
     };
-
-    window.addEventListener('scroll', onScrollOrResize, { passive: true });
     const onLayoutChange = () => {
-        fitSidebarToc();
+        fitSidebar();
         const scrollTop = window.scrollY;
-        headingTops = headings.map(heading => heading.getBoundingClientRect().top + scrollTop);
+        headingTops = headings.map((heading) => heading.getBoundingClientRect().top + scrollTop);
         onScrollOrResize();
     };
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
     window.addEventListener('resize', onLayoutChange);
-    if (document.fonts) document.fonts.ready.then(onLayoutChange);
     window.addEventListener('load', onLayoutChange);
-    if (sidebarToc) new ResizeObserver(onLayoutChange).observe(sidebarToc.querySelector('.post-toc-content'));
-    if (postContent) new ResizeObserver(onLayoutChange).observe(postContent);
+    document.fonts.ready.then(onLayoutChange);
+    new ResizeObserver(onLayoutChange).observe(toc.querySelector('.post-toc-content'));
+    new ResizeObserver(onLayoutChange).observe(postContent);
     onLayoutChange();
+}
 
-    if (sidebarToc) {
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let trackingTouch = false;
-        const drawerContent = sidebarToc.querySelector('.post-toc-content');
-        const drawerToggle = sidebarToc.querySelector('.post-toc-toggle');
-        const setDrawerOpen = (open) => {
-            const isDrawer = matches(QUERIES.tablet);
-            const hadFocus = drawerContent && drawerContent.contains(document.activeElement);
-            sidebarToc.classList.toggle('is-drawer-open', open);
-            if (drawerToggle) drawerToggle.setAttribute('aria-expanded', String(open));
-            if (drawerContent) drawerContent.inert = isDrawer && !open;
-            if (isDrawer && !open && hadFocus && drawerToggle) drawerToggle.focus({ preventScroll: true });
-        };
-        setDrawerOpen(sidebarToc.classList.contains('is-drawer-open'));
-        window.matchMedia(QUERIES.tablet).addEventListener('change', () => setDrawerOpen(false));
+function initTocDrawer(toc) {
+    const content = toc.querySelector('.post-toc-content');
+    const toggle = toc.querySelector('.post-toc-toggle');
+    const isOpen = () => toc.classList.contains('is-drawer-open');
 
-        const HINT_KEY = 'toc-drawer-hint-seen';
-        let hintEl = null;
-        let hintTimer = null;
+    const setOpen = (open) => {
+        const hadFocus = content.contains(document.activeElement);
+        toc.classList.toggle('is-drawer-open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+        content.inert = drawerMode() && !open;
+        if (drawerMode() && !open && hadFocus) toggle.focus({ preventScroll: true });
+    };
+    setOpen(isOpen());
+    matchMedia(QUERIES.tablet).addEventListener('change', () => setOpen(false));
 
-        const dismissHint = () => {
-            if (hintEl && hintEl.classList.contains('is-visible')) {
-                hintEl.classList.remove('is-visible');
-                try { localStorage.setItem(HINT_KEY, 'true'); } catch(e) {}
-                clearTimeout(hintTimer);
-                setTimeout(() => {
-                    if (hintEl) {
-                        hintEl.remove();
-                        hintEl = null;
-                    }
-                }, 400);
-            }
-        };
+    const dismissHint = initSwipeHint();
+    const openFromGesture = () => {
+        setOpen(true);
+        dismissHint();
+    };
 
-        const initTooltip = () => {
-            try { if (localStorage.getItem(HINT_KEY)) return; } catch(e) {}
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let trackingTouch = false;
+    document.addEventListener('touchstart', (e) => {
+        trackingTouch = false;
+        if (!drawerMode() || e.touches.length !== 1) return;
+        const scrolling = e.target.closest('pre, .table-wrapper, .katex-display, input, textarea, select, [contenteditable="true"]');
+        if (scrolling && (scrolling.matches('input, textarea, select, [contenteditable="true"]') || scrolling.scrollWidth > scrolling.clientWidth)) return;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        trackingTouch = true;
+        dismissHint();
+    }, { passive: true });
 
-            const isMobile = matches(QUERIES.tablet);
-            if (!isMobile) return;
-
-            const lang = document.documentElement.lang || 'zh';
-            const hintText = lang === 'en' ? '← Swipe for TOC' : '← 侧滑查看目录';
-
-            hintEl = document.createElement('div');
-            hintEl.className = 'toc-drawer-hint';
-            hintEl.setAttribute('aria-hidden', 'true');
-            hintEl.textContent = hintText;
-            document.body.appendChild(hintEl);
-
-            setTimeout(() => {
-                if (hintEl) hintEl.classList.add('is-visible');
-            }, 1000);
-
-            hintTimer = setTimeout(dismissHint, 5000);
-        };
-
-        setTimeout(initTooltip, 300);
-
-        document.addEventListener('touchstart', (e) => {
-            trackingTouch = false;
-            if (!matches(QUERIES.tablet) || e.touches.length !== 1) return;
-            const scrollingContent = e.target.closest('pre, .table-wrapper, .katex-display, input, textarea, select, [contenteditable="true"]');
-            if (scrollingContent && (scrollingContent.matches('input, textarea, select, [contenteditable="true"]') || scrollingContent.scrollWidth > scrollingContent.clientWidth)) return;
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            trackingTouch = true;
-            
-            dismissHint();
-        }, { passive: true });
-
-        const handleTouchEnd = (e) => {
-            if (!trackingTouch || !e.changedTouches.length) return;
-            trackingTouch = false;
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
-
-            const isMobile = matches(QUERIES.tablet);
-            if (!isMobile) return;
-
-            if (Math.abs(deltaX) > Math.abs(deltaY) * 1.2 && Math.abs(deltaX) > 30) {
-                const isOpen = sidebarToc.classList.contains('is-drawer-open');
-                if (deltaX < 0 && !isOpen) {
-                    if (touchStartX > window.innerWidth * 0.25) {
-                        setDrawerOpen(true);
-                        dismissHint();
-                    }
-                } else if (deltaX > 0 && isOpen) {
-                    setDrawerOpen(false);
-                }
-            }
-        };
-
-        document.addEventListener('touchend', handleTouchEnd, { passive: true });
-        document.addEventListener('touchcancel', () => { trackingTouch = false; }, { passive: true });
-
-        document.addEventListener('click', (e) => {
-            const isMobile = matches(QUERIES.tablet);
-            if (!isMobile) return;
-
-            const isOpen = sidebarToc.classList.contains('is-drawer-open');
-            const clickedToc = sidebarToc.contains(e.target);
-
-            if (isOpen) {
-                if (!clickedToc) {
-                    setDrawerOpen(false);
-                }
-            } else {
-                if (e.target.closest('a, button, input, textarea, select, [contenteditable="true"]')) return;
-                if (e.clientX > window.innerWidth - 32 && e.clientY > window.innerHeight * 0.1 && e.clientY < window.innerHeight * 0.9) {
-                    setDrawerOpen(true);
-                    dismissHint();
-                }
-            }
-        });
-
-        if (drawerToggle) {
-            drawerToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                setDrawerOpen(!sidebarToc.classList.contains('is-drawer-open'));
-                dismissHint();
-            });
+    document.addEventListener('touchend', (e) => {
+        if (!trackingTouch || !e.changedTouches.length) return;
+        trackingTouch = false;
+        if (!drawerMode()) return;
+        const deltaX = e.changedTouches[0].clientX - touchStartX;
+        const deltaY = e.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(deltaX) <= Math.abs(deltaY) * 1.2 || Math.abs(deltaX) <= 30) return;
+        if (deltaX < 0 && !isOpen()) {
+            if (touchStartX > window.innerWidth * 0.25) openFromGesture();
+        } else if (deltaX > 0 && isOpen()) {
+            setOpen(false);
         }
+    }, { passive: true });
+    document.addEventListener('touchcancel', () => { trackingTouch = false; }, { passive: true });
 
-        sidebarToc.addEventListener('click', (e) => {
-            const isMobile = matches(QUERIES.tablet);
-            if (!isMobile) return;
+    document.addEventListener('click', (e) => {
+        if (!drawerMode()) return;
+        if (isOpen()) {
+            if (!toc.contains(e.target)) setOpen(false);
+            return;
+        }
+        if (e.target.closest('a, button, input, textarea, select, [contenteditable="true"]')) return;
+        if (e.clientX > window.innerWidth - 32 && e.clientY > window.innerHeight * 0.1 && e.clientY < window.innerHeight * 0.9) {
+            openFromGesture();
+        }
+    });
 
-            const isOpen = sidebarToc.classList.contains('is-drawer-open');
-            if (!isOpen) {
-                setDrawerOpen(true);
-                dismissHint();
-                e.stopPropagation();
-            }
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setOpen(!isOpen());
+        dismissHint();
+    });
+
+    toc.addEventListener('click', (e) => {
+        if (!drawerMode() || isOpen()) return;
+        openFromGesture();
+        e.stopPropagation();
+    });
+
+    toc.querySelectorAll('nav a').forEach((link) => {
+        link.addEventListener('click', () => {
+            if (drawerMode()) setTimeout(() => setOpen(false), 150);
         });
+    });
 
-        const tocLinks = sidebarToc.querySelectorAll('nav a');
-        tocLinks.forEach((link) => {
-            link.addEventListener('click', () => {
-                const isMobile = matches(QUERIES.tablet);
-                if (isMobile) {
-                    setTimeout(() => {
-                        setDrawerOpen(false);
-                    }, 150);
-                }
-            });
-        });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && drawerMode() && isOpen()) setOpen(false);
+    });
+    window.addEventListener('scroll', dismissHint, { passive: true });
+}
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && matches(QUERIES.tablet) && sidebarToc.classList.contains('is-drawer-open')) {
-                setDrawerOpen(false);
-            }
-        });
-        window.addEventListener('scroll', dismissHint, { passive: true });
-    }
-});
+function initSwipeHint() {
+    const HINT_KEY = 'toc-drawer-hint-seen';
+    let hint = null;
+    let timer = null;
+
+    const dismiss = () => {
+        if (!hint || !hint.classList.contains('is-visible')) return;
+        hint.classList.remove('is-visible');
+        try { localStorage.setItem(HINT_KEY, 'true'); } catch (e) {}
+        clearTimeout(timer);
+        setTimeout(() => {
+            hint?.remove();
+            hint = null;
+        }, 400);
+    };
+
+    setTimeout(() => {
+        try { if (localStorage.getItem(HINT_KEY)) return; } catch (e) {}
+        if (!drawerMode()) return;
+        hint = document.createElement('div');
+        hint.className = 'toc-drawer-hint';
+        hint.setAttribute('aria-hidden', 'true');
+        hint.textContent = document.documentElement.lang === 'en' ? '← Swipe for TOC' : '← 侧滑查看目录';
+        document.body.appendChild(hint);
+        setTimeout(() => hint?.classList.add('is-visible'), 1000);
+        timer = setTimeout(dismiss, 5000);
+    }, 300);
+
+    return dismiss;
+}

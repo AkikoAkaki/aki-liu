@@ -1,23 +1,15 @@
-{{- $page := .page -}}
+{{- $page := . -}}
 {{- $siteTitle := $page.Site.Title -}}
-{{- /* Microblog entries have no explicit title; synthesize from first line of plain text. */ -}}
 {{- $pageTitle := partial "page-title.html" $page -}}
 {{- if and (eq $page.Section "microblog") $page.IsPage -}}
-    {{- $first := $page.Plain | strings.TrimSpace -}}
-    {{- if gt (len $first) 60 -}}
-        {{- $first = printf "%s…" (substr $first 0 60) -}}
-    {{- end -}}
-    {{- if ne $first "" -}}
-        {{- $pageTitle = $first -}}
+    {{- with partial "microblog-title.html" (dict "page" $page "max" 60) -}}
+        {{- $pageTitle = . -}}
     {{- end -}}
 {{- end -}}
 {{- $title := printf "%s | %s" $pageTitle $siteTitle -}}
 {{- if $page.IsHome -}}
     {{- $title = $siteTitle -}}
 {{- end -}}
-{{- $siteBase := $page.Site.BaseURL -}}
-{{- $hasAbsoluteBase := or (hasPrefix $siteBase "http://") (hasPrefix $siteBase "https://") -}}
-{{- $siteURL := strings.TrimSuffix "/" ($page.Site.Params.siteURL | default "") -}}
 
 <title>{{ $title }}</title>
 
@@ -41,44 +33,26 @@
     <meta name="description" content="{{ $description }}">
 {{- end -}}
 
-{{- $canonical := partial "head/resolve-url.html" (dict
-    "rel" $page.RelPermalink
-    "perm" $page.Permalink
-    "siteURL" $siteURL
-    "hasAbsoluteBase" $hasAbsoluteBase
-) -}}
+{{- $canonical := $page.Permalink -}}
 <link rel="canonical" href="{{ $canonical }}">
 
 {{- if $page.IsTranslated -}}
     {{- $translations := sort $page.AllTranslations "Language.Weight" "asc" -}}
     {{- range $translations -}}
-        {{- $href := partial "head/resolve-url.html" (dict
-            "rel" .RelPermalink
-            "perm" .Permalink
-            "siteURL" $siteURL
-            "hasAbsoluteBase" $hasAbsoluteBase
-        ) -}}
-        <link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ $href }}">
+        <link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}">
     {{- end -}}
     {{- with index $translations 0 -}}
-        {{- $href := partial "head/resolve-url.html" (dict
-            "rel" .RelPermalink
-            "perm" .Permalink
-            "siteURL" $siteURL
-            "hasAbsoluteBase" $hasAbsoluteBase
-        ) -}}
-        <link rel="alternate" hreflang="x-default" href="{{ $href }}">
+        <link rel="alternate" hreflang="x-default" href="{{ .Permalink }}">
     {{- end -}}
 {{- end -}}
 
-{{- $noindex := partial "is-truthy.html" ($page.Params.noindex | default false) -}}
-{{- if or (eq $page.Kind "404") $noindex -}}
+{{- if eq $page.Kind "404" -}}
     <meta name="robots" content="noindex,nofollow">
 {{- else -}}
     <meta name="robots" content="index,follow,max-image-preview:large">
 {{- end -}}
 
-{{- $ogLocale := replace ($page.Language.LanguageCode | default $page.Language.Lang) "-" "_" -}}
+{{- $ogLocale := replace $page.Language.LanguageCode "-" "_" -}}
 <meta property="og:site_name" content="{{ $siteTitle }}">
 <meta property="og:locale" content="{{ $ogLocale }}">
 <meta property="og:type" content="{{ if $page.IsPage }}article{{ else }}website{{ end }}">
@@ -88,9 +62,9 @@
 <meta property="og:description" content="{{ $description }}">
 {{- end -}}
 
-{{- if and $page.IsTranslated (gt (len $page.AllTranslations) 1) -}}
+{{- if $page.IsTranslated -}}
     {{- range $page.AllTranslations -}}
-        {{- $altLocale := replace (.Language.LanguageCode | default .Language.Lang) "-" "_" -}}
+        {{- $altLocale := replace .Language.LanguageCode "-" "_" -}}
         {{- if ne $altLocale $ogLocale -}}
             <meta property="og:locale:alternate" content="{{ $altLocale }}">
         {{- end -}}
@@ -105,9 +79,6 @@
             {{- $socialImage = .RelPermalink -}}
         {{- end -}}
     {{- end -}}
-{{- end -}}
-{{- if and (eq $socialImage "") $page.Site.Params.defaultSocialImage -}}
-    {{- $socialImage = printf "%v" $page.Site.Params.defaultSocialImage -}}
 {{- end -}}
 {{- if and $socialImage (not (hasPrefix $socialImage "http://")) (not (hasPrefix $socialImage "https://")) -}}
     {{- $socialImage = $socialImage | absURL -}}
@@ -124,18 +95,12 @@
 {{- end -}}
 
 {{- if $page.IsHome -}}
-    {{- $websiteURL := partial "head/resolve-url.html" (dict
-        "rel" $page.Site.Home.RelPermalink
-        "perm" $page.Site.Home.Permalink
-        "siteURL" $siteURL
-        "hasAbsoluteBase" $hasAbsoluteBase
-    ) -}}
-    {{- $websiteSchema := dict
+        {{- $websiteSchema := dict
         "@context" "https://schema.org"
         "@type" "WebSite"
         "name" $siteTitle
-        "url" $websiteURL
-        "inLanguage" ($page.Language.LanguageCode | default $page.Language.Lang)
+        "url" $page.Site.Home.Permalink
+        "inLanguage" $page.Language.LanguageCode
     -}}
     {{- printf "<script type=\"application/ld+json\">%s</script>" ($websiteSchema | jsonify) | safeHTML -}}
 {{- else if $page.IsPage -}}
@@ -148,7 +113,7 @@
         "mainEntityOfPage" $canonical
         "datePublished" ($page.Date.Format "2006-01-02T15:04:05Z07:00")
         "dateModified" ($page.Lastmod.Format "2006-01-02T15:04:05Z07:00")
-        "inLanguage" ($page.Language.LanguageCode | default $page.Language.Lang)
+        "inLanguage" $page.Language.LanguageCode
         "author" (dict "@type" "Person" "name" $authorName)
     -}}
     {{- if ne $description "" -}}
@@ -161,30 +126,17 @@
 {{- end -}}
 
 {{- if not $page.IsHome -}}
-    {{- $homeURL := partial "head/resolve-url.html" (dict
-        "rel" $page.Site.Home.RelPermalink
-        "perm" $page.Site.Home.Permalink
-        "siteURL" $siteURL
-        "hasAbsoluteBase" $hasAbsoluteBase
-    ) -}}
-    {{- $crumbs := slice (dict "@type" "ListItem" "position" 1 "name" $siteTitle "item" $homeURL) -}}
+    {{- $crumbs := slice (dict "name" $siteTitle "item" $page.Site.Home.Permalink) -}}
     {{- if and $page.Section (ne $page.Kind "section") -}}
-        {{- $sectionPage := $page.Site.GetPage "section" $page.Section -}}
-        {{- if $sectionPage -}}
-            {{- $sectionURL := partial "head/resolve-url.html" (dict
-                "rel" $sectionPage.RelPermalink
-                "perm" $sectionPage.Permalink
-                "siteURL" $siteURL
-                "hasAbsoluteBase" $hasAbsoluteBase
-            ) -}}
-            {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" $sectionPage.Title "item" $sectionURL) -}}
-            {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 3 "name" $pageTitle) -}}
-        {{- else -}}
-            {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" $pageTitle) -}}
+        {{- with $page.Site.GetPage "section" $page.Section -}}
+            {{- $crumbs = $crumbs | append (dict "name" .Title "item" .Permalink) -}}
         {{- end -}}
-    {{- else -}}
-        {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" 2 "name" $pageTitle) -}}
     {{- end -}}
-    {{- $breadcrumbSchema := dict "@context" "https://schema.org" "@type" "BreadcrumbList" "itemListElement" $crumbs -}}
+    {{- $crumbs = $crumbs | append (dict "name" $pageTitle) -}}
+    {{- $items := slice -}}
+    {{- range $position, $crumb := $crumbs -}}
+        {{- $items = $items | append (merge $crumb (dict "@type" "ListItem" "position" (add $position 1))) -}}
+    {{- end -}}
+    {{- $breadcrumbSchema := dict "@context" "https://schema.org" "@type" "BreadcrumbList" "itemListElement" $items -}}
     {{- printf "<script type=\"application/ld+json\">%s</script>" ($breadcrumbSchema | jsonify) | safeHTML -}}
 {{- end -}}

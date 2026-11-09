@@ -2,54 +2,14 @@
 {{- if not $src -}}
   {{- errorf "figure shortcode requires the 'src' parameter (called at %s)" .Position -}}
 {{- end -}}
-
 {{- $caption := .Get "caption" -}}
-{{- $title := .Get "title" -}}
-{{- $alt := .Get "alt" -}}
+{{- $alt := .Get "alt" | default "" -}}
 {{- if and (not $alt) $caption -}}
   {{- $alt = plainify ($caption | markdownify) -}}
 {{- end -}}
-{{- if not $alt -}}
-  {{- $alt = "" -}}
-{{- end -}}
-
-{{- /* Use markdownify to support both markdown and HTML tags in caption */ -}}
-{{- with $caption -}}
-  {{- $caption = . | markdownify -}}
-{{- end -}}
-
-{{- $link := .Get "link" -}}
-{{- $target := .Get "target" -}}
-{{- $rel := .Get "rel" -}}
-{{- if and (eq $target "_blank") (eq $rel "") -}}
-  {{- $rel = "noopener" -}}
-{{- end -}}
-
-{{- $resource := .Page.Resources.GetMatch $src -}}
-{{- $imgURL := $src -}}
-{{- $imgWidth := 0 -}}
-{{- $imgHeight := 0 -}}
-{{- $imgSrcset := "" -}}
-{{- $imgSizes := "" -}}
-
-{{- with $resource -}}
-  {{- $img := partial "post-image-srcset.html" . -}}
-  {{- $imgURL = $img.url -}}
-  {{- $imgWidth = $img.width -}}
-  {{- $imgHeight = $img.height -}}
-  {{- $imgSrcset = $img.srcset -}}
-  {{- $imgSizes = $img.sizes -}}
-{{- end -}}
-
-<figure{{ with .Get "class" }} class="{{ . }}"{{ end }}>
-  {{- if $link -}}
-  <a href="{{ $link }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>
-  {{- end -}}
-  <img src="{{ $imgURL | safeURL }}"{{ with $imgSrcset }} srcset="{{ . }}" sizes="{{ $imgSizes }}"{{ end }} alt="{{ $alt }}" loading="lazy" decoding="async"{{ with $title }} title="{{ . }}"{{ end }}{{ if gt $imgWidth 0 }} width="{{ $imgWidth }}" style="width: {{ $imgWidth }}px"{{ end }}{{ if gt $imgHeight 0 }} height="{{ $imgHeight }}"{{ end }}>
-  {{- if $link -}}
-  </a>
-  {{- end -}}
+<figure>
+  {{- partial "post-img.html" (dict "resource" (.Page.Resources.GetMatch $src) "src" $src "alt" $alt "title" "") -}}
   {{- with $caption -}}
-  <figcaption class="figure-caption">{{ . | safeHTML }}</figcaption>
+  <figcaption class="figure-caption">{{ . | markdownify | safeHTML }}</figcaption>
   {{- end -}}
 </figure>

@@ -1,0 +1,50 @@
+{{- /* Every stylesheet, script and font preload a page loads.
+       head/core-assets.html renders this manifest. css order is cascade order.
+       A script's `chunks` and `workers` are built with it and passed as data-<name> attributes. */ -}}
+{{- $isArchive := partial "is-archive.html" . -}}
+
+{{- $preloads := slice "/fonts/switzer/Switzer-Regular.woff2?v=9f9ee2e506f332e5" -}}
+{{- $css := slice -}}
+{{- if and (not .IsHome) (not $isArchive) -}}
+    {{- $css = $css | append (dict "name" "css/fonts-latin.css" "files" (slice "css/fonts-latin.css")) -}}
+{{- end -}}
+{{- $css = $css | append (dict "name" "css/bundle.css" "files" (slice "css/fonts-ui.css" "css/base.css" "css/menu.css" "css/low-resource.css" "css/layout.css" "css/components.css" "css/motion.css" "css/search.css")) -}}
+{{- $js := slice (dict "src" "js/main.js" "chunks" (dict "search-src" "js/modules/search-palette.js")) -}}
+
+{{- if $isArchive -}}
+    {{- $preloads = $preloads | append "/fonts/jetbrainsmono/v24/latin-normal.woff2?v=6c25ebda3407a4f4" -}}
+    {{- if eq .Section "textlab" -}}
+        {{- $preloads = $preloads | append "https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438weI_wC-ZF.woff2" -}}
+    {{- end -}}
+    {{- $css = $css | append (dict "name" "css/archive.css" "files" (slice "css/archive-sidebar.css" "css/archive.css")) -}}
+    {{- $js = $js | append (dict "src" "js/archive.js") -}}
+{{- end -}}
+{{- if eq .Section "about" -}}
+    {{- $css = $css | append (dict "name" "css/about.css" "files" (slice "css/about.css")) -}}
+    {{- if .IsSection -}}
+        {{- $js = $js | append (dict "src" "js/about.js" "chunks" (dict "pinboard-src" "js/modules/about-pinboard.js")) -}}
+    {{- end -}}
+{{- end -}}
+{{- if .IsHome -}}
+    {{- $preloads = $preloads | append "/fonts/switzer/Switzer-Medium.woff2?v=fd2e1c41034752b4" -}}
+    {{- $css = $css | append (dict "name" "css/home.css" "files" (slice "css/fonts-latin.css" "css/home.css")) -}}
+    {{- $js = $js | append (dict "src" "js/home.js") -}}
+    {{- $js = $js | append (dict "src" "js/home-field.js" "workers" (dict "worker-src" "js/home-field-worker.js") "chunks" (dict "fallback-src" "js/modules/home-field-renderer.js")) -}}
+{{- end -}}
+{{- if .IsPage -}}
+    {{- $css = $css | append (dict "name" "css/page.css" "files" (slice "css/post.css" "css/syntax-highlight.css")) -}}
+    {{- if partial "has-toc.html" . -}}
+        {{- $js = $js | append (dict "src" "js/post-toc.js") -}}
+    {{- end -}}
+{{- end -}}
+{{- if eq .Section "microblog" -}}
+    {{- $css = $css | append (dict "name" "css/microblog.css" "files" (slice "css/archive-sidebar.css" "css/microblog.css")) -}}
+    {{- if .IsSection -}}
+        {{- $js = $js | append (dict "src" "js/microblog.js") -}}
+    {{- end -}}
+{{- end -}}
+{{- if eq .Type "dashboard" -}}
+    {{- $css = $css | append (dict "name" "css/dashboard.css" "files" (slice "css/dashboard.css")) -}}
+    {{- $js = $js | append (dict "src" "js/dashboard.js") -}}
+{{- end -}}
+{{- return (dict "preloads" $preloads "css" $css "js" $js "archive" $isArchive) -}}

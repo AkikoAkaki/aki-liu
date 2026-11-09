@@ -1,5 +1,9 @@
 const tokens = (value) => (value || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
 
+export function archiveControls() {
+  return [...document.querySelectorAll(".archive-tag-item[data-tag], .archive-year-item[data-year]")];
+}
+
 export function archiveEntries(list) {
   return [...list.querySelectorAll(":scope > .archive-item")].map((element) => ({
     element,
@@ -19,7 +23,7 @@ export function readArchiveFilters(list) {
   };
 }
 
-export function matchesArchiveFilters(entry, filters) {
+function matchesArchiveFilters(entry, filters) {
   return (!filters.tags.size || entry.tags.some((tag) => filters.tags.has(tag))) &&
     (!filters.years.size || filters.years.has(entry.year));
 }
@@ -29,12 +33,12 @@ export function updateArchiveView(entries, filters) {
   const visible = new Set(matched);
   entries.forEach((entry) => { entry.element.hidden = !visible.has(entry); });
 
-  document.querySelectorAll(".archive-tag-item[data-tag], .archive-year-item[data-year]").forEach((control) => {
+  archiveControls().forEach((control) => {
     const active = control.dataset.tag !== undefined
       ? filters.tags.has(control.dataset.tag)
       : filters.years.has(control.dataset.year);
     control.classList.toggle("active", active);
-    if (control.getAttribute("role") === "button") control.setAttribute("aria-pressed", String(active));
+    control.setAttribute("aria-pressed", String(active));
   });
 
   const entryStat = document.querySelector('[data-archive-stat="entries"]');

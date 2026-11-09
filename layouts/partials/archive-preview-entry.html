@@ -1,6 +1,6 @@
-{{- $html := .Content | truncate 800 -}}
+{{- $html := partial "archive-preview-html.html" . -}}
 {{- $hasMath := in $html `class="katex` -}}
-{{- $runtime := and site.Params.enableKaTeX (partial "page-has-math.html" .) (partial "html-needs-math-runtime.html" $html) -}}
+{{- $runtime := partial "html-needs-math-runtime.html" (dict "page" . "html" $html) -}}
 {{- $entry := dict "url" .RelPermalink "title" .Title "html" $html "math" (or $hasMath $runtime) "mathRuntime" $runtime -}}
 {{- $path := printf "data/archive-preview/%s.json" (substr (sha256 .RelPermalink) 0 12) -}}
 {{- return (resources.FromString $path (jsonify $entry) | fingerprint) -}}

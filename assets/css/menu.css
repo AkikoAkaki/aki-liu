@@ -1,0 +1,495 @@
+.menu-bar {
+    --menu-collapsed-width: 320px;
+    --menu-collapsed-height: 68px;
+    --menu-open-width: 480px;
+    --menu-search-width: min(880px, calc(100vw - 48px));
+    --menu-search-height: min(680px, calc(100dvh - 140px));
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translate3d(-50%, 0, 0);
+    z-index: 3000;
+
+    width: var(--menu-collapsed-width);
+    height: var(--menu-collapsed-height);
+    border-radius: 18px;
+    background: rgba(236, 236, 236, 0.14);
+    backdrop-filter: blur(32px) saturate(180%);
+    overflow: hidden;
+    will-change: transform, width, height, border-radius;
+
+    transition:
+        transform 0.82s var(--ease-out-quint),
+        width 0.6s var(--ease-out-quint),
+        height 0.6s var(--ease-out-quint),
+        border-radius 0.6s var(--ease-out-quint);
+}
+
+.menu-bar.is-scrolled-away {
+    transform: translate3d(-50%, calc(-100% - 110px), 0);
+}
+
+.menu-bar.is-open {
+    width: var(--menu-open-width);
+    height: var(--menu-open-height, 560px);
+    border-radius: var(--panel-shell-radius);
+    overflow: hidden;
+    background: var(--panel-shell-bg);
+    backdrop-filter: var(--panel-shell-backdrop);
+    box-shadow: var(--panel-shell-shadow);
+}
+
+.menu-bar.is-search {
+    width: var(--menu-search-width);
+    height: var(--menu-search-height);
+    border-radius: var(--panel-shell-radius);
+    overflow: hidden;
+    background: var(--panel-shell-bg);
+    backdrop-filter: var(--panel-shell-backdrop);
+    box-shadow: var(--panel-shell-shadow);
+}
+
+.menu-trigger {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--menu-collapsed-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px 0 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    font-family: var(--font-sans);
+    font-size: 18px;
+    font-weight: 450;
+    letter-spacing: 0.01em;
+    z-index: 1;
+}
+
+.menu-trigger-label {
+    position: relative;
+    display: block;
+    height: 1.35em;
+    min-width: 68px;
+    overflow: hidden;
+    text-align: left;
+}
+
+.menu-trigger-title {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    will-change: transform, opacity;
+    transition:
+        opacity 0.22s var(--ease-out-expo),
+        transform 0.28s var(--ease-out-expo);
+}
+
+.menu-trigger-title--menu {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+.menu-trigger-title--search {
+    opacity: 0;
+    transform: translate3d(0, 120%, 0);
+}
+
+.menu-bar.is-search .menu-trigger-title--menu {
+    opacity: 0;
+    transform: translate3d(0, -120%, 0);
+}
+
+.menu-bar.is-search .menu-trigger-title--search {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+.menu-trigger:focus-visible {
+    outline: none;
+}
+
+.menu-trigger:hover .menu-trigger-icon {
+    transform: scale(1.15);
+    color: var(--color-heading);
+}
+
+.menu-trigger:active .menu-trigger-icon {
+    transform: scale(0.92);
+}
+
+.menu-trigger-icon {
+    display: flex;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+}
+
+.menu-trigger-icon svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
+.menu-icon-open,
+.menu-icon-close {
+    position: absolute;
+    transition:
+        opacity 0.22s ease,
+        transform 0.22s var(--ease-out-expo);
+}
+
+.menu-icon-open {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+.menu-icon-close {
+    opacity: 0;
+    transform: rotate(-45deg);
+}
+
+.menu-bar.is-open .menu-icon-open,
+.menu-bar.is-search .menu-icon-open {
+    opacity: 0;
+    transform: rotate(45deg);
+}
+.menu-bar.is-open .menu-icon-close,
+.menu-bar.is-search .menu-icon-close {
+    opacity: 1;
+    transform: rotate(0deg);
+}
+
+.menu-panel {
+    display: block;
+    box-sizing: border-box;
+    padding: 80px 40px 20px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate3d(0, -10px, 0);
+    will-change: opacity, transform;
+    transition:
+        opacity 0.22s ease,
+        transform 0.52s var(--ease-out-quint),
+        visibility 0s linear 0.52s;
+}
+
+.menu-bar.is-open:not(.is-search) .menu-panel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0);
+    transition-delay: 0.04s, 0.04s, 0s;
+}
+
+.menu-bar.is-search .menu-panel {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate3d(0, -18px, 0);
+    transition:
+        opacity 0.18s var(--ease-out-expo),
+        transform 0.28s var(--ease-out-expo),
+        visibility 0s linear 0.28s;
+}
+
+.menu-panel-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.menu-link {
+    --menu-stagger-y: 10px;
+    --menu-magnet-x: 0px;
+    --menu-magnet-y: 0px;
+    --menu-content-x: 0px;
+    --menu-content-y: 0px;
+    --menu-cursor-x: 50%;
+    --menu-cursor-y: 50%;
+    --menu-fill-scale: 0;
+    --menu-fill-opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 12px 14px;
+    margin: 0 -14px;
+    border-radius: 10px;
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--text-color);
+    text-decoration: none;
+    opacity: 0;
+    transform: translate3d(
+        var(--menu-magnet-x),
+        calc(var(--menu-stagger-y) + var(--menu-magnet-y)),
+        0
+    );
+    will-change: transform, opacity;
+    transition:
+        opacity 0.22s ease,
+        transform 0.42s var(--ease-out-quint),
+        background-color 0.2s ease;
+}
+
+.menu-link::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    top: 0;
+    width: max(220%, 560px);
+    aspect-ratio: 1;
+    border-radius: 999px;
+    opacity: var(--menu-fill-opacity);
+    transform: translate3d(
+        calc(var(--menu-cursor-x) - 50%),
+        calc(var(--menu-cursor-y) - 50%),
+        0
+    ) scale(var(--menu-fill-scale));
+    transform-origin: center;
+    background: radial-gradient(
+        circle at center,
+        rgba(var(--text-rgb), 0.18) 0%,
+        rgba(var(--text-rgb), 0.13) 48%,
+        rgba(var(--text-rgb), 0.08) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -18px 36px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(24px) saturate(160%);
+    pointer-events: none;
+    will-change: transform, opacity;
+    transition: opacity 0.16s ease;
+}
+
+.menu-link-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    color: var(--text-color);
+    transform: translate3d(var(--menu-content-x), var(--menu-content-y), 0);
+    will-change: transform;
+    pointer-events: none;
+}
+
+.menu-bar.is-open:not(.is-search) .menu-link:hover,
+.menu-bar.is-open:not(.is-search) .menu-link:focus-visible {
+    opacity: 1;
+    background-color: transparent;
+}
+
+.menu-link.is-active {
+    background-color: rgba(var(--text-rgb), 0.06);
+}
+
+.menu-bar.is-open:not(.is-search) .menu-link {
+    --menu-stagger-y: 0px;
+    opacity: 0.55;
+}
+
+/* The current page enters with the others; staying opaque while closed made it
+   show early and then slide into place on its own. */
+.menu-bar.is-open:not(.is-search) .menu-link.is-active {
+    opacity: 1;
+}
+
+.menu-link.is-magnetic,
+.menu-link.is-settling {
+    transition:
+        opacity 0.18s ease,
+        background-color 0.2s ease;
+}
+
+body.menu-cursor-hidden,
+body.menu-cursor-hidden * {
+    cursor: none !important;
+}
+
+
+.mb-tag-chip {
+    position: relative;
+    overflow: hidden;
+    --menu-magnet-x: 0px;
+    --menu-magnet-y: 0px;
+    --menu-cursor-x: 50%;
+    --menu-cursor-y: 50%;
+    --menu-fill-scale: 0;
+    --menu-fill-opacity: 0;
+    transform: translate3d(var(--menu-magnet-x), var(--menu-magnet-y), 0);
+    will-change: transform;
+}
+
+.mb-tag-chip.is-magnetic,
+.mb-tag-chip.is-settling {
+    transition: opacity 0.18s ease;
+}
+
+.mb-tag-chip::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: var(--menu-cursor-x);
+    top: var(--menu-cursor-y);
+    width: max(300%, 100px);
+    aspect-ratio: 1;
+    border-radius: 999px;
+    opacity: var(--menu-fill-opacity);
+    transform: translate3d(-50%, -50%, 0) scale(var(--menu-fill-scale));
+    transform-origin: center;
+    background: radial-gradient(
+        circle at center,
+        rgba(var(--text-rgb), 0.15) 0%,
+        rgba(var(--text-rgb), 0.1) 48%,
+        rgba(var(--text-rgb), 0.05) 100%
+    );
+    backdrop-filter: blur(16px) saturate(150%);
+    pointer-events: none;
+    will-change: transform, opacity, left, top;
+}
+
+.mb-tag-chip.is-magnetic {
+    background-color: transparent;
+    border-color: rgba(var(--text-rgb), 0.18);
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        opacity 0.18s ease;
+}
+
+.mb-tag-chip.is-settling {
+    transition:
+        background-color 0.25s ease,
+        border-color 0.25s ease,
+        opacity 0.18s ease;
+}
+
+/* Items enter top to bottom and leave bottom to top; --menu-i comes from site-menu.html. */
+.menu-bar.is-open:not(.is-search) .menu-panel-inner > .menu-link {
+    transition-delay: calc(0.04s + var(--menu-i, 0) * 0.035s);
+}
+.menu-bar:not(.is-open) .menu-panel-inner > .menu-link {
+    transition-delay: calc((var(--menu-count, 1) - 1 - var(--menu-i, 0)) * 0.03s);
+}
+
+.menu-kbd {
+    font-family: var(--font-sans);
+    margin-left: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    opacity: 0.38;
+    letter-spacing: 0;
+    color: var(--text-color);
+}
+
+
+@media (max-width: 768px) {
+    .menu-bar {
+        --menu-collapsed-width: 220px;
+        --menu-collapsed-height: 56px;
+        --menu-open-width: min(92vw, 420px);
+        --menu-search-width: min(92vw, 520px);
+        --menu-search-height: min(680px, calc(100dvh - 80px));
+        top: 40px;
+
+        background: rgba(var(--bg-rgb), 0.8) !important;
+        backdrop-filter: blur(16px) saturate(140%) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        transition:
+            transform 0.4s var(--ease-out-expo),
+            width 0.3s var(--ease-out-expo),
+            height 0.3s var(--ease-out-expo),
+            border-radius 0.3s var(--ease-out-expo),
+            backdrop-filter 0.3s ease;
+    }
+
+    .menu-bar.is-open,
+    .menu-bar.is-search {
+        background: rgba(var(--bg-rgb), 0.8) !important;
+        backdrop-filter: blur(16px) saturate(140%) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .menu-bar.is-animating {
+        backdrop-filter: none !important;
+    }
+
+    .menu-bar.is-scrolled-away {
+        transform: translate3d(-50%, 0, 0);
+    }
+
+    .menu-trigger {
+        font-size: 18px;
+        padding: 0 24px 0 20px;
+    }
+
+    .menu-panel {
+        padding-top: 72px;
+        transition:
+            opacity 0.18s ease,
+            transform 0.35s var(--ease-out-expo),
+            visibility 0s linear 0.35s;
+    }
+
+    .menu-link {
+        transition:
+            opacity 0.18s ease,
+            transform 0.3s var(--ease-out-expo),
+            background-color 0.2s ease;
+    }
+
+    .menu-link::before,
+    .mb-tag-chip::before {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .menu-bar {
+        --menu-collapsed-width: 110px;
+        --menu-collapsed-height: 38px;
+        --menu-open-width: min(92vw, 360px);
+        --menu-search-width: calc(100vw - 24px);
+        --menu-search-height: calc(100dvh - 24px);
+        top: 12px;
+    }
+
+    .menu-bar.is-scrolled-away {
+        transform: translate3d(-50%, 0, 0);
+    }
+
+    .menu-trigger {
+        font-size: 18px;
+        padding: 0 20px 0 16px;
+    }
+
+    .menu-panel {
+        padding-top: 46px;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 20px;
+    }
+}
+
+/* Magnetic layers need the promotion hint only while interacting/settling. */
+.mb-tag-chip:not(.is-magnetic):not(.is-settling),
+.mb-tag-chip:not(.is-magnetic):not(.is-settling)::before,
+.menu-link:not(.is-magnetic):not(.is-settling)::before,
+.menu-link:not(.is-magnetic):not(.is-settling) .menu-link-content {
+    will-change: auto;
+}

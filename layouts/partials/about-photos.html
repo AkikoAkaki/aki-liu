@@ -1,0 +1,18 @@
+{{- /* data/about_photos.yaml with each photo processed; a missing file fails the build. */ -}}
+{{- $photos := slice -}}
+{{- range site.Data.about_photos -}}
+    {{- $entry := . -}}
+    {{- with resources.Get (printf "images/about/%s" .file) -}}
+        {{- $image := . -}}
+        {{- if gt .Width 800 -}}
+            {{- $image = .Resize "800x webp q82" -}}
+        {{- else -}}
+            {{- $image = .Process "webp q82" -}}
+        {{- end -}}
+        {{- $alt := strings.TrimSuffix (path.Ext $entry.file) $entry.file -}}
+        {{- $photos = $photos | append (dict "alt" $alt "title" $entry.title "image" $image) -}}
+    {{- else -}}
+        {{- errorf "About photo not found: %s" $entry.file -}}
+    {{- end -}}
+{{- end -}}
+{{- return $photos -}}

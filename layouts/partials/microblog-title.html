@@ -1,0 +1,6 @@
+{{- /* Microblog entries have no title; use their opening text, cut to `max` characters. */ -}}
+{{- $text := .page.Plain | htmlUnescape | strings.TrimSpace -}}
+{{- if gt (strings.RuneCount $text) .max -}}
+    {{- $text = printf "%s…" (substr $text 0 .max) -}}
+{{- end -}}
+{{- return $text -}}

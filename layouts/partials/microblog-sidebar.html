@@ -1,0 +1,13 @@
+{{- $entries := partial "microblog-entries.html" . -}}
+{{- $years := slice -}}
+{{- range $entries.GroupByPublishDate "2006" -}}
+    {{- $years = $years | append .Key -}}
+{{- end -}}
+{{- return (dict
+    "context" .
+    "years" $years
+    "tagSlice" (partial "tag-sidebar-data.html" $entries)
+    "initialTags" (slice)
+    "entryCount" (len $entries)
+    "yearCount" (len $years)
+) -}}

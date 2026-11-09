@@ -1,12 +1,12 @@
-import { matches, QUERIES } from "./media.js";
+import { QUERIES } from "./media.js";
+import { isSlowNetwork } from "./resource-mode.js";
 
 export function initHomeHoverPreview() {
   const scope = document.querySelector("[data-home-preview-scope]");
   const preview = document.querySelector("[data-home-hover-preview]");
-  if (!scope || !preview) return;
 
-  const canHover = matches(QUERIES.hover);
-  const reduceMotion = matches(QUERIES.reducedMotion);
+  const canHover = matchMedia(QUERIES.hover).matches;
+  const reduceMotion = matchMedia(QUERIES.reducedMotion).matches;
   if (!canHover) return;
 
   const allItems = Array.from(
@@ -35,8 +35,7 @@ export function initHomeHoverPreview() {
   scope.addEventListener(
     "pointerenter",
     () => {
-      const connection = navigator.connection;
-      if (connection?.saveData || /^(slow-2g|2g|3g)$/.test(connection?.effectiveType)) return;
+      if (isSlowNetwork()) return;
       items.forEach((item) => {
         const preload = new Image();
         preload.decoding = "async";

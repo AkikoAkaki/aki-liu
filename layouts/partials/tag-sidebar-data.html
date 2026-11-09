@@ -1,13 +1,10 @@
-{{- /* Build sorted tag stats for the given page context. */ -}}
-{{- $pages := .pages | default .Pages -}}
+{{- /* Tags on the given pages, most used first. */ -}}
 {{- $tagCounts := dict -}}
-{{- range $pages -}}
-    {{- if eq .Kind "page" -}}
-        {{- range .Params.tags -}}
-            {{- $name := printf "%v" . -}}
-            {{- $current := index $tagCounts $name | default 0 -}}
-            {{- $tagCounts = merge $tagCounts (dict $name (add $current 1)) -}}
-        {{- end -}}
+{{- range . -}}
+    {{- range .Params.tags -}}
+        {{- $name := printf "%v" . -}}
+        {{- $current := index $tagCounts $name | default 0 -}}
+        {{- $tagCounts = merge $tagCounts (dict $name (add $current 1)) -}}
     {{- end -}}
 {{- end -}}
 {{- $tagSlice := slice -}}

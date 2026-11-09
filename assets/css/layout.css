@@ -284,8 +284,7 @@ body {
 }
 
 
-.kind-section:where(:not(.archive-page)) .site-container,
-.kind-term:where(:not(.archive-page)) .site-container {
+.kind-section:where(:not(.archive-page)) .site-container {
     grid-template-columns: 2fr 5fr 3fr;
     grid-template-rows: auto minmax(0, 1fr);
     padding-top: 10rem;
@@ -298,27 +297,22 @@ body {
 }
 
 .kind-section:where(:not(.archive-page)) .site-sidebar,
-.kind-section:where(:not(.archive-page)) .site-sidebar-right,
-.kind-term:where(:not(.archive-page)) .site-sidebar,
-.kind-term:where(:not(.archive-page)) .site-sidebar-right {
+.kind-section:where(:not(.archive-page)) .site-sidebar-right {
     display: block;
     grid-row: 1;
     justify-self: stretch;
     padding-right: 0;
 }
 
-.kind-section:where(:not(.archive-page)) .site-main,
-.kind-term:where(:not(.archive-page)) .site-main {
+.kind-section:where(:not(.archive-page)) .site-main {
     grid-row: 1;
 }
 
-.kind-section:where(:not(.archive-page)) .site-sidebar-right,
-.kind-term:where(:not(.archive-page)) .site-sidebar-right {
+.kind-section:where(:not(.archive-page)) .site-sidebar-right {
     align-self: stretch;
 }
 
-.kind-section:where(:not(.archive-page)) .site-sidebar-bottom,
-.kind-term:where(:not(.archive-page)) .site-sidebar-bottom {
+.kind-section:where(:not(.archive-page)) .site-sidebar-bottom {
     display: block;
     grid-column: 1;
     grid-row: 2;
@@ -338,7 +332,7 @@ body {
     color: var(--color-secondary);
 }
 
-.section-microblog .site-main {
+.section-microblog.kind-section .site-main {
     grid-column: 2 / -1;
 }
 
@@ -454,8 +448,7 @@ body {
         padding-right: 1rem;
     }
 
-    .kind-section:where(:not(.archive-page)) .site-container,
-    .kind-term:where(:not(.archive-page)) .site-container {
+    .kind-section:where(:not(.archive-page)) .site-container {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
         padding-top: 6rem;
@@ -463,55 +456,36 @@ body {
     }
 
     .kind-section:where(:not(.archive-page)) .site-sidebar,
-    .kind-term:where(:not(.archive-page)) .site-sidebar,
     .kind-section:where(:not(.archive-page)) .site-main,
-    .kind-term:where(:not(.archive-page)) .site-main,
     .kind-section:where(:not(.archive-page)) .archive-left-col,
-    .kind-term:where(:not(.archive-page)) .archive-left-col,
-    .kind-section:where(:not(.archive-page)) .archive-main-col,
-    .kind-term:where(:not(.archive-page)) .archive-main-col {
+    .kind-section:where(:not(.archive-page)) .archive-main-col {
         display: contents;
     }
 
-    .kind-section:where(:not(.archive-page)) .archive-logo-container,
-    .kind-term:where(:not(.archive-page)) .archive-logo-container {
+    .kind-section:where(:not(.archive-page)) .archive-logo-container {
         order: 1;
         margin-bottom: 0.5rem;
     }
 
-    .kind-section:where(:not(.archive-page)) .archive-intro-section,
-    .kind-term:where(:not(.archive-page)) .archive-intro-section {
+    .kind-section:where(:not(.archive-page)) .archive-intro-section {
         order: 2;
         margin-top: 0;
         margin-bottom: 0.25rem;
     }
 
-    .kind-section:where(:not(.archive-page)) .archive-filter-section,
-    .kind-term:where(:not(.archive-page)) .archive-filter-section {
+    .kind-section:where(:not(.archive-page)) .archive-filter-section {
         order: 3;
         margin-top: 0.5rem;
         margin-bottom: 0.5rem;
     }
 
-    .kind-section:where(:not(.archive-page)) .archive-list-header,
-    .kind-term:where(:not(.archive-page)) .archive-list-header {
-        order: 4;
-        margin-top: 1rem;
-        margin-bottom: 0.25rem;
-    }
 
-    .kind-section:where(:not(.archive-page)) .archive-list,
-    .kind-term:where(:not(.archive-page)) .archive-list {
-        order: 5;
-    }
 
-    .kind-section:where(:not(.archive-page)) .site-sidebar-right,
-    .kind-term:where(:not(.archive-page)) .site-sidebar-right {
+    .kind-section:where(:not(.archive-page)) .site-sidebar-right {
         display: none;
     }
 
-    .kind-section:where(:not(.archive-page)) .site-sidebar-bottom,
-    .kind-term:where(:not(.archive-page)) .site-sidebar-bottom {
+    .kind-section:where(:not(.archive-page)) .site-sidebar-bottom {
         order: 6;
         grid-row: auto;
         position: static;

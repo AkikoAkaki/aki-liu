@@ -1,32 +1,13 @@
 {{ define "sidebar-left" }}
-{{- $entries := partial "microblog-entries.html" . -}}
-{{- .Store.Set "entries" $entries -}}
-{{- $tagSlice := partialCached "tag-sidebar-data.html" (dict "pages" $entries) (printf "%s|%s" .Path .Language.Lang) -}}
-{{ $years := slice }}
-{{ range $entries.GroupByPublishDate "2006" }}
-    {{ $years = $years | append .Key }}
-{{ end }}
-{{ .Store.Set "years" $years }}
-{{ partial "archive-sidebar-left.html" (dict "context" . "regularPages" $entries "years" $years "tagSlice" $tagSlice) }}
-{{ end }}
-
-{{ define "sidebar-bottom" }}
-{{ $years := .Store.Get "years" }}
-{{ partial "archive-sidebar-bottom.html" (dict "years" $years) }}
+{{ partial "archive-sidebar-left.html" (partialCached "microblog-sidebar.html" . .Language.Lang) }}
 {{ end }}
 
 {{ define "main" }}
-{{- $entries := .Store.Get "entries" -}}
+{{- $entries := partial "microblog-entries.html" . -}}
+{{- $pageSize := site.Params.microblogPageSize -}}
 {{- $feedIndex := partialCached "microblog-feed-index.html" . .Language.Lang -}}
 <div class="archive-main-col">
-    {{ if .Content }}
-    <div class="archive-intro-section">
-        <h3 class="archive-col-header">Info:</h3>
-        <div class="archive-intro-text">
-            {{ .Content }}
-        </div>
-    </div>
-    {{ end }}
+    {{ partial "archive-intro.html" . }}
 
     <section class="microblog-page" data-katex-base="{{ partialCached "katex-base.html" "katex-base" }}">
         <script type="application/json" data-mb-feed-index>{{ $feedIndex | jsonify | safeJS }}</script>
@@ -38,7 +19,7 @@
                         <span class="mb-column-meta"><span class="mb-column-count" data-mb-column-count>{{ len $entries }}</span> <span data-mb-column-unit>{{ if eq (len $entries) 1 }}Entry{{ else }}Entries{{ end }}</span></span>
                     </div>
                     <div class="mb-column-feed" data-mb-feed>
-                        {{- range first 30 $entries -}}{{ partialCached "microblog-card.html" . .RelPermalink }}{{- end -}}
+                        {{- range first $pageSize $entries -}}{{ partialCached "microblog-card.html" . .RelPermalink }}{{- end -}}
                     </div>
                     <div class="mb-column-sentinel" data-mb-sentinel aria-hidden="true"></div>
                     <div class="mb-column-controls">
@@ -49,10 +30,7 @@
             </div>
         </div>
 
-        <noscript><p class="mb-noscript-hint">Showing the latest {{ if gt (len $entries) 30 }}30{{ else }}{{ len $entries }}{{ end }} entries. <a href="{{ printf "%sindex.xml" .RelPermalink }}">Read the complete feed via RSS.</a></p></noscript>
+        <noscript><p class="mb-noscript-hint">Showing the latest {{ len (first $pageSize $entries) }} entries. <a href="{{ printf "%sindex.xml" .RelPermalink }}">Read the latest entries via RSS.</a></p></noscript>
     </section>
 </div>
-{{ end }}
-
-{{ define "sidebar-right" }}
 {{ end }}

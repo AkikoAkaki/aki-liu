@@ -6,7 +6,6 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
-$Warnings = New-Object System.Collections.Generic.List[string]
 $Failures = New-Object System.Collections.Generic.List[string]
 
 function Normalize-RepoPath {
@@ -74,42 +73,6 @@ function Write-AssetSummary {
     foreach ($file in ($files | Sort-Object Length -Descending | Select-Object -First 10)) {
         Write-Host ("  {0,10:N1} KB  {1}" -f ($file.Length / 1KB), (Normalize-RepoPath $file.FullName.Substring($root.Length)))
     }
-}
-
-function Get-StagedPaths {
-    Push-Location $ProjectRoot
-    try {
-        $output = & git diff --cached --name-only 2>&1 | ForEach-Object { "$_" }
-        if ($LASTEXITCODE -ne 0) {
-            $Warnings.Add(("Could not inspect staged files: {0}" -f (($output -join " ").Trim())))
-            return @()
-        }
-
-        return @($output | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | ForEach-Object { Normalize-RepoPath $_ })
-    }
-    finally {
-        Pop-Location
-    }
-}
-
-function Test-StagedPaths {
-    $stagedPaths = @(Get-StagedPaths)
-    $generatedPrefixes = @(
-        "public/",
-        "public_test/",
-        "content/microblog/2099/"
-    )
-
-    foreach ($path in $stagedPaths) {
-        foreach ($prefix in $generatedPrefixes) {
-            if ($path.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase) -or $path.Equals($prefix.TrimEnd("/"), [System.StringComparison]::OrdinalIgnoreCase)) {
-                $Warnings.Add("Generated path is staged: $path")
-                break
-            }
-        }
-    }
-
-    return $stagedPaths.Count
 }
 
 function Get-FrontMatter {
@@ -206,10 +169,7 @@ function Test-MicroblogFrontMatter {
 Write-Host "Local pre-push check"
 Write-Host ("Root: {0}" -f $ProjectRoot)
 
-$stagedCount = Test-StagedPaths
-Write-Host ("Staging: checked {0} staged path(s)" -f $stagedCount)
-
-Invoke-CheckedCommand -FilePath "hugo" -Arguments @("--gc", "--minify", "--destination", "public_test") -WorkingDirectory $ProjectRoot | Out-Null
+Invoke-CheckedCommand -FilePath "hugo" -Arguments @("--gc", "--minify", "--cleanDestinationDir", "--destination", "public_test") -WorkingDirectory $ProjectRoot | Out-Null
 Write-Host "Hugo: built public_test/"
 
 $microblogCount = Test-MicroblogFrontMatter
@@ -220,14 +180,6 @@ if ($Audit.IsPresent) {
 }
 else {
     Write-Host "Asset audit: skipped (use -Audit)"
-}
-
-if ($Warnings.Count -gt 0) {
-    Write-Host ""
-    Write-Host "Warnings:"
-    foreach ($warning in $Warnings) {
-        Write-Host ("- {0}" -f $warning)
-    }
 }
 
 if ($Failures.Count -gt 0) {

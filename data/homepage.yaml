@@ -1,9 +1,3 @@
-# Homepage content data.
-# Homepage sections and footer contact data.
-
-# -----------------------------------------------------------------------------
-# Intro
-# -----------------------------------------------------------------------------
 intro:
   name: "Aki Liu"
   tagline: "AI Infrastructure, MLSys, Writing, and Thinking"
@@ -11,14 +5,9 @@ intro:
     - "Senior at the University of Rochester (B.S. in Computer Science and Applied Mathematics, graduating December 2026), working on ML systems and AI infrastructure."
     - "Alongside this, I write essays, fragments, and criticism on sensation, space, and the textures of contemporary existence. Some of it ends up in <a href='/textlab/'>Text Lab</a>."
 
-# -----------------------------------------------------------------------------
-# Work Grid (2 columns x 3 rows)
-# -----------------------------------------------------------------------------
 grid:
   left:
-    - id: experience
-      title: Experience
-      link: ""
+    - title: Experience
       items:
         - title: ML Systems Research @URochester
           role: Undergraduate Researcher
@@ -38,9 +27,7 @@ grid:
           date: "2025"
           link: "https://rochester-bear-lab.github.io/"
           preview: "images/home/bearlab.png"
-    - id: projects
-      title: Project
-      link: ""
+    - title: Project
       items:
         - title: LLM Quant Profiler
           date: "2026"
@@ -49,34 +36,7 @@ grid:
         - title: MoodStream
           date: "2026"
           link: "https://github.com/AkikoAkaki/moodstream"
-  right:
-    - id: about
-      title: About
-      link: /about/
-      sublinks:
-        - label: Courses
-          link: /about/courses/
-        - label: Resume
-          link: /about/resume/
-    - id: textlab
-      title: Text Lab
-      link: /textlab/
-    - id: notes
-      title: Notes
-      link: /notes/
-    - id: weeknotes
-      title: Weeknotes
-      link: /weeknotes/
-    - id: microblog
-      title: Microblog
-      link: /microblog/
-    - id: dashboard
-      title: Dashboard
-      link: /dashboard/
 
-# -----------------------------------------------------------------------------
-# Now
-# -----------------------------------------------------------------------------
 now:
   cards:
     - title: "Focusing Now"
@@ -108,9 +68,6 @@ now:
         - "Writing across affect theory, psychogeography, negative aesthetics, and phenomenology of the body, tracing how sensation, space, and form encode the conditions of contemporary existence."
         - "A fuller <a href='/influences/'>map of influences</a>"
 
-# -----------------------------------------------------------------------------
-# Connect
-# -----------------------------------------------------------------------------
 connect:
   title: "Connect"
   items:

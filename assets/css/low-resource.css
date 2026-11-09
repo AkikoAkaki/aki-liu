@@ -1,0 +1,34 @@
+/* Device capacity/save-data and reduced-transparency are hints, not live RAM usage. */
+:root[data-low-resource] .menu-bar,
+:root[data-low-resource] .home-glass,
+:root[data-low-resource] .reading-haze::before,
+:root[data-low-resource] .af-origin-label,
+:root[data-low-resource] .menu-link::before,
+:root[data-low-resource] .mb-tag-chip::before {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+
+:root[data-low-resource] .menu-bar {
+    background: var(--bg-color) !important;
+}
+
+:root[data-low-resource] .home-glass {
+    background: var(--home-glass-solid, var(--bg-color));
+}
+
+:root[data-low-resource] .reading-haze::before {
+    background: var(--bg-color);
+}
+
+:root[data-low-resource] .af-origin-label {
+    background: #fff;
+}
+
+:root[data-low-resource] :is(.menu-bar, .menu-trigger-title, .menu-panel,
+    .menu-search-panel, .menu-link, .menu-link-content, .mb-tag-chip,
+    .home-hover-preview, .home-hover-preview-img),
+:root[data-low-resource] .menu-link::before,
+:root[data-low-resource] .mb-tag-chip::before {
+    will-change: auto;
+}

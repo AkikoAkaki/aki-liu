@@ -6,7 +6,7 @@
     {{- range .Params.tags -}}
         {{- $slug := . | urlize -}}
         {{- $slugs = $slugs | append $slug -}}
-        {{- $tags = merge $tags (dict $slug (partial "tag-label.html" . | strings.TrimSpace)) -}}
+        {{- $tags = merge $tags (dict $slug (partial "tag-label.html" .)) -}}
     {{- end -}}
     {{- $card := partialCached "microblog-card.html" . .RelPermalink -}}
     {{- $items = $items | append (dict "id" .RelPermalink "year" (.PublishDate.Format "2006") "tags" $slugs "html" $card) -}}

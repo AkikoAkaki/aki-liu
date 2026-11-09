@@ -1,22 +1,25 @@
 {{- $page := . -}}
 {{- $html := $page.Content -}}
 {{- $gallery := slice -}}
+{{- $inlineSizes := "(max-width: 768px) calc(100vw - 90px), 466px" -}}
 {{- range $page.Resources.ByType "image" -}}
-    {{- $image := partialCached "microblog-image.html" . .RelPermalink -}}
-    {{- $referenced := or (strings.Contains $html $image.original) (strings.Contains $html $image.rendered) -}}
-    {{- if $referenced -}}
-        {{- $attributes := printf `src="%s" data-mb-image` (htmlEscape $image.src) -}}
+    {{- $image := partial "responsive-image.html" (dict "resource" . "cap" 1040) -}}
+    {{- $original := .RelPermalink -}}
+    {{- /* The Markdown image hook writes the article-sized URL into the body. */ -}}
+    {{- $rendered := (partial "post-image.html" .).url -}}
+    {{- if or (strings.Contains $html $original) (strings.Contains $html $rendered) -}}
+        {{- $attributes := printf `src="%s" data-mb-image` (htmlEscape $image.url) -}}
         {{- with $image.srcset -}}
-            {{- $attributes = printf `%s srcset="%s" sizes="(max-width: 768px) calc(100vw - 90px), 466px"` $attributes (htmlEscape .) -}}
+            {{- $attributes = printf `%s srcset="%s" sizes="%s"` $attributes (htmlEscape .) $inlineSizes -}}
         {{- end -}}
-        {{- range slice $image.rendered $image.original | uniq -}}
+        {{- range slice $rendered $original | uniq -}}
             {{- $html = replace $html (printf `src="%s"` (htmlEscape .)) $attributes -}}
         {{- end -}}
     {{- else -}}
-        {{- $gallery = $gallery | append $image -}}
+        {{- $gallery = $gallery | append (merge $image (dict "original" $original)) -}}
     {{- end -}}
 {{- end -}}
-<article class="mb-card" data-mb-id="{{ $page.RelPermalink }}"{{ if and site.Params.enableKaTeX (partial "page-has-math.html" $page) (partial "html-needs-math-runtime.html" $html) }} data-mb-math-runtime{{ end }}>
+<article class="mb-card" data-mb-id="{{ $page.RelPermalink }}"{{ if partial "html-needs-math-runtime.html" (dict "page" $page "html" $html) }} data-mb-math-runtime{{ end }}>
     <header class="mb-card-header">
         <div class="mb-card-meta">
             <div class="mb-card-date-wrapper">
@@ -42,7 +45,7 @@
     <div class="mb-card-images {{ $class }}" data-mb-image-count="{{ $count }}">
         {{- range . }}
         <a class="mb-img-cell" href="{{ .original }}" style="--mb-img-ratio: {{ if .width }}{{ .width }} / {{ .height }}{{ else }}4 / 3{{ end }}" aria-label="Open image">
-            <img src="{{ .src }}"{{ with .srcset }} srcset="{{ . }}" sizes="{{ if eq $count 1 }}(max-width: 768px) calc(100vw - 90px), 466px{{ else }}(max-width: 768px) calc((100vw - 94px) / 2), 231px{{ end }}"{{ end }} alt="" loading="lazy" decoding="async"{{ if .width }} width="{{ .width }}" height="{{ .height }}"{{ end }} data-mb-image>
+            <img src="{{ .url }}"{{ with .srcset }} srcset="{{ . }}" sizes="{{ if eq $count 1 }}{{ $inlineSizes }}{{ else }}(max-width: 768px) calc((100vw - 94px) / 2), 231px{{ end }}"{{ end }} alt="" loading="lazy" decoding="async"{{ if .width }} width="{{ .width }}" height="{{ .height }}"{{ end }} data-mb-image>
         </a>
         {{- end }}
     </div>

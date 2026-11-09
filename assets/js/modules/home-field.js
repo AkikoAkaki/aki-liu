@@ -1,20 +1,19 @@
-import { media, QUERIES } from "./media.js";
+import { QUERIES } from "./media.js";
 import { characters, makeAtlas } from "./home-field-atlas.js";
-import { isResourceConstrained } from "./resource-mode.js";
+import { isLowResourceMode } from "./resource-mode.js";
 
 export async function initHomeField(workerSrc, fallbackSrc) {
   const host = document.querySelector(".site-wrapper");
-  if (!host || !document.querySelector(".home-container")) return;
-  const offscreen = workerSrc && HTMLCanvasElement.prototype.transferControlToOffscreen && typeof Worker === "function";
-  const createFieldRenderer = offscreen ? null : (await import(fallbackSrc)).createFieldRenderer;
+  const offscreen = HTMLCanvasElement.prototype.transferControlToOffscreen && typeof Worker === "function";
+  const direct = offscreen ? null : (await import(fallbackSrc)).createFieldController(receive);
   const canvas = document.createElement("canvas");
   canvas.className = "home-field";
   canvas.setAttribute("aria-hidden", "true");
   canvas.style.cssText = "opacity:0.35;pointer-events:none;border-radius:inherit;z-index:-1";
   host.style.isolation = "isolate";
   host.prepend(canvas);
-  const reduced = media(QUERIES.reducedMotion);
-  let worker = null, renderer = null, surface = null;
+  const reduced = matchMedia(QUERIES.reducedMotion);
+  let worker = null, surface = null;
   let disposed = false, version = 0, sizeKey = "", pointerFrame = 0;
   let initialized = false, latestPointer = null;
   let scrolling = false, scrollTimer = 0;
@@ -23,25 +22,20 @@ export async function initHomeField(workerSrc, fallbackSrc) {
   function send(message, transfer = []) {
     if (disposed) return;
     if (worker) worker.postMessage(message, transfer);
-    else if (message.type === "init") {
-      renderer?.destroy();
-      renderer = createFieldRenderer(canvas, message.settings, receive);
-    } else if (message.type === "update") renderer?.update(message.settings);
-    else if (message.type === "pointer") renderer?.pointer(message.point);
+    else direct.handle({ ...message, canvas });
   }
   function receive(message) {
     if (disposed) return;
     if (message.type === "ready") canvas.classList.add("is-ready");
     else if (message.type === "restore") geometry(true).catch(fail);
     else if (message.type === "unsupported") dispose();
-    else if (message.type === "error") fail(new Error(message.message));
   }
   function state() {
     return {
       dark: document.documentElement.dataset.theme === "dark",
       mobile: innerWidth < 760,
       reduced: reduced.matches,
-      lowResource: document.documentElement.hasAttribute("data-low-resource") || isResourceConstrained() || navigator.hardwareConcurrency <= 2,
+      lowResource: isLowResourceMode() || navigator.hardwareConcurrency <= 2,
       visible: !document.hidden,
       scrolling,
     };
@@ -61,7 +55,7 @@ export async function initHomeField(workerSrc, fallbackSrc) {
     if (disposed || current !== version) { atlas.close(); return; }
     const settings = {
       ...state(), width: Math.max(1, Math.round(width * ratio)), height: Math.max(1, Math.round(height * ratio)),
-      cellWidth, cellHeight, columns: characters.length, characters: characters.length, atlas,
+      cellWidth, cellHeight, characters: characters.length, atlas,
     };
     const message = { type: !initialized || restart ? "init" : "update", settings };
     const transfer = [atlas];
@@ -111,7 +105,7 @@ export async function initHomeField(workerSrc, fallbackSrc) {
     disposed = true;
     if (pointerFrame) cancelAnimationFrame(pointerFrame);
     clearTimeout(scrollTimer);
-    worker?.terminate(); renderer?.destroy(); canvas.remove();
+    worker?.terminate(); direct?.destroy(); canvas.remove();
     observer.disconnect(); theme.disconnect();
     host.removeEventListener("pointermove", move); host.removeEventListener("pointerleave", leave);
     window.removeEventListener("scroll", scrolled);

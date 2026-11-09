@@ -4,16 +4,16 @@ import {
   readArchiveFilters,
   updateArchiveView,
   syncArchiveURL,
+  archiveControls,
 } from "./archive-state.js";
-import { media, QUERIES } from "./media.js";
+import { QUERIES } from "./media.js";
 
 export function initArchiveFilter() {
   const list = document.querySelector("[data-archive-filter-root]");
-  if (!list) return;
   const entries = archiveEntries(list);
   const preview = initArchivePreview(list);
-  const reducedMotion = media(QUERIES.reducedMotion);
-  const controls = [...document.querySelectorAll(".archive-tag-item[data-tag], .archive-year-item[data-year]")];
+  const reducedMotion = matchMedia(QUERIES.reducedMotion);
+  const controls = archiveControls();
   const motions = new Map();
   let exitLayer = null;
   let filters = readArchiveFilters(list);
@@ -61,7 +61,6 @@ export function initArchiveFilter() {
     preview.clear();
     if (!moving) return;
 
-    // Read final geometry before starting any animations.
     const after = new Map(matched.map(({ element }) => [element, element.getBoundingClientRect()]));
     const origin = list.getBoundingClientRect();
     before.forEach(({ rect, opacity }, element) => {

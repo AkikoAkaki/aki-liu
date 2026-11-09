@@ -1,12 +1,9 @@
-{{ define "sidebar-left" }}{{ end }}
-{{ define "sidebar-right" }}{{ end }}
-{{ define "post-header" }}{{ end }}
 
 {{ define "main" }}
 {{- $latest := site.Data.metrics.latest -}}
 {{- $history := site.Data.metrics.history_timeline -}}
+{{- $recent := 12 -}}
 
-{{- /* Language split: one ratio per language, shown as %.1f in the legend and %.2f as the bar width. */ -}}
 {{- $totalPages := add $latest.build.zhPages $latest.build.enPages -}}
 {{- $zhRatio := mul (div (float $latest.build.zhPages) (float $totalPages)) 100 -}}
 {{- $enRatio := mul (div (float $latest.build.enPages) (float $totalPages)) 100 -}}
@@ -15,23 +12,14 @@
 {{- $zhBarPct := printf "%.2f" $zhRatio -}}
 {{- $enBarPct := printf "%.2f" $enRatio -}}
 
-{{- /* Neutral cache ring: health has not been assessed. */ -}}
 {{- $cacheRatio := $latest.templates.aggregateCacheRatio -}}
 {{- $cacheRatioStr := printf "%.2f" $cacheRatio -}}
 {{- $totalCacheCalls := $latest.templates.aggregateCalls -}}
 {{- $ringRadius := 26 -}}
-{{- $ringCirc := div (math.Round (mul 200 math.Pi $ringRadius)) 100.0 -}}
-{{- $ringOffset := printf "%.2f" $ringCirc -}}
 
 {{- $pageBundles := $latest.quality.pageBundles -}}
-{{- $assetsMeasured := not (not $pageBundles) -}}
-{{- $cssKB := 0.0 -}}
-{{- $jsKB := 0.0 -}}
-{{- with $pageBundles -}}
-    {{- $cssKB = div (float .maxCssBytes) 1024.0 -}}
-    {{- $jsKB = div (float .maxJsBytes) 1024.0 -}}
-{{- end -}}
-{{- $assetsMeasured = eq $pageBundles.scope "initial-local-files-v1" -}}
+{{- $cssKB := div (float $pageBundles.maxCssBytes) 1024.0 -}}
+{{- $jsKB := div (float $pageBundles.maxJsBytes) 1024.0 -}}
 {{- $cssScaleKB := math.Max 150.0 (mul (math.Ceil (div $cssKB 50.0)) 50.0) -}}
 {{- $jsScaleKB := math.Max 40.0 (mul (math.Ceil (div $jsKB 10.0)) 10.0) -}}
 {{- $cssBundleKB := printf "%.1f" $cssKB -}}
@@ -40,14 +28,28 @@
 {{- $assetBaseline := $pageBundles.baseline | default dict -}}
 {{- $hasAssetBaseline := eq $assetBaseline.status "available" -}}
 
-{{- /* Static quality checks. */ -}}
-{{- $hasBroken := gt $latest.quality.brokenInternalReferenceCount 0 -}}
-{{- $hasMissingCanon := gt $latest.quality.invalidCanonicalCount 0 -}}
-{{- $hasLangAttr := not (gt $latest.quality.invalidHtmlLangCount 0) -}}
+{{- /* Static quality checks; the health card and the diagnostic report both list them. */ -}}
+{{- $quality := $latest.quality -}}
+{{- $hasBroken := gt $quality.brokenInternalReferenceCount 0 -}}
+{{- $hasMissingCanon := gt $quality.invalidCanonicalCount 0 -}}
+{{- $badLang := gt $quality.invalidHtmlLangCount 0 -}}
+{{- $brokenText := printf "%d missing local %s" (int $quality.brokenInternalReferenceCount) (cond (eq $quality.brokenInternalReferenceCount 1) "reference" "references") -}}
+{{- $canonText := printf "%d %s a valid canonical URL" (int $quality.invalidCanonicalCount) (cond (eq $quality.invalidCanonicalCount 1) "page missing" "pages missing") -}}
+{{- $langText := printf "%d pages with a missing or unsupported lang attribute" (int $quality.invalidHtmlLangCount) -}}
+{{- $checks := slice
+    (dict "state" (cond $hasBroken "fail" "pass") "title" "Local links and assets" "report" "Internal link audit"
+        "summary" (cond $hasBroken $brokenText "Checked local links and assets exist")
+        "finding" (cond $hasBroken (printf "%s found." $brokenText) "Checked local links and assets exist."))
+    (dict "state" (cond $hasMissingCanon "warn" "pass") "title" "Canonical URL" "report" "Canonical URL"
+        "summary" (cond $hasMissingCanon $canonText "All audited pages declare a valid canonical URL")
+        "finding" (cond $hasMissingCanon (printf "%s." $canonText) "All audited pages declare a valid canonical URL."))
+    (dict "state" (cond $badLang "warn" "pass") "title" "Page language" "report" "HTML lang attribute"
+        "summary" (cond $badLang $langText (printf "All %v pages declare zh / en" $quality.htmlFiles))
+        "finding" (cond $badLang (printf "%s." $langText) (printf "All %v pages declare a supported zh / en lang attribute." $quality.htmlFiles)))
+-}}
 
 <div class="dash-shell">
     <div class="dash-container">
-        {{/* ---- Title block ---- */}}
         <header class="title-block">
             <div>
                 <h1 class="dash-title">Dashboard</h1>
@@ -88,7 +90,6 @@
         </section>
 
         <section class="cards-grid">
-            {{/* Card 1: Build duration */}}
             <article class="metric-card">
                 {{ partial "dashboard/metric-head.html" (dict "label" "Build duration") }}
                 <div class="metric-body">
@@ -109,11 +110,10 @@
                     <span class="metric-sub" id="spark-delta"></span>
                 </div>
                 <p class="metric-foot">
-                    Local Hugo production build with the existing resource cache. Line: last {{ math.Min 12 (len $history) }} measurements; lower is faster.
+                    Local Hugo production build with the existing resource cache. Line: last {{ math.Min $recent (len $history) }} measurements; lower is faster.
                 </p>
             </article>
 
-            {{/* Card 2: Cache health */}}
             <article class="metric-card">
                 {{ partial "dashboard/metric-head.html" (dict "label" "Cache health") }}
                 <div class="metric-body">
@@ -138,26 +138,11 @@
                         </div>
                         <div class="ring-wrap">
                             <svg viewBox="0 0 56 56">
-                                <defs>
-                                    <linearGradient id="cache-ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="var(--dash-good)" />
-                                        <stop offset="100%" stop-color="var(--dash-good)" />
-                                    </linearGradient>
-                                </defs>
                                 <circle
                                     class="ring-track"
                                     cx="28"
                                     cy="28"
                                     r="{{ $ringRadius }}"
-                                />
-                                <circle
-                                    class="ring-fill"
-                                    cx="28"
-                                    cy="28"
-                                    r="{{ $ringRadius }}"
-                                    stroke-dasharray="{{ printf "%.2f" $ringCirc }}"
-                                    stroke-dashoffset="{{ $ringOffset }}"
-                                    style="stroke: url(#cache-ring-grad); visibility: hidden;"
                                 />
                             </svg>
                         </div>
@@ -168,7 +153,6 @@
                 </p>
             </article>
 
-            {{/* Card 3: Pages by language */}}
             <article class="metric-card">
                 {{ partial "dashboard/metric-head.html" (dict "label" "Pages by language") }}
                 <div class="metric-body">
@@ -205,7 +189,6 @@
                 </p>
             </article>
 
-            {{/* Card 4: Generated pages */}}
             <article class="metric-card">
                 {{ partial "dashboard/metric-head.html" (dict "label" "Generated pages") }}
                 <div class="metric-body">
@@ -230,11 +213,10 @@
                     ></div>
                 </div>
                 <p class="metric-foot">
-                    Articles, archives and taxonomy pages. Bars: last {{ math.Min 12 (len $history) }} measurements.
+                    Articles, archives and taxonomy pages. Bars: last {{ math.Min $recent (len $history) }} measurements.
                 </p>
             </article>
 
-            {{/* Card 5: Page asset size */}}
             <article class="metric-card">
                 {{ partial "dashboard/metric-head.html" (dict "label" "Page asset size") }}
                 <div class="metric-body">
@@ -243,7 +225,7 @@
                             <div class="br-head">
                                 <span class="br-name" title="Initial local files, including vendor; inline, remote and runtime-loaded files excluded. {{ range $pageBundles.groups }}{{ .label }}: {{ printf "%.1f" (div (float .maxCssBytes) 1024.0) }} KB; gzip estimate {{ printf "%.1f" (div (float .cssGzipBytes) 1024.0) }} KB on {{ .cssPage }}{{ "\n" }}{{ end }}">CSS{{ with $pageBundles.cssGroup }} &middot; {{ . }}{{ end }}</span>
                                 <span class="br-val"
-                                    >{{ if $assetsMeasured }}{{ $cssBundleKB }}{{ else }}Not measured{{ end }}
+                                    >{{ $cssBundleKB }}
                                     <span style="color: var(--color-muted)"
                                         >KB</span
                                     ></span
@@ -263,7 +245,7 @@
                             <div class="br-scale">
                                 <span>0KB</span>
                                 <span style="color: var(--color-muted)"
-                                    >{{ if $assetsMeasured }}gzip est. {{ printf "%.1f" (div (float $pageBundles.cssGzipBytes) 1024.0) }}KB{{ else }}Not measured{{ end }}{{ if $hasAssetBaseline }} · {{ printf "%+.1f" (div (float $assetBaseline.cssDeltaBytes) 1024.0) }}KB{{ end }}</span
+                                    >gzip est. {{ printf "%.1f" (div (float $pageBundles.cssGzipBytes) 1024.0) }}KB{{ if $hasAssetBaseline }} · {{ printf "%+.1f" (div (float $assetBaseline.cssDeltaBytes) 1024.0) }}KB{{ end }}</span
                                 >
                                 <span>{{ printf "%.0f" $cssScaleKB }}KB</span>
                             </div>
@@ -272,7 +254,7 @@
                             <div class="br-head">
                                 <span class="br-name" title="Initial local files, including vendor; inline, remote and runtime-loaded files excluded. {{ range $pageBundles.groups }}{{ .label }}: {{ printf "%.1f" (div (float .maxJsBytes) 1024.0) }} KB; gzip estimate {{ printf "%.1f" (div (float .jsGzipBytes) 1024.0) }} KB on {{ .jsPage }}{{ "\n" }}{{ end }}">JS{{ with $pageBundles.jsGroup }} &middot; {{ . }}{{ end }}</span>
                                 <span class="br-val"
-                                    >{{ if $assetsMeasured }}{{ printf "%.1f" $jsKB }}{{ else }}Not measured{{ end }}
+                                    >{{ printf "%.1f" $jsKB }}
                                     <span style="color: var(--color-muted)"
                                         >KB</span
                                     ></span
@@ -289,7 +271,7 @@
                             <div class="br-scale">
                                 <span>0KB</span>
                                 <span style="color: var(--color-muted)"
-                                    >{{ if $assetsMeasured }}gzip est. {{ printf "%.1f" (div (float $pageBundles.jsGzipBytes) 1024.0) }}KB{{ else }}Not measured{{ end }}{{ if $hasAssetBaseline }} · {{ printf "%+.1f" (div (float $assetBaseline.jsDeltaBytes) 1024.0) }}KB{{ end }}</span
+                                    >gzip est. {{ printf "%.1f" (div (float $pageBundles.jsGzipBytes) 1024.0) }}KB{{ if $hasAssetBaseline }} · {{ printf "%+.1f" (div (float $assetBaseline.jsDeltaBytes) 1024.0) }}KB{{ end }}</span
                                 >
                                 <span>{{ printf "%.0f" $jsScaleKB }}KB</span>
                             </div>
@@ -300,75 +282,25 @@
                 <div class="budget-status-wrap">
                     <span class="budget-status">
                         <span class="status-orb" aria-hidden="true"></span>
-                        <span class="status-copy">{{ if not $assetsMeasured }}Not measured{{ else if $hasAssetBaseline }}Compared with origin/main{{ else }}Baseline not set{{ end }}</span>
+                        <span class="status-copy">{{ if $hasAssetBaseline }}Compared with origin/main{{ else }}Baseline not set{{ end }}</span>
                     </span>
                 </div>
             </article>
 
-            {{/* Card 6: Static quality */}}
             <article class="metric-card">
                 {{ partial "dashboard/metric-head.html" (dict "label" "Static quality") }}
                 <div class="metric-body">
                     <div class="health-list">
-                        <div
-                            class="health-row {{ if $hasBroken }}fail{{ else }}pass{{ end }}"
-                        >
+                        {{ range $checks }}
+                        <div class="health-row {{ .state }}">
                             <span class="h-dot"></span>
                             <span class="h-label">
-                                Local links and assets
-                                <span class="desc"
-                                    >{{ if $hasBroken }}{{
-                                    $latest.quality.brokenInternalReferenceCount
-                                    }} missing local {{ if eq
-                                    $latest.quality.brokenInternalReferenceCount
-                                    1 }}reference{{ else }}references{{ end }}{{
-                                    else }}Checked local links and assets exist{{ end
-                                    }}</span
-                                >
+                                {{ .title }}
+                                <span class="desc">{{ .summary }}</span>
                             </span>
-                            <span class="h-meta"
-                                >{{ if $hasBroken }}Fail{{ else }}Pass{{ end
-                                }}</span
-                            >
+                            <span class="h-meta">{{ title .state }}</span>
                         </div>
-                        <div
-                            class="health-row {{ if $hasMissingCanon }}warn{{ else }}pass{{ end }}"
-                        >
-                            <span class="h-dot"></span>
-                            <span class="h-label">
-                                Canonical URL
-                                <span class="desc"
-                                    >{{ if $hasMissingCanon }}{{
-                                    $latest.quality.invalidCanonicalCount }} {{ if eq
-                                    $latest.quality.invalidCanonicalCount 1 }}page
-                                    missing{{ else }}pages missing{{ end }}
-                                    a valid canonical URL{{ else }}All audited pages declare
-                                    a valid canonical URL{{ end }}</span
-                                >
-                            </span>
-                            <span class="h-meta"
-                                >{{ if $hasMissingCanon }}Warn{{ else }}Pass{{
-                                end }}</span
-                            >
-                        </div>
-                        <div
-                            class="health-row {{ if $hasLangAttr }}pass{{ else }}warn{{ end }}"
-                        >
-                            <span class="h-dot"></span>
-                            <span class="h-label">
-                                Page language
-                                <span class="desc"
-                                    >{{ if $hasLangAttr }}All {{ $latest.quality.htmlFiles }}
-                                    pages declare zh / en{{ else }}{{
-                                    $latest.quality.invalidHtmlLangCount }} pages with a
-                                    missing or unsupported lang attribute{{ end }}</span
-                                >
-                            </span>
-                            <span class="h-meta"
-                                >{{ if $hasLangAttr }}Pass{{ else }}Warn{{ end
-                                }}</span
-                            >
-                        </div>
+                        {{ end }}
                     </div>
                 </div>
             </article>
@@ -450,7 +382,6 @@
         </section>
 
         <div class="bottom-row" style="margin-top: 1.25rem">
-            {{/* Template render rank */}}
             <div class="panel">
                 <div class="panel-head">
                     <div class="panel-titles">
@@ -517,7 +448,6 @@
                 </div>
             </div>
 
-            {{/* Diagnostic report */}}
             <div class="panel">
                 <div class="panel-head">
                     <div class="panel-titles">
@@ -582,75 +512,16 @@
                     </div>
 
                     <div>
-                        {{ if $hasBroken }}
-                        <div class="diag-finding fail">
+                        {{ range $checks }}
+                        <div class="diag-finding {{ .state }}">
                             <span class="d-dot"></span>
                             <span class="d-text">
-                                Internal link audit
-                                <span class="desc"
-                                    >{{
-                                    $latest.quality.brokenInternalReferenceCount
-                                    }} missing local {{ if eq
-                                    $latest.quality.brokenInternalReferenceCount
-                                    1 }}reference{{ else }}references{{ end }}
-                                    found.</span
-                                >
-                            </span>
-                            <span class="d-meta">Measured</span>
-                        </div>
-                        {{ else }}
-                        <div class="diag-finding pass">
-                            <span class="d-dot"></span>
-                            <span class="d-text">
-                                Internal link audit
-                                <span class="desc"
-                                    >Checked local links and assets exist.</span
-                                >
-                            </span>
-                            <span class="d-meta">Measured</span>
-                        </div>
-                        {{ end }} {{ if $hasMissingCanon }}
-                        <div class="diag-finding warn">
-                            <span class="d-dot"></span>
-                            <span class="d-text">
-                                Canonical URL
-                                <span class="desc"
-                                    >{{ $latest.quality.invalidCanonicalCount }} {{
-                                    if eq $latest.quality.invalidCanonicalCount 1
-                                    }}page missing{{ else }}pages missing{{ end
-                                    }} a valid canonical URL.</span
-                                >
-                            </span>
-                            <span class="d-meta">Measured</span>
-                        </div>
-                        {{ else }}
-                        <div class="diag-finding pass">
-                            <span class="d-dot"></span>
-                            <span class="d-text">
-                                Canonical URL
-                                <span class="desc"
-                                    >All audited pages declare a valid canonical URL.</span
-                                >
+                                {{ .report }}
+                                <span class="desc">{{ .finding }}</span>
                             </span>
                             <span class="d-meta">Measured</span>
                         </div>
                         {{ end }}
-
-                        <div
-                            class="diag-finding {{ if $hasLangAttr }}pass{{ else }}warn{{ end }}"
-                        >
-                            <span class="d-dot"></span>
-                            <span class="d-text">
-                                HTML lang attribute
-                                <span class="desc"
-                                    >{{ if $hasLangAttr }}All {{ $latest.quality.htmlFiles }}
-                                    pages declare a supported zh / en lang attribute.{{ else
-                                    }}{{ $latest.quality.invalidHtmlLangCount }}
-                                    pages with a missing or unsupported lang attribute.{{ end }}</span
-                                >
-                            </span>
-                            <span class="d-meta">Measured</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -661,6 +532,5 @@
     </div>
 </div>
 
-{{/* ---- Chart data + JS ---- */}}
-<script type="application/json" id="dashboard-history">{{ $history | jsonify | safeJS }}</script>
+<script type="application/json" id="dashboard-history" data-recent="{{ $recent }}">{{ $history | jsonify | safeJS }}</script>
 {{ end }}

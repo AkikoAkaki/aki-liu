@@ -37,18 +37,19 @@ OptMem 跨会话、上下文压缩、模型和供应商保留记忆。没有它�
 - **双语**：中文默认（`zh`），内容目录使用 slug，中文正文为 `index.md`，英文翻译放在同目录的 `index.en.md`。
 - **内容栏目**（`content/`）：`notes/`、`textlab/` 和 `weeknotes/` 使用 `list.html` 的三栏归档布局（左侧栏、正文、右侧悬停预览）。`microblog/` 和 `about/` 有独立布局；`influences/` 是单页。`hugo.toml` 的 `mainSections`（notes、textlab、weeknotes）通过 `site.MainSections` 提供归档、标签页和标签搜索的数据；它必须位于第一个 `[table]` 之前，否则 TOML 会把它归入该表。
 - **首页**：数据来自 `data/homepage.yaml`，模板为 `layouts/index.html`。
-- **导航**：`data/nav.yaml` 按顺序列出菜单项。`baseof.html` 根据它渲染菜单，并以 `data-nav` JSON 传给搜索面板；标记为 `hidden: true` 的条目也会出现在搜索面板中。
-- **CSS**：全局 bundle 按 `base.css` → `layout.css` → `components.css` → `motion.css` → `search.css` 拼接。首页加载 `home.css`，单页加载 `post.css` + `syntax-highlight.css`，About、Microblog 和 Dashboard 的 CSS 按路由加载。均由 Hugo Pipes 处理（适用时使用 `resources.Concat` 和 `resources.Minify`）。
-- **JS**：`assets/js/main.js` 是通过 Hugo `js.Build` 构建的全局入口。`home.js`、`about.js`、`dashboard.js`、`microblog.js` 在各自路由加载；有目录的单页加载 `post-toc.js`。文章和归档预览均通过 `assets/js/modules/katex.js` 渲染 KaTeX。媒体查询位于 `assets/js/modules/media.js`，搜索评分和摘要位于 `assets/js/modules/search-core.js`。不使用外部打包器。
+- **导航**：`data/nav.yaml` 按顺序列出菜单项。`partials/site-menu.html` 根据它渲染菜单，首页导航面板读同一份数据，并以 `data-nav` JSON 传给搜索面板；标记为 `hidden: true` 的条目也会出现在搜索面板中。
+- **资源清单**：`layouts/partials/head/page-assets.html` 按页面列出样式、脚本和字体预加载，`head/core-assets.html` 只负责渲染。新增路由资源只改清单。
+- **CSS**：全局 bundle 按 `fonts-ui.css` → `base.css` → `menu.css` → `low-resource.css` → `layout.css` → `components.css` → `motion.css` → `search.css` 拼接，顺序即层叠顺序。首页加载 `home.css`，单页加载 `post.css` + `syntax-highlight.css`，归档页加载 `archive-sidebar.css` + `archive.css`，Microblog 加载 `archive-sidebar.css` + `microblog.css`，About 和 Dashboard 的 CSS 按路由加载。
+- **JS**：`assets/js/main.js` 是通过 Hugo `js.Build` 构建的全局入口。`home.js`、`home-field.js`、`about.js`、`archive.js`、`dashboard.js`、`microblog.js` 在各自路由加载；有目录的单页加载 `post-toc.js`。文章和归档预览均通过 `assets/js/modules/katex.js` 渲染 KaTeX。JS 用到的媒体查询全部列在 `assets/js/modules/media.js`，与 CSS 断点手动保持一致，搜索评分和摘要位于 `assets/js/modules/search-core.js`。不使用外部打包器。
 
 ## 约定
 
-- **图片**：非 SVG/GIF 图片通过自定义渲染钩子 `layouts/_default/_markup/render-image.html` 自动转换为 WebP。需要说明的 bundle 图片使用 `figure` shortcode。
-- **视频**：使用 `localvideo` shortcode 和 bundle 内素材。
-- **KaTeX**：全局启用；frontmatter 设置 `enableKaTeX`/`math` 或内容包含数学分隔符的页面会加载（`layouts/partials/page-has-math.html`、`layouts/partials/head/katex.html`）。文件位于带版本号的 `static/lib/katex-<version>/`，因为 `/lib/` 使用不可变缓存；升级时同时修改 `layouts/partials/katex-base.html` 和 `scripts/download-katex.ps1`。
-- **标签**：在 frontmatter 中写 `tags: ["tag-name"]`，由 `layouts/tags/term.html` 渲染 `/tags/<name>/`。URL、`data-tag` 和筛选使用 slug。`data/tags.yaml` 将 slug 映射到圆点颜色及需要特殊大小写的标签名（如 `mlsys` → `MLSys`）；模板通过 `style="--tag-color: …"` 输出颜色。新标签在此添加一行；缺少配置时使用灰点和标题式大小写。
+- **图片**：非 SVG/GIF 图片通过自定义渲染钩子 `layouts/_default/_markup/render-image.html` 自动转换为 WebP。需要说明的 bundle 图片使用 `figure` shortcode（参数：`src`、`alt`、`caption`）。WebP 转换和 srcset 集中在 `layouts/partials/responsive-image.html`。读取资源的 `.RelPermalink` 会发布原文件，模板只在实际提供原图时读取。
+- **视频**：使用 `localvideo` shortcode 和 bundle 内素材（参数：`src`、`caption`）；同名 `<name>.poster.webp` 会成为封面并延迟加载。
+- **KaTeX**：frontmatter 设置 `math` 或内容包含数学分隔符的页面会加载（`layouts/partials/page-has-math.html`、`layouts/partials/head/katex.html`）。文件位于带版本号的 `static/lib/katex-<version>/`，因为 `/lib/` 使用不可变缓存；升级时同时修改 `layouts/partials/katex-base.html` 和 `scripts/download-katex.ps1`。
+- **标签**：在 frontmatter 中写 `tags: ["tag-name"]`，由 `layouts/_default/list.html` 渲染 `/tags/<name>/`。URL、`data-tag` 和筛选使用 slug。`data/tags.yaml` 将 slug 映射到圆点颜色及需要特殊大小写的标签名（如 `mlsys` → `MLSys`）；模板通过 `style="--tag-color: …"` 输出颜色。新标签在此添加一行；缺少配置时使用灰点和标题式大小写。
 - **归档预览**：每篇文章有带指纹的预览 JSON（`layouts/partials/archive-preview-entry.html`，前 800 个字符）。`assets/js/modules/archive-preview.js` 加载悬停或聚焦的文章，仅为含公式的预览加载 KaTeX。
-- **Microblog 分页**：`microblog-feed-index.html` 嵌入列数和带指纹的每 30 条分块 URL。浏览器只请求下一块；公开的 `feed.json` 仍包含全部内容。
+- **Microblog 分页**：`microblog-feed-index.html` 嵌入列数和带指纹的每 30 条分块 URL。每块条数来自 `hugo.toml` 的 `params.microblogPageSize`。浏览器只请求下一块；公开的 `feed.json` 仍包含全部内容。
 - **字体**：Switzer、PP Editorial Old、JetBrains Mono、Newsreader 和 Noto Serif SC 自托管于 `static/fonts/`；只有归档页的另一款 Newsreader 从 Google Fonts 加载。
 - **Goldmark**：`unsafe = true`（允许 Markdown 中的 HTML），`hardWraps = true`；`$`、`\(`、`$$`、`\[` 公式交给 KaTeX。
 - **Microblog 目录**：必须为 `YYYY/MM/DD-HHMMSS`；slug 和公开 URL 由目录生成。
@@ -72,9 +73,10 @@ OptMem 跨会话、上下文压缩、模型和供应商保留记忆。没有它�
 | 导航 | `data/nav.yaml` |
 | 标签颜色和名称 | `data/tags.yaml`、`layouts/partials/tag-label.html`、`layouts/partials/tag-color.html` |
 | 基础布局 | `layouts/_default/baseof.html` |
-| CSS bundle 入口 | `layouts/partials/head/core-assets.html`、`assets/css/base.css`、`layout.css`、`components.css`、`motion.css`、`search.css` |
-| 路由 CSS | `assets/css/home.css`、`post.css` + `syntax-highlight.css`、`about.css`、`microblog.css`、`dashboard.css` |
-| JS 入口 | `assets/js/main.js`、`home.js`、`about.js`、`dashboard.js`、`microblog.js`、`post-toc.js` |
+| 页面资源清单 | `layouts/partials/head/page-assets.html` |
+| 全局 CSS | `assets/css/fonts-ui.css`、`base.css`、`menu.css`、`low-resource.css`、`layout.css`、`components.css`、`motion.css`、`search.css` |
+| 路由 CSS | `assets/css/archive-sidebar.css`、`archive.css`、`home.css`、`post.css` + `syntax-highlight.css`、`about.css`、`microblog.css`、`dashboard.css` |
+| JS 入口 | `assets/js/main.js`、`home.js`、`home-field.js`、`about.js`、`archive.js`、`dashboard.js`、`microblog.js`、`post-toc.js` |
 | 归档悬停预览 | `layouts/partials/archive-preview-entry.html`、`assets/js/modules/archive-preview.js` |
 | 本地 Claude 配置（已忽略） | `.claude/settings.local.json` |
 

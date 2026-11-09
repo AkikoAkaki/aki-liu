@@ -1,4 +1,4 @@
-{{- $pages := where (where .Pages "Kind" "page") "Params.hidden" "!=" true -}}
+{{- $pages := where .Pages "Kind" "page" -}}
 {{- $initialTags := slice -}}
 {{- if and (eq .Kind "term") (eq .Type "tags") -}}
     {{- $pages = where .Site.RegularPages "Section" "in" .Site.MainSections -}}
@@ -32,7 +32,7 @@
     "regularPages" $pages
     "entries" $entries
     "years" (sort (uniq $years) "value" "desc")
-    "tagSlice" (partial "tag-sidebar-data.html" (dict "pages" $pages))
+    "tagSlice" (partial "tag-sidebar-data.html" $pages)
     "initialTags" $initialTags
     "entryCount" $count
     "yearCount" (len (uniq $visibleYears))

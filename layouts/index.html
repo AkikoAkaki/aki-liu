@@ -1,39 +1,15 @@
 {{ define "main" }}
 {{- $data := site.Data.homepage -}}
 {{- $heroHref := "Hero.svg" | relURL -}}
-{{- $textLabHref := "/textlab/" -}}
-{{- with .Site.GetPage "section" "textlab" -}}
-    {{- $textLabHref = .RelPermalink -}}
-{{- end -}}
-{{- $influencesHref := "/influences/" -}}
-{{- with .Site.GetPage "/influences" -}}
-    {{- $influencesHref = .RelPermalink -}}
-{{- end -}}
-{{- $cuteThingsHref := "/cute-things/" -}}
-{{- with .Site.GetPage "/cute-things/" -}}
-    {{- $cuteThingsHref = .RelPermalink -}}
-{{- end -}}
-{{- $internalHrefReplacements := dict
-    "href='/textlab/'" (printf "href='%s'" $textLabHref)
-    "href=\"/textlab/\"" (printf "href=\"%s\"" $textLabHref)
-    "href='/influences/'" (printf "href='%s'" $influencesHref)
-    "href=\"/influences/\"" (printf "href=\"%s\"" $influencesHref)
-    "href='/cute-things/'" (printf "href='%s'" $cuteThingsHref)
-    "href=\"/cute-things/\"" (printf "href=\"%s\"" $cuteThingsHref)
--}}
 
 <div class="home-container">
-    {{/* Intro section */}}
     <section class="intro">
         <div class="author-name-svg-wrapper">
             <span class="hero-wipe"><img src="{{ $heroHref }}" alt="{{ $data.intro.name }}" class="hero-svg" width="1880" height="1000"></span>
         </div>
         <div class="intro-copy reading-haze">
         {{- range $index, $para := $data.intro.bio }}
-        {{- $paragraph := $para -}}
-        {{- range $from, $to := $internalHrefReplacements -}}
-            {{- $paragraph = replace $paragraph $from $to -}}
-        {{- end -}}
+        {{- $paragraph := partial "localize-links.html" $para -}}
         <p class="bio-text">
             {{- if eq $index 0 }}<em>{{ $data.intro.tagline }}</em>. {{ end }}{{ $paragraph | safeHTML }}
         </p>
@@ -41,27 +17,12 @@
         </div>
     </section>
 
-    {{/* Work grid section */}}
     <section class="work-table-section" data-home-preview-scope>
         <div class="work-grid">
-            {{/* Left column: Experience, Project, About */}}
             <div class="work-column">
                 {{- range $cell := $data.grid.left }}
                 <div class="work-cell reading-haze">
-                    <h3 class="work-col-title">
-                        {{- if $cell.link -}}
-                        <a href="{{ $cell.link | relLangURL }}">{{ $cell.title }}</a>
-                        {{- else -}}
-                        {{- $cell.title -}}
-                        {{- end -}}
-                    </h3>
-                    {{- if $cell.sublinks }}
-                    <div class="work-sublinks">
-                        {{- range $cell.sublinks }}
-                        <a href="{{ .link | relLangURL }}" class="work-sublink">{{ .label }}</a>
-                        {{- end }}
-                    </div>
-                    {{- else }}
+                    <h3 class="work-col-title">{{ $cell.title }}</h3>
                     <div class="work-items">
                         {{- range $cell.items }}
                         {{- /* The hover preview box is at most 320 CSS px wide; 640px covers 2x screens. */}}
@@ -91,31 +52,23 @@
                         </div>
                         {{- end }}
                     </div>
-                    {{- end }}
                 </div>
                 {{- end }}
             </div>
 
-            {{/* Right column: Section navigation */}}
             <div class="work-column nav-panel-column">
                 <div class="nav-panel home-glass">
                     <div class="nav-panel-content">
                         <div class="nav-panel-header">Navigation</div>
                         <nav class="nav-panel-list">
-                            {{- range $data.grid.right }}
+                            {{- range where (where (partial "site-nav.html" .) "hidden" "!=" true) "id" "!=" "home" }}
                             <div class="nav-panel-group">
-                                {{- if .link -}}
-                                <a href="{{ .link | relLangURL }}" class="nav-panel-item">
-                                    <span class="nav-text">{{ .title }}</span>
+                                <a href="{{ .url }}" class="nav-panel-item">
+                                    <span class="nav-text">{{ .label }}</span>
                                 </a>
-                                {{- else -}}
-                                <span class="nav-panel-item" style="cursor: default;">
-                                    <span class="nav-text">{{ .title }}</span>
-                                </span>
-                                {{- end -}}
-                                {{- if .sublinks }}
+                                {{- with .sublinks }}
                                 <div class="nav-panel-sublinks">
-                                    {{- range .sublinks }}
+                                    {{- range . }}
                                     <a href="{{ .link | relLangURL }}" class="nav-panel-subitem">
                                         <span class="nav-text">{{ .label }}</span>
                                     </a>
@@ -131,7 +84,6 @@
         </div>
     </section>
 
-    {{/* Now section */}}
     <section class="now-section">
         <div class="now-cards-container">
             {{- range $index, $card := $data.now.cards }}
@@ -151,10 +103,7 @@
                         {{- end }}
                         <div class="nc-paragraphs">
                             {{- range .paragraphs }}
-                            {{- $paragraph := . -}}
-                            {{- range $from, $to := $internalHrefReplacements -}}
-                                {{- $paragraph = replace $paragraph $from $to -}}
-                            {{- end -}}
+                            {{- $paragraph := partial "localize-links.html" . -}}
                             <p>{{ $paragraph | safeHTML }}</p>
                             {{- end }}
                         </div>
@@ -182,6 +131,12 @@
     </section>
 
 </div>
+{{ end }}
 
-
+{{ define "body-end" }}
+{{- /* At body level so position: fixed stays relative to the viewport. */ -}}
+<div class="home-hover-preview" data-home-hover-preview aria-hidden="true">
+    <img class="home-hover-preview-img is-active" data-home-preview-layer="0" alt="">
+    <img class="home-hover-preview-img" data-home-preview-layer="1" alt="">
+</div>
 {{ end }}

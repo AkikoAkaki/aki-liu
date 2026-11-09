@@ -1,0 +1,34 @@
+{{- $nav := partial "site-nav.html" . -}}
+<div class="menu-bar" id="menu-bar">
+    <button class="menu-trigger" id="menu-trigger" aria-expanded="false" aria-controls="menu-panel">
+        <span class="menu-trigger-label">
+            <span class="menu-trigger-title menu-trigger-title--menu">Menu</span>
+            <span class="menu-trigger-title menu-trigger-title--search" aria-hidden="true">Search</span>
+        </span>
+        <span class="menu-trigger-icon" aria-hidden="true">
+            <svg class="menu-icon-open" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 9H19" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
+                <path d="M5 15H19" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
+            </svg>
+            <svg class="menu-icon-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17 7L7 17" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
+                <path d="M7 7L17 17" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
+            </svg>
+        </span>
+    </button>
+    <nav class="menu-panel" id="menu-panel" aria-hidden="true">
+        {{- /* --menu-i / --menu-count drive the open and close stagger in menu CSS; Search is the last item. */ -}}
+        {{- $visible := where $nav "hidden" "!=" true -}}
+        <div class="menu-panel-inner" style="--menu-count: {{ add (len $visible) 1 }}">
+            {{- range $menuIndex, $item := $visible }}
+            <a href="{{ .url }}" class="menu-link{{ if cond (eq .id "home") $.IsHome (or (eq $.Section .id) (eq $.Type .id)) }} is-active{{ end }}" style="--menu-i: {{ $menuIndex }}"><span class="menu-link-content"><span class="menu-link-label">{{ .label }}</span></span></a>
+            {{- end }}
+            <a href="#search" class="menu-link menu-link--search" style="--menu-i: {{ len $visible }}" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
+        </div>
+    </nav>
+    <div class="menu-search-panel" id="menu-search-panel" aria-hidden="true"
+         data-index-url="{{ "search-index.json" | relLangURL }}"
+         data-tags-url="{{ "tags/" | relLangURL }}"
+         data-nav="{{ $nav | jsonify }}"
+         data-language-url="{{ partial "language-url.html" . }}"></div>
+</div>

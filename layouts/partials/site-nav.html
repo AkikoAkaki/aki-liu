@@ -1,0 +1,8 @@
+{{- /* data/nav.yaml with each entry's resolved URL; feeds the menu and the search palette. */ -}}
+{{- $nav := slice -}}
+{{- range site.Data.nav -}}
+    {{- $url := printf "%s/" .id | relLangURL -}}
+    {{- with site.GetPage (cond (eq .id "home") "/" (printf "/%s" .id)) -}}{{- $url = .RelPermalink -}}{{- end -}}
+    {{- $nav = $nav | append (merge . (dict "url" $url)) -}}
+{{- end -}}
+{{- return $nav -}}

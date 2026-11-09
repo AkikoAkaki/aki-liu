@@ -1,4 +1,4 @@
-import { isResourceConstrained } from './resource-mode.js';
+import { isResourceConstrained, isSlowNetwork } from './resource-mode.js';
 
 export function initPrefetcher() {
   const prefetchedUrls = new Set();
@@ -7,10 +7,7 @@ export function initPrefetcher() {
     HTMLScriptElement.supports('speculationrules');
 
   function allowed() {
-    const connection = navigator.connection;
-    return !document.hidden && !isResourceConstrained() &&
-      !/^(slow-2g|2g|3g)$/.test(connection?.effectiveType) &&
-      prefetchedUrls.size < 3;
+    return !document.hidden && !isResourceConstrained() && !isSlowNetwork() && prefetchedUrls.size < 3;
   }
 
   function targetUrl(link) {
@@ -18,7 +15,6 @@ export function initPrefetcher() {
         (link.target && link.target !== '_self') || link.dataset.noPrefetch !== undefined) return;
     try {
       const url = new URL(link.href, location.href);
-      // Only static page URLs: no downloads, query actions, or same-page anchors.
       if (!/^https?:$/.test(url.protocol) || url.origin !== location.origin ||
           url.search || url.pathname === location.pathname ||
           (!url.pathname.endsWith('/') && !url.pathname.endsWith('.html'))) return;

@@ -1,11 +1,10 @@
-import { media, QUERIES } from "./modules/media.js";
+import { QUERIES } from "./modules/media.js";
 import { initAboutGallery } from "./modules/about-gallery.js";
 const pinboardSrc = document.currentScript?.dataset.pinboardSrc;
 
 function initPinboardLoader() {
   const canvas = document.getElementById("about-pinboard-canvas");
-  if (!canvas || !pinboardSrc) return;
-  const desktop = media(QUERIES.aboutDesktop);
+  const desktop = matchMedia(QUERIES.aboutDesktop);
   let pending = false;
   let initialized = false;
   const observer = new IntersectionObserver(async entries => {
@@ -27,7 +26,7 @@ function initPinboardLoader() {
 }
 
 function initScrollReveal() {
-  const motion = media(QUERIES.reducedMotion);
+  const motion = matchMedia(QUERIES.reducedMotion);
   const pending = new Set();
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(({ target, isIntersecting }) => {
@@ -40,7 +39,6 @@ function initScrollReveal() {
 
   if (!motion.matches) {
     document.querySelectorAll(".af-enter").forEach((target) => {
-      // Never hide something the visitor can already see.
       if (target.getBoundingClientRect().top < innerHeight) return;
       target.classList.add("is-enter-pending");
       pending.add(target);

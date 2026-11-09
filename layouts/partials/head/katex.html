@@ -1,5 +1,4 @@
-{{- $pageHasMath := partialCached "page-has-math.html" . .RelPermalink -}}
-{{- $hasMath := $pageHasMath -}}
+{{- $hasMath := partialCached "page-has-math.html" . .RelPermalink -}}
 {{- if and (eq .Section "microblog") .IsSection -}}
     {{- range partial "microblog-entries.html" . -}}
         {{- if partialCached "page-has-math.html" . .RelPermalink -}}
@@ -11,8 +10,8 @@
 {{- if $hasMath -}}
     {{- $katexBase := partialCached "katex-base.html" "katex-base" -}}
     <link rel="stylesheet" href="{{ $katexBase }}katex.min.css">
-    {{- if and $pageHasMath (partial "html-needs-math-runtime.html" .Content) -}}
-        {{- $compat := resources.Get "js/math-compat.js" | js.Build (dict "targetPath" "js/math-compat.js" "minify" true) | fingerprint -}}
+    {{- if partial "html-needs-math-runtime.html" (dict "page" . "html" .Content) -}}
+        {{- $compat := partial "head/js-bundle.html" (dict "src" "js/math-compat.js" "format" "iife") -}}
         <script defer src="{{ $compat.RelPermalink }}" integrity="{{ $compat.Data.Integrity }}" data-katex-base="{{ $katexBase }}"></script>
     {{- end -}}
 {{- end -}}

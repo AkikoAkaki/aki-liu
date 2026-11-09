@@ -1,0 +1,3 @@
+{{- /* Builds one JS entry (dict "src", "format"); the output keeps the entry's file name. */ -}}
+{{- $options := dict "targetPath" (printf "js/%s" (path.Base .src)) "minify" true "format" .format -}}
+{{- return (resources.Get .src | js.Build $options | fingerprint) -}}

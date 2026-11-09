@@ -1,0 +1,2 @@
+{{- /* homepage.yaml holds root-relative links in rich text; point them at this language. */ -}}
+{{- return (replaceRE `href=(['"])/` (printf "href=$1%s" ("/" | relLangURL)) .) -}}

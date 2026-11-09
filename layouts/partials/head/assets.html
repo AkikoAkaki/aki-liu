@@ -1,14 +1,4 @@
-{{- $coreAssetsKey := printf "%s|%s|%s|%s|%t|%t" .Language.Lang .Kind .Section .Type .IsHome .IsPage -}}
-{{- partialCached "head/core-assets.html" . $coreAssetsKey -}}
+{{- $assets := partial "head/page-assets.html" . -}}
+{{- partialCached "head/core-assets.html" $assets (jsonify $assets) -}}
 {{- partial "head/cjk-fonts.html" . -}}
-
-{{- /* KaTeX (per-page gating is handled inside the partial) */ -}}
-{{- $siteKaTeX := or .Site.Params.enablekatex .Site.Params.enableKaTeX -}}
-{{- if $siteKaTeX -}}
-    {{- partial "head/katex.html" . -}}
-{{- end -}}
-
-{{- if and .IsPage (gt (len (findRE "<li" .TableOfContents)) 0) -}}
-    {{- $tocJS := resources.Get "js/post-toc.js" | js.Build (dict "targetPath" "js/post-toc.js") | resources.Minify | fingerprint -}}
-    <script defer src="{{ $tocJS.RelPermalink }}" integrity="{{ $tocJS.Data.Integrity }}"></script>
-{{- end -}}
+{{- partial "head/katex.html" . -}}

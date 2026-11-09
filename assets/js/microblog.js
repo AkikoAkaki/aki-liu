@@ -1,20 +1,18 @@
-import { escapeHtml } from "./modules/dom-utils.js";
-import { isResourceConstrained } from "./modules/resource-mode.js";
+import { escapeHtml } from "./modules/escape-html.js";
+import { createJsonCache } from "./modules/fetch-cache.js";
 import { loadKatexRuntime, renderMath } from "./modules/katex.js";
-import { matches, QUERIES } from "./modules/media.js";
+import { QUERIES } from "./modules/media.js";
 
-const root = document.querySelector('.microblog-page');
-if (root) initMicroblog(root);
+initMicroblog(document.querySelector('.microblog-page'));
 
 function initMicroblog(root) {
     const deck = root.querySelector('.microblog-deck');
-    const PAGE_SIZE = 30;
     const columns = new Map();
     const images = new WeakSet();
     const mathCards = new WeakSet();
     let sequence = 0;
     let feed;
-    const chunks = new Map();
+    const loadChunk = createJsonCache(8, 2);
 
     const observer = new IntersectionObserver(entries => {
         for (const entry of entries) {
@@ -47,43 +45,6 @@ function initMicroblog(root) {
         }
     }
 
-    function readChunk(entries) {
-        if (!Array.isArray(entries)) throw new Error('Invalid microblog entries');
-        const seen = new Set();
-        for (const entry of entries) {
-            if (!entry || typeof entry.id !== 'string' || typeof entry.html !== 'string'
-                || typeof entry.year !== 'string' || !Array.isArray(entry.tags)
-                || !entry.tags.every(tag => typeof tag === 'string') || seen.has(entry.id)) {
-                throw new Error('Invalid microblog entry');
-            }
-            seen.add(entry.id);
-        }
-        return entries;
-    }
-
-    function loadChunk(url) {
-        if (!chunks.has(url)) {
-            const request = fetch(url, { credentials: 'same-origin' }).then(response => {
-                if (!response.ok) throw new Error(`Microblog page request failed: ${response.status}`);
-                return response.json();
-            }).then(readChunk).catch(error => {
-                if (chunks.get(url) === request) chunks.delete(url);
-                throw error;
-            });
-            chunks.set(url, request);
-        } else {
-            const cached = chunks.get(url);
-            chunks.delete(url);
-            chunks.set(url, cached);
-        }
-        const request = chunks.get(url);
-        const limit = isResourceConstrained() ? 2 : 8;
-        while (chunks.size > limit) {
-            chunks.delete(chunks.keys().next().value);
-        }
-        return request;
-    }
-
     function loadFeed() {
         return feed ??= JSON.parse(root.querySelector('[data-mb-feed-index]').textContent);
     }
@@ -105,10 +66,9 @@ function initMicroblog(root) {
         updateControls(state, state.next ? '' : 'Loading entries…');
         try {
             const data = loadFeed();
-            if (columns.get(state.id) !== state) return;
             const column = data.columns[state.type === 'all' ? '__all__' : state.id];
             if (!column) throw new Error('Unknown microblog column');
-            const url = column.pages[Math.floor(state.next / PAGE_SIZE)];
+            const url = column.pages[Math.floor(state.next / data.pageSize)];
             const entries = url ? await loadChunk(url) : [];
             if (columns.get(state.id) !== state) return;
             const fragment = document.createDocumentFragment();
@@ -137,7 +97,7 @@ function initMicroblog(root) {
     function animate(state, frames, finish = () => {}) {
         state.animation?.cancel();
         state.animation = null;
-        if (matches(QUERIES.reducedMotion)) {
+        if (matchMedia(QUERIES.reducedMotion).matches) {
             finish();
             return;
         }
@@ -214,7 +174,7 @@ function initMicroblog(root) {
     function labelFor(type, key) {
         if (type === 'year') return key;
         const item = document.querySelector(`.archive-tag-item[data-tag="${CSS.escape(key)}"] .tag-name`);
-        return item?.textContent.trim() || feed?.tags[key] || key;
+        return item?.textContent.trim() || loadFeed().tags[key] || key;
     }
 
     function openColumn(type, key, push = true) {

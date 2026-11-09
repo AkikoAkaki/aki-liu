@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const H = JSON.parse(document.getElementById("dashboard-history").textContent);
-  const recent = H.slice(-12);
+  const historyData = document.getElementById("dashboard-history");
+  const H = JSON.parse(historyData.textContent);
+  const recent = H.slice(-Number(historyData.dataset.recent));
   const formatStamp = stamp => stamp.replace(/^(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})$/, '$1-$2-$3 $4:$5:$6');
   const timelineColors = {
     good: 'var(--dash-good)',
@@ -25,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const sparkData = recent.map(d => d.buildMs);
   (function drawSparkline() {
     const svg = document.getElementById('sparkline-build');
-    if (!svg) return;
     const W = 130, H2 = 42, pad = 2;
     const min = Math.min(...sparkData), max = Math.max(...sparkData);
     const span = max - min || 1;
@@ -74,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   (function drawBars() {
     const container = document.getElementById('bars-chart');
-    if (!container) return;
     const vols = recent.map(d => d.zhPages + d.enPages);
     const min = Math.min(...vols), max = Math.max(...vols);
     const span = max - min || 1;
@@ -114,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function drawChart(metric) {
     const svg = document.getElementById('trend-chart');
-    if (!svg) return;
     if (chartInteractionCleanup) {
       chartInteractionCleanup();
       chartInteractionCleanup = null;
@@ -144,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let html = `
       <defs>
-        <!-- Build Duration Gradient -->
         <linearGradient id="trend-line-grad-build" x1="0" y1="1" x2="0" y2="0">
           <stop offset="0%" stop-color="var(--dash-good)" />
           <stop offset="54%" stop-color="var(--dash-accent-2)" />
@@ -158,7 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
           <stop offset="100%" stop-color="var(--dash-bad)" stop-opacity="0.2" />
         </linearGradient>
 
-        <!-- Page Volume Gradient -->
         <linearGradient id="trend-line-grad-pages" x1="0" y1="1" x2="0" y2="0">
           <stop offset="0%" stop-color="var(--dash-accent)" />
           <stop offset="100%" stop-color="var(--dash-accent)" />
@@ -212,7 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const crect = document.getElementById('cursor-rect');
       const ctext = document.getElementById('cursor-text');
       const ctime = document.getElementById('cursor-time');
-      if (!cursor) return;
       cursor.classList.add('active');
       line.setAttribute('x1', cx.toFixed(1)); line.setAttribute('x2', cx.toFixed(1));
       dot.setAttribute('cx', cx.toFixed(1)); dot.setAttribute('cy', cy.toFixed(1));
@@ -285,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         animFrameId = null;
       }
       const cursor = document.getElementById('chart-cursor');
-      if (cursor) cursor.classList.remove('active');
+      cursor.classList.remove('active');
     };
 
     svg.addEventListener('mousemove', onMouseMove);

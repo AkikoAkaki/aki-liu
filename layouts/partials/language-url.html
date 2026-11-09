@@ -1,0 +1,16 @@
+{{- /* This page's translation, else the other language's section or home. */ -}}
+{{- $otherLang := cond (eq .Language.Lang "en") "zh" "en" -}}
+{{- $url := "" -}}
+{{- range .Translations -}}
+    {{- if eq .Language.Lang $otherLang -}}{{- $url = .RelPermalink -}}{{- end -}}
+{{- end -}}
+{{- if not $url -}}
+    {{- $section := .Section -}}
+    {{- range .Sites -}}
+        {{- if eq .Language.Lang $otherLang -}}
+            {{- $url = .Home.RelPermalink -}}
+            {{- with .GetPage "section" $section -}}{{- $url = .RelPermalink -}}{{- end -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- return $url -}}

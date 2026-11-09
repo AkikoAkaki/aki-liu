@@ -1,6 +1,6 @@
 export function initLocalVideos() {
   const videos = document.querySelectorAll('video[data-lazy-video]');
-  if (!videos.length || navigator.connection?.saveData || typeof IntersectionObserver !== "function") return;
+  if (!videos.length || navigator.connection?.saveData) return;
   const observer = new IntersectionObserver(entries => {
     for (const { target: video, isIntersecting } of entries) {
       if (!isIntersecting) continue;

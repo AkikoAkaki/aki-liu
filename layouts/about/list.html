@@ -1,10 +1,7 @@
-{{ define "sidebar-left" }}{{ end }}
-
 {{ define "main" }}
 <div class="af-wrap">
   <div class="af-page">
 
-    {{/* ===== Hero ===== */}}
     <div class="af-display-row">
       <h1>ABOUT<br>ME,</h1>
       <h1 class="af-h-r">AKI&nbsp;(Fengkai)<br>LIU.</h1>
@@ -12,22 +9,7 @@
 
     <div class="af-center-band">
       <div></div>
-      {{ $valid_images := slice }}
-      {{ range site.Data.about_photos }}
-        {{ $entry := . }}
-        {{ with resources.Get (printf "images/about/%s" .file) }}
-          {{ $processed := . }}
-          {{ if gt .Width 800 }}
-            {{ $processed = .Resize "800x webp q82" }}
-          {{ else }}
-            {{ $processed = .Process "webp q82" }}
-          {{ end }}
-          {{ $alt := strings.TrimSuffix (path.Ext $entry.file) $entry.file }}
-          {{ $valid_images = $valid_images | append (dict "name" $entry.file "alt" $alt "title" $entry.title "image" $processed) }}
-        {{ else }}
-          {{ errorf "About photo not found: %s" $entry.file }}
-        {{ end }}
-      {{ end }}
+      {{ $valid_images := partial "about-photos.html" . }}
       {{ $img_index := index (seq 0 (sub (len $valid_images) 1) | shuffle) 0 }}
       {{ $random_name := index $valid_images $img_index }}
       {{ $random_style := printf "aspect-ratio: %d/%d;" $random_name.image.Width $random_name.image.Height }}
@@ -71,7 +53,7 @@
             This fall I am taking ML systems for efficient AI, numerical analysis, linear optimization, microeconomic theory, and writing for computer science.
           </p>
           <p>
-            I am doing ML systems research in Prof. Sreepathi Pai's group on GPU kernel autotuning, maintaining <a href="/notes/quantization-tax/">LLM Quant Profiler</a>, and continuing to reshape this site.
+            I am doing ML systems research in Prof. Sreepathi Pai's group on GPU kernel autotuning, maintaining <a href="{{ "notes/quantization-tax/" | relLangURL }}">LLM Quant Profiler</a>, and continuing to reshape this site.
           </p>
           <p>
             My technical attention is on AI infrastructure, ML systems, efficient inference, quantization, and the less visible systems problems behind modern AI.
@@ -151,22 +133,14 @@
             I have also been paying attention to visual computing, spatial computing, edge/cloud collaboration, heterogeneous computing, platforms, clothing, scent, music, and everyday interfaces.
           </p>
           <p>
-            Some of this turns into fragments for <a href="/textlab/">Text Lab</a>; some of it belongs more to a loose map of <a href="/influences/">influences</a>.
+            Some of this turns into fragments for <a href="{{ "textlab/" | relLangURL }}">Text Lab</a>; some of it belongs more to a loose map of <a href="{{ "influences/" | relLangURL }}">influences</a>.
           </p>
         </div>
       </div>
     </div>
 
-
-
-    {{/* ===== Divider ===== */}}
-
-
-    {{/* ===== Pinboard ===== */}}
     <section class="af-pinboard-section">
       <h2 class="af-pinboard-title af-enter">It's hard for me to<br>introduce myself.</h2>
-
-
 
       <div class="af-pinboard-columns">
         <div class="af-pin-left af-enter">
@@ -192,8 +166,6 @@
           <p class="af-pin-body">
             This site is where I organize these things. It is not just a portfolio, nor is it an over-packaged personal brand. It is more like a continuously generating space, used to record how I understand technology, culture, systems, and myself.
           </p>
-
-
         </div>
 
         <div class="af-pinboard-canvas" id="about-pinboard-canvas">

@@ -1,9 +1,12 @@
-{{- /* Returns the WebP version of a post image resource, capped at 1400px
-       wide (the post column is at most 680 CSS px). SVG and GIF pass through. */ -}}
-{{- $resource := . -}}
-{{- $subType := lower $resource.MediaType.SubType -}}
-{{- if and (ne $subType "svg") (ne $subType "gif") -}}
-  {{- $spec := cond (gt $resource.Width 1400) "resize 1400x webp q82" "webp q82" -}}
-  {{- $resource = $resource.Process $spec -}}
+{{- /* Article image: the post column is at most 680 CSS px wide. */ -}}
+{{- $image := partial "responsive-image.html" (dict "resource" . "cap" 1400) -}}
+{{- $sizes := "" -}}
+{{- if $image.srcset -}}
+    {{- $columnWidth := math.Min $image.width 680 | int -}}
+    {{- $tabletWidth := math.Min $image.width 650 | int -}}
+    {{- /* layout.css changes padding at 480/768px and uses a 650px
+           center column. post.css keeps body text in the 650px
+           left column above 1200px. */ -}}
+    {{- $sizes = printf "(max-width: 480px) min(%dpx, calc(100vw - 2rem)), (max-width: 768px) min(%dpx, calc(100vw - 2.5rem)), (max-width: 900px) %dpx, %dpx" $columnWidth $columnWidth $columnWidth $tabletWidth -}}
 {{- end -}}
-{{- return $resource -}}
+{{- return (merge $image (dict "sizes" $sizes)) -}}

@@ -1,98 +1,30 @@
-{{- /* Static head assets cached across pages in one build. */ -}}
-{{- /* Inline theme bootstrap: must run before first paint to avoid a
-       light-to-dark snap when the visitor's stored preference is dark. */ -}}
-{{- /* CSS reads only html[data-theme]: the stored choice, else the system
+{{- /* Renders the manifest from head/page-assets.html and reads nothing else,
+       so one render serves every page with the same manifest. */ -}}
+{{- /* Theme bootstrap runs before first paint to avoid a light-to-dark snap.
+       CSS reads only html[data-theme]: the stored choice, else the system
        preference (kept in sync until the visitor picks a theme). */ -}}
-<script>(function(){var d=document.documentElement,m=window.matchMedia('(prefers-color-scheme: dark)');function apply(){var t=null;try{t=localStorage.getItem('theme');}catch(_){}d.setAttribute('data-theme',t==='dark'||t==='light'?t:(m.matches?'dark':'light'));}apply();if(m.addEventListener){m.addEventListener('change',apply);}}())</script>
-{{- $isArchive := partial "is-archive.html" . -}}
-{{- if $isArchive -}}<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>{{- end -}}
-<!-- Preload core brand font to avoid FOUT/FOIT -->
-<link rel="preload" href="/fonts/switzer/Switzer-Regular.woff2?v=9f9ee2e506f332e5" as="font" type="font/woff2" crossorigin>
-{{- if .IsHome -}}
-<link rel="preload" href="/fonts/switzer/Switzer-Medium.woff2?v=fd2e1c41034752b4" as="font" type="font/woff2" crossorigin>
+<script>(function(){var d=document.documentElement,m=window.matchMedia('(prefers-color-scheme: dark)');function apply(){var t=null;try{t=localStorage.getItem('theme');}catch(_){}d.setAttribute('data-theme',t==='dark'||t==='light'?t:(m.matches?'dark':'light'));}apply();m.addEventListener('change',apply);}())</script>
+{{- if .archive -}}<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>{{- end -}}
+{{- range .preloads -}}
+<link rel="preload" href="{{ . }}" as="font" type="font/woff2" crossorigin>
 {{- end -}}
-{{- if and (not .IsHome) (not $isArchive) -}}
-    {{- $latinFonts := resources.Get "css/fonts-latin.css" | resources.Minify | fingerprint -}}
-    <link rel="stylesheet" href="{{ $latinFonts.RelPermalink }}" integrity="{{ $latinFonts.Data.Integrity }}">
+{{- range .css -}}
+    {{- $files := slice -}}
+    {{- range .files -}}{{- $files = $files | append (resources.Get .) -}}{{- end -}}
+    {{- $style := $files | resources.Concat .name | resources.Minify | fingerprint -}}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
 {{- end -}}
-
-{{- /* CSS pipeline: global base bundle + route-level styles */ -}}
-{{- $base := resources.Get "css/base.css" -}}
-{{- $layout := resources.Get "css/layout.css" -}}
-{{- $components := resources.Get "css/components.css" -}}
-{{- $motion := resources.Get "css/motion.css" -}}
-{{- $search := resources.Get "css/search.css" -}}
-{{- $style := slice $base $layout $components $motion $search | resources.Concat "css/bundle.css" | resources.Minify | fingerprint -}}
-<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
-
-{{- if $isArchive -}}
-    {{- $archiveStyle := resources.Get "css/archive.css" | resources.Minify | fingerprint -}}
-    <link rel="stylesheet" href="{{ $archiveStyle.RelPermalink }}" integrity="{{ $archiveStyle.Data.Integrity }}">
-    <link rel="preload" href="/fonts/jetbrainsmono/v24/latin-normal.woff2?v=6c25ebda3407a4f4" as="font" type="font/woff2" crossorigin>
-    {{- if eq .Section "textlab" -}}
-    <link rel="preload" href="https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438weI_wC-ZF.woff2" as="font" type="font/woff2" crossorigin>
+{{- if .archive -}}
+<script>if(new URLSearchParams(location.search).has('tags')||new URLSearchParams(location.search).has('years'))document.documentElement.setAttribute('data-archive-restoring','');</script>
+{{- end -}}
+{{- range .js -}}
+    {{- $script := partial "head/js-bundle.html" (dict "src" .src "format" "iife") -}}
+    {{- $data := "" -}}
+    {{- range $name, $src := .workers -}}
+        {{- $data = printf `%s data-%s="%s"` $data $name (partial "head/js-bundle.html" (dict "src" $src "format" "iife")).RelPermalink -}}
     {{- end -}}
-    <script>if(new URLSearchParams(location.search).has('tags')||new URLSearchParams(location.search).has('years'))document.documentElement.setAttribute('data-archive-restoring','');</script>
-    {{- $archiveJS := resources.Get "js/archive.js" | js.Build (dict "targetPath" "js/archive.js") | resources.Minify | fingerprint -}}
-    <script defer src="{{ $archiveJS.RelPermalink }}" integrity="{{ $archiveJS.Data.Integrity }}"></script>
-{{- end -}}
-
-{{- if eq .Section "about" -}}
-    {{- $aboutStyle := resources.Get "css/about.css" | resources.Minify | fingerprint -}}
-    <link rel="stylesheet" href="{{ $aboutStyle.RelPermalink }}" integrity="{{ $aboutStyle.Data.Integrity }}">
-{{- end -}}
-
-{{- if .IsHome -}}
-    {{- $homeStyle := slice (resources.Get "css/fonts-latin.css") (resources.Get "css/home.css") | resources.Concat "css/home.css" | resources.Minify | fingerprint -}}
-    <link rel="stylesheet" href="{{ $homeStyle.RelPermalink }}" integrity="{{ $homeStyle.Data.Integrity }}">
-{{- end -}}
-
-{{- if .IsPage -}}
-    {{- $post := resources.Get "css/post.css" -}}
-    {{- $syntax := resources.Get "css/syntax-highlight.css" -}}
-    {{- $pageStyle := slice $post $syntax | resources.Concat "css/page.css" | resources.Minify | fingerprint -}}
-    <link rel="stylesheet" href="{{ $pageStyle.RelPermalink }}" integrity="{{ $pageStyle.Data.Integrity }}">
-{{- end -}}
-
-{{- if eq .Section "microblog" -}}
-    {{- $microblog := resources.Get "css/microblog.css" -}}
-    {{- $microblogStyle := $microblog | resources.Minify | fingerprint -}}
-    <link rel="stylesheet" href="{{ $microblogStyle.RelPermalink }}" integrity="{{ $microblogStyle.Data.Integrity }}">
-{{- end -}}
-
-{{- if or (eq .Section "dashboard") (eq .Type "dashboard") -}}
-    {{- $dashboard := resources.Get "css/dashboard.css" -}}
-    {{- $dashboardStyle := $dashboard | resources.Minify | fingerprint -}}
-    <link rel="stylesheet" href="{{ $dashboardStyle.RelPermalink }}" integrity="{{ $dashboardStyle.Data.Integrity }}">
-{{- end -}}
-
-{{- /* JS entrypoints use ES module imports; keep them behind Hugo js.Build. */ -}}
-{{- $mainJS := resources.Get "js/main.js" | js.Build (dict "minify" true "targetPath" "js/main.js") | resources.Minify | fingerprint -}}
-{{- $searchJS := resources.Get "js/modules/search-palette.js" | js.Build (dict "format" "esm" "minify" true "targetPath" "js/search-palette.js") | fingerprint -}}
-<script defer src="{{ $mainJS.RelPermalink }}" integrity="{{ $mainJS.Data.Integrity }}" data-search-src="{{ $searchJS.RelPermalink }}"></script>
-
-{{- if and (eq .Section "microblog") (eq .Kind "section") -}}
-    {{- $microblogJS := resources.Get "js/microblog.js" | js.Build (dict "targetPath" "js/microblog.js") | resources.Minify | fingerprint -}}
-    <script defer src="{{ $microblogJS.RelPermalink }}" integrity="{{ $microblogJS.Data.Integrity }}"></script>
-{{- end -}}
-
-{{- if and (eq .Section "about") (eq .Kind "section") -}}
-    {{- $aboutJS := resources.Get "js/about.js" | js.Build (dict "minify" true "targetPath" "js/about.js") | resources.Minify | fingerprint -}}
-    {{- $pinboardJS := resources.Get "js/modules/about-pinboard.js" | js.Build (dict "format" "esm" "minify" true "targetPath" "js/about-pinboard.js") | fingerprint -}}
-    <script defer src="{{ $aboutJS.RelPermalink }}" integrity="{{ $aboutJS.Data.Integrity }}" data-pinboard-src="{{ $pinboardJS.RelPermalink }}"></script>
-{{- end -}}
-
-{{- if .IsHome -}}
-    {{- $homeJS := resources.Get "js/home.js" | js.Build (dict "minify" true "targetPath" "js/home.js") | resources.Minify | fingerprint -}}
-    {{- /* The field renderer runs separately from the page's UI thread. */ -}}
-    {{- $homeFieldJS := resources.Get "js/home-field.js" | js.Build (dict "minify" true "targetPath" "js/home-field.js") | resources.Minify | fingerprint -}}
-    {{- $homeFieldWorker := resources.Get "js/home-field-worker.js" | js.Build (dict "minify" true "targetPath" "js/home-field-worker.js") | resources.Minify | fingerprint -}}
-    {{- $homeFieldFallback := resources.Get "js/modules/home-field-renderer.js" | js.Build (dict "format" "esm" "minify" true "targetPath" "js/home-field-fallback.js") | fingerprint -}}
-    <script defer src="{{ $homeJS.RelPermalink }}" integrity="{{ $homeJS.Data.Integrity }}"></script>
-    <script defer src="{{ $homeFieldJS.RelPermalink }}" integrity="{{ $homeFieldJS.Data.Integrity }}" data-worker-src="{{ $homeFieldWorker.RelPermalink }}" data-fallback-src="{{ $homeFieldFallback.RelPermalink }}"></script>
-{{- end -}}
-
-{{- if or (eq .Section "dashboard") (eq .Type "dashboard") -}}
-    {{- $dashboardJS := resources.Get "js/dashboard.js" | js.Build (dict "targetPath" "js/dashboard.js") | resources.Minify | fingerprint -}}
-    <script defer src="{{ $dashboardJS.RelPermalink }}" integrity="{{ $dashboardJS.Data.Integrity }}"></script>
+    {{- range $name, $src := .chunks -}}
+        {{- $data = printf `%s data-%s="%s"` $data $name (partial "head/js-bundle.html" (dict "src" $src "format" "esm")).RelPermalink -}}
+    {{- end -}}
+    <script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"{{ $data | safeHTMLAttr }}></script>
 {{- end -}}

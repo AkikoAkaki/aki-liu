@@ -1,13 +1,9 @@
-# download-katex.ps1
-# Automates the self-hosting of KaTeX assets to achieve fully localized, CDN-free math rendering.
-
 # Versioned directory: /lib/ is cached as immutable (vercel.json). After an
 # upgrade, update layouts/partials/katex-base.html to the new directory.
 $katexVersion = "0.16.21"
 $baseDir = "static/lib/katex-$katexVersion"
 $fontsDir = "$baseDir/fonts"
 
-# 1. Create directory paths
 if (!(Test-Path $fontsDir)) {
     New-Item -ItemType Directory -Force -Path $fontsDir | Out-Null
     Write-Host "Created local KaTeX directories." -ForegroundColor Green
@@ -15,14 +11,12 @@ if (!(Test-Path $fontsDir)) {
 
 $cdnBase = "https://cdn.jsdelivr.net/npm/katex@$katexVersion/dist"
 
-# 2. Files to download
 $coreFiles = @(
     @{ Url = "$cdnBase/katex.min.css"; Out = "$baseDir/katex.min.css" }
     @{ Url = "$cdnBase/katex.min.js"; Out = "$baseDir/katex.min.js" }
     @{ Url = "$cdnBase/contrib/auto-render.min.js"; Out = "$baseDir/auto-render.min.js" }
 )
 
-# 3. Brotli-compressed WOFF2 Fonts list
 $fonts = @(
     "KaTeX_AMS-Regular.woff2",
     "KaTeX_Caligraphic-Bold.woff2",
@@ -48,7 +42,6 @@ $fonts = @(
 
 Write-Host "Downloading KaTeX stylesheet..." -ForegroundColor Cyan
 
-# Download CSS
 foreach ($file in $coreFiles) {
     Write-Host "Downloading $($file.Url) -> $($file.Out)" -ForegroundColor Gray
     try {
@@ -60,7 +53,6 @@ foreach ($file in $coreFiles) {
 
 Write-Host "Downloading Brotli WOFF2 mathematical fonts..." -ForegroundColor Cyan
 
-# Download Fonts
 foreach ($font in $fonts) {
     $fontUrl = "$cdnBase/fonts/$font"
     $fontOut = "$fontsDir/$font"

@@ -5,7 +5,7 @@
 
 <article class="microblog-single">
     <div class="microblog-single-back">
-        <a class="back-link" href="{{ with $section }}{{ .RelPermalink }}{{ else }}/microblog/{{ end }}">
+        <a class="back-link" href="{{ $section.RelPermalink }}">
             {{ partialCached "icons/back-arrow.html" "back-arrow" }}
             <span>microblog</span>
         </a>
@@ -28,7 +28,7 @@
     {{- if .Params.tags }}
     <div class="microblog-single-tags">
         {{- range .Params.tags }}
-        <a class="mb-tag-chip" href="{{ with $section }}{{ .RelPermalink }}{{ else }}/microblog/{{ end }}?cols={{ . | urlize }}">#{{ . }}</a>
+        <a class="mb-tag-chip" data-magnetic href="{{ $section.RelPermalink }}?cols={{ . | urlize }}">#{{ . }}</a>
         {{- end }}
     </div>
     {{- end }}

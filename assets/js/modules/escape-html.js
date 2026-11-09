@@ -11,7 +11,3 @@ export function escapeHtml(value) {
       })[char],
   );
 }
-
-export function tagToSlug(tag) {
-  return String(tag).toLowerCase().replace(/\s+/g, "-");
-}

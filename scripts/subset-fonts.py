@@ -16,8 +16,6 @@ for folder in ('content', 'data', 'assets', 'layouts'):
  for source in (root/folder).rglob('*'):
   if source.is_file() and source.suffix.lower() in ('.md','.html','.yaml','.yml','.toml','.json','.css','.js','.xml'):
    core.update(map(ord, source.read_text(encoding='utf-8',errors='replace')))
-# Keep other original cmap characters in the on-demand face.
-# All remaining characters are preserved in ext.
 def ranges(values):
  vals=sorted(values); groups=[]
  for v in vals:
@@ -34,7 +32,7 @@ def sync_css(metadata):
    url='/'+target.relative_to('static').as_posix()
    mapping[url]=value
    versions[url]=hashlib.sha256((root/target).read_bytes()).hexdigest()[:16]
- for name in ('base.css','fonts-latin.css','archive.css'):
+ for name in ('fonts-ui.css','fonts-latin.css','archive.css'):
   path=root/'assets/css'/name
   original=path.read_text(encoding='utf-8')
   def update(match):
@@ -55,7 +53,7 @@ def sync_css(metadata):
   if updated!=original:
    path.write_text(updated,encoding='utf-8',newline='\n')
  # Preload and CSS must use identical URLs to reuse the same font response.
- path=root/'layouts/partials/head/core-assets.html'
+ path=root/'layouts/partials/head/page-assets.html'
  original=path.read_text(encoding='utf-8')
  def version_preload(match):
   source_url=match[0].split('?')[0]

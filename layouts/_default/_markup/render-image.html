@@ -1,16 +1,6 @@
 {{- $dest := .Destination -}}
-{{- $alt := .PlainText | default "" -}}
-{{- $title := .Title -}}
-{{- $isRemote := or (hasPrefix $dest "http://") (hasPrefix $dest "https://") -}}
 {{- $resource := "" -}}
-
-{{- if and .Page (not $isRemote) (not (hasPrefix $dest "/")) -}}
+{{- if and .Page (not (hasPrefix $dest "http://")) (not (hasPrefix $dest "https://")) (not (hasPrefix $dest "/")) -}}
   {{- $resource = .Page.Resources.GetMatch $dest -}}
 {{- end -}}
-
-{{- if $resource -}}
-  {{- $img := partial "post-image-srcset.html" $resource -}}
-<img src="{{ $img.url }}"{{ with $img.srcset }} srcset="{{ . }}" sizes="{{ $img.sizes }}"{{ end }} alt="{{ $alt }}" loading="lazy" decoding="async"{{ if gt $img.width 0 }} width="{{ $img.width }}" height="{{ $img.height }}" style="width: {{ $img.width }}px"{{ end }}{{ with $title }} title="{{ . }}"{{ end }}>
-{{- else -}}
-<img src="{{ $dest | safeURL }}" alt="{{ $alt }}" loading="lazy" decoding="async"{{ with $title }} title="{{ . }}"{{ end }}>
-{{- end -}}
+{{- partial "post-img.html" (dict "resource" $resource "src" $dest "alt" (.PlainText | default "") "title" .Title) -}}

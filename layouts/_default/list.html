@@ -3,19 +3,10 @@
 {{ partial "archive-sidebar-left.html" $archive }}
 {{ end }}
 
-{{ define "sidebar-bottom" }}{{ end }}
-
 {{ define "main" }}
 {{- $archive := partialCached "archive-data.html" . .Path .Language.Lang -}}
 <div class="archive-main-col">
-    {{ if .Content }}
-    <div class="archive-intro-section">
-        <h3 class="archive-col-header">Info:</h3>
-        <div class="archive-intro-text">
-            {{ .Content }}
-        </div>
-    </div>
-    {{ end }}
+    {{ partial "archive-intro.html" . }}
 
     <div class="archive-list-header">
         <span class="header-col-year">Date:</span>
@@ -24,8 +15,17 @@
 
     {{ partial "archive-list-items.html" $archive }}
 </div>
+{{- /* Applies URL filters before first paint. */ -}}
+<script>{{ (resources.Get "js/archive-boot.js" | js.Build (dict "minify" true)).Content | safeJS }}</script>
 {{ end }}
 
 {{ define "sidebar-right" }}
-{{ partial "archive-preview.html" . }}
+<div class="archive-right-cols">
+    <div class="archive-view-col">
+        <h3 class="archive-col-header">Preview:</h3>
+
+        <div id="archive-preview-container" class="preview-container">
+        </div>
+    </div>
+</div>
 {{ end }}

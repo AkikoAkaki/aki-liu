@@ -1,5 +1,5 @@
 import EmblaCarousel from "./vendor-embla-8.6.0.js";
-import { media, QUERIES } from "./media.js";
+import { QUERIES } from "./media.js";
 
 // These scalar tweens retain GSAP's cubic/quartic ease-out without its runtime.
 function tweenOffset(motion, { offset, duration, power, onUpdate, onComplete, onInterrupt }) {
@@ -25,14 +25,13 @@ function tweenOffset(motion, { offset, duration, power, onUpdate, onComplete, on
 
 export function initAboutGallery() {
   const root = document.querySelector("[data-about-sequence]");
-  if (!root) return;
   const viewport = root.querySelector(".af-sequence-layer");
   const track = root.querySelector("[data-about-sequence-track]");
   const items = [...track.children];
   const cover = root.querySelector(".af-photo-base img");
   const status = root.querySelector("[data-gallery-status]");
-  const desktop = media("(min-width: 769px) and (hover: hover) and (pointer: fine)");
-  const reducedMotion = media(QUERIES.reducedMotion);
+  const desktop = matchMedia(QUERIES.gallerySequence);
+  const reducedMotion = matchMedia(QUERIES.reducedMotion);
   const images = items.map((item) => item.querySelector("img"));
   const decoded = new Map();
   let index = Number(root.dataset.initialIndex);

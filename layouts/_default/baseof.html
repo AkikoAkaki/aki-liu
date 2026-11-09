@@ -1,23 +1,15 @@
 <!DOCTYPE html>
 <html lang="{{ .Language.Lang }}">
 <head>
-    {{- $isArchive := partial "is-archive.html" . -}}
-    {{- /* data/nav.yaml feeds both the menu and the search palette. */ -}}
-    {{- $nav := slice -}}
-    {{- range site.Data.nav -}}
-        {{- $url := printf "%s/" .id | relLangURL -}}
-        {{- with site.GetPage (cond (eq .id "home") "/" (printf "/%s" .id)) -}}{{- $url = .RelPermalink -}}{{- end -}}
-        {{- $nav = $nav | append (merge . (dict "url" $url)) -}}
-    {{- end -}}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#050505" media="(prefers-color-scheme: dark)">
-    {{ partial "head/seo.html" (dict "page" .) }}
+    {{ partial "head/seo.html" . }}
     {{ partial "head/assets.html" . }}
     <link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
 </head>
-<body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} type-{{ .Type }} kind-{{ .Kind }}{{ if $isArchive }} archive-page{{ end }}{{ if and (eq .Kind "page") (lt .WordCount 600) }} post-short{{ end }}">
+<body class="{{ if .IsHome }}home-page{{ else }}not-home{{ end }} section-{{ .Section }} type-{{ .Type }} kind-{{ .Kind }}{{ if partial "is-archive.html" . }} archive-page{{ end }}{{ if and (eq .Kind "page") (lt .WordCount 600) }} post-short{{ end }}">
     <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="edge-fade" aria-hidden="true"></div>
     <div class="site-wrapper">
@@ -30,103 +22,12 @@
         <aside class="site-sidebar-bottom">{{ block "sidebar-bottom" . }}{{ end }}</aside>
         <aside class="site-sidebar-right">{{ block "sidebar-right" . }}{{ end }}</aside>
     </div>
-    {{- if $isArchive -}}
-        {{- $archiveBoot := resources.Get "js/archive-boot.js" | js.Build | resources.Minify -}}
-        <script>{{ $archiveBoot.Content | safeJS }}</script>
-    {{- end -}}
-    </div><!-- /.site-wrapper -->
-
-    <footer class="site-footer">
-        <div class="footer-content">
-            {{ block "footer-inner" . }}
-            {{- $connect := site.Data.homepage.connect -}}
-            <div class="footer-grid">
-                <div class="footer-contact">
-                    <h2 class="footer-label">{{ default "Connect" $connect.title }}</h2>
-                </div>
-                <div class="footer-links-container">
-                    <ul class="footer-links">
-                        {{- range $connect.items }}
-                        <li>
-                            <span class="link-name">{{ .platform }}</span>
-                            <span class="link-line"></span>
-                            <a href="{{ .link }}"{{ with .preview }} data-preview="{{ . | relURL }}"{{ end }} target="{{ if strings.HasPrefix .link "http" }}_blank{{ else }}_self{{ end }}"{{ if strings.HasPrefix .link "http" }} rel="noopener"{{ end }}>{{ .value }} <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 9.5L9.5 2.5M9.5 2.5V8.5M9.5 2.5H3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-                        </li>
-                        {{- end }}
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <div class="footer-quote">
-                    "To sing you must first open your mouth"
-                </div>
-                <div class="footer-copyright-wrapper">
-                    <img src="{{ "images/signature.webp" | relURL }}" alt="AKI LIU" class="footer-signature" loading="lazy" width="208" height="118">
-                    <span class="footer-copyright">©{{ now.Year }} Aki Liu</span>
-                </div>
-            </div>
-            {{ end }}
-        </div>
-    </footer>
-
-    <div class="menu-bar" id="menu-bar">
-        <button class="menu-trigger" id="menu-trigger" aria-expanded="false" aria-controls="menu-panel">
-            <span class="menu-trigger-label">
-                <span class="menu-trigger-title menu-trigger-title--menu">Menu</span>
-                <span class="menu-trigger-title menu-trigger-title--search" aria-hidden="true">Search</span>
-            </span>
-            <span class="menu-trigger-icon" aria-hidden="true">
-                <svg class="menu-icon-open" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 9H19" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
-                    <path d="M5 15H19" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
-                </svg>
-                <svg class="menu-icon-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17 7L7 17" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
-                    <path d="M7 7L17 17" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/>
-                </svg>
-            </span>
-        </button>
-        <nav class="menu-panel" id="menu-panel" aria-hidden="true">
-            {{- /* --menu-i / --menu-count drive the open and close stagger in base.css. */ -}}
-            {{- $menuCount := 1 -}}
-            {{- range $nav }}{{ if not .hidden }}{{ $menuCount = add $menuCount 1 }}{{ end }}{{ end -}}
-            {{- $menuIndex := 0 }}
-            <div class="menu-panel-inner" style="--menu-count: {{ $menuCount }}">
-                {{- range $nav }}{{ if not .hidden }}
-                <a href="{{ .url }}" class="menu-link{{ if cond (eq .id "home") $.IsHome (or (eq $.Section .id) (eq $.Type .id)) }} is-active{{ end }}" style="--menu-i: {{ $menuIndex }}"><span class="menu-link-content"><span class="menu-link-label">{{ .label }}</span></span></a>
-                {{- $menuIndex = add $menuIndex 1 }}
-                {{- end }}{{ end }}
-                <a href="#search" class="menu-link menu-link--search" style="--menu-i: {{ $menuIndex }}" data-search-trigger><span class="menu-link-content"><span class="menu-link-label">Search</span><kbd class="menu-kbd">⌘K</kbd></span></a>
-            </div>
-        </nav>
-        {{- $otherLang := cond (eq .Language.Lang "en") "zh" "en" -}}
-        {{- $languageURL := "" -}}
-        {{- range .Translations -}}
-            {{- if eq .Language.Lang $otherLang -}}{{- $languageURL = .RelPermalink -}}{{- end -}}
-        {{- end -}}
-        {{- if not $languageURL -}}
-            {{- $section := .Section -}}
-            {{- range .Sites -}}
-                {{- if eq .Language.Lang $otherLang -}}
-                    {{- $languageURL = .Home.RelPermalink -}}
-                    {{- with .GetPage "section" $section -}}{{- $languageURL = .RelPermalink -}}{{- end -}}
-                {{- end -}}
-            {{- end -}}
-        {{- end -}}
-        <div class="menu-search-panel" id="menu-search-panel" aria-hidden="true"
-             data-index-url="{{ "search-index.json" | relLangURL }}"
-             data-tags-url="{{ "tags/" | relLangURL }}"
-             data-nav="{{ $nav | jsonify }}"
-             data-language-url="{{ $languageURL }}"></div>
     </div>
 
-    {{- if .IsHome }}
-    <!-- Home Hover Preview Box placed at root body level to ensure true viewport-relative position: fixed positioning -->
-    <div class="home-hover-preview" data-home-hover-preview aria-hidden="true">
-        <img class="home-hover-preview-img is-active" data-home-preview-layer="0" alt="">
-        <img class="home-hover-preview-img" data-home-preview-layer="1" alt="">
-    </div>
-    {{- end }}
+    {{ partial "site-footer.html" . }}
 
+    {{ partial "site-menu.html" . }}
+
+    {{ block "body-end" . }}{{ end }}
 </body>
 </html>
