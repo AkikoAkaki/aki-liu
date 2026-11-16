@@ -47,6 +47,7 @@ OptMem 跨会话、上下文压缩、模型和供应商保留记忆。没有它�
 - **图片**：非 SVG/GIF 图片通过自定义渲染钩子 `layouts/_default/_markup/render-image.html` 自动转换为 WebP。需要说明的 bundle 图片使用 `figure` shortcode（参数：`src`、`alt`、`caption`）。WebP 转换和 srcset 集中在 `layouts/partials/responsive-image.html`。读取资源的 `.RelPermalink` 会发布原文件，模板只在实际提供原图时读取。
 - **视频**：使用 `localvideo` shortcode 和 bundle 内素材（参数：`src`、`caption`）；同名 `<name>.poster.webp` 会成为封面并延迟加载。
 - **KaTeX**：frontmatter 设置 `math` 或内容包含数学分隔符的页面会加载（`layouts/partials/page-has-math.html`、`layouts/partials/head/katex.html`）。文件位于带版本号的 `static/lib/katex-<version>/`，因为 `/lib/` 使用不可变缓存；升级时同时修改 `layouts/partials/katex-base.html` 和 `scripts/download-katex.ps1`。
+- **Mermaid**：```mermaid 代码块经 `layouts/_default/_markup/render-codeblock-mermaid.html` 输出源码，含该代码块的页面加载 `assets/js/mermaid.js`，用 Pele 的按需加载版本渲染成 SVG，渲染失败时保留源码；配色变量在 `post.css` 的 `.post-content .mermaid`。Pele 文件位于 `static/lib/pele-<version>/`（npm 包 `dist/esm/` 下的 `lazy.js` 和 `chunks/`），升级时换新目录并修改 `layouts/partials/head/page-assets.html` 里的路径。
 - **标签**：在 frontmatter 中写 `tags: ["tag-name"]`，由 `layouts/_default/list.html` 渲染 `/tags/<name>/`。URL、`data-tag` 和筛选使用 slug。`data/tags.yaml` 将 slug 映射到圆点颜色及需要特殊大小写的标签名（如 `mlsys` → `MLSys`）；模板通过 `style="--tag-color: …"` 输出颜色。新标签在此添加一行；缺少配置时使用灰点和标题式大小写。
 - **归档预览**：每篇文章有带指纹的预览 JSON（`layouts/partials/archive-preview-entry.html`，前 800 个字符）。`assets/js/modules/archive-preview.js` 加载悬停或聚焦的文章，仅为含公式的预览加载 KaTeX。
 - **Microblog 分页**：`microblog-feed-index.html` 嵌入列数和带指纹的每 30 条分块 URL。每块条数来自 `hugo.toml` 的 `params.microblogPageSize`。浏览器只请求下一块；公开的 `feed.json` 仍包含全部内容。

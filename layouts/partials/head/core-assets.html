@@ -26,5 +26,8 @@
     {{- range $name, $src := .chunks -}}
         {{- $data = printf `%s data-%s="%s"` $data $name (partial "head/js-bundle.html" (dict "src" $src "format" "esm")).RelPermalink -}}
     {{- end -}}
+    {{- range $name, $value := .data -}}
+        {{- $data = printf `%s data-%s="%s"` $data $name $value -}}
+    {{- end -}}
     <script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"{{ $data | safeHTMLAttr }}></script>
 {{- end -}}

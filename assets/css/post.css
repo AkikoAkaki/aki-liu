@@ -757,6 +757,25 @@ body.post-short {
     padding: 0;
 }
 
+/* Mermaid diagrams rendered by Pele (js/mermaid.js) follow the site palette in both themes. */
+.post-content .mermaid {
+    margin: 2.5rem 0;
+    --pele-bg: var(--bg-color);
+    --pele-fg: var(--text-color);
+    --pele-line: var(--color-secondary);
+    --pele-muted: var(--color-muted);
+    --pele-surface: var(--color-bg-muted);
+    --pele-surface-alt: var(--border-color);
+    --pele-border: var(--color-dim);
+    --pele-font: var(--font-sans);
+    --pele-font-mono: var(--font-mono);
+}
+
+.post-content .mermaid > .code-block,
+.post-content .mermaid > pre {
+    margin: 0;
+}
+
 /* Copy button: the block holds it, so it stays put while the code scrolls sideways. */
 .post-content .code-block {
     position: relative;
