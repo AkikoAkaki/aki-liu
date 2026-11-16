@@ -40,7 +40,14 @@ draft: false
 
 ## Autotuner 的基本循环
 
-Tuner（预算：N 次 evaluation）把 proposal 变成 config 交给 GPU；GPU 运行 kernel、测出 runtime 后返回；Tuner 根据 runtime 提出下一个 proposal，如此循环。
+```mermaid
+flowchart LR
+    A["Tuner<br/>预算：N 次 evaluation"]
+    B["GPU<br/>运行 kernel，测量 runtime"]
+
+    A -->|"proposal → config"| B
+    B -->|"返回 runtime<br/>Tuner 据此提出下一个 proposal"| A
+```
 
 在这个 project 中，tuner 是 OpenTuner，kernel 是 Gaussian (image filtering)。
 - 每个输出像素等于周围 5×5 个输入像素的加权和，用 OpenCL 写，文件是 `gaussian_static_1.cl`，输入是 1024×1024，跑在 GPU 上)

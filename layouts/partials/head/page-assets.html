@@ -36,6 +36,10 @@
     {{- if partial "has-toc.html" . -}}
         {{- $js = $js | append (dict "src" "js/post-toc.js") -}}
     {{- end -}}
+    {{- /* Pele lives in a versioned /lib/ directory (immutable cache): an upgrade uses a new directory. */ -}}
+    {{- if findRE "(?m)^[ \\t]*(```|~~~)[ \\t]*mermaid" .RawContent 1 -}}
+        {{- $js = $js | append (dict "src" "js/mermaid.js" "data" (dict "pele-src" ("lib/pele-1.13.0/lazy.js" | relURL))) -}}
+    {{- end -}}
 {{- end -}}
 {{- if eq .Section "microblog" -}}
     {{- $css = $css | append (dict "name" "css/microblog.css" "files" (slice "css/archive-sidebar.css" "css/microblog.css")) -}}
