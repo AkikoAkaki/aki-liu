@@ -1,5 +1,5 @@
 ---
-title: "2026-W46"
+title: "2026-W46：无罪偿还"
 date: 2026-11-16
 draft: false
 ---
@@ -28,7 +28,7 @@ draft: false
 
 这周一直在思考和研究我的 CSC 290 的 Final Project 应该怎么做。我是想基于 FlashAttention 加速我的 meeting-transcriber 工具的转录。我花了蛮长时间研究 CTranslate2，fast-whisper，以及 Attention 和 FlashAttention 的。看你过两天会把我在这过程中写的 note publish 到网站上。
 
-
+---
 
 ## 想法
 
@@ -58,7 +58,7 @@ BLG 竟然赢了。我已经不知道该说些什么好了。感觉表达什么�
 
 这种将女性物化与男性之间的地位竞争结合起来，并从中获取性快感的 toxic masculinity 竟然还在这个世界上被普遍认可，真的令我不可思议。
 
-
+---
 
 ## 生活
 

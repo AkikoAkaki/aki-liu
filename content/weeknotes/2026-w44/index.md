@@ -1,5 +1,5 @@
 ---
-title: "2026-W44"
+title: "2026-W44：语言的沉默"
 date: 2026-11-02
 draft: false
 ---
