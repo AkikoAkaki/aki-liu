@@ -549,6 +549,13 @@ body.post-short {
     margin: 0 auto;
 }
 
+/* Laptop-width windows: the same column fills more of a smaller screen, so body text drops 1px. */
+@media (min-width: 769px) and (max-width: 1600px) {
+    .post-content {
+        font-size: 15px;
+    }
+}
+
 .post-content p {
     margin-bottom: 1rem;
 }
@@ -878,7 +885,7 @@ body.post-short {
 .post-content ol {
     margin: 1.5rem 0;
     padding-left: 1.5rem;
-    line-height: 1.7;
+    line-height: 1.55;
     color: var(--text-color);
     list-style-position: outside;
 }
@@ -887,14 +894,14 @@ body.post-short {
 .post-content ul ol,
 .post-content ol ul,
 .post-content ol ol {
-    margin: 0.5rem 0 0;
-    line-height: 1.7;
+    margin: 0.25rem 0 0;
+    line-height: 1.55;
 }
 
 .post-content li {
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.15rem;
     padding-left: 0.5rem;
-    line-height: 1.7;
+    line-height: 1.55;
     color: var(--text-color);
 }
 
