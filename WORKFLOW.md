@@ -57,7 +57,9 @@ About 页图片使用独立的 Hugo Pipes 流程，不要复制到其他页面�
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check.ps1   # 加 -Audit 检查产物大小
 ```
 
-检查会构建 `public_test/`，并验证 Microblog 路径和 frontmatter。`-Audit` 还会输出图片、CSS、JS、HTML 和搜索索引的总大小及最大的十个文件；它不检测未使用文件。
+检查会构建 `public_test/`，并验证 Microblog 路径和 frontmatter。
+
+文章里出现新的外链域名时，在检查之后运行 `python scripts/cache-external-assets.py --site public_test --icons-only`，再提交 `assets/icons/external/` 下新增的图标。构建时没有对应图标的链接会显示通用外链箭头。`-Audit` 还会输出图片、CSS、JS、HTML 和搜索索引的总大小及最大的十个文件；它不检测未使用文件。
 
 如果改动涉及固定元素、页脚或页面级 `overflow`，对同一构建运行 `node scripts/edge-check.mjs`。它需要 Node 22+ 和 Chrome 或 Edge，输出 `PASS` 或失败的页面和步骤。它模拟 Safari；确认移动端布局修复前，还需用真实 iPhone 检查。
 
