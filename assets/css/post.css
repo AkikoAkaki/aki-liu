@@ -704,6 +704,17 @@ body.post-short {
     text-align: left;
 }
 
+/* Figures on consecutive lines in a list item: hardWraps puts a <br> beside each one,
+   which adds an empty line between the figure margins. */
+.post-content li > br:has(+ figure),
+.post-content li > figure + br {
+    display: none;
+}
+
+.post-content li > figure {
+    margin: 1.25rem 0;
+}
+
 .post-content figure img,
 .post-content figure video {
     margin: 0;
